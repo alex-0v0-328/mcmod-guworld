@@ -24,9 +24,9 @@ The project rules for gu-world, loaded at the start of every session. Collaborat
 
 ## Map
 
-| Path                                        | What it is                                                                                                              |
-|---------------------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| Path                                        | What it is                                                                                                |
+|---------------------------------------------|-----------------------------------------------------------------------------------------------------------|
 | `src/main/java/net/alex/guzhenrenworld/`    | `GuWorld` (entry, `MOD_ID`), `GuWorldClient`, `registry/WorldDimensions`, `datagen/`, `client/dimension/` |
-| `src/generated/resources/`                  | Committed datagen output                                                                                                |
-| `../guzhenren/`                             | Guzhenren, where both mods run and are checked together                                                                 |
-| `C:\workspace\Obsidian\guzhenren-mod-wiki\` | The shared wiki; dimensions under 开发向/维度                                                                           |
+| `src/generated/resources/`                  | Committed datagen output                                                                                  |
+| `../guzhenren/`                             | Guzhenren, where both mods run and are checked together                                                   |
+| `C:\workspace\Obsidian\guzhenren-mod-wiki\` | The shared wiki; dimensions under 开发向/维度                                                             |
