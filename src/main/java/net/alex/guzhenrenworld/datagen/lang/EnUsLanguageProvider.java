@@ -35,9 +35,9 @@ public class EnUsLanguageProvider extends LanguageProvider {
     private void addDimensionKeys() {
         ResourceLocation dimension = WorldDimensions.TREASURE_YELLOW_HEAVEN_STEM.location();
         ResourceLocation biome = WorldDimensions.TREASURE_YELLOW_HEAVEN_BIOME.location();
-        add(dimension.toLanguageKey("dimension"),                "Treasure Yellow Heaven");
-        add(biome.toLanguageKey("biome"),                        "Treasure Yellow Heaven");
-        add(dimension.toLanguageKey("travelerstitles"),          "Treasure Yellow Heaven");
+        add(dimension.toLanguageKey("dimension"), "Treasure Yellow Heaven");
+        add(biome.toLanguageKey("biome"), "Treasure Yellow Heaven");
+        add(dimension.toLanguageKey("travelerstitles"), "Treasure Yellow Heaven");
         add(dimension.toLanguageKey("travelerstitles", "color"), "f4d35e");
     }
     //endregion

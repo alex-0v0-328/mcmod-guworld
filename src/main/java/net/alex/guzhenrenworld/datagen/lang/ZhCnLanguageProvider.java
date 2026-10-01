@@ -36,9 +36,9 @@ public class ZhCnLanguageProvider extends LanguageProvider {
     private void addDimensionKeys() {
         ResourceLocation dimension = WorldDimensions.TREASURE_YELLOW_HEAVEN_STEM.location();
         ResourceLocation biome = WorldDimensions.TREASURE_YELLOW_HEAVEN_BIOME.location();
-        add(dimension.toLanguageKey("dimension"),                "宝黄天");
-        add(biome.toLanguageKey("biome"),                        "宝黄天");
-        add(dimension.toLanguageKey("travelerstitles"),          "宝黄天");
+        add(dimension.toLanguageKey("dimension"), "宝黄天");
+        add(biome.toLanguageKey("biome"), "宝黄天");
+        add(dimension.toLanguageKey("travelerstitles"), "宝黄天");
         add(dimension.toLanguageKey("travelerstitles", "color"), "f4d35e");
     }
     //endregion
