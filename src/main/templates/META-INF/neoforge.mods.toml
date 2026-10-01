@@ -1,0 +1,46 @@
+
+modLoader="javafml" #mandatory
+
+loaderVersion="${loader_version_range}" #mandatory
+
+license="${mod_license}"
+
+[[mods]] #mandatory
+
+modId="${mod_id}" #mandatory
+
+version="${mod_version}" #mandatory
+
+displayName="${mod_name}" #mandatory
+
+#authors=""
+
+description='''
+The dimensions, terrain and biomes of Guzhenren. Requires Guzhenren.
+'''
+
+#[[accessTransformers]]
+#file="META-INF/accesstransformer.cfg"
+
+[[dependencies.${mod_id}]] #optional
+    modId="neoforge" #mandatory
+    type="required" #mandatory
+    versionRange="[${neo_version},)" #mandatory
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="minecraft"
+    type="required"
+    versionRange="${minecraft_version_range}"
+    ordering="NONE"
+    side="BOTH"
+
+# Guzhenren owns the player data, the anchored-dimension travel and the guards; this mod only
+# supplies the worlds they act on. It also rejects a Guzhenren too old for this version.
+[[dependencies.${mod_id}]]
+    modId="guzhenren"
+    type="required"
+    versionRange="${guzhenren_version_range}"
+    ordering="AFTER"
+    side="BOTH"
