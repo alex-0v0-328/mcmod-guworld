@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.common.Mod;
 
 /**
- * Entry point of gu-world, the companion mod of Guzhenren ({@code guzhenren}), built from its own
+ * Entry point of Gu World, the companion mod of Guzhenren ({@code guzhenren}), built from its own
  * repository beside it.
  *
  * <p>This mod owns every dimension, terrain and biome. Guzhenren owns the player data, the
@@ -28,7 +28,7 @@ import net.neoforged.fml.common.Mod;
 @Mod(GuWorld.MOD_ID)
 public class GuWorld {
 
-    public static final String MOD_ID = "gu_world";
+    public static final String MOD_ID = "guworld";
 
     public static ResourceLocation id(String path) { return ResourceLocation.fromNamespaceAndPath(MOD_ID, path); }
 }

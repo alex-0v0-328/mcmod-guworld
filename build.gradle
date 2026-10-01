@@ -69,8 +69,8 @@ neoForge {
 
             // Guzhenren's IDEA window links this project too, and its runs use the plain names, so
             // ours carry the project name and a folder instead of overwriting Client, Data, Server.
-            ideName = "gu-world ${ideName.get()}"
-            ideFolderName = 'gu-world'
+            ideName = "Gu World ${ideName.get()}"
+            ideFolderName = 'Gu World'
         }
     }
 

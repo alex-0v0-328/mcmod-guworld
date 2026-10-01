@@ -1,10 +1,10 @@
-# CLAUDE.md — gu-world
+# CLAUDE.md — Gu World
 
-The project rules for gu-world, loaded at the start of every session opened here, local or in the cloud. Collaboration rules live in the alex-constitution and i-have-adhd skills, which outrank this file; Alex's chat instructions beat both. Local sessions get those skills from `~/.claude` through the user-level SessionStart hook; cloud sessions get the tracked copies in `.claude/skills/`, injected by the hook in `.claude/settings.json`. Those copies come from `../guzhenren/.claude/`, the source, through `python .claude/hooks/session_start.py --deploy` run there; never edit them here. Guzhenren's rules file `../guzhenren/CLAUDE.md` (Boundaries, Language and style) and its local `reference/` apply here too when checked out beside this one, read on demand; this file only adds what differs, and carries the code conventions itself for cloud sessions.
+The project rules for Gu World, loaded at the start of every session opened here, local or in the cloud. Collaboration rules live in the alex-constitution and i-have-adhd skills, which outrank this file; Alex's chat instructions beat both. Local sessions get those skills from `~/.claude` through the user-level SessionStart hook; cloud sessions get the tracked copies in `.claude/skills/`, injected by the hook in `.claude/settings.json`. Those copies come from `../guzhenren/.claude/`, the source, through `python .claude/hooks/session_start.py --deploy` run there; never edit them here. Guzhenren's rules file `../guzhenren/CLAUDE.md` (Boundaries, Language and style) and its local `reference/` apply here too when checked out beside this one, read on demand; this file only adds what differs, and carries the code conventions itself for cloud sessions.
 
 ## What this is
 
-- gu-world (mod id `gu_world`, package `net.alex.guzhenrenworld`, Minecraft 1.21.1, NeoForge 21.1.252) owns every dimension of Guzhenren and its terrain, the overworld terrain both new and vanilla-modified, and the biomes. Guzhenren (`../guzhenren`, mod id `guzhenren`) owns everything else, including travel into these dimensions, their guards and the structures. Ownership record: wiki《待定设计》(Alex, 2026-10-01).
+- Gu World, 蛊界 (mod id `guworld`, display name `Gu World`, both `gu_world`/`gu-world` until 2026-10-02, Alex; package `net.alex.guzhenrenworld`, Minecraft 1.21.1, NeoForge 21.1.252) owns every dimension of Guzhenren and its terrain, the overworld terrain both new and vanilla-modified, the biomes, and naturally generated unique structures such as the spirit spring (元泉; Alex, 2026-10-02; its code still lives in Guzhenren until a scheduled move, wiki《待定设计》). Guzhenren (`../guzhenren`, mod id `guzhenren`) owns everything else, including travel into these dimensions, their guards and the settlements (山寨, 城镇, 村落, the vanilla village rework). Ownership record: wiki《待定设计》(Alex, 2026-10-01).
 - The full game needs both mods plus the pack; the split exists for design isolation.
 
 ## Boundaries
@@ -17,7 +17,7 @@ The project rules for gu-world, loaded at the start of every session opened here
 
 ## Build, run and check
 
-- `.\gradlew.bat build` compiles and packs `build/libs/gu_world-<version>.jar`; GitHub Actions does the same and nothing more.
+- `.\gradlew.bat build` compiles and packs `build/libs/guworld-<version>.jar`; GitHub Actions does the same and nothing more.
 - `.\gradlew.bat runData` regenerates the committed `src/generated/resources`. It and every other run load Guzhenren at run time from `../guzhenren` (`-PguzhenrenDir` overrides): its built jar, Epic Fight and GeckoLib from its `run/mods`, and Curios. Build Guzhenren first. After a provider change, run it and review the diff; CI cannot check this drift.
 - Both mods run together in Guzhenren: its `python tools/check.py` builds this project first, then runs the GameTests, the server smoke (which loads every dimension defined here) and the client. Visual and feel acceptance in `runClient` stays Alex's.
 - Guzhenren's tools drive this repository too, from its folder: `python ../guzhenren/tools/check.py --project guworld` runs `build`, then the `runData` drift check; `python ../guzhenren/tools/ship.py <plan> --project guworld` commits and pushes through the same mirror and contributor gate (plan at `C:\workspace\Dev\Projects\_Temp\guworld\ship-plan.json`, log under `_Temp\guworld\logs\`). The flow, commit-message picking included, is Guzhenren's `commit-push` skill, section Sibling repositories.
