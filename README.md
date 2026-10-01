@@ -1,6 +1,6 @@
 # gu-world
 
-[蛊真人](https://github.com/alex-0v0-328/guzhenren-mod) 的配套模组：全部维度、地形与群系都在这里。必须与蛊真人一起安装。
+[蛊真人](https://github.com/alex-0v0-328/guzhenren-mcmod) 的配套模组：全部维度、地形与群系都在这里。必须与蛊真人一起安装。
 
 > 开发阶段，玩法内容尚未定型，本文不列具体内容。
 
