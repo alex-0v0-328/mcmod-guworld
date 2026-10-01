@@ -26,5 +26,7 @@ jobs:
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
 
+      # runData loads Guzhenren at run time, which this checkout lacks, so the generated-data drift
+      # check runs before every push through the maintainer's ship tool instead.
       - name: Build with Gradle
         run: ./gradlew build
