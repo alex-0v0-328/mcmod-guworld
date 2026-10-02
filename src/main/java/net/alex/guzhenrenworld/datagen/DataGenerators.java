@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.datagen.lang.EnUsLanguageProvider;
 import net.alex.guzhenrenworld.datagen.lang.ZhCnLanguageProvider;
+import net.alex.guzhenrenworld.datagen.lang.ZhTwLanguageProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -42,6 +43,7 @@ public final class DataGenerators {
 
         generator.addProvider(event.includeClient(), new EnUsLanguageProvider(packOutput));
         generator.addProvider(event.includeClient(), new ZhCnLanguageProvider(packOutput));
+        generator.addProvider(event.includeClient(), new ZhTwLanguageProvider(packOutput));
 
         DatapackProvider datapackProvider = generator.addProvider(event.includeServer(),
                 new DatapackProvider(packOutput, lookupProvider));

@@ -15,6 +15,10 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  * <p>⚠ These renderings are the authority, not a translation of the English. Deriving either side
  * from the other is how a name quietly comes to mean something it never meant.
  *
+ * <p>{@link ZhTwLanguageProvider} extends this table through the protected locale constructor and
+ * converts every value on its way in, so a string written here reaches {@code zh_tw} with no second
+ * line.
+ *
  * @author Alex
  * @version 1.0.0
  * @see EnUsLanguageProvider
@@ -24,7 +28,11 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 public class ZhCnLanguageProvider extends LanguageProvider {
 
     public ZhCnLanguageProvider(PackOutput output) {
-        super(output, GuWorld.MOD_ID, "zh_cn");
+        this(output, "zh_cn");
+    }
+
+    protected ZhCnLanguageProvider(PackOutput output, String locale) {
+        super(output, GuWorld.MOD_ID, locale);
     }
 
     @Override
