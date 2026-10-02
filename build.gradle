@@ -32,6 +32,26 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+// Every test lives under src/test, local-only and gitignored as in Guzhenren, one folder per layer,
+// and none of them ships in the jar:
+//   modded  L2 'test': modded JUnit with registries loaded but no world.
+//   game    L3 'gametest': @GameTest classes plus their scene templates, run by runGameTestServer
+//           on a real dedicated server. The source set joins the mod below, so dev runs still find
+//           the tests (and the /test command), while the jar task packs only 'main'.
+// Both load Guzhenren like every other run here (see dependencies).
+sourceSets {
+    test {
+        java.srcDirs = ['src/test/modded/java']
+        resources.srcDirs = ['src/test/modded/resources']
+    }
+    gametest {
+        java.srcDirs = ['src/test/game/java']
+        resources.srcDirs = ['src/test/game/resources']
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
 neoForge {
     version = project.neo_version
 
@@ -52,8 +72,11 @@ neoForge {
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
+        // Its own game directory keeps the GameTest world apart from the run/ dev world.
         gameTestServer {
             type = "gameTestServer"
+            sourceSet = sourceSets.gametest
+            gameDirectory = project.file('run-gametest')
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
@@ -77,7 +100,16 @@ neoForge {
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
+            // src/test is local-only (gitignored), so a CI checkout has no GameTests to join.
+            if (file('src/test/game/java').isDirectory()) {
+                sourceSet(sourceSets.gametest)
+            }
         }
+    }
+
+    unitTest {
+        enable()
+        testedMod = mods."${mod_id}"
     }
 }
 
@@ -86,7 +118,7 @@ configurations {
 }
 
 // Guzhenren, the sibling project at ../guzhenren (or -PguzhenrenDir), is a required mod, so every run
-// here, runData included, loads its built jar plus what it needs: Epic Fight and GeckoLib from its
+// here, runData and both test layers included, loads its built jar plus what it needs: Epic Fight and GeckoLib from its
 // run/mods, and Curios, whose classes its datagen touches. This mod compiles against none of them. A
 // jar that is not there adds nothing, and the run then stops on the missing dependency; build
 // Guzhenren first.
@@ -96,6 +128,29 @@ dependencies {
     localRuntime fileTree(dir: new File(guzhenrenDir, 'build/libs'), include: 'guzhenren-*.jar', exclude: '*-sources.jar')
     localRuntime fileTree(dir: new File(guzhenrenDir, 'run/mods'), include: ['epic-fight-*.jar', 'geckolib-*.jar'])
     localRuntime "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+
+    testImplementation platform("org.junit:junit-bom:${junit_version}")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+// Both test layers run with the same Guzhenren set as the runs; GameTests also compile against
+// everything the mod compiles against.
+neoForge.addModdingDependenciesTo sourceSets.gametest
+configurations {
+    testRuntimeOnly.extendsFrom localRuntime
+    gametestCompileOnly.extendsFrom compileOnly
+    gametestImplementation.extendsFrom implementation
+    gametestRuntimeOnly.extendsFrom localRuntime, runtimeOnly
+}
+
+tasks.named('test', Test) {
+    workingDir project.file('build/minecraft-junit')
+    useJUnitPlatform()
+    testLogging {
+        events 'failed', 'skipped'
+        exceptionFormat = 'full'
+    }
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {

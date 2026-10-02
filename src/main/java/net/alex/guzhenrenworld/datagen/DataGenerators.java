@@ -9,6 +9,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 /**
@@ -37,10 +38,14 @@ public final class DataGenerators {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
         generator.addProvider(event.includeClient(), new EnUsLanguageProvider(packOutput));
         generator.addProvider(event.includeClient(), new ZhCnLanguageProvider(packOutput));
 
-        generator.addProvider(event.includeServer(), new DatapackProvider(packOutput, lookupProvider));
+        DatapackProvider datapackProvider = generator.addProvider(event.includeServer(),
+                new DatapackProvider(packOutput, lookupProvider));
+        generator.addProvider(event.includeServer(), new WorldBiomeTagsProvider(packOutput,
+                datapackProvider.getRegistryProvider(), existingFileHelper));
     }
 }
