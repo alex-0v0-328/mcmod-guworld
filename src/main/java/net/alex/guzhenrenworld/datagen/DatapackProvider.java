@@ -28,12 +28,10 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.FlatLevelSource;
 import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.VerticalAnchor;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings;
 import net.minecraft.world.level.levelgen.placement.BiomeFilter;
-import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
@@ -48,19 +46,19 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * <p>Extends {@link net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider}. Builds in one
  * {@code RegistrySetBuilder} the Treasure Yellow Heaven dimension -- its dimension type, its one biome
  * and its level stem, a flat generator with no layers, so the dimension is pure void -- and the Spirit
- * Spring [元泉] worldgen: a configured and a placed feature per {@link WorldFeatures} placement, and the
- * biome modifiers adding them to {@link WorldBiomeTags#SPIRIT_SPRING_GENERATES}, the surface one at
- * {@code TOP_LAYER_MODIFICATION} (after vegetation) and the cave one at {@code UNDERGROUND_DECORATION}.
+ * Spring [元泉] worldgen: its configured and placed feature and the biome modifier adding it to
+ * {@link WorldBiomeTags#SPIRIT_SPRING_GENERATES} at {@code TOP_LAYER_MODIFICATION} (after vegetation).
  * The tag provider takes {@code getRegistryProvider()} from this instance, not the plain lookup, so the
  * tag pass sees the biome this run generates.
  *
  * <p>⚠ There can only be one per data run. The builtin-entries provider reports a fixed name, so a
  * second instance fails datagen outright; add a registry to this one's builder instead.
  *
- * <p>⚠ {@link #SPIRIT_SPRING_RARITY} is Alex's pick (2026-09-23): desert-well scale, but across 39 land
- * biomes instead of one. ⚠ {@link #SPIRIT_SPRING_UNDERGROUND_RARITY} is Alex's constraint (2026-09-26):
- * strictly rarer than the surface roll. 3000 is the initial pick, his to tune -- the cave-floor scan
- * also fails most sampled attempts, so the effective underground rate lands far below the surface one.
+ * <p>⚠ {@link #SPIRIT_SPRING_RARITY} is Alex's pick (2026-10-02): about one cluster per 2,500 chunks of
+ * the 39 land biomes. The roll is not the rate -- even with the anchor search only ≈4% of rolls find
+ * flat enough ground (measured over 1,600 chunks), so 100 rolls per cluster, where the 2026-09-23 roll
+ * of 1000 with the origin-only check left about one spring per 50,000 chunks. The underground cave
+ * variant (2026-09-26, roll 3000) never grew in practice and was removed the same day (Alex).
  *
  * @author Alex
  * @version 1.0.0
@@ -143,20 +141,11 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
             Registries.PLACED_FEATURE, GuWorld.id("spirit_spring"));
     private static final ResourceKey<BiomeModifier> GENERATE_SPIRIT_SPRING = ResourceKey.create(
             NeoForgeRegistries.Keys.BIOME_MODIFIERS, GuWorld.id("spirit_spring"));
-    private static final ResourceKey<ConfiguredFeature<?, ?>> SPIRIT_SPRING_UNDERGROUND_CONFIGURED =
-            ResourceKey.create(Registries.CONFIGURED_FEATURE, GuWorld.id("spirit_spring_underground"));
-    private static final ResourceKey<PlacedFeature> SPIRIT_SPRING_UNDERGROUND_PLACED = ResourceKey.create(
-            Registries.PLACED_FEATURE, GuWorld.id("spirit_spring_underground"));
-    private static final ResourceKey<BiomeModifier> GENERATE_SPIRIT_SPRING_UNDERGROUND = ResourceKey.create(
-            NeoForgeRegistries.Keys.BIOME_MODIFIERS, GuWorld.id("spirit_spring_underground"));
-    private static final int SPIRIT_SPRING_RARITY = 1000;
-    private static final int SPIRIT_SPRING_UNDERGROUND_RARITY = 3000;
+    private static final int SPIRIT_SPRING_RARITY = 100;
 
     private static void configuredFeatures(BootstrapContext<ConfiguredFeature<?, ?>> context) {
         context.register(SPIRIT_SPRING_CONFIGURED,
                 new ConfiguredFeature<>(WorldFeatures.SPIRIT_SPRING.get(), NoneFeatureConfiguration.INSTANCE));
-        context.register(SPIRIT_SPRING_UNDERGROUND_CONFIGURED, new ConfiguredFeature<>(
-                WorldFeatures.SPIRIT_SPRING_UNDERGROUND.get(), NoneFeatureConfiguration.INSTANCE));
     }
 
     private static void placedFeatures(BootstrapContext<PlacedFeature> context) {
@@ -165,12 +154,6 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 configured.getOrThrow(SPIRIT_SPRING_CONFIGURED),
                 List.of(RarityFilter.onAverageOnceEvery(SPIRIT_SPRING_RARITY),
                         InSquarePlacement.spread(), BiomeFilter.biome())));
-        context.register(SPIRIT_SPRING_UNDERGROUND_PLACED, new PlacedFeature(
-                configured.getOrThrow(SPIRIT_SPRING_UNDERGROUND_CONFIGURED),
-                List.of(RarityFilter.onAverageOnceEvery(SPIRIT_SPRING_UNDERGROUND_RARITY),
-                        InSquarePlacement.spread(),
-                        HeightRangePlacement.uniform(VerticalAnchor.aboveBottom(8), VerticalAnchor.belowTop(8)),
-                        BiomeFilter.biome())));
     }
 
     private static void biomeModifiers(BootstrapContext<BiomeModifier> context) {
@@ -179,9 +162,6 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
         context.register(GENERATE_SPIRIT_SPRING, new BiomeModifiers.AddFeaturesBiomeModifier(biomes,
                 HolderSet.direct(placedFeatures.getOrThrow(SPIRIT_SPRING_PLACED)),
                 GenerationStep.Decoration.TOP_LAYER_MODIFICATION));
-        context.register(GENERATE_SPIRIT_SPRING_UNDERGROUND, new BiomeModifiers.AddFeaturesBiomeModifier(biomes,
-                HolderSet.direct(placedFeatures.getOrThrow(SPIRIT_SPRING_UNDERGROUND_PLACED)),
-                GenerationStep.Decoration.UNDERGROUND_DECORATION));
     }
     //endregion
 }

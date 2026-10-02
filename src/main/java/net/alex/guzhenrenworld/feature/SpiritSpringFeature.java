@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import net.alex.guzhenrenworld.registry.GuzhenrenBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
@@ -22,10 +21,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The Spirit Spring [元泉] structure, in two {@link Placement}s: on the surface and underground in
- * open caves. Each structure is a 7x7 basin laid out as three layers around the center column's
- * ground height g (surface: {@code MOTION_BLOCKING_NO_LEAVES} - 1; underground: the cave floor
- * found by the scan below); {@link #groundAt} dispatches between the two rules.
+ * The Spirit Spring [元泉] surface structure: a 7x7 basin laid out as three layers around the center
+ * column's ground height g ({@code MOTION_BLOCKING_NO_LEAVES} - 1, judged by {@link #surfaceGround}).
  *
  * <p>Layer one at g-1 buries the calcite basin; layer two at g paves the ground with slabs and
  * raises the calcite pillar under the spring; layer three at g+1 is only the source block. The
@@ -44,14 +41,20 @@ import org.jetbrains.annotations.Nullable;
  *
  * <p>Clusters (Alex, 2026-09-26): a spot that passes the rarity roll grows 1..5 springs -- 50%,
  * 20%, 15%, 10%, 5% ({@link #CLUSTER_SIZE_WEIGHTS}; {@link #clusterSizeForRoll} maps a [0,100)
- * roll through the cumulative weights) -- the same roll for surface and underground spots. Every
- * spring of one cluster sits 8..16 blocks (horizontal) from every other
- * ({@link #separationAcceptable}), so the 7x7 basins never overlap. Members are scattered around
- * the feature origin within the Chebyshev bound {@link #MAX_ORIGIN_OFFSET}: the origin sits inside
+ * roll through the cumulative weights). Every spring of one cluster sits 8..16 blocks (horizontal)
+ * from every other ({@link #separationAcceptable}), so the 7x7 basins never overlap. Members are
+ * scattered around the feature origin within the Chebyshev bound {@link #MAX_ORIGIN_OFFSET}: the origin sits inside
  * the generating chunk and features may write one chunk past its border, so ±12 keeps every 7x7
  * inside the 3x3 chunk window instead of clipping outer columns. {@link #memberSpot} tries
  * {@link #MEMBER_SPOT_ATTEMPTS} random candidates per member; a member whose candidates all fail
  * terrain checks is dropped -- the rolled size is the attempt, not a quota.
+ *
+ * <p>Anchor search (Alex, 2026-10-02): {@link #anchorSpot} tries the origin column, then up to
+ * {@link #ANCHOR_SPOT_ATTEMPTS} random columns within the same ±{@link #MAX_ORIGIN_OFFSET} bound.
+ * Judged at the origin alone, the strict terrain rules let ≈1-2% of rolls through, so a spring stood
+ * about one per 50,000 chunks; the search keeps the rules and only gives each roll more columns
+ * (≈4% of rolls now grow a cluster). A {@code /place feature} likewise lands on qualifying ground
+ * within that bound of the player instead of failing on the column underfoot.
  *
  * <p>Surface placement ({@link #surfaceGround}) happens on flat land only (Alex, 2026-09-24):
  * vegetation runs before us ({@code VEGETAL_DECORATION} precedes {@code TOP_LAYER_MODIFICATION}),
@@ -61,20 +64,10 @@ import org.jetbrains.annotations.Nullable;
  * bumps never leave plants floating above the carve -- and stalk plants that dodge the heightmap
  * (no collision: bamboo, sugar cane) veto from the clear band.
  *
- * <p>Underground placement ({@link #caveGround}, 2026-09-26) runs at
- * {@code UNDERGROUND_DECORATION} with a uniform height sample; the column scan starts just below
- * that sample (never nearer than {@link #UNDERGROUND_SURFACE_GUARD} under the surface, so open air
- * never qualifies) and walks down {@link #UNDERGROUND_SCAN_DEPTH} cells for an enclosed cave floor
- * ({@link #caveFloorAt}): sturdy ground under the whole footprint, the two-cell clear band holding
- * only air or replaceable plants ({@link #clearable}) -- never fluids, so cave lakes and lava veto
- * the floor -- and solid ceiling within {@link #UNDERGROUND_CEILING_SCAN} cells over the clear
- * band ({@link #enclosed}), so ravines open to the sky fail. Its rarity sits strictly above the
- * surface roll (DatapackProvider), per Alex's "lower than the surface, still rare" constraint.
- *
  * <p>⚠ Layout, rarity and the cluster numbers are Alex's picks (2026-09-23, 2026-09-24,
- * 2026-09-26), not silent tunables. Symbol legend: {@code x}=keep, {@code a}=air (the basin well),
- * {@code y}=cobblestone, {@code t}=mossy cobblestone, {@code f}=calcite, {@code c}=cobblestone
- * slab (bottom), {@code m}=mossy cobblestone slab (bottom).
+ * 2026-09-26, 2026-10-02), not silent tunables. Symbol legend: {@code x}=keep, {@code a}=air (the
+ * basin well), {@code y}=cobblestone, {@code t}=mossy cobblestone, {@code f}=calcite,
+ * {@code c}=cobblestone slab (bottom), {@code m}=mossy cobblestone slab (bottom).
  *
  * @author Alex
  * @version 1.0.0
@@ -82,8 +75,6 @@ import org.jetbrains.annotations.Nullable;
  */
 
 public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
-
-    public enum Placement { SURFACE, UNDERGROUND }
 
     static final String[] LAYER_ONE = {
             "xxtttxx",
@@ -112,17 +103,12 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
     private static final int MAX_ORIGIN_OFFSET = 12;
     //endregion
 
-    //region Underground scan [地下扫描]
-    private static final int UNDERGROUND_SCAN_DEPTH = 24;
-    private static final int UNDERGROUND_CEILING_SCAN = 16;
-    private static final int UNDERGROUND_SURFACE_GUARD = 4;
+    //region Anchor search [就近找点] -- origin first, then random columns within the cluster bound
+    private static final int ANCHOR_SPOT_ATTEMPTS = 32;
     //endregion
 
-    private final Placement placement;
-
-    public SpiritSpringFeature(Placement placement) {
+    public SpiritSpringFeature() {
         super(NoneFeatureConfiguration.CODEC);
-        this.placement = placement;
     }
 
     @Override
@@ -130,14 +116,14 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
         WorldGenLevel level = context.level();
         BlockPos origin = context.origin();
         RandomSource random = context.random();
-        BlockPos anchor = groundAt(level, origin.getX(), origin.getZ(), origin.getY());
+        BlockPos anchor = anchorSpot(level, origin, random);
         if (anchor == null) return false;
         int clusterSize = clusterSizeForRoll(random.nextInt(100));
         placeStructure(level, anchor);
         List<BlockPos> placed = new ArrayList<>();
         placed.add(anchor);
         for (int member = 1; member < clusterSize; member++) {
-            BlockPos spot = memberSpot(level, origin, anchor, placed, random);
+            BlockPos spot = memberSpot(level, origin, placed, random);
             if (spot == null) continue;
             placeStructure(level, spot);
             placed.add(spot);
@@ -159,8 +145,18 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
         return distance >= CLUSTER_MIN_SEPARATION && distance <= CLUSTER_MAX_SEPARATION;
     }
 
-    private @Nullable BlockPos memberSpot(WorldGenLevel level, BlockPos origin, BlockPos anchor,
-                                          List<BlockPos> placed, RandomSource random) {
+    private static @Nullable BlockPos anchorSpot(WorldGenLevel level, BlockPos origin, RandomSource random) {
+        BlockPos ground = surfaceGround(level, origin.getX(), origin.getZ());
+        for (int attempt = 0; ground == null && attempt < ANCHOR_SPOT_ATTEMPTS; attempt++) {
+            int dx = random.nextIntBetweenInclusive(-MAX_ORIGIN_OFFSET, MAX_ORIGIN_OFFSET);
+            int dz = random.nextIntBetweenInclusive(-MAX_ORIGIN_OFFSET, MAX_ORIGIN_OFFSET);
+            ground = surfaceGround(level, origin.getX() + dx, origin.getZ() + dz);
+        }
+        return ground;
+    }
+
+    private static @Nullable BlockPos memberSpot(WorldGenLevel level, BlockPos origin, List<BlockPos> placed,
+                                                 RandomSource random) {
         for (int attempt = 0; attempt < MEMBER_SPOT_ATTEMPTS; attempt++) {
             double angle = random.nextDouble() * Math.PI * 2.0;
             double reach = CLUSTER_MIN_SEPARATION
@@ -177,17 +173,10 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
                 }
             }
             if (!spaced) continue;
-            BlockPos ground = groundAt(level, origin.getX() + dx, origin.getZ() + dz, anchor.getY());
+            BlockPos ground = surfaceGround(level, origin.getX() + dx, origin.getZ() + dz);
             if (ground != null) return ground;
         }
         return null;
-    }
-
-    private @Nullable BlockPos groundAt(WorldGenLevel level, int x, int z, int hintY) {
-        return switch (placement) {
-            case SURFACE -> surfaceGround(level, x, z);
-            case UNDERGROUND -> caveGround(level, x, z, hintY);
-        };
     }
 
     private static @Nullable BlockPos surfaceGround(WorldGenLevel level, int x, int z) {
@@ -199,52 +188,6 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
                 || !level.getFluidState(groundCenter.above()).isEmpty()) return null;
         if (unevenTerrain(level, groundCenter)) return null;
         return groundCenter;
-    }
-
-    private static @Nullable BlockPos caveGround(WorldGenLevel level, int x, int z, int hintY) {
-        int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
-        int top = Math.min(hintY, surfaceY - UNDERGROUND_SURFACE_GUARD);
-        int bottom = Math.max(level.getMinBuildHeight() + 1, top - UNDERGROUND_SCAN_DEPTH);
-        for (int groundY = top; groundY >= bottom; groundY--) {
-            if (caveFloorAt(level, x, groundY, z)) return new BlockPos(x, groundY, z);
-        }
-        return null;
-    }
-
-    private static boolean caveFloorAt(WorldGenLevel level, int x, int groundY, int z) {
-        if (!sturdyFloor(level, x, groundY, z)) return false;
-        if (!enclosed(level, x, groundY, z)) return false;
-        for (int row = 0; row < LAYER_TWO.length; row++) {
-            for (int column = 0; column < LAYER_TWO[row].length(); column++) {
-                if (LAYER_TWO[row].charAt(column) == 'x') continue;
-                int cellX = x + column - RADIUS;
-                int cellZ = z + row - RADIUS;
-                if (!sturdyFloor(level, cellX, groundY, cellZ)) return false;
-                for (int dy = 1; dy <= CLEAR_HEIGHT_ABOVE; dy++) {
-                    if (!clearable(level, cellX, groundY + dy, cellZ)) return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static boolean sturdyFloor(WorldGenLevel level, int x, int y, int z) {
-        BlockPos pos = new BlockPos(x, y, z);
-        return level.getBlockState(pos).isFaceSturdy(level, pos, Direction.UP);
-    }
-
-    private static boolean clearable(WorldGenLevel level, int x, int y, int z) {
-        BlockPos pos = new BlockPos(x, y, z);
-        BlockState state = level.getBlockState(pos);
-        return state.getFluidState().isEmpty() && (state.isAir() || state.canBeReplaced());
-    }
-
-    private static boolean enclosed(WorldGenLevel level, int x, int groundY, int z) {
-        for (int dy = CLEAR_HEIGHT_ABOVE + 1; dy <= CLEAR_HEIGHT_ABOVE + UNDERGROUND_CEILING_SCAN; dy++) {
-            BlockPos pos = new BlockPos(x, groundY + dy, z);
-            if (level.getBlockState(pos).isFaceSturdy(level, pos, Direction.DOWN)) return true;
-        }
-        return false;
     }
 
     private static boolean unevenTerrain(WorldGenLevel level, BlockPos groundCenter) {
