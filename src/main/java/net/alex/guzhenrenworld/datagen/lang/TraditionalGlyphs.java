@@ -33,7 +33,7 @@ public final class TraditionalGlyphs {
 
     private static final String PAIRS = "宝寶 黄黃";
     private static final String UNCHANGED = "天";
-    private static final Map<String, String> TOKENS = tokens();
+    private static final Map<String, String> TOKENS = parseTokens();
     private static final int LONGEST = TOKENS.keySet().stream().mapToInt(String::length).max().orElse(1);
 
     private TraditionalGlyphs() {}
@@ -42,7 +42,7 @@ public final class TraditionalGlyphs {
         StringBuilder traditional = new StringBuilder(simplified.length());
         int index = 0;
         while (index < simplified.length()) {
-            int length = matchLength(simplified, index);
+            int length = getMatchLength(simplified, index);
             if (length > 0) {
                 traditional.append(TOKENS.get(simplified.substring(index, index + length)));
                 index += length;
@@ -60,14 +60,14 @@ public final class TraditionalGlyphs {
         return traditional.toString();
     }
 
-    private static int matchLength(String text, int start) {
-        for (int length = Math.min(LONGEST, text.length() - start); length > 0; length--) {
-            if (TOKENS.containsKey(text.substring(start, start + length))) return length;
+    private static int getMatchLength(String simplified, int start) {
+        for (int length = Math.min(LONGEST, simplified.length() - start); length > 0; length--) {
+            if (TOKENS.containsKey(simplified.substring(start, start + length))) return length;
         }
         return 0;
     }
 
-    private static Map<String, String> tokens() {
+    private static Map<String, String> parseTokens() {
         Map<String, String> tokens = new HashMap<>();
         for (String token : PAIRS.split(" ")) {
             int half = token.length() / 2;

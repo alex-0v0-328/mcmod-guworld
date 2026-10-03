@@ -17,9 +17,11 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
  * Wires every generator of this mod that runs at datagen time.
  *
  * <p>Annotated {@code @EventBusSubscriber}. On {@code GatherDataEvent} it adds every provider under
- * {@code datagen/}. The output is the committed source set {@code src/generated/resources}, written by
- * {@code runData}. The data run loads Guzhenren too, as a required mod, but NeoForge only executes the
- * generators of the mod named by {@code --mod}, so Guzhenren's providers write nothing here.
+ * {@code datagen/}. Each is one NeoForge allows only once per run, so it lives here and collects its
+ * entries from the function packages ({@code dimension}, {@code feature}). The output is the committed
+ * source set {@code src/generated/resources}, written by {@code runData}. The data run loads Guzhenren
+ * too, as a required mod, but NeoForge only executes the generators of the mod named by {@code --mod},
+ * so Guzhenren's providers write nothing here.
  *
  * <p>⚠ What they write is a committed source set, so a provider changed without regenerating ships a
  * stale jar while the build stays perfectly green.
@@ -35,7 +37,7 @@ public final class DataGenerators {
     private DataGenerators() {}
 
     @SubscribeEvent
-    public static void gatherData(GatherDataEvent event) {
+    public static void onGatherData(GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput packOutput = generator.getPackOutput();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
@@ -47,7 +49,7 @@ public final class DataGenerators {
 
         DatapackProvider datapackProvider = generator.addProvider(event.includeServer(),
                 new DatapackProvider(packOutput, lookupProvider));
-        generator.addProvider(event.includeServer(), new WorldBiomeTagsProvider(packOutput,
+        generator.addProvider(event.includeServer(), new BiomeTagsProvider(packOutput,
                 datapackProvider.getRegistryProvider(), existingFileHelper));
     }
 }

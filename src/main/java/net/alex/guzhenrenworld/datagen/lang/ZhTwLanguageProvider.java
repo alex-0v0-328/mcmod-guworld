@@ -20,8 +20,8 @@ import net.minecraft.data.PackOutput;
 
 public class ZhTwLanguageProvider extends ZhCnLanguageProvider {
 
-    public ZhTwLanguageProvider(PackOutput output) {
-        super(output, "zh_tw");
+    public ZhTwLanguageProvider(PackOutput packOutput) {
+        super(packOutput, "zh_tw");
     }
 
     @Override

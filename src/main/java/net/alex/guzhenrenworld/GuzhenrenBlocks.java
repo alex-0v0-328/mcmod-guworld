@@ -1,4 +1,4 @@
-package net.alex.guzhenrenworld.registry;
+package net.alex.guzhenrenworld;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -24,8 +24,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 
 public final class GuzhenrenBlocks {
 
-    private GuzhenrenBlocks() {}
-
     public static final DeferredHolder<Block, Block> SPIRIT_SPRING = DeferredHolder.create(Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath("guzhenren", "spirit_spring"));
+
+    private GuzhenrenBlocks() {}
 }

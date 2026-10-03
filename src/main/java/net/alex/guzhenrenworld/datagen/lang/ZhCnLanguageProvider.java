@@ -1,16 +1,15 @@
 package net.alex.guzhenrenworld.datagen.lang;
 
 import net.alex.guzhenrenworld.GuWorld;
-import net.alex.guzhenrenworld.registry.WorldDimensions;
+import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 /**
  * The Chinese strings of this mod, beside the English ones.
  *
- * <p>Extends {@link net.neoforged.neoforge.common.data.LanguageProvider} for {@code zh_cn}. Keys are
- * built the same way as in {@link EnUsLanguageProvider}.
+ * <p>Extends {@link LanguageProvider} for {@code zh_cn}. Keys are built the same way as in
+ * {@link EnUsLanguageProvider}, by the function packages.
  *
  * <p>⚠ These renderings are the authority, not a translation of the English. Deriving either side
  * from the other is how a name quietly comes to mean something it never meant.
@@ -27,27 +26,16 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 
 public class ZhCnLanguageProvider extends LanguageProvider {
 
-    public ZhCnLanguageProvider(PackOutput output) {
-        this(output, "zh_cn");
+    public ZhCnLanguageProvider(PackOutput packOutput) {
+        this(packOutput, "zh_cn");
     }
 
-    protected ZhCnLanguageProvider(PackOutput output, String locale) {
-        super(output, GuWorld.MOD_ID, locale);
+    protected ZhCnLanguageProvider(PackOutput packOutput, String locale) {
+        super(packOutput, GuWorld.MOD_ID, locale);
     }
 
     @Override
     protected void addTranslations() {
-        addDimensionKeys();
+        TreasureYellowHeaven.addTranslations(this, "宝黄天");
     }
-
-    //region DIMENSION
-    private void addDimensionKeys() {
-        ResourceLocation dimension = WorldDimensions.TREASURE_YELLOW_HEAVEN_STEM.location();
-        ResourceLocation biome = WorldDimensions.TREASURE_YELLOW_HEAVEN_BIOME.location();
-        add(dimension.toLanguageKey("dimension"), "宝黄天");
-        add(biome.toLanguageKey("biome"), "宝黄天");
-        add(dimension.toLanguageKey("travelerstitles"), "宝黄天");
-        add(dimension.toLanguageKey("travelerstitles", "color"), "f4d35e");
-    }
-    //endregion
 }

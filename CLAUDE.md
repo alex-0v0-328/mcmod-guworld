@@ -9,7 +9,7 @@ The project rules for Gu World, loaded at the start of every session opened here
 
 ## Boundaries
 
-- The dependency exists at run time only: `neoforge.mods.toml` requires `guzhenren` and loads after it, and this project never compiles against Guzhenren. Guzhenren names each dimension by its level key alone (`ModDimensions` there), and this project names a Guzhenren block by its id alone (`registry/GuzhenrenBlocks`), so renaming either means renaming it in both projects in the same task.
+- The dependency exists at run time only: `neoforge.mods.toml` requires `guzhenren` and loads after it, and this project never compiles against Guzhenren. Guzhenren names each dimension by its level key alone (`ModDimensions` there), and this project names a Guzhenren block by its id alone (`GuzhenrenBlocks`), so renaming either means renaming it in both projects in the same task.
 - The package is `net.alex.guzhenrenworld`, never `net.alex.guzhenren.world`: Guzhenren owns that package, and a package split across two mod jars fails to load.
 - Never add Claude as a contributor: no `Co-Authored-By` or generated-with line and no Claude identity in any commit (Alex, 2026-10-01). The remote is `https://github.com/alex-0v0-328/mcmod-guworld` (renamed 2026-10-01; the earlier `gu-world-mcmod` redirects), branch `main`. The local folder is `C:\workspace\Dev\Projects\Minecraft-ModDev\guworld` (renamed from `gu-world` on 2026-10-01, Alex).
 - Nothing gets backed up; Git is the only rollback. Temporary files live under `C:\workspace\Dev\Projects\_Temp\guworld\` in a subfolder per task and are deleted before the task closes. `.idea/`, `run/`, `run-gametest/`, `src/test/` and `.claude/settings.local.json` sit outside Git; the tests stay local-only as in Guzhenren.
@@ -25,15 +25,16 @@ The project rules for Gu World, loaded at the start of every session opened here
 
 ## Map
 
-| Path                                        | What it is                                                                                                |
-|---------------------------------------------|-----------------------------------------------------------------------------------------------------------|
-| `src/main/java/net/alex/guzhenrenworld/`    | `GuWorld` (entry, `MOD_ID`), `GuWorldClient`, `registry/WorldDimensions`, `datagen/`, `client/dimension/` |
-| `.../feature/`, `.../registry/`             | `SpiritSpringFeature`; `WorldFeatures`, `WorldBiomeTags`, `GuzhenrenBlocks` (Guzhenren blocks by id)      |
-| `src/generated/resources/`                  | Committed datagen output                                                                                  |
-| `src/test/`                                 | Local-only tests: `modded/` L2 JUnit, `game/` L3 GameTests (own source set, not in the jar)               |
-| `.claude/`                                  | Cloud-session hook and the always-on skills, copies synced from Guzhenren; `settings.local.json` local    |
-| `../guzhenren/`                             | Guzhenren, where both mods run and are checked together                                                   |
-| `C:\workspace\Obsidian\guzhenren-mod-wiki\` | The shared wiki; dimensions under 开发向/维度                                                             |
+| Path                                        | What it is                                                                                              |
+|---------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| `src/main/java/net/alex/guzhenrenworld/`    | `GuWorld` (entry, `MOD_ID`), `GuzhenrenBlocks` (Guzhenren blocks by id); one package per function below |
+| `.../dimension/`, `.../feature/`            | `TreasureYellowHeaven`; `SpiritSpring` (registration, keys, datagen entries), `SpiritSpringFeature`     |
+| `.../datagen/`, `.../client/`               | Once-per-run providers and `lang/`, fed by the function packages; client-only drawing                   |
+| `src/generated/resources/`                  | Committed datagen output                                                                                |
+| `src/test/`                                 | Local-only tests: `modded/` L2 JUnit, `game/` L3 GameTests (own source set, not in the jar)             |
+| `.claude/`                                  | Cloud-session hook and the always-on skills, copies synced from Guzhenren; `settings.local.json` local  |
+| `../guzhenren/`                             | Guzhenren, where both mods run and are checked together                                                 |
+| `C:\workspace\Obsidian\guzhenren-mod-wiki\` | The shared wiki; dimensions under 开发向/维度                                                           |
 
 ## Language and style
 
@@ -43,4 +44,10 @@ The project rules for Gu World, loaded at the start of every session opened here
   - Blank lines: one after a type's opening brace, none before its closing brace, none at the top of a method or block body; exactly one between members, placed above Javadoc and annotations; consecutive fields form one block with no blank lines; one between the top-level class Javadoc and the declaration; one before `//region` and after `//endregion`, none inside them; at most one between logical steps inside a method.
   - Braces: an empty body is `{}` on one line (`private X() {}`); a one-line brace pair with content keeps a space inside (`{ return x; }`, `new int[] { 1, 2 }`).
   - Imports form one block in plain ASCII order (`ModContainer` before `common.Mod`), static imports in their own block first, no wildcards. Constants are `UPPER_SNAKE` (`MOD_ID`). No hand-aligned argument columns; lines stay within 120 characters.
+- Naming, shared by the four mods and final (Alex, 2026-10-03):
+  1. Parameters and locals are whole words (`player`, `stack`, `level`, `entity`, `event`, `value`, `delta`, `amount`, `index`, `ticks`); only for-loop counters may be `i`/`j`, and `x`/`y`/`z` and `id` count as words.
+  2. One concept has one name across the repository, and two concepts never share one.
+  3. A method name starts with a verb: `get`/`is`/`has` read, `set`/`add`/`shift` write, `tick` advances one tick, `refresh` recomputes derived state, `on` handles an event, `register` registers. The idiomatic short static factories (`id`, `key`, `of`) stay.
+  4. A class name does not repeat what its package says; only externally visible entry classes carry the mod prefix.
+  5. A class does one thing: a class over 300 lines or a method over 40 is split, or the reason is stated. Packages depend one way, never in a cycle.
 - New code matches its neighbors' comment density, naming and idiom. Markdown tables stay aligned: after touching one, `python ../guzhenren/tools/md_tables.py <file>` must report nothing.
