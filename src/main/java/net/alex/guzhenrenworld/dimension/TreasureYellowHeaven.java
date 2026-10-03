@@ -32,6 +32,9 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  * {@code client.dimension.TreasureYellowHeavenEffects} registers. {@link #COLOR} paints the sky, the fog
  * and the water, and is the title color {@link #addTranslations} writes.
  *
+ * <p>Beds and respawn anchors work here (Alex, 2026-10-03): players cannot place blocks in this
+ * dimension, but should one ever get here, it works instead of exploding.
+ *
  * <p>{@link #addTranslations} builds every key from the registered keys, never from a raw string, so a
  * renamed dimension cannot leave a key behind pointing at nothing; each language provider passes only
  * its own rendering of the name. The {@code travelerstitles.*} pair is the Traveler's Titles
@@ -66,8 +69,8 @@ public final class TreasureYellowHeaven {
                 false,
                 false,
                 1.0,
-                false,
-                false,
+                true,
+                true,
                 0,
                 256,
                 256,
