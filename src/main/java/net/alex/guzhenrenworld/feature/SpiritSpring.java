@@ -35,9 +35,8 @@ import net.neoforged.neoforge.registries.RegisterEvent;
  * {@link #registerConfiguredFeature}, {@link #registerPlacedFeature} and {@link #registerBiomeModifier} are
  * the bootstraps {@code datagen.DatapackProvider} runs: the configured and placed feature, and the biome
  * modifier adding it to {@link #BIOMES} at {@code TOP_LAYER_MODIFICATION} (after vegetation);
- * {@code datagen.BiomeTagsProvider} fills that tag from {@link #LAND_BIOMES}. The spring's worldgen moved
- * here from Guzhenren on 2026-10-02 (Alex), which keeps the block, fluid, item and client rendering, so
- * every worldgen id changed namespace from {@code guzhenren} to {@code guworld}.
+ * {@code datagen.BiomeTagsProvider} fills that tag from {@link #LAND_BIOMES}. Guzhenren keeps the spring's
+ * block, fluid, item and client rendering; every worldgen id here is in the {@code guworld} namespace.
  *
  * <p>{@link #LAND_BIOMES} is 39 overworld land biomes, moved here with the spring's worldgen as a copy of
  * Guzhenren's wild Gu land list; the two now belong to different mods and may diverge.
@@ -45,11 +44,10 @@ import net.neoforged.neoforge.registries.RegisterEvent;
  * <p>⚠ The spring is a land structure, so {@link #LAND_BIOMES} must NOT collapse to
  * {@code #minecraft:is_overworld}, which also carries the oceans and rivers.
  *
- * <p>⚠ {@link #RARITY} is Alex's pick (2026-10-02): about one cluster per 2,500 chunks of the 39 land
+ * <p>⚠ {@link #RARITY} is Alex's pick: about one cluster per 2,500 chunks of the 39 land
  * biomes. The roll is not the rate -- even with the anchor search only ≈4% of rolls find flat enough
- * ground (measured over 1,600 chunks), so 100 rolls per cluster, where the 2026-09-23 roll of 1000 with
- * the origin-only check left about one spring per 50,000 chunks. The underground cave variant
- * (2026-09-26, roll 3000) never grew in practice and was removed on 2026-10-02 (Alex).
+ * ground (measured over 1,600 chunks), so 100 rolls per cluster. There is no underground variant:
+ * a cave spot almost never passes the flat-ground check.
  *
  * @author Alex
  * @version 1.0.0

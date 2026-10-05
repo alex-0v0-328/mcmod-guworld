@@ -32,7 +32,7 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  * {@code client.dimension.TreasureYellowHeavenEffects} registers. {@link #COLOR} paints the sky, the fog
  * and the water, and is the title color {@link #addTranslations} writes.
  *
- * <p>Beds and respawn anchors work here (Alex, 2026-10-03): players cannot place blocks in this
+ * <p>Beds and respawn anchors work here: players cannot place blocks in this
  * dimension, but should one ever get here, it works instead of exploding.
  *
  * <p>{@link #addTranslations} builds every key from the registered keys, never from a raw string, so a

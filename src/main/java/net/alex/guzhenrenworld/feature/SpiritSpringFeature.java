@@ -29,8 +29,8 @@ import org.jetbrains.annotations.Nullable;
  * <p>Layer one at g-1 buries the calcite basin; layer two at g paves the ground with slabs and
  * raises the calcite pillar under the spring; layer three at g+1 is only the source block. The
  * layer-two ring around the pillar is cleared to air ({@code a}), so the four streams fall into
- * the calcite basin and the rim holds the water instead of letting it sheet outward (Alex,
- * 2026-09-23). Outer {@code x} cells keep the original terrain (dirt stays dirt).
+ * the calcite basin and the rim holds the water instead of letting it sheet outward. Outer
+ * {@code x} cells keep the original terrain (dirt stays dirt).
  * {@link #placeStructure} lays both grid layers and the source around the ground block at layer
  * two's level, first clearing {@link #CLEAR_HEIGHT_ABOVE} cells over every non-{@code x} column
  * ({@link #BASIN_COLUMNS}, enough for double plants and snow layers); it is public for GameTests,
@@ -38,10 +38,9 @@ import org.jetbrains.annotations.Nullable;
  *
  * <p>The spring itself is Guzhenren's block, reached by id through {@link GuzhenrenBlocks#SPIRIT_SPRING}
  * because this mod never compiles against Guzhenren; the first flow tick goes to the fluid the
- * block's default state carries, its source. Guzhenren keeps the block, fluid, item and rendering;
- * this structure moved here on 2026-10-02 (Alex).
+ * block's default state carries, its source. Guzhenren keeps the block, fluid, item and rendering.
  *
- * <p>Clusters (Alex, 2026-09-26): a spot that passes the rarity roll grows 1..5 springs -- 50%,
+ * <p>Clusters: a spot that passes the rarity roll grows 1..5 springs -- 50%,
  * 20%, 15%, 10%, 5% ({@link #CLUSTER_SIZE_WEIGHTS}; {@link #getClusterSize} maps a [0,100)
  * roll through the cumulative weights). Every spring of one cluster sits 8..16 blocks (horizontal)
  * from every other ({@link #isSeparationAcceptable}), so the 7x7 basins never overlap. Members are
@@ -51,14 +50,14 @@ import org.jetbrains.annotations.Nullable;
  * tries {@link #MEMBER_SPOT_ATTEMPTS} random candidates per member; a member whose candidates all fail
  * terrain checks is dropped -- the rolled size is the attempt, not a quota.
  *
- * <p>Anchor search (Alex, 2026-10-02): {@link #findAnchorSpot} tries the origin column, then up to
+ * <p>Anchor search: {@link #findAnchorSpot} tries the origin column, then up to
  * {@link #ANCHOR_SPOT_ATTEMPTS} random columns within the same ±{@link #MAX_ORIGIN_OFFSET} bound.
  * Judged at the origin alone, the strict terrain rules let ≈1-2% of rolls through, so a spring stood
  * about one per 50,000 chunks; the search keeps the rules and only gives each roll more columns
  * (≈4% of rolls now grow a cluster). A {@code /place feature} likewise lands on qualifying ground
  * within that bound of the player instead of failing on the column underfoot.
  *
- * <p>Surface placement ({@link #findSurfaceGround}) happens on flat land only (Alex, 2026-09-24):
+ * <p>Surface placement ({@link #findSurfaceGround}) happens on flat land only:
  * vegetation runs before us ({@code VEGETAL_DECORATION} precedes {@code TOP_LAYER_MODIFICATION}),
  * so above every non-{@code x} column the two cells over the ground are cleared to air. Logs and
  * leaves, fluids, and any structure column whose own surface height differs from the center's
@@ -66,8 +65,8 @@ import org.jetbrains.annotations.Nullable;
  * bumps never leave plants floating above the carve -- and stalk plants that dodge the heightmap
  * (no collision: bamboo, sugar cane) veto from the clear band.
  *
- * <p>⚠ Layout, rarity and the cluster numbers are Alex's picks (2026-09-23, 2026-09-24,
- * 2026-09-26, 2026-10-02), not silent tunables. Symbol legend: {@code x}=keep, {@code a}=air (the
+ * <p>⚠ Layout, rarity and the cluster numbers are Alex's picks, not
+ * silent tunables. Symbol legend: {@code x}=keep, {@code a}=air (the
  * basin well), {@code y}=cobblestone, {@code t}=mossy cobblestone, {@code f}=calcite,
  * {@code c}=cobblestone slab (bottom), {@code m}=mossy cobblestone slab (bottom).
  *
@@ -122,7 +121,7 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
         return true;
     }
 
-    //region Cluster [丛生] -- the size roll, the spacing and the member search (Alex, 2026-09-26)
+    //region Cluster [丛生] -- the size roll, the spacing and the member search
     static final int[] CLUSTER_SIZE_WEIGHTS = { 50, 20, 15, 10, 5 };
     static final int CLUSTER_MIN_SEPARATION = 8;
     static final int CLUSTER_MAX_SEPARATION = 16;
@@ -178,7 +177,7 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
     }
     //endregion
 
-    //region Terrain [地形] -- flat, dry, treeless ground only (Alex, 2026-09-24)
+    //region Terrain [地形] -- flat, dry, treeless ground only
     private static @Nullable BlockPos findSurfaceGround(WorldGenLevel level, int x, int z) {
         BlockPos groundCenter = new BlockPos(x, getGroundY(level, x, z), z);
         BlockState groundState = level.getBlockState(groundCenter);
