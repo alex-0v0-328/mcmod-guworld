@@ -76,12 +76,13 @@ neoForge {
         gameTestServer {
             type = "gameTestServer"
             sourceSet = sourceSets.gametest
-            gameDirectory = project.file('run-gametest')
+            gameDirectory = project.file(providers.gradleProperty('gameTestDir').getOrElse('run-gametest'))
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         data {
             data()
+            gameDirectory = project.file(providers.gradleProperty('dataGameDir').getOrElse('run-data'))
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
@@ -117,12 +118,12 @@ configurations {
     runtimeClasspath.extendsFrom localRuntime
 }
 
-// Guzhenren, the sibling project at ../guzhenren (or -PguzhenrenDir), is a required mod, so every run
+// Guzhenren, the sibling project at ../mcmod-guzhenren (or -PguzhenrenDir), is a required mod, so every run
 // here, runData and both test layers included, loads its built jar plus what it needs: Epic Fight and GeckoLib from its
 // run/mods, and Curios, whose classes its datagen touches. This mod compiles against none of them. A
 // jar that is not there adds nothing, and the run then stops on the missing dependency; build
 // Guzhenren first.
-def guzhenrenDir = file(providers.gradleProperty('guzhenrenDir').getOrElse('../guzhenren'))
+def guzhenrenDir = file(providers.gradleProperty('guzhenrenDir').getOrElse('../mcmod-guzhenren'))
 
 dependencies {
     localRuntime fileTree(dir: new File(guzhenrenDir, 'build/libs'), include: 'guzhenren-*.jar', exclude: '*-sources.jar')

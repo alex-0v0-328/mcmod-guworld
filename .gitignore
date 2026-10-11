@@ -35,6 +35,7 @@ bin/
 ### Minecraft Modding ###
 run/
 run-gametest/
+run-data/
 !**/src/**/run/
 logs/
 !**/src/**/logs/
