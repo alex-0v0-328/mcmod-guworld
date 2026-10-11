@@ -6,7 +6,8 @@
       "biome": "guworld:treasure_yellow_heaven",
       "features": false,
       "lakes": false,
-      "layers": []
+      "layers": [],
+      "structure_overrides": []
     }
   }
 }

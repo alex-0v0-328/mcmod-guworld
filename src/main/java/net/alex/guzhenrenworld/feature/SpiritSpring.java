@@ -44,9 +44,9 @@ import net.neoforged.neoforge.registries.RegisterEvent;
  * <p>⚠ The spring is a land structure, so {@link #LAND_BIOMES} must NOT collapse to
  * {@code #minecraft:is_overworld}, which also carries the oceans and rivers.
  *
- * <p>⚠ {@link #RARITY} is Alex's pick: about one cluster per 2,500 chunks of the 39 land
+ * <p>⚠ {@link #RARITY} is Alex's pick: about one cluster per 7,500 chunks of the 39 land
  * biomes. The roll is not the rate -- even with the anchor search only ≈4% of rolls find flat enough
- * ground (measured over 1,600 chunks), so 100 rolls per cluster. There is no underground variant:
+ * ground (measured over 1,600 chunks), so one roll per 300 chunks. There is no underground variant:
  * a cave spot almost never passes the flat-ground check.
  *
  * @author Alex
@@ -117,7 +117,7 @@ public final class SpiritSpring {
     private static final ResourceKey<PlacedFeature> PLACED_FEATURE = ResourceKey.create(Registries.PLACED_FEATURE, ID);
     private static final ResourceKey<BiomeModifier> BIOME_MODIFIER =
             ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, ID);
-    private static final int RARITY = 100;
+    private static final int RARITY = 300;
 
     private SpiritSpring() {}
 

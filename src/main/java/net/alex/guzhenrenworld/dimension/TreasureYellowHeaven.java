@@ -6,6 +6,7 @@ import java.util.OptionalLong;
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
@@ -32,8 +33,10 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  * {@code client.dimension.TreasureYellowHeavenEffects} registers. {@link #COLOR} paints the sky, the fog
  * and the water, and is the title color {@link #addTranslations} writes.
  *
- * <p>Beds and respawn anchors work here: players cannot place blocks in this
- * dimension, but should one ever get here, it works instead of exploding.
+ * <p>Beds and respawn anchors work here, and a bed sets the spawn: the type is natural, which also lets
+ * clocks and compasses work. Players cannot place blocks in this dimension, but should one ever get here,
+ * it works instead of exploding. The flat generator names an empty structure set list, as vanilla's void
+ * preset does: left unset it would consider every registered structure set, other mods' included.
  *
  * <p>{@link #addTranslations} builds every key from the registered keys, never from a raw string, so a
  * renamed dimension cannot leave a key behind pointing at nothing; each language provider passes only
@@ -67,7 +70,7 @@ public final class TreasureYellowHeaven {
                 true,
                 false,
                 false,
-                false,
+                true,
                 1.0,
                 true,
                 true,
@@ -100,7 +103,8 @@ public final class TreasureYellowHeaven {
     public static void registerLevelStem(BootstrapContext<LevelStem> context) {
         HolderGetter<DimensionType> dimensionTypes = context.lookup(Registries.DIMENSION_TYPE);
         Holder<Biome> biome = context.lookup(Registries.BIOME).getOrThrow(BIOME);
-        FlatLevelGeneratorSettings settings = new FlatLevelGeneratorSettings(Optional.empty(), biome, List.of());
+        FlatLevelGeneratorSettings settings =
+                new FlatLevelGeneratorSettings(Optional.of(HolderSet.empty()), biome, List.of());
         context.register(LEVEL_STEM, new LevelStem(
                 dimensionTypes.getOrThrow(DIMENSION_TYPE),
                 new FlatLevelSource(settings)

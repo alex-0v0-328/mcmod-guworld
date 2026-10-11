@@ -42,9 +42,10 @@ import org.jetbrains.annotations.Nullable;
  *
  * <p>Clusters: a spot that passes the rarity roll grows 1..5 springs -- 50%,
  * 20%, 15%, 10%, 5% ({@link #CLUSTER_SIZE_WEIGHTS}; {@link #getClusterSize} maps a [0,100)
- * roll through the cumulative weights). Every spring of one cluster sits 8..16 blocks (horizontal)
- * from every other ({@link #isSeparationAcceptable}), so the 7x7 basins never overlap. Members are
- * scattered around the feature origin within the Chebyshev bound {@link #MAX_ORIGIN_OFFSET}: the
+ * roll through the cumulative weights). The members ring the cluster's first spring, 8..10 blocks
+ * (horizontal) from it ({@link #isWithinReach}) and at least 8 from every other ({@link #isSeparationAcceptable}),
+ * so the 7x7 basins never overlap and stand 1..3 blocks apart; a whole cluster spans about 27x27 blocks.
+ * Every spring stays within the Chebyshev bound {@link #MAX_ORIGIN_OFFSET} of the feature origin: the
  * origin sits inside the generating chunk and features may write one chunk past its border, so ±12
  * keeps every 7x7 inside the 3x3 chunk window instead of clipping outer columns. {@link #findMemberSpot}
  * tries {@link #MEMBER_SPOT_ATTEMPTS} random candidates per member; a member whose candidates all fail
@@ -64,6 +65,10 @@ import org.jetbrains.annotations.Nullable;
  * veto the spot ({@link #isTerrainUneven}) -- slopes, ponds and trees all move the heightmap, so
  * bumps never leave plants floating above the carve -- and stalk plants that dodge the heightmap
  * (no collision: bamboo, sugar cane) veto from the clear band.
+ *
+ * <p>⚠ The terrain checks reach up to ±15 blocks into neighbor chunks, which may not have grown their trees
+ * yet, so whether a spot qualifies can depend on the order chunks generate in, as vanilla tree placement
+ * does.
  *
  * <p>⚠ Layout, rarity and the cluster numbers are Alex's picks, not
  * silent tunables. Symbol legend: {@code x}=keep, {@code a}=air (the
@@ -113,7 +118,7 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
         List<BlockPos> placed = new ArrayList<>();
         placed.add(anchor);
         for (int member = 1; member < clusterSize; member++) {
-            BlockPos spot = findMemberSpot(level, origin, placed, random);
+            BlockPos spot = findMemberSpot(level, origin, anchor, placed, random);
             if (spot == null) continue;
             placeStructure(level, spot);
             placed.add(spot);
@@ -124,7 +129,7 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
     //region Cluster [丛生] -- the size roll, the spacing and the member search
     static final int[] CLUSTER_SIZE_WEIGHTS = { 50, 20, 15, 10, 5 };
     static final int CLUSTER_MIN_SEPARATION = 8;
-    static final int CLUSTER_MAX_SEPARATION = 16;
+    static final int CLUSTER_MAX_REACH = 10;
     private static final int MEMBER_SPOT_ATTEMPTS = 32;
     private static final int MAX_ORIGIN_OFFSET = 12;
 
@@ -138,21 +143,29 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     static boolean isSeparationAcceptable(int offsetX, int offsetZ) {
-        double distance = Math.sqrt((double) offsetX * offsetX + (double) offsetZ * offsetZ);
-        return distance >= CLUSTER_MIN_SEPARATION && distance <= CLUSTER_MAX_SEPARATION;
+        return getDistance(offsetX, offsetZ) >= CLUSTER_MIN_SEPARATION;
     }
 
-    private static @Nullable BlockPos findMemberSpot(WorldGenLevel level, BlockPos origin, List<BlockPos> placed,
-            RandomSource random) {
+    static boolean isWithinReach(int offsetX, int offsetZ) {
+        return getDistance(offsetX, offsetZ) <= CLUSTER_MAX_REACH;
+    }
+
+    private static double getDistance(int offsetX, int offsetZ) {
+        return Math.sqrt((double) offsetX * offsetX + (double) offsetZ * offsetZ);
+    }
+
+    private static @Nullable BlockPos findMemberSpot(WorldGenLevel level, BlockPos origin, BlockPos anchor,
+            List<BlockPos> placed, RandomSource random) {
         for (int attempt = 0; attempt < MEMBER_SPOT_ATTEMPTS; attempt++) {
             double angle = random.nextDouble() * Math.PI * 2.0;
             double reach = CLUSTER_MIN_SEPARATION
-                    + random.nextDouble() * (CLUSTER_MAX_SEPARATION - CLUSTER_MIN_SEPARATION + 1.0);
-            int offsetX = (int) Math.round(reach * Math.cos(angle));
-            int offsetZ = (int) Math.round(reach * Math.sin(angle));
-            if (Math.abs(offsetX) > MAX_ORIGIN_OFFSET || Math.abs(offsetZ) > MAX_ORIGIN_OFFSET) continue;
-            int x = origin.getX() + offsetX;
-            int z = origin.getZ() + offsetZ;
+                    + random.nextDouble() * (CLUSTER_MAX_REACH - CLUSTER_MIN_SEPARATION);
+            int x = anchor.getX() + (int) Math.round(reach * Math.cos(angle));
+            int z = anchor.getZ() + (int) Math.round(reach * Math.sin(angle));
+            if (Math.abs(x - origin.getX()) > MAX_ORIGIN_OFFSET || Math.abs(z - origin.getZ()) > MAX_ORIGIN_OFFSET) {
+                continue;
+            }
+            if (!isWithinReach(x - anchor.getX(), z - anchor.getZ())) continue;
             boolean spaced = placed.stream()
                     .allMatch(spring -> isSeparationAcceptable(x - spring.getX(), z - spring.getZ()));
             if (!spaced) continue;
