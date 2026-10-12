@@ -58,13 +58,18 @@ import org.jetbrains.annotations.Nullable;
  * (≈4% of rolls now grow a cluster). A {@code /place feature} likewise lands on qualifying ground
  * within that bound of the player instead of failing on the column underfoot.
  *
- * <p>Surface placement ({@link #findSurfaceGround}) happens on flat land only:
+ * <p>Surface placement ({@link #findSurfaceGround}, public for GameTests) happens on flat, dry land only:
  * vegetation runs before us ({@code VEGETAL_DECORATION} precedes {@code TOP_LAYER_MODIFICATION}),
  * so above every non-{@code x} column the two cells over the ground are cleared to air. Logs and
- * leaves, fluids, and any structure column whose own surface height differs from the center's
+ * leaves at the center, and any structure column whose own surface height differs from the center's
  * veto the spot ({@link #isTerrainUneven}) -- slopes, ponds and trees all move the heightmap, so
  * bumps never leave plants floating above the carve -- and stalk plants that dodge the heightmap
- * (no collision: bamboo, sugar cane) veto from the clear band.
+ * (no collision: bamboo, sugar cane) veto from the clear band. {@link #isTerrainWet} vetoes any
+ * structure column that is ice or holds a fluid in its ground or the cell above: water level with the
+ * ground passes the height rule, and vanilla's {@code freeze_top_layer} runs earlier in the same step
+ * (a biome modifier appends after the biome's own features), so a frozen pond or river is flat ice with
+ * no fluid at the surface. The searches reach ±{@link #MAX_ORIGIN_OFFSET} past the biome filter, into
+ * rivers and frozen oceans as well.
  *
  * <p>⚠ The terrain checks reach up to ±15 blocks into neighbor chunks, which may not have grown their trees
  * yet, so whether a spot qualifies can depend on the order chunks generate in, as vanilla tree placement
@@ -191,13 +196,11 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
     //endregion
 
     //region Terrain [地形] -- flat, dry, treeless ground only
-    private static @Nullable BlockPos findSurfaceGround(WorldGenLevel level, int x, int z) {
+    public static @Nullable BlockPos findSurfaceGround(WorldGenLevel level, int x, int z) {
         BlockPos groundCenter = new BlockPos(x, getGroundY(level, x, z), z);
         BlockState groundState = level.getBlockState(groundCenter);
         if (groundState.is(BlockTags.LOGS) || groundState.is(BlockTags.LEAVES)) return null;
-        if (!level.getFluidState(groundCenter).isEmpty()
-                || !level.getFluidState(groundCenter.above()).isEmpty()) return null;
-        if (isTerrainUneven(level, groundCenter)) return null;
+        if (isTerrainUneven(level, groundCenter) || isTerrainWet(level, groundCenter)) return null;
         return groundCenter;
     }
 
@@ -213,6 +216,15 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
                 Block above = level.getBlockState(ground.above(offsetY)).getBlock();
                 if (above instanceof BambooStalkBlock || above instanceof SugarCaneBlock) return true;
             }
+        }
+        return false;
+    }
+
+    private static boolean isTerrainWet(WorldGenLevel level, BlockPos groundCenter) {
+        for (BlockPos offset : BASIN_COLUMNS) {
+            BlockPos ground = groundCenter.offset(offset);
+            if (level.getBlockState(ground).is(BlockTags.ICE)) return true;
+            if (!level.getFluidState(ground).isEmpty() || !level.getFluidState(ground.above()).isEmpty()) return true;
         }
         return false;
     }
