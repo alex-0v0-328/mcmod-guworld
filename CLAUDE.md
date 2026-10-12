@@ -44,7 +44,7 @@ The project rules for Gu World, loaded at the start of every session opened here
   - Blank lines: one after a type's opening brace, none before its closing brace, none at the top of a method or block body; exactly one between members, placed above Javadoc and annotations; consecutive fields form one block with no blank lines; one between the top-level class Javadoc and the declaration; one before `//region` and after `//endregion`, none inside them; at most one between logical steps inside a method.
   - Braces: an empty body is `{}` on one line (`private X() {}`); a one-line brace pair with content keeps a space inside (`{ return x; }`, `new int[] { 1, 2 }`).
   - Imports form one block in plain ASCII order (`ModContainer` before `common.Mod`), static imports in their own block first, no wildcards. Constants are `UPPER_SNAKE` (`MOD_ID`). No hand-aligned argument columns; lines stay within 120 characters.
-- Naming, shared by the four mods and final:
+- Naming, shared by both mods and final:
   1. Parameters and locals are whole words (`player`, `stack`, `level`, `entity`, `event`, `value`, `delta`, `amount`, `index`, `ticks`); only for-loop counters may be `i`/`j`, and `x`/`y`/`z` and `id` count as words.
   2. One concept has one name across the repository, and two concepts never share one.
   3. A method name starts with a verb: `get`/`is`/`has` read, `set`/`add`/`shift` write, `tick` advances one tick, `refresh` recomputes derived state, `on` handles an event, `register` registers. The idiomatic short static factories (`id`, `key`, `of`) stay.
