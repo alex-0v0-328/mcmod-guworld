@@ -1,6 +1,7 @@
 package net.alex.guzhenrenworld.datagen.lang;
 
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.dimension.SouthernBorder;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -37,5 +38,6 @@ public class ZhCnLanguageProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         TreasureYellowHeaven.addTranslations(this, "宝黄天");
+        SouthernBorder.addTranslations(this, "南疆");
     }
 }

@@ -32,7 +32,7 @@ import java.util.Map;
 public final class TraditionalGlyphs {
 
     private static final String PAIRS = "宝寶 黄黃";
-    private static final String UNCHANGED = "天";
+    private static final String UNCHANGED = "南天疆";
     private static final Map<String, String> TOKENS = parseTokens();
     private static final int LONGEST = TOKENS.keySet().stream().mapToInt(String::length).max().orElse(1);
 

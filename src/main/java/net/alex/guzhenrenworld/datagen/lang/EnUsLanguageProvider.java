@@ -1,6 +1,7 @@
 package net.alex.guzhenrenworld.datagen.lang;
 
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.dimension.SouthernBorder;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -26,5 +27,6 @@ public class EnUsLanguageProvider extends LanguageProvider {
     @Override
     protected void addTranslations() {
         TreasureYellowHeaven.addTranslations(this, "Treasure Yellow Heaven");
+        SouthernBorder.addTranslations(this, "Southern Border");
     }
 }

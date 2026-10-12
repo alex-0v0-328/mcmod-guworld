@@ -3,6 +3,8 @@ package net.alex.guzhenrenworld.datagen;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.dimension.SouthernBorder;
+import net.alex.guzhenrenworld.dimension.SouthernBorderTerrain;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
 import net.minecraft.core.HolderLookup;
@@ -17,9 +19,11 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  *
  * <p>Extends {@link DatapackBuiltinEntriesProvider}. Builds in one {@code RegistrySetBuilder} the entries
  * the function packages bootstrap: the Treasure Yellow Heaven dimension's type, biome and level stem
- * ({@link TreasureYellowHeaven}), and the Spirit Spring [元泉] configured and placed feature and biome
- * modifier ({@link SpiritSpring}). The tag provider takes {@code getRegistryProvider()} from this
- * instance, not the plain lookup, so the tag pass sees the biome this run generates.
+ * ({@link TreasureYellowHeaven}); the Southern Border [南疆] dimension's type, noise settings and level stem
+ * ({@link SouthernBorder}) with its noises and density functions ({@link SouthernBorderTerrain}); and the
+ * Spirit Spring [元泉] configured and placed feature and biome modifier ({@link SpiritSpring}). A registry two
+ * dimensions both fill gets one bootstrap that runs both. The tag provider takes {@code getRegistryProvider()}
+ * from this instance, not the plain lookup, so the tag pass sees the biome this run generates.
  *
  * <p>⚠ There can only be one per data run. The builtin-entries provider reports a fixed name, so a
  * second instance fails datagen outright; add a registry to this one's builder instead.
@@ -32,9 +36,18 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 public class DatapackProvider extends DatapackBuiltinEntriesProvider {
 
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
-            .add(Registries.DIMENSION_TYPE, TreasureYellowHeaven::registerDimensionType)
+            .add(Registries.DIMENSION_TYPE, context -> {
+                TreasureYellowHeaven.registerDimensionType(context);
+                SouthernBorder.registerDimensionType(context);
+            })
             .add(Registries.BIOME, TreasureYellowHeaven::registerBiome)
-            .add(Registries.LEVEL_STEM, TreasureYellowHeaven::registerLevelStem)
+            .add(Registries.NOISE, SouthernBorderTerrain::registerNoises)
+            .add(Registries.DENSITY_FUNCTION, SouthernBorderTerrain::registerDensityFunctions)
+            .add(Registries.NOISE_SETTINGS, SouthernBorder::registerNoiseSettings)
+            .add(Registries.LEVEL_STEM, context -> {
+                TreasureYellowHeaven.registerLevelStem(context);
+                SouthernBorder.registerLevelStem(context);
+            })
             .add(Registries.CONFIGURED_FEATURE, SpiritSpring::registerConfiguredFeature)
             .add(Registries.PLACED_FEATURE, SpiritSpring::registerPlacedFeature)
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, SpiritSpring::registerBiomeModifier);

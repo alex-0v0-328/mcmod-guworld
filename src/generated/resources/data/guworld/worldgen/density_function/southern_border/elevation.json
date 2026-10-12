@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:clamp",
+    "input": {
+      "type": "minecraft:add",
+      "argument1": -1.2857142857142858,
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": 0.005714285714285714,
+        "argument2": "guworld:southern_border/height"
+      }
+    },
+    "max": 1.0,
+    "min": -1.0
+  }
+}
