@@ -1,6 +1,7 @@
 package net.alex.guzhenrenworld.datagen.lang;
 
 import net.minecraft.data.PackOutput;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The Traditional Chinese [繁中] strings of this mod, derived from the Simplified ones.
@@ -25,7 +26,7 @@ public class ZhTwLanguageProvider extends ZhCnLanguageProvider {
     }
 
     @Override
-    public void add(String key, String value) {
+    public void add(@NotNull String key, @NotNull String value) {
         super.add(key, TraditionalGlyphs.convert(value));
     }
 }
