@@ -15,19 +15,27 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * Builds the noise router of a heightfield region: terrain whose surface is one 2D height in blocks, with
  * vanilla's caves, aquifers and ore veins carved out of it.
  *
- * <p>{@link #create} takes the {@link Region}: the surface height, and the five 2D fields its biome
- * table reads. The height turns into the density {@code (height - y) / 8}, so the surface lies exactly where
- * the height says, with no 3D noise on top: no overhangs, no floating bits, and the slopes are the height's
- * own. Eight blocks per unit is roughly the rate vanilla's surface density falls at, so vanilla's cave
- * thresholds keep their depth below ground: cheese caves start about 12 blocks down, cave entrances reach the
- * surface. The {@code depth} biome parameter is the same difference over 128 blocks, 0 at the surface and
- * positive below, which is what vanilla's cave biomes read.
+ * <p>{@link #create} takes the {@link Region}: the surface height, the cave ceiling, the shore, and the five 2D
+ * fields its biome table reads. The height turns into the density {@code (height - y) / 8}, so the surface lies
+ * exactly where the height says, with no 3D noise on top: no overhangs, no floating bits, and the slopes are the
+ * height's own. Eight blocks per unit is roughly the rate vanilla's surface density falls at, so vanilla's cave
+ * thresholds keep their depth below ground. The {@code depth} biome parameter is the same difference over 128
+ * blocks, 0 at the surface and positive below, which is what vanilla's cave biomes read.
  *
  * <p>Everything below the surface mirrors vanilla's {@code NoiseRouterData.overworld}: the cave layer, cheese,
  * entrance, spaghetti, pillar and noodle functions by their vanilla ids, the same aquifer noises, and the ore
  * veins between {@link #VEIN_MIN_Y} and {@link #VEIN_MAX_Y}, vanilla's copper-to-iron vein band (its
- * {@code OreVeinifier.VeinType} is not public). The vanilla cave functions are tuned for -64..320, so terrain
- * above 320 is solid rock with only noodle caves.
+ * {@code OreVeinifier.VeinType} is not public). Three gates keep them from breaking the terrain open:
+ * <ul>
+ *   <li>The full cave set (cheese caverns, spaghetti, pillars) runs only some 12 blocks below both the surface
+ *   and the region's cave ceiling, a flat height. Vanilla measures that depth straight down, so on a steep
+ *   flank a cavern 12 blocks below the surface lies a few blocks behind the slope and opens a cross-section on
+ *   it; above the ceiling a mountain is solid rock with only the entrance tunnels, the caves vanilla keeps in
+ *   its top 12 blocks.</li>
+ *   <li>Entrances stay closed where the shore is below {@link #SHORE_GUARD}, so no cave mouth opens in a
+ *   riverbed or on its bank.</li>
+ *   <li>Noodle caves start 12 blocks below the surface, so they never riddle the ground or a riverbed.</li>
+ * </ul>
  *
  * <p>The noise column is {@link #NOISE_SETTINGS}, -64..447; a region's dimension type must cover it. The slide
  * fades the density to air over the top 16 blocks and to rock over the bottom 24, as vanilla's does over its
@@ -47,6 +55,8 @@ public final class HeightfieldRouter {
     private static final double DEPTH_BLOCKS_PER_UNIT = 128.0;
     private static final double SURFACE_DENSITY_THRESHOLD = 1.5625;
     private static final double CHEESE_NOISE_TARGET = -0.703125;
+    private static final double SHORE_GUARD = 1.6;
+    private static final double NO_CAVE = 64.0;
     private static final int VEIN_MIN_Y = -60;
     private static final int VEIN_MAX_Y = 50;
     private static final ResourceKey<DensityFunction> Y = vanillaKey("y");
@@ -59,16 +69,22 @@ public final class HeightfieldRouter {
 
     private HeightfieldRouter() {}
 
-    public record Region(DensityFunction height, DensityFunction temperature, DensityFunction vegetation,
-            DensityFunction continents, DensityFunction erosion, DensityFunction ridges) {}
+    public record Region(DensityFunction height, double caveCeiling, DensityFunction shore,
+            DensityFunction temperature, DensityFunction vegetation, DensityFunction continents,
+            DensityFunction erosion, DensityFunction ridges) {}
 
     public static NoiseRouter create(HolderGetter<DensityFunction> functions,
             HolderGetter<NormalNoise.NoiseParameters> noises, Region region) {
         DensityFunction surface = getRelativeHeight(region.height(), SURFACE_BLOCKS_PER_UNIT);
-        DensityFunction entrances = DensityFunctions.min(surface,
-                DensityFunctions.mul(DensityFunctions.constant(5.0), getFunction(functions, ENTRANCES)));
-        DensityFunction carved = DensityFunctions.rangeChoice(surface, -1000000.0, SURFACE_DENSITY_THRESHOLD,
-                entrances, getUnderground(functions, noises, surface));
+        DensityFunction cover = DensityFunctions.min(surface,
+                getRelativeHeight(DensityFunctions.constant(region.caveCeiling()), SURFACE_BLOCKS_PER_UNIT));
+        DensityFunction entrances = DensityFunctions.rangeChoice(region.shore(), -1000000.0, SHORE_GUARD, surface,
+                DensityFunctions.min(surface,
+                        DensityFunctions.mul(DensityFunctions.constant(5.0), getFunction(functions, ENTRANCES))));
+        DensityFunction carved = DensityFunctions.rangeChoice(cover, -1000000.0, SURFACE_DENSITY_THRESHOLD,
+                entrances, getUnderground(functions, noises, cover));
+        DensityFunction noodles = DensityFunctions.rangeChoice(surface, -1000000.0, SURFACE_DENSITY_THRESHOLD,
+                DensityFunctions.constant(NO_CAVE), getFunction(functions, NOODLE));
         DensityFunction initial = DensityFunctions.add(surface, DensityFunctions.constant(CHEESE_NOISE_TARGET));
         return new NoiseRouter(
                 DensityFunctions.noise(noises.getOrThrow(Noises.AQUIFER_BARRIER), 0.5),
@@ -82,7 +98,7 @@ public final class HeightfieldRouter {
                 getRelativeHeight(region.height(), DEPTH_BLOCKS_PER_UNIT),
                 region.ridges(),
                 slide(initial.clamp(-64.0, 64.0)),
-                DensityFunctions.min(postProcess(slide(carved)), getFunction(functions, NOODLE)),
+                DensityFunctions.min(postProcess(slide(carved)), noodles),
                 getVeinBand(functions, DensityFunctions.noise(noises.getOrThrow(Noises.ORE_VEININESS), 1.5, 1.5)),
                 getVeinRidged(functions, noises),
                 DensityFunctions.noise(noises.getOrThrow(Noises.ORE_GAP)));
@@ -94,7 +110,7 @@ public final class HeightfieldRouter {
     }
 
     private static DensityFunction getUnderground(HolderGetter<DensityFunction> functions,
-            HolderGetter<NormalNoise.NoiseParameters> noises, DensityFunction surface) {
+            HolderGetter<NormalNoise.NoiseParameters> noises, DensityFunction cover) {
         DensityFunction layer = DensityFunctions.mul(DensityFunctions.constant(4.0),
                 DensityFunctions.noise(noises.getOrThrow(Noises.CAVE_LAYER), 8.0).square());
         DensityFunction cheese = DensityFunctions.add(
@@ -102,7 +118,7 @@ public final class HeightfieldRouter {
                         DensityFunctions.noise(noises.getOrThrow(Noises.CAVE_CHEESE), 0.6666666666666666))
                         .clamp(-1.0, 1.0),
                 DensityFunctions.add(DensityFunctions.constant(1.5),
-                        DensityFunctions.mul(DensityFunctions.constant(-0.64), surface)).clamp(0.0, 0.5));
+                        DensityFunctions.mul(DensityFunctions.constant(-0.64), cover)).clamp(0.0, 0.5));
         DensityFunction spaghetti =
                 DensityFunctions.add(getFunction(functions, SPAGHETTI_2D), getFunction(functions, SPAGHETTI_ROUGHNESS));
         DensityFunction cheeseOrEntrance =

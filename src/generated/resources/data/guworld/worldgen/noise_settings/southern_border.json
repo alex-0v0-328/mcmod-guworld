@@ -85,23 +85,6 @@
                           "argument2": {
                             "type": "minecraft:range_choice",
                             "input": {
-                              "type": "minecraft:add",
-                              "argument1": {
-                                "type": "minecraft:mul",
-                                "argument1": 0.125,
-                                "argument2": "guworld:southern_border/height"
-                              },
-                              "argument2": {
-                                "type": "minecraft:y_clamped_gradient",
-                                "from_value": 8.0,
-                                "from_y": -64,
-                                "to_value": -56.0,
-                                "to_y": 448
-                              }
-                            },
-                            "max_exclusive": 1.5625,
-                            "min_inclusive": -1000000.0,
-                            "when_in_range": {
                               "type": "minecraft:min",
                               "argument1": {
                                 "type": "minecraft:add",
@@ -119,9 +102,65 @@
                                 }
                               },
                               "argument2": {
-                                "type": "minecraft:mul",
-                                "argument1": 5.0,
-                                "argument2": "minecraft:overworld/caves/entrances"
+                                "type": "minecraft:add",
+                                "argument1": {
+                                  "type": "minecraft:mul",
+                                  "argument1": 62.0,
+                                  "argument2": 0.125
+                                },
+                                "argument2": {
+                                  "type": "minecraft:y_clamped_gradient",
+                                  "from_value": 8.0,
+                                  "from_y": -64,
+                                  "to_value": -56.0,
+                                  "to_y": 448
+                                }
+                              }
+                            },
+                            "max_exclusive": 1.5625,
+                            "min_inclusive": -1000000.0,
+                            "when_in_range": {
+                              "type": "minecraft:range_choice",
+                              "input": "guworld:southern_border/shore",
+                              "max_exclusive": 1.6,
+                              "min_inclusive": -1000000.0,
+                              "when_in_range": {
+                                "type": "minecraft:add",
+                                "argument1": {
+                                  "type": "minecraft:mul",
+                                  "argument1": 0.125,
+                                  "argument2": "guworld:southern_border/height"
+                                },
+                                "argument2": {
+                                  "type": "minecraft:y_clamped_gradient",
+                                  "from_value": 8.0,
+                                  "from_y": -64,
+                                  "to_value": -56.0,
+                                  "to_y": 448
+                                }
+                              },
+                              "when_out_of_range": {
+                                "type": "minecraft:min",
+                                "argument1": {
+                                  "type": "minecraft:add",
+                                  "argument1": {
+                                    "type": "minecraft:mul",
+                                    "argument1": 0.125,
+                                    "argument2": "guworld:southern_border/height"
+                                  },
+                                  "argument2": {
+                                    "type": "minecraft:y_clamped_gradient",
+                                    "from_value": 8.0,
+                                    "from_y": -64,
+                                    "to_value": -56.0,
+                                    "to_y": 448
+                                  }
+                                },
+                                "argument2": {
+                                  "type": "minecraft:mul",
+                                  "argument1": 5.0,
+                                  "argument2": "minecraft:overworld/caves/entrances"
+                                }
                               }
                             },
                             "when_out_of_range": {
@@ -171,18 +210,36 @@
                                             "type": "minecraft:mul",
                                             "argument1": -0.64,
                                             "argument2": {
-                                              "type": "minecraft:add",
+                                              "type": "minecraft:min",
                                               "argument1": {
-                                                "type": "minecraft:mul",
-                                                "argument1": 0.125,
-                                                "argument2": "guworld:southern_border/height"
+                                                "type": "minecraft:add",
+                                                "argument1": {
+                                                  "type": "minecraft:mul",
+                                                  "argument1": 0.125,
+                                                  "argument2": "guworld:southern_border/height"
+                                                },
+                                                "argument2": {
+                                                  "type": "minecraft:y_clamped_gradient",
+                                                  "from_value": 8.0,
+                                                  "from_y": -64,
+                                                  "to_value": -56.0,
+                                                  "to_y": 448
+                                                }
                                               },
                                               "argument2": {
-                                                "type": "minecraft:y_clamped_gradient",
-                                                "from_value": 8.0,
-                                                "from_y": -64,
-                                                "to_value": -56.0,
-                                                "to_y": 448
+                                                "type": "minecraft:add",
+                                                "argument1": {
+                                                  "type": "minecraft:mul",
+                                                  "argument1": 62.0,
+                                                  "argument2": 0.125
+                                                },
+                                                "argument2": {
+                                                  "type": "minecraft:y_clamped_gradient",
+                                                  "from_value": 8.0,
+                                                  "from_y": -64,
+                                                  "to_value": -56.0,
+                                                  "to_y": 448
+                                                }
                                               }
                                             }
                                           }
@@ -220,7 +277,28 @@
           }
         }
       },
-      "argument2": "minecraft:overworld/caves/noodle"
+      "argument2": {
+        "type": "minecraft:range_choice",
+        "input": {
+          "type": "minecraft:add",
+          "argument1": {
+            "type": "minecraft:mul",
+            "argument1": 0.125,
+            "argument2": "guworld:southern_border/height"
+          },
+          "argument2": {
+            "type": "minecraft:y_clamped_gradient",
+            "from_value": 8.0,
+            "from_y": -64,
+            "to_value": -56.0,
+            "to_y": 448
+          }
+        },
+        "max_exclusive": 1.5625,
+        "min_inclusive": -1000000.0,
+        "when_in_range": 64.0,
+        "when_out_of_range": "minecraft:overworld/caves/noodle"
+      }
     },
     "fluid_level_floodedness": {
       "type": "minecraft:noise",
@@ -301,19 +379,14 @@
       "y_scale": 1.0
     },
     "ridges": {
-      "type": "minecraft:min",
-      "argument1": {
-        "type": "minecraft:abs",
-        "argument": "guworld:southern_border/river"
-      },
-      "argument2": {
+      "type": "minecraft:clamp",
+      "input": {
         "type": "minecraft:mul",
-        "argument1": 2.0,
-        "argument2": {
-          "type": "minecraft:abs",
-          "argument": "guworld:southern_border/great_river"
-        }
-      }
+        "argument1": 0.012000000104308128,
+        "argument2": "guworld:southern_border/shore"
+      },
+      "max": 1.0,
+      "min": 0.0
     },
     "temperature": {
       "type": "minecraft:flat_cache",

@@ -23,8 +23,9 @@ import net.minecraft.world.level.biome.Climate;
  * biome keeps it.
  *
  * <p>Rivers take the narrow weirdness band {@link #RIVER_CHANNEL} on the two lowest bands only, where the
- * terrain carves its channels; every land entry stays outside that band, so the two never tie. Lush caves sit
- * under the wet third and dripstone caves under the dry third, between {@link #CAVE_DEPTH}.
+ * terrain carves its channels; every land entry stays outside that band, so the two never tie. The terrain
+ * scales its shore by {@link #RIVER_WEIRDNESS}, so the band covers exactly the channels that hold water. Lush
+ * caves sit under the wet third and dripstone caves under the dry third, between {@link #CAVE_DEPTH}.
  *
  * <p>⚠ The table is a first prototype for Alex to judge in game, not a settled pick.
  *
@@ -36,6 +37,7 @@ import net.minecraft.world.level.biome.Climate;
 
 public final class SouthernBorderBiomes {
 
+    static final float RIVER_WEIRDNESS = 0.012F;
     private static final List<Climate.Parameter> ELEVATIONS = List.of(
             Climate.Parameter.span(-1.0F, -0.75F),
             Climate.Parameter.span(-0.75F, -0.35F),
@@ -77,10 +79,10 @@ public final class SouthernBorderBiomes {
                     List.of(Biomes.JAGGED_PEAKS, Biomes.JAGGED_PEAKS, Biomes.JAGGED_PEAKS),
                     List.of(Biomes.JAGGED_PEAKS, Biomes.JAGGED_PEAKS, Biomes.JAGGED_PEAKS)));
     private static final Climate.Parameter FULL_RANGE = Climate.Parameter.span(-1.0F, 1.0F);
-    private static final Climate.Parameter RIVER_CHANNEL = Climate.Parameter.span(-0.012F, 0.012F);
+    private static final Climate.Parameter RIVER_CHANNEL = Climate.Parameter.span(-RIVER_WEIRDNESS, RIVER_WEIRDNESS);
     private static final List<Climate.Parameter> LAND_WEIRDNESS = List.of(
-            Climate.Parameter.span(-1.0F, -0.012F),
-            Climate.Parameter.span(0.012F, 1.0F));
+            Climate.Parameter.span(-1.0F, -RIVER_WEIRDNESS),
+            Climate.Parameter.span(RIVER_WEIRDNESS, 1.0F));
     private static final Climate.Parameter LOWLANDS = Climate.Parameter.span(-1.0F, -0.35F);
     private static final Climate.Parameter CAVE_DEPTH = Climate.Parameter.span(0.2F, 0.9F);
     private static final float[] SURFACE_DEPTHS = { 0.0F, 1.0F };

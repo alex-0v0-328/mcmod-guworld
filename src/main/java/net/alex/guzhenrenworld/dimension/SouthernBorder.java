@@ -64,7 +64,7 @@ public final class SouthernBorder {
     public static final double BORDER_SIZE = 8192.0;
     private static final int MIN_Y = -64;
     private static final int HEIGHT = 576;
-    private static final int SEA_LEVEL = 63;
+    static final int SEA_LEVEL = 63;
 
     private SouthernBorder() {}
 

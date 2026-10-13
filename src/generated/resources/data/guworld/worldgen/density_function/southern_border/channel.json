@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:min",
+    "argument1": {
+      "type": "minecraft:mul",
+      "argument1": 100.00000223517424,
+      "argument2": {
+        "type": "minecraft:abs",
+        "argument": "guworld:southern_border/great_river"
+      }
+    },
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": 249.99998812563774,
+      "argument2": "guworld:southern_border/stream"
+    }
+  }
+}
