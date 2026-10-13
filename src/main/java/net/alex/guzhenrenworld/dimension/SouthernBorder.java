@@ -44,8 +44,10 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  * <p>{@link #addTranslations} writes the dimension name and the Traveler's Titles title from the registered
  * key, the way {@code TreasureYellowHeaven} does, without a title color.
  *
- * <p>⚠ This is a terrain prototype: no travel leads here yet (Guzhenren owns travel), so it is reached with
- * {@code /execute in guworld:southern_border}.
+ * <p>⚠ Every key shares the location of Guzhenren's level key
+ * {@code net.alex.guzhenren.registry.world.ModDimensions#SOUTHERN_BORDER}, the admin travel there (Guzhenren
+ * owns travel): {@code /guworld enter guworld:southern_border} lands players on the surface above 0, 0. A renamed
+ * key here leaves that command pointing at nothing until that key is renamed too.
  *
  * @author Alex
  * @version 1.0.0
