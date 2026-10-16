@@ -32,7 +32,9 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *   stretches the ranges and keeps their flanks walkable. The mountain share ({@link #MOUNTAINS}, 0..1, a
  *   four-kilometer noise) shifts the sum down by up to 1 where it is low, so the plains keep only the odd hill;
  *   the river valleys ({@link SouthernBorderRivers}) shift it down further. A spline turns the sum into blocks,
- *   flat at 0, up to {@link #PEAK_RISE}.</li>
+ *   flat at 0, up to {@link #PEAK_RISE}. {@link #RIDGE} holds the main ridge and {@link #RANGE} the sum without
+ *   spurs and stream hollows, a field that changes only over kilometers, which also tells the streams where their
+ *   headwaters lie.</li>
  *   <li>Benches: where a 512-block mask noise is high, a terrace spline flattens the rise around +42..45 and
  *   +115..118 blocks and steepens it just above, so those mountainsides carry shelves some tens of blocks wide
  *   and low summits end in flat tops, the ground the clan villages [山寨] will stand on. A kilometer-scale noise
@@ -60,7 +62,10 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * ({@link HeightfieldRouter}), and the landform zones none, so their walls stay whole.
  *
  * <p>A function read in several places is registered, since only a shared holder shares its cache, and only in
- * chunk generation: a point query recomputes the whole chain. {@link DensityShapes} holds the spline helpers.
+ * chunk generation: a point query recomputes the whole chain. {@link #FOOT}, {@link #TOP} and {@link #HEIGHT} also
+ * keep the last column they computed: the aquifers and the surface rules find the preliminary surface of a column,
+ * often one outside the chunk where the flat cache holds nothing, by stepping down it four blocks at a time, and
+ * without that cache every step would recompute the whole chain. {@link DensityShapes} holds the spline helpers.
  *
  * <p>⚠ Every number here is a prototype for Alex to judge in game, not a settled pick.
  *
@@ -87,6 +92,8 @@ public final class SouthernBorderTerrain {
     private static final ResourceKey<NormalNoise.NoiseParameters> VEGETATION_NOISE = noiseKey("vegetation");
     private static final ResourceKey<NormalNoise.NoiseParameters> VARIANT_NOISE = noiseKey("variant");
     private static final ResourceKey<DensityFunction> MOUNTAINS = functionKey("mountains");
+    private static final ResourceKey<DensityFunction> RIDGE = functionKey("ridge");
+    private static final ResourceKey<DensityFunction> RANGE = functionKey("range");
     private static final ResourceKey<DensityFunction> RISE = functionKey("rise");
     private static final ResourceKey<DensityFunction> GROUND = functionKey("ground");
     private static final ResourceKey<DensityFunction> LAND = functionKey("land");
@@ -140,8 +147,11 @@ public final class SouthernBorderTerrain {
         Holder<DensityFunction> mountains = context.register(MOUNTAINS, DensityFunctions.flatCache(getSpline(
                 getCoordinate(getNoise(noises, CONTINENT_NOISE)), MOUNTAINS_START, 0.0F, 0.0F, MOUNTAINS_FULL, 1.0F,
                 0.0F)));
-        Holder<DensityFunction> rise =
-                context.register(RISE, DensityFunctions.flatCache(getRise(noises, mountains, rivers.getValleys())));
+        Holder<DensityFunction> ridge = context.register(RIDGE, DensityFunctions.flatCache(getRidge(noises)));
+        Holder<DensityFunction> range = context.register(RANGE,
+                DensityFunctions.flatCache(getRange(ridge, mountains, rivers.getGreatValleys())));
+        Holder<DensityFunction> rise = context.register(RISE,
+                DensityFunctions.flatCache(getRise(noises, ridge, range, rivers.getStreamCut())));
         Holder<DensityFunction> ground = context.register(GROUND, DensityFunctions.flatCache(getGround(noises, rise)));
         SouthernBorderLandforms.Cliffs cliffs =
                 SouthernBorderLandforms.register(context, ground, rivers.getGreatValley(), rivers.channel());
@@ -149,14 +159,15 @@ public final class SouthernBorderTerrain {
         Holder<DensityFunction> land =
                 context.register(LAND, DensityFunctions.flatCache(rivers.getFloodplain(cliffs.foot())));
         DensityFunction wet = rivers.getWet(land);
-        Holder<DensityFunction> foot = context.register(FOOT,
-                DensityFunctions.flatCache(DensityFunctions.cache2d(rivers.getCarved(land, wet))));
+        Holder<DensityFunction> foot = context.register(FOOT, DensityFunctions.flatCache(DensityFunctions.cache2d(
+                rivers.getCarved(Holder.direct(rivers.getStreamValley(land, range, cliffs.weight())), wet))));
         Holder<DensityFunction> top = context.register(TOP, DensityFunctions.flatCache(DensityFunctions.cache2d(
-                rivers.getCarved(Holder.direct(rivers.getFloodplain(cliffs.top())), wet))));
-        Holder<DensityFunction> height = context.register(HEIGHT, DensityFunctions.flatCache(DensityFunctions.lerp(
-                getSpline(getCoordinate(cliffs.edge()), -0.05F, 0.0F, 0.0F, 0.05F, 1.0F, 0.0F),
-                new DensityFunctions.HolderHolder(foot), new DensityFunctions.HolderHolder(top))));
-        SouthernBorderRivers.registerShore(context, rivers, wet);
+                rivers.getCarved(Holder.direct(rivers.getStreamValley(
+                        Holder.direct(rivers.getFloodplain(cliffs.top())), range, cliffs.weight())), wet))));
+        Holder<DensityFunction> height = context.register(HEIGHT, DensityFunctions.flatCache(DensityFunctions.cache2d(
+                DensityFunctions.lerp(getSpline(getCoordinate(cliffs.edge()), -0.05F, 0.0F, 0.0F, 0.05F, 1.0F, 0.0F),
+                        new DensityFunctions.HolderHolder(foot), new DensityFunctions.HolderHolder(top)))));
+        SouthernBorderRivers.registerShore(context, rivers, height);
         context.register(ELEVATION, DensityFunctions.flatCache(
                 getBlend(-185.0 / 135.0, 1.0 / 135.0, new DensityFunctions.HolderHolder(height)).clamp(-1.0, 1.0)));
     }
@@ -189,18 +200,28 @@ public final class SouthernBorderTerrain {
                 getScaled(0.99 * SouthernBorderBiomes.RIVER_WEIRDNESS, shore), land);
     }
 
+    private static DensityFunction getRidge(HolderGetter<NormalNoise.NoiseParameters> noises) {
+        DensityFunction crests = DensityFunctions.add(getMountainNoise(noises, RIDGE_COARSE_NOISE),
+                getMountainNoise(noises, RIDGE_FINE_NOISE)).abs();
+        return getBlend(1.0, -1.0, crests).clamp(0.0, 1.0);
+    }
+
+    private static DensityFunction getRange(Holder<DensityFunction> ridge, Holder<DensityFunction> mountains,
+            DensityFunction greatValleys) {
+        DensityFunction share = getBlend(-1.0, 1.0, new DensityFunctions.HolderHolder(mountains));
+        return DensityFunctions.add(DensityFunctions.add(new DensityFunctions.HolderHolder(ridge), share),
+                getScaled(-1.0, greatValleys));
+    }
+
     private static DensityFunction getRise(HolderGetter<NormalNoise.NoiseParameters> noises,
-            Holder<DensityFunction> mountains, DensityFunction valleys) {
-        DensityFunction ridge = getBlend(1.0, -1.0, DensityFunctions.add(getMountainNoise(noises, RIDGE_COARSE_NOISE),
-                getMountainNoise(noises, RIDGE_FINE_NOISE)).abs()).clamp(0.0, 1.0);
+            Holder<DensityFunction> ridge, Holder<DensityFunction> range, DensityFunction streamCut) {
         DensityFunction spurs = DensityFunctions.add(DensityFunctions.add(
                         getScaled(-0.3, getMountainNoise(noises, SPUR_A_NOISE).abs()),
                         getScaled(-0.12, getMountainNoise(noises, SPUR_B_NOISE).abs())),
                 getScaled(-0.05, getMountainNoise(noises, SPUR_C_NOISE).abs()));
-        DensityFunction ridged = DensityFunctions.add(ridge, DensityFunctions.mul(spurs, getBlend(0.3, 0.7, ridge)));
-        DensityFunction relief = DensityFunctions.add(
-                DensityFunctions.add(ridged, getBlend(-1.0, 1.0, new DensityFunctions.HolderHolder(mountains))),
-                getScaled(-1.0, valleys));
+        DensityFunction relief = DensityFunctions.add(DensityFunctions.add(new DensityFunctions.HolderHolder(range),
+                        DensityFunctions.mul(spurs, getBlend(0.3, 0.7, new DensityFunctions.HolderHolder(ridge)))),
+                getScaled(-1.0, streamCut));
         return getSpline(getCoordinate(relief),
                 0.0F, 0.0F, 0.0F,
                 0.3F, 0.22F * PEAK_RISE, 1.25F * PEAK_RISE,

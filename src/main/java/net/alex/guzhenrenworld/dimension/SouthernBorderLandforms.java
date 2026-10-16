@@ -140,9 +140,8 @@ public final class SouthernBorderLandforms {
 
     private static DensityFunction getCapped(Holder<DensityFunction> ground, Holder<DensityFunction> weight,
             DensityFunction landform) {
-        DensityFunction regular = new DensityFunctions.HolderHolder(ground);
-        DensityFunction blended = DensityFunctions.add(regular, DensityFunctions.mul(
-                new DensityFunctions.HolderHolder(weight), DensityFunctions.add(landform, getScaled(-1.0, regular))));
+        DensityFunction blended = DensityFunctions.lerp(new DensityFunctions.HolderHolder(weight),
+                new DensityFunctions.HolderHolder(ground), landform);
         return getSpline(getCoordinate(blended), 300.0F, 300.0F, 1.0F, 340.0F, PEAK_Y, 0.0F);
     }
 

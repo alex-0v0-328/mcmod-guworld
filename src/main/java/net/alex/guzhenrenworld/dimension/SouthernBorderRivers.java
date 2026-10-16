@@ -4,8 +4,10 @@ import static net.alex.guzhenrenworld.dimension.DensityShapes.getBlend;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getCoordinate;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getRamp;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getScaled;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getSoftMin;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getSpline;
 
+import java.util.Arrays;
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -20,7 +22,7 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * The rivers of the Southern Border [南疆]: where they run, the valleys they cut, the floodplains beside them and the
  * channels the sea level fills, every id under {@code guworld:southern_border/}.
  *
- * <p>Rivers follow the zero lines of noises, so they meander and never stop on a plain. Channels and floodplains are
+ * <p>Rivers follow the zero lines of noises, so they meander and never stop on a plain. Channels and valleys are
  * measured in blocks from that line ({@link #GREAT_DISTANCE}, {@link #STREAM_DISTANCE}): the noise over its own
  * slope, which comes from two samples {@link #SLOPE_STEP} blocks east and south, the sum of both differences times
  * {@link #SLOPE_NORM} standing in for its length, and a spline through {@link #SLOPES} for the division. A
@@ -34,37 +36,50 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *   (streams half that), so courses wander in bends a few hundred blocks long.</li>
  *   <li>The great river noise carries octaves down to 256 blocks, so its course bends at several scales.</li>
  *   <li>A 512-block width noise scales every half-width by 0.75..1.5 ({@link #getNarrowing}), so a river narrows into
- *   runs and opens into broad reaches, and its floodplain with it; {@link #NARROWING} holds its reciprocal, which
- *   scales the distances.</li>
+ *   runs and opens into broad reaches, and its floodplain and valley with it; {@link #NARROWING} holds its
+ *   reciprocal, which scales the distances.</li>
  * </ul>
  *
+ * <p>Water stands only below the sea level, so a river holds water along its whole course only if its bed is set to a
+ * fixed height, never lowered by some amount from the ground around, which rises and falls along the course and would
+ * break the river into a string of pools. Vanilla, Tectonic and Terralith set their river floors to one height and end
+ * the rivers once, where a smooth large-scale field, erosion, crosses a threshold. The streams here do the same, and
+ * the great rivers set floodplain and bed to fixed heights inside valleys deep enough to hold them.
  * <ul>
  *   <li>Great rivers ({@link #GREAT_RIVER}): a four-kilometer noise, a few per eight kilometers. Within
  *   ±{@link #BASIN_WIDTH} of the line the mountains sink by up to {@link #BASIN_CUT}, within
- *   ±{@link #GREAT_VALLEY_WIDTH} by {@link #GREAT_VALLEY_CUT} more, so every great river crosses the ranges down a
- *   broad valley; the channel is ±{@link #GREAT_HALF_WIDTH} blocks before widening, 24..48 blocks wide.</li>
+ *   ±{@link #GREAT_VALLEY_WIDTH} by {@link #GREAT_VALLEY_CUT} more ({@link Rivers#getGreatValleys}), so every great
+ *   river crosses the ranges down a broad valley. Within {@link #GREAT_FLOODPLAIN} blocks of the channel low ground
+ *   is flattened to a floodplain {@link #FLOODPLAIN_Y} ± {@link #FLOODPLAIN_SWING} by a 128-block noise
+ *   ({@link Rivers#getFloodplain}); the flattening holds below about y 72 and fades out by y 90, both lifted or
+ *   lowered up to {@link #FLOODPLAIN_EDGE_SWING} blocks by the same noise, so the floodplain edge wanders instead of
+ *   following one contour. The channel ({@link Rivers#getCarved}), ±{@link #GREAT_HALF_WIDTH} blocks before
+ *   widening, 24..48 blocks wide, sinks to {@link #GREAT_RIVER_DEPTH} below sea level where the floodplain lies below
+ *   y 66 and fades out by y 74.</li>
  *   <li>Streams ({@link #STREAM}): two two-kilometer noises, one on each side of the great rivers, blended across
  *   the great channel, so a stream that meets a great river joins it like a tributary instead of crossing it.
- *   Their valleys sink the mountains by {@link #STREAM_VALLEY_CUT} within ±{@link #STREAM_VALLEY_WIDTH}, which
- *   carries them through low passes; under high ranges they end as dry valleys, their headwaters. Their channels are
- *   ±{@link #STREAM_HALF_WIDTH} blocks before widening.</li>
- *   <li>Floodplains ({@link Rivers#getFloodplain}): within {@link #GREAT_FLOODPLAIN} and {@link #STREAM_FLOODPLAIN}
- *   blocks of the channels low ground is flattened to a floodplain
- *   {@link #FLOODPLAIN_Y} ± {@link #FLOODPLAIN_SWING} by a 128-block noise. The flattening holds below about y 72
- *   and fades out by y 90, both lifted or lowered up to {@link #FLOODPLAIN_EDGE_SWING} blocks by the same noise, so
- *   the floodplain edge wanders instead of following one contour, and never cuts a slot into a hillside.</li>
- *   <li>Channels ({@link Rivers#getCarved}): {@link #CHANNEL} is the distance to the nearer channel in widened
- *   half-widths, 0 at the line and 1 at the bank. Where the floodplain lies below y 66 the bed sinks to
- *   {@link #GREAT_RIVER_DEPTH} or {@link #STREAM_DEPTH} below sea level and the sea level fills it; by y 74
- *   the channel fades out, so a stream climbing into the mountains leaves its water at a shore.</li>
+ *   {@link Rivers#getStreamCut} sinks the mountains by {@link #STREAM_VALLEY_CUT} within ±{@link #STREAM_VALLEY_WIDTH}
+ *   of the line. The valley ({@link Rivers#getStreamValley}) is a profile over the distance: {@link #CHANNEL_PROFILE},
+ *   the bed {@link #STREAM_DEPTH} below sea level, the water line at ±{@link #STREAM_HALF_WIDTH} blocks before
+ *   widening (5..10 blocks wide), a low bank and a floodplain a few blocks above the water, then the walls
+ *   {@link #getWalled} adds: those of {@link #STREAM_PROFILE} steepen to one block per block, those of
+ *   {@link #GORGE_PROFILE}, taken by the landform zone weight, rise tens of blocks per block, so a stream cuts a gorge
+ *   through cliff country instead of planing its tops away; the weight is 0 outside, so foot and top share a profile
+ *   there. The ground takes the lower of itself and the profile, rounded over {@link #VALLEY_ROUNDING} blocks.</li>
+ *   <li>Headwaters: {@code SouthernBorderTerrain}'s range field, its ridged relief without spurs, changes only over
+ *   kilometers. Below {@link #REACH_FULL} the valley is whole; toward {@link #REACH_END} the profile rises by up to
+ *   {@link #STREAM_LIFT} blocks, a share of that field alone, so the water ends once, where the bed passes sea level,
+ *   and a dry valley climbs on until its floor passes the ground. A lift read off the ground would follow every hill
+ *   and leave pools along the last stretch.</li>
  * </ul>
  * The terrain floods and carves the foot and the top of its cliffs alike, with the wetness of the foot, so a river
  * runs past a cliff as it runs over open ground.
  *
- * <p>{@link #SHORE} is the channel distance, in widened half-widths, where the channel holds water and at least
- * {@link #DRY_SHORE} elsewhere. The router keeps cave entrances out of the riverbeds with it, and the biome table reads
- * it, scaled by {@code SouthernBorderBiomes.RIVER_WEIRDNESS}, as the weirdness, so the river biome covers exactly the
- * wet channels.
+ * <p>{@link #CHANNEL} is the distance to the nearer channel in widened half-widths, 0 at the line and 1 at the bank;
+ * {@link #SHORE} is that distance where the surface stands below sea level and at least {@link #DRY_SHORE} where it
+ * does not. The router keeps cave entrances out of the riverbeds with it, and the biome table reads it, scaled by
+ * {@code SouthernBorderBiomes.RIVER_WEIRDNESS}, as the weirdness, so the river biome covers exactly the wet
+ * channels.
  *
  * <p>⚠ Every number here is a prototype for Alex to judge in game, not a settled pick.
  *
@@ -102,7 +117,6 @@ public final class SouthernBorderRivers {
     private static final float GREAT_BRIDGE = 0.006F;
     private static final float STREAM_HALF_WIDTH = 3.5F;
     private static final float GREAT_FLOODPLAIN = 70.0F;
-    private static final float STREAM_FLOODPLAIN = 16.0F;
     static final double FLOODPLAIN_Y = 65.0;
     private static final double FLOODPLAIN_SWING = 2.0;
     private static final double FLOODPLAIN_EDGE_SWING = 6.0;
@@ -113,6 +127,15 @@ public final class SouthernBorderRivers {
             1.0E-2F };
     private static final float GREAT_RIVER_DEPTH = 9.0F;
     private static final float STREAM_DEPTH = 4.0F;
+    private static final float[] CHANNEL_PROFILE = {
+            0.0F, 59.0F, 0.0F, 1.5F, 59.7F, 0.9F, 3.5F, 63.0F, 1.5F, 5.0F, 64.3F, 0.4F, 14.0F, 66.0F, 0.2F };
+    private static final float[] STREAM_PROFILE = getWalled(26.0F, 73.0F, 0.8F, 60.0F, 106.0F, 1.0F,
+            300.0F, 346.0F, 1.0F);
+    private static final float[] GORGE_PROFILE = getWalled(18.0F, 100.0F, 12.0F, 22.0F, 340.0F, 30.0F);
+    private static final float VALLEY_ROUNDING = 6.0F;
+    private static final double STREAM_LIFT = 300.0;
+    private static final float REACH_FULL = 0.45F;
+    private static final float REACH_END = 0.75F;
     private static final double DRY_SHORE = 8.0;
 
     private SouthernBorderRivers() {}
@@ -121,12 +144,15 @@ public final class SouthernBorderRivers {
             Holder<DensityFunction> streamDistance, Holder<DensityFunction> narrowing, Holder<DensityFunction> channel,
             DensityFunction floodplain) {
 
-        DensityFunction getValleys() {
+        DensityFunction getGreatValleys() {
             DensityFunctions.Spline.Coordinate line = getCoordinate(great);
-            return DensityFunctions.add(DensityFunctions.add(
-                            getScaled(GREAT_VALLEY_CUT, getRamp(line, GREAT_RIVER_WIDTH, GREAT_VALLEY_WIDTH)),
-                            getScaled(BASIN_CUT, getRamp(line, GREAT_RIVER_WIDTH, BASIN_WIDTH))),
-                    getScaled(STREAM_VALLEY_CUT, getRamp(getCoordinate(stream), STREAM_WIDTH, STREAM_VALLEY_WIDTH)));
+            return DensityFunctions.add(
+                    getScaled(GREAT_VALLEY_CUT, getRamp(line, GREAT_RIVER_WIDTH, GREAT_VALLEY_WIDTH)),
+                    getScaled(BASIN_CUT, getRamp(line, GREAT_RIVER_WIDTH, BASIN_WIDTH)));
+        }
+
+        DensityFunction getStreamCut() {
+            return getScaled(STREAM_VALLEY_CUT, getRamp(getCoordinate(stream), STREAM_WIDTH, STREAM_VALLEY_WIDTH));
         }
 
         DensityFunction getGreatValley() {
@@ -134,16 +160,23 @@ public final class SouthernBorderRivers {
         }
 
         DensityFunction getFloodplain(Holder<DensityFunction> ground) {
-            DensityFunction plain = DensityFunctions.min(
-                    getSpline(getCoordinate(getNarrowed(greatDistance)), GREAT_HALF_WIDTH, 0.0F, 0.0F,
-                            GREAT_FLOODPLAIN, 1.0F, 0.0F),
-                    getSpline(getCoordinate(getNarrowed(streamDistance)), STREAM_HALF_WIDTH, 0.0F, 0.0F,
-                            STREAM_FLOODPLAIN, 1.0F, 0.0F));
+            DensityFunction plain = getSpline(getCoordinate(getNarrowed(greatDistance, narrowing)),
+                    GREAT_HALF_WIDTH, 0.0F, 0.0F, GREAT_FLOODPLAIN, 1.0F, 0.0F);
             DensityFunction shifted = DensityFunctions.add(new DensityFunctions.HolderHolder(ground),
                     getScaled(-FLOODPLAIN_EDGE_SWING / FLOODPLAIN_SWING, getBlend(-FLOODPLAIN_Y, 1.0, floodplain)));
             DensityFunction lowland = getSpline(getCoordinate(shifted), 72.0F, 1.0F, 0.0F, 90.0F, 0.0F, 0.0F);
             DensityFunction keep = getBlend(1.0, -1.0, DensityFunctions.mul(getBlend(1.0, -1.0, plain), lowland));
             return DensityFunctions.lerp(keep, floodplain, new DensityFunctions.HolderHolder(ground));
+        }
+
+        DensityFunction getStreamValley(Holder<DensityFunction> land, Holder<DensityFunction> range,
+                Holder<DensityFunction> zones) {
+            DensityFunctions.Spline.Coordinate distance = getCoordinate(getNarrowed(streamDistance, narrowing));
+            DensityFunction profile = DensityFunctions.lerp(new DensityFunctions.HolderHolder(zones),
+                    getSpline(distance, STREAM_PROFILE), getSpline(distance, GORGE_PROFILE));
+            DensityFunction valley = DensityFunctions.add(profile, getScaled(STREAM_LIFT,
+                    getSpline(getCoordinate(range), REACH_FULL, 0.0F, 0.0F, REACH_END, 1.0F, 0.0F)));
+            return getSoftMin(new DensityFunctions.HolderHolder(land), valley, VALLEY_ROUNDING);
         }
 
         DensityFunction getWet(Holder<DensityFunction> land) {
@@ -152,20 +185,12 @@ public final class SouthernBorderRivers {
         }
 
         DensityFunction getCarved(Holder<DensityFunction> land, DensityFunction wet) {
-            DensityFunction nearer = DensityFunctions.add(
-                    getScaled(1.0 / GREAT_HALF_WIDTH, new DensityFunctions.HolderHolder(greatDistance)),
-                    getScaled(-1.0 / STREAM_HALF_WIDTH, new DensityFunctions.HolderHolder(streamDistance)));
-            DensityFunction depth = getSpline(getCoordinate(nearer), -0.5F, GREAT_RIVER_DEPTH, 0.0F, 0.5F,
-                    STREAM_DEPTH, 0.0F);
-            DensityFunction inside = getSpline(getCoordinate(channel), 0.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F);
+            DensityFunction inside = getSpline(getCoordinate(getHalfWidths(greatDistance, narrowing, GREAT_HALF_WIDTH)),
+                    0.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F);
             return DensityFunctions.lerp(DensityFunctions.mul(inside, wet), new DensityFunctions.HolderHolder(land),
-                    getBlend(SouthernBorder.SEA_LEVEL, -1.0, depth));
+                    DensityFunctions.constant(SouthernBorder.SEA_LEVEL - GREAT_RIVER_DEPTH));
         }
 
-        private DensityFunction getNarrowed(Holder<DensityFunction> distance) {
-            return DensityFunctions.mul(new DensityFunctions.HolderHolder(distance),
-                    new DensityFunctions.HolderHolder(narrowing));
-        }
     }
 
     static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context) {
@@ -195,25 +220,41 @@ public final class SouthernBorderRivers {
                         getDistance(noises, STREAM_A_NOISE, WARP_BLOCKS / 2.0))));
         Holder<DensityFunction> narrowing =
                 context.register(NARROWING, DensityFunctions.flatCache(getNarrowing(noises)));
-        DensityFunction narrow = new DensityFunctions.HolderHolder(narrowing);
         Holder<DensityFunction> channel = context.register(CHANNEL, DensityFunctions.flatCache(DensityFunctions.min(
-                DensityFunctions.mul(getScaled(1.0 / GREAT_HALF_WIDTH,
-                        new DensityFunctions.HolderHolder(greatDistance)), narrow),
-                DensityFunctions.mul(getScaled(1.0 / STREAM_HALF_WIDTH,
-                        new DensityFunctions.HolderHolder(streamDistance)), narrow))));
+                getHalfWidths(greatDistance, narrowing, GREAT_HALF_WIDTH),
+                getHalfWidths(streamDistance, narrowing, STREAM_HALF_WIDTH))));
         DensityFunction floodplain = getBlend(FLOODPLAIN_Y, FLOODPLAIN_SWING,
                 DensityFunctions.noise(noises.getOrThrow(FLOODPLAIN_NOISE), 1.0, 0.0));
         return new Rivers(new DensityFunctions.HolderHolder(greatRiver).abs(), stream, greatDistance, streamDistance,
                 narrowing, channel, floodplain);
     }
 
-    static void registerShore(BootstrapContext<DensityFunction> context, Rivers rivers, DensityFunction wet) {
+    static void registerShore(BootstrapContext<DensityFunction> context, Rivers rivers,
+            Holder<DensityFunction> height) {
+        DensityFunction dry = getSpline(getCoordinate(height),
+                SouthernBorder.SEA_LEVEL - 0.5F, 0.0F, 0.0F, SouthernBorder.SEA_LEVEL + 1.0F, 1.0F, 0.0F);
         context.register(SHORE, DensityFunctions.flatCache(DensityFunctions.add(
-                new DensityFunctions.HolderHolder(rivers.channel()), getScaled(DRY_SHORE, getBlend(1.0, -1.0, wet)))));
+                new DensityFunctions.HolderHolder(rivers.channel()), getScaled(DRY_SHORE, dry))));
     }
 
     static DensityFunction getShore(HolderGetter<DensityFunction> functions) {
         return new DensityFunctions.HolderHolder(functions.getOrThrow(SHORE));
+    }
+
+    private static DensityFunction getNarrowed(Holder<DensityFunction> distance, Holder<DensityFunction> narrowing) {
+        return DensityFunctions.mul(new DensityFunctions.HolderHolder(distance),
+                new DensityFunctions.HolderHolder(narrowing));
+    }
+
+    private static DensityFunction getHalfWidths(Holder<DensityFunction> distance, Holder<DensityFunction> narrowing,
+            float halfWidth) {
+        return getScaled(1.0 / halfWidth, getNarrowed(distance, narrowing));
+    }
+
+    private static float[] getWalled(float... walls) {
+        float[] points = Arrays.copyOf(CHANNEL_PROFILE, CHANNEL_PROFILE.length + walls.length);
+        System.arraycopy(walls, 0, points, CHANNEL_PROFILE.length, walls.length);
+        return points;
     }
 
     private static DensityFunction getDistance(HolderGetter<NormalNoise.NoiseParameters> noises,

@@ -11,8 +11,12 @@ import net.minecraft.world.level.levelgen.DensityFunctions;
  *
  * <p>{@link #getSpline} takes flat {@code location, value, derivative} triples. {@link #getRamp} falls from 1 at
  * its start to 0 at its end almost linearly, flat at both ends, so a valley cut through it keeps an even slope
- * instead of the steep middle of a smoothstep. {@link #getCoordinate} wraps an unregistered function only: a
- * registered one goes in as its holder, since a coordinate around a bare holder reference cannot be encoded.
+ * instead of the steep middle of a smoothstep. {@link #getSoftMin} is the lower of two heights with the crease
+ * between them rounded over {@code rounding} blocks, so a valley cut into the ground meets it in a curve, not a
+ * sharp rim: the second height plus a spline of the gap, whose two quadratic pieces a cubic segment reproduces
+ * exactly, so the first height is read once. A point query caches nothing, so every extra read of a function
+ * recomputes its whole chain; pass the costly height first. {@link #getCoordinate} wraps an unregistered function
+ * only: a registered one goes in as its holder, since a coordinate around a bare holder reference cannot be encoded.
  *
  * @author Alex
  * @version 1.0.0
@@ -38,6 +42,12 @@ final class DensityShapes {
         float slope = -1.1F / span;
         return getSpline(coordinate, start, 1.0F, 0.0F, start + 0.15F * span, 0.93F, slope,
                 end - 0.15F * span, 0.07F, slope, end, 0.0F, 0.0F);
+    }
+
+    static DensityFunction getSoftMin(DensityFunction first, DensityFunction second, float rounding) {
+        DensityFunction gap = DensityFunctions.add(first, getScaled(-1.0, second));
+        return DensityFunctions.add(second, getSpline(getCoordinate(gap),
+                -rounding, -rounding, 1.0F, 0.0F, -0.25F * rounding, 0.5F, rounding, 0.0F, 0.0F));
     }
 
     static DensityFunction getBlend(double base, double scale, DensityFunction value) {
