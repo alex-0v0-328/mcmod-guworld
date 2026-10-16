@@ -1,0 +1,49 @@
+{
+  "config": {
+    "feature": {
+      "feature": {
+        "config": {
+          "to_place": {
+            "noise": {
+              "amplitudes": [
+                1.3,
+                1
+              ],
+              "firstOctave": -7
+            },
+            "scale": 1,
+            "seed": 0,
+            "states": [
+              {
+                "Name": "minecraft:oxeye_daisy"
+              },
+              {
+                "Name": "minecraft:red_tulip"
+              },
+              {
+                "Name": "minecraft:poppy"
+              }
+            ],
+            "type": "minecraft:noise_provider"
+          }
+        },
+        "type": "minecraft:simple_block"
+      },
+      "placement": [
+        {
+          "predicate": {
+            "blocks": [
+              "minecraft:air"
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          "type": "minecraft:block_predicate_filter"
+        }
+      ]
+    },
+    "tries": 32,
+    "xz_spread": 8,
+    "y_spread": 3
+  },
+  "type": "minecraft:random_patch"
+}

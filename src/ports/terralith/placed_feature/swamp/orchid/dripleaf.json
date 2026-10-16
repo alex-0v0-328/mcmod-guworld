@@ -1,0 +1,48 @@
+{
+  "feature": "guworld:swamp/vanilla/water_decor",
+  "placement": [
+    {
+      "count": 32,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "height": {
+        "absolute": 62
+      },
+      "type": "minecraft:height_range"
+    },
+    {
+      "predicate": {
+        "predicates": [
+          {
+            "blocks": [
+              "minecraft:water"
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:clay",
+              "minecraft:dirt",
+              "minecraft:mud"
+            ],
+            "offset": [
+              0,
+              -1,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

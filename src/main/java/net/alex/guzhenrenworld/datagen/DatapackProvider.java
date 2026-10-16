@@ -3,7 +3,10 @@ package net.alex.guzhenrenworld.datagen;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.biome.Ports;
+import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.SouthernBorder;
+import net.alex.guzhenrenworld.dimension.SouthernBorderBiomeSettings;
 import net.alex.guzhenrenworld.dimension.SouthernBorderTerrain;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
@@ -20,8 +23,10 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * <p>Extends {@link DatapackBuiltinEntriesProvider}. Builds in one {@code RegistrySetBuilder} the entries
  * the function packages bootstrap: the Treasure Yellow Heaven dimension's type, biome and level stem
  * ({@link TreasureYellowHeaven}); the Southern Border [南疆] dimension's type, noise settings and level stem
- * ({@link SouthernBorder}) with its noises and density functions ({@link SouthernBorderTerrain}); and the
- * Spirit Spring [元泉] configured and placed feature and biome modifier ({@link SpiritSpring}). A registry two
+ * ({@link SouthernBorder}) with its noises and density functions ({@link SouthernBorderTerrain}) and its landform
+ * biomes ({@link SouthernBorderBiomeSettings}); Gu World's shared biomes, the vanilla replicas ({@link Replicas}) and
+ * the biomes ported from Terralith with their noises and features ({@link Ports}); and the Spirit Spring
+ * [元泉] configured and placed feature and biome modifier ({@link SpiritSpring}). A registry two
  * dimensions both fill gets one bootstrap that runs both. The tag provider takes {@code getRegistryProvider()}
  * from this instance, not the plain lookup, so the tag pass sees the biome this run generates.
  *
@@ -40,16 +45,30 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 TreasureYellowHeaven.registerDimensionType(context);
                 SouthernBorder.registerDimensionType(context);
             })
-            .add(Registries.BIOME, TreasureYellowHeaven::registerBiome)
-            .add(Registries.NOISE, SouthernBorderTerrain::registerNoises)
+            .add(Registries.BIOME, context -> {
+                TreasureYellowHeaven.registerBiome(context);
+                Replicas.registerBiomes(context);
+                Ports.registerBiomes(context);
+                SouthernBorderBiomeSettings.registerBiomes(context);
+            })
+            .add(Registries.NOISE, context -> {
+                SouthernBorderTerrain.registerNoises(context);
+                Ports.registerNoises(context);
+            })
             .add(Registries.DENSITY_FUNCTION, SouthernBorderTerrain::registerDensityFunctions)
             .add(Registries.NOISE_SETTINGS, SouthernBorder::registerNoiseSettings)
             .add(Registries.LEVEL_STEM, context -> {
                 TreasureYellowHeaven.registerLevelStem(context);
                 SouthernBorder.registerLevelStem(context);
             })
-            .add(Registries.CONFIGURED_FEATURE, SpiritSpring::registerConfiguredFeature)
-            .add(Registries.PLACED_FEATURE, SpiritSpring::registerPlacedFeature)
+            .add(Registries.CONFIGURED_FEATURE, context -> {
+                SpiritSpring.registerConfiguredFeature(context);
+                Ports.registerConfiguredFeatures(context);
+            })
+            .add(Registries.PLACED_FEATURE, context -> {
+                SpiritSpring.registerPlacedFeature(context);
+                Ports.registerPlacedFeatures(context);
+            })
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, SpiritSpring::registerBiomeModifier);
 
     public DatapackProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {

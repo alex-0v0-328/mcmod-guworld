@@ -84,6 +84,8 @@ neoForge {
             data()
             gameDirectory = project.file(providers.gradleProperty('dataGameDir').getOrElse('run-data'))
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+            // Biomes and features ported from Terralith are datagen input, read through this property (biome.Ports).
+            systemProperty 'guworld.ports', file('src/ports').getAbsolutePath()
         }
 
         configureEach {

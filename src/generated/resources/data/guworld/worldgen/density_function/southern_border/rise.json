@@ -258,19 +258,19 @@
           "value": 0.0
         },
         {
-          "derivative": 387.5,
+          "derivative": 293.75,
           "location": 0.3,
-          "value": 68.2
+          "value": 51.7
         },
         {
-          "derivative": 372.0,
+          "derivative": 282.0,
           "location": 0.75,
-          "value": 248.0
+          "value": 188.0
         },
         {
-          "derivative": 108.5,
+          "derivative": 82.25,
           "location": 1.0,
-          "value": 310.0
+          "value": 235.0
         }
       ]
     }

@@ -18,7 +18,7 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
  *
  * <p>Annotated {@code @EventBusSubscriber}. On {@code GatherDataEvent} it adds every provider under
  * {@code datagen/}. Each is one NeoForge allows only once per run, so it lives here and collects its
- * entries from the function packages ({@code dimension}, {@code feature}). The output is the committed
+ * entries from the function packages ({@code biome}, {@code dimension}, {@code feature}). The output is the committed
  * source set {@code src/generated/resources}, written by {@code runData}. The data run loads Guzhenren
  * too, as a required mod, but NeoForge only executes the generators of the mod named by {@code --mod},
  * so Guzhenren's providers write nothing here.
@@ -51,5 +51,7 @@ public final class DataGenerators {
                 new DatapackProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new BiomeTagsProvider(packOutput,
                 datapackProvider.getRegistryProvider(), existingFileHelper));
+        generator.addProvider(event.includeServer(), new BlockTagsProvider(packOutput, lookupProvider,
+                existingFileHelper));
     }
 }

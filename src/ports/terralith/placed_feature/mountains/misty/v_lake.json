@@ -1,0 +1,35 @@
+{
+  "feature": "guworld:mountains/misty/v_lake",
+  "placement": [
+    {
+      "chance": 3,
+      "type": "minecraft:rarity_filter"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "height": {
+        "absolute": 256
+      },
+      "type": "minecraft:height_range"
+    },
+    {
+      "allowed_search_condition": {
+        "blocks": [
+          "minecraft:air"
+        ],
+        "type": "minecraft:matching_blocks"
+      },
+      "direction_of_search": "down",
+      "max_steps": 32,
+      "target_condition": {
+        "type": "minecraft:solid"
+      },
+      "type": "minecraft:environment_scan"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

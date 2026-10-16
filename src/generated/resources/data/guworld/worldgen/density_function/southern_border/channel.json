@@ -4,16 +4,21 @@
     "type": "minecraft:min",
     "argument1": {
       "type": "minecraft:mul",
-      "argument1": 100.00000223517424,
-      "argument2": {
-        "type": "minecraft:abs",
-        "argument": "guworld:southern_border/great_river"
-      }
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": 0.0625,
+        "argument2": "guworld:southern_border/great_distance"
+      },
+      "argument2": "guworld:southern_border/narrowing"
     },
     "argument2": {
       "type": "minecraft:mul",
-      "argument1": 249.99998812563774,
-      "argument2": "guworld:southern_border/stream"
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": 0.2857142857142857,
+        "argument2": "guworld:southern_border/stream_distance"
+      },
+      "argument2": "guworld:southern_border/narrowing"
     }
   }
 }

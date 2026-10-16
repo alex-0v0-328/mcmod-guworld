@@ -1,150 +1,61 @@
 {
   "type": "minecraft:flat_cache",
   "argument": {
-    "type": "minecraft:cache_2d",
-    "argument": {
-      "type": "minecraft:add",
-      "argument1": {
-        "type": "minecraft:mul",
-        "argument1": "guworld:southern_border/land",
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:mul",
+      "argument1": "guworld:southern_border/foot",
+      "argument2": {
+        "type": "minecraft:add",
+        "argument1": 1.0,
         "argument2": {
-          "type": "minecraft:add",
-          "argument1": 1.0,
+          "type": "minecraft:mul",
+          "argument1": -1.0,
           "argument2": {
-            "type": "minecraft:mul",
-            "argument1": -1.0,
-            "argument2": {
-              "type": "minecraft:cache_once",
-              "argument": {
-                "type": "minecraft:mul",
-                "argument1": {
-                  "type": "minecraft:spline",
-                  "spline": {
-                    "coordinate": "guworld:southern_border/channel",
-                    "points": [
-                      {
-                        "derivative": 0.0,
-                        "location": 0.0,
-                        "value": 1.0
-                      },
-                      {
-                        "derivative": 0.0,
-                        "location": 1.0,
-                        "value": 0.0
-                      }
-                    ]
+            "type": "minecraft:cache_once",
+            "argument": {
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": "guworld:southern_border/landform/edge",
+                "points": [
+                  {
+                    "derivative": 0.0,
+                    "location": -0.05,
+                    "value": 0.0
+                  },
+                  {
+                    "derivative": 0.0,
+                    "location": 0.05,
+                    "value": 1.0
                   }
-                },
-                "argument2": {
-                  "type": "minecraft:spline",
-                  "spline": {
-                    "coordinate": "guworld:southern_border/land",
-                    "points": [
-                      {
-                        "derivative": 0.0,
-                        "location": 66.0,
-                        "value": 1.0
-                      },
-                      {
-                        "derivative": 0.0,
-                        "location": 74.0,
-                        "value": 0.0
-                      }
-                    ]
-                  }
-                }
+                ]
               }
             }
           }
         }
-      },
+      }
+    },
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": "guworld:southern_border/top",
       "argument2": {
-        "type": "minecraft:mul",
-        "argument1": {
-          "type": "minecraft:add",
-          "argument1": 63.0,
-          "argument2": {
-            "type": "minecraft:mul",
-            "argument1": -1.0,
-            "argument2": {
-              "type": "minecraft:spline",
-              "spline": {
-                "coordinate": {
-                  "type": "minecraft:add",
-                  "argument1": {
-                    "type": "minecraft:mul",
-                    "argument1": 100.00000223517424,
-                    "argument2": {
-                      "type": "minecraft:abs",
-                      "argument": "guworld:southern_border/great_river"
-                    }
-                  },
-                  "argument2": {
-                    "type": "minecraft:mul",
-                    "argument1": -1.0,
-                    "argument2": {
-                      "type": "minecraft:mul",
-                      "argument1": 249.99998812563774,
-                      "argument2": "guworld:southern_border/stream"
-                    }
-                  }
-                },
-                "points": [
-                  {
-                    "derivative": 0.0,
-                    "location": -0.5,
-                    "value": 9.0
-                  },
-                  {
-                    "derivative": 0.0,
-                    "location": 0.5,
-                    "value": 4.0
-                  }
-                ]
+        "type": "minecraft:cache_once",
+        "argument": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "guworld:southern_border/landform/edge",
+            "points": [
+              {
+                "derivative": 0.0,
+                "location": -0.05,
+                "value": 0.0
+              },
+              {
+                "derivative": 0.0,
+                "location": 0.05,
+                "value": 1.0
               }
-            }
-          }
-        },
-        "argument2": {
-          "type": "minecraft:cache_once",
-          "argument": {
-            "type": "minecraft:mul",
-            "argument1": {
-              "type": "minecraft:spline",
-              "spline": {
-                "coordinate": "guworld:southern_border/channel",
-                "points": [
-                  {
-                    "derivative": 0.0,
-                    "location": 0.0,
-                    "value": 1.0
-                  },
-                  {
-                    "derivative": 0.0,
-                    "location": 1.0,
-                    "value": 0.0
-                  }
-                ]
-              }
-            },
-            "argument2": {
-              "type": "minecraft:spline",
-              "spline": {
-                "coordinate": "guworld:southern_border/land",
-                "points": [
-                  {
-                    "derivative": 0.0,
-                    "location": 66.0,
-                    "value": 1.0
-                  },
-                  {
-                    "derivative": 0.0,
-                    "location": 74.0,
-                    "value": 0.0
-                  }
-                ]
-              }
-            }
+            ]
           }
         }
       }

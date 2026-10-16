@@ -1,0 +1,16 @@
+{
+  "config": {
+    "default": "guworld:taiga/tall/spruce_tall",
+    "features": [
+      {
+        "chance": 0.01,
+        "feature": "guworld:taiga/tall/pine_tall"
+      },
+      {
+        "chance": 0.75,
+        "feature": "guworld:taiga/tall/spruce_tall_m"
+      }
+    ]
+  },
+  "type": "minecraft:random_selector"
+}

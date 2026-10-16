@@ -1,0 +1,12 @@
+{
+  "config": {
+    "default": "guworld:swamp/orchid/small/swamp_small",
+    "features": [
+      {
+        "chance": 0.2,
+        "feature": "guworld:swamp/orchid/small/swamp_special_small"
+      }
+    ]
+  },
+  "type": "minecraft:random_selector"
+}

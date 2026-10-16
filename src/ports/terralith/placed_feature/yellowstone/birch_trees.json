@@ -1,0 +1,36 @@
+{
+  "feature": "guworld:yellowstone/birch",
+  "placement": [
+    {
+      "count": 200,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "height": {
+        "max_inclusive": {
+          "absolute": 160
+        },
+        "min_inclusive": {
+          "absolute": 107
+        },
+        "type": "minecraft:trapezoid"
+      },
+      "type": "minecraft:height_range"
+    },
+    {
+      "predicate": {
+        "state": {
+          "Name": "minecraft:fern"
+        },
+        "type": "minecraft:would_survive"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

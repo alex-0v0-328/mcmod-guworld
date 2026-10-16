@@ -1,0 +1,23 @@
+{
+  "feature": "guworld:yellowstone/magma",
+  "placement": [
+    {
+      "count": {
+        "max_inclusive": 3,
+        "min_inclusive": 2,
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "OCEAN_FLOOR",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

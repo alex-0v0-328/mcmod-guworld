@@ -6,7 +6,6 @@ import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.data.worldgen.SurfaceRuleData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -28,14 +27,14 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  * <p>Every key shares the one location {@code guworld:southern_border}. {@link #registerDimensionType},
  * {@link #registerNoiseSettings} and {@link #registerLevelStem} are the bootstraps {@code datagen.DatapackProvider}
  * runs. The dimension type is the overworld's (sky, effects, beds, raids, monster light) with a taller column,
- * -64..511 ({@link #MIN_Y}, {@link #HEIGHT}), so peaks around y 400 still have air above them. The noise
- * settings are a {@link HeightfieldRouter} over {@link SouthernBorderTerrain}, with vanilla's overworld surface
- * rules, sea level {@link #SEA_LEVEL}, aquifers and ore veins; the level stem pairs them with the multi-noise
- * biome source of {@link SouthernBorderBiomes}. The settings name no spawn target: the overworld stays the
- * spawn dimension.
+ * -64..383 ({@link #MIN_Y}, {@link #HEIGHT}), so peaks, capped at y 320, keep 63 blocks of air. The noise
+ * settings are a {@link HeightfieldRouter} over {@link SouthernBorderTerrain}, with {@link SouthernBorderSurface}'s
+ * rules ahead of vanilla's overworld ones, sea level {@link #SEA_LEVEL}, aquifers and ore veins; the level stem pairs
+ * them with the multi-noise biome source of {@link SouthernBorderBiomes}. The settings name no spawn target: the
+ * overworld stays the spawn dimension.
  *
- * <p>Built-in structure sets apply as in any noise dimension, so vanilla structures and strongholds can generate
- * here wherever their biomes allow.
+ * <p>Built-in structure sets apply as in any noise dimension, but every structure checks its biome tags and none of
+ * this region's own biomes is in one, so no vanilla structure generates here, strongholds included.
  *
  * <p>The region is finite: {@link #BORDER_SIZE} is the side of its square world border around 0, 0, eight
  * kilometers (about 262,000 chunks), which {@link RegionBorders} applies to {@link #LEVEL}. The vanilla border
@@ -65,7 +64,7 @@ public final class SouthernBorder {
     public static final ResourceKey<Level> LEVEL = ResourceKey.create(Registries.DIMENSION, ID);
     public static final double BORDER_SIZE = 8192.0;
     private static final int MIN_Y = -64;
-    private static final int HEIGHT = 576;
+    private static final int HEIGHT = 448;
     static final int SEA_LEVEL = 63;
 
     private SouthernBorder() {}
@@ -97,7 +96,7 @@ public final class SouthernBorder {
                 Blocks.WATER.defaultBlockState(),
                 SouthernBorderTerrain.createRouter(context.lookup(Registries.DENSITY_FUNCTION),
                         context.lookup(Registries.NOISE)),
-                SurfaceRuleData.overworld(),
+                SouthernBorderSurface.getRules(),
                 List.of(),
                 SEA_LEVEL,
                 false,

@@ -1,0 +1,54 @@
+{
+  "config": {
+    "depth": 8,
+    "extra_bottom_block_chance": 0,
+    "extra_edge_column_chance": 0,
+    "ground_state": {
+      "noise": {
+        "amplitudes": [
+          1,
+          1,
+          2,
+          3,
+          0,
+          2.75,
+          5
+        ],
+        "firstOctave": -6
+      },
+      "scale": 1,
+      "seed": 0,
+      "states": [
+        {
+          "Name": "minecraft:stone"
+        },
+        {
+          "Name": "minecraft:moss_block"
+        },
+        {
+          "Name": "minecraft:moss_block"
+        },
+        {
+          "Name": "minecraft:dripstone_block"
+        },
+        {
+          "Name": "minecraft:granite"
+        },
+        {
+          "Name": "minecraft:granite"
+        },
+        {
+          "Name": "minecraft:granite"
+        }
+      ],
+      "type": "minecraft:noise_provider"
+    },
+    "replaceable": "#guworld:stone",
+    "surface": "floor",
+    "vegetation_chance": 0,
+    "vegetation_feature": "guworld:nothing",
+    "vertical_range": 256,
+    "xz_radius": 8
+  },
+  "type": "minecraft:vegetation_patch"
+}

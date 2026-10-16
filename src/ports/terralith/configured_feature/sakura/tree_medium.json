@@ -1,0 +1,18 @@
+{
+  "config": {
+    "default": {
+      "feature": "guworld:sakura/tree_medium_dark_oak",
+      "placement": []
+    },
+    "features": [
+      {
+        "chance": 0.5,
+        "feature": {
+          "feature": "guworld:sakura/tree_medium_cherry",
+          "placement": []
+        }
+      }
+    ]
+  },
+  "type": "minecraft:random_selector"
+}

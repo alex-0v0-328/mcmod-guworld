@@ -4,10 +4,10 @@
     "type": "minecraft:clamp",
     "input": {
       "type": "minecraft:add",
-      "argument1": -1.2857142857142858,
+      "argument1": -1.3703703703703705,
       "argument2": {
         "type": "minecraft:mul",
-        "argument1": 0.005714285714285714,
+        "argument1": 0.007407407407407408,
         "argument2": "guworld:southern_border/height"
       }
     },

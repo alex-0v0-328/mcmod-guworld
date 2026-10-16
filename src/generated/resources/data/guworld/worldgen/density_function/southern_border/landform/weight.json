@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:spline",
+    "spline": {
+      "coordinate": "guworld:southern_border/landform/zone",
+      "points": [
+        {
+          "derivative": 0.0,
+          "location": 0.053000003,
+          "value": 0.0
+        },
+        {
+          "derivative": 0.0,
+          "location": 0.213,
+          "value": 1.0
+        }
+      ]
+    }
+  }
+}

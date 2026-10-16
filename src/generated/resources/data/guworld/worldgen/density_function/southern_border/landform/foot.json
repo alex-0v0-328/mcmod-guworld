@@ -1,0 +1,1095 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:spline",
+    "spline": {
+      "coordinate": {
+        "type": "minecraft:add",
+        "argument1": "guworld:southern_border/ground",
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": "guworld:southern_border/landform/weight",
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:add",
+              "argument1": {
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:add",
+                  "argument1": {
+                    "type": "minecraft:add",
+                    "argument1": 0.0,
+                    "argument2": {
+                      "type": "minecraft:mul",
+                      "argument1": {
+                        "type": "minecraft:add",
+                        "argument1": 1.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": -1.0,
+                          "argument2": {
+                            "type": "minecraft:spline",
+                            "spline": {
+                              "coordinate": {
+                                "type": "minecraft:noise",
+                                "noise": "guworld:southern_border/landform/type",
+                                "xz_scale": 1.0,
+                                "y_scale": 0.0
+                              },
+                              "points": [
+                                {
+                                  "derivative": 0.0,
+                                  "location": -0.246,
+                                  "value": 0.0
+                                },
+                                {
+                                  "derivative": 0.0,
+                                  "location": -0.186,
+                                  "value": 1.0
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "argument2": {
+                        "type": "minecraft:add",
+                        "argument1": {
+                          "type": "minecraft:add",
+                          "argument1": 65.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 1.0,
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": {
+                                "type": "minecraft:add",
+                                "argument1": -65.0,
+                                "argument2": {
+                                  "type": "minecraft:mul",
+                                  "argument1": 1.0,
+                                  "argument2": {
+                                    "type": "minecraft:add",
+                                    "argument1": {
+                                      "type": "minecraft:add",
+                                      "argument1": 67.0,
+                                      "argument2": {
+                                        "type": "minecraft:mul",
+                                        "argument1": 3.0,
+                                        "argument2": {
+                                          "type": "minecraft:noise",
+                                          "noise": "guworld:southern_border/landform/plain",
+                                          "xz_scale": 1.0,
+                                          "y_scale": 0.0
+                                        }
+                                      }
+                                    },
+                                    "argument2": {
+                                      "type": "minecraft:mul",
+                                      "argument1": 4.0,
+                                      "argument2": {
+                                        "type": "minecraft:spline",
+                                        "spline": {
+                                          "coordinate": "guworld:southern_border/landform/zone",
+                                          "points": [
+                                            {
+                                              "derivative": 0.0,
+                                              "location": 0.25,
+                                              "value": 0.0
+                                            },
+                                            {
+                                              "derivative": 0.0,
+                                              "location": 0.4,
+                                              "value": 1.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              },
+                              "argument2": {
+                                "type": "minecraft:add",
+                                "argument1": 1.0,
+                                "argument2": {
+                                  "type": "minecraft:mul",
+                                  "argument1": -0.85,
+                                  "argument2": {
+                                    "type": "minecraft:spline",
+                                    "spline": {
+                                      "coordinate": {
+                                        "type": "minecraft:abs",
+                                        "argument": "guworld:southern_border/great_river"
+                                      },
+                                      "points": [
+                                        {
+                                          "derivative": 0.0,
+                                          "location": 0.01,
+                                          "value": 1.0
+                                        },
+                                        {
+                                          "derivative": -7.857143,
+                                          "location": 0.031000001,
+                                          "value": 0.93
+                                        },
+                                        {
+                                          "derivative": -7.857143,
+                                          "location": 0.12900001,
+                                          "value": 0.07
+                                        },
+                                        {
+                                          "derivative": 0.0,
+                                          "location": 0.15,
+                                          "value": 0.0
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": 0.0,
+                          "argument2": {
+                            "type": "minecraft:spline",
+                            "spline": {
+                              "coordinate": "guworld:southern_border/channel",
+                              "points": [
+                                {
+                                  "derivative": 0.0,
+                                  "location": 1.5,
+                                  "value": 0.0
+                                },
+                                {
+                                  "derivative": 0.0,
+                                  "location": 4.0,
+                                  "value": 1.0
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "argument2": {
+                    "type": "minecraft:mul",
+                    "argument1": {
+                      "type": "minecraft:add",
+                      "argument1": {
+                        "type": "minecraft:spline",
+                        "spline": {
+                          "coordinate": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/landform/type",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          },
+                          "points": [
+                            {
+                              "derivative": 0.0,
+                              "location": -0.246,
+                              "value": 0.0
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": -0.186,
+                              "value": 1.0
+                            }
+                          ]
+                        }
+                      },
+                      "argument2": {
+                        "type": "minecraft:mul",
+                        "argument1": -1.0,
+                        "argument2": {
+                          "type": "minecraft:spline",
+                          "spline": {
+                            "coordinate": {
+                              "type": "minecraft:noise",
+                              "noise": "guworld:southern_border/landform/type",
+                              "xz_scale": 1.0,
+                              "y_scale": 0.0
+                            },
+                            "points": [
+                              {
+                                "derivative": 0.0,
+                                "location": -0.022999998,
+                                "value": 0.0
+                              },
+                              {
+                                "derivative": 0.0,
+                                "location": 0.037,
+                                "value": 1.0
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    },
+                    "argument2": {
+                      "type": "minecraft:add",
+                      "argument1": {
+                        "type": "minecraft:add",
+                        "argument1": 65.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": 1.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": {
+                              "type": "minecraft:add",
+                              "argument1": -65.0,
+                              "argument2": {
+                                "type": "minecraft:mul",
+                                "argument1": 1.0,
+                                "argument2": {
+                                  "type": "minecraft:add",
+                                  "argument1": 74.0,
+                                  "argument2": {
+                                    "type": "minecraft:mul",
+                                    "argument1": 10.0,
+                                    "argument2": {
+                                      "type": "minecraft:noise",
+                                      "noise": "guworld:southern_border/landform/hills",
+                                      "xz_scale": 1.0,
+                                      "y_scale": 0.0
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "argument2": {
+                              "type": "minecraft:add",
+                              "argument1": 1.0,
+                              "argument2": {
+                                "type": "minecraft:mul",
+                                "argument1": -0.85,
+                                "argument2": {
+                                  "type": "minecraft:spline",
+                                  "spline": {
+                                    "coordinate": {
+                                      "type": "minecraft:abs",
+                                      "argument": "guworld:southern_border/great_river"
+                                    },
+                                    "points": [
+                                      {
+                                        "derivative": 0.0,
+                                        "location": 0.01,
+                                        "value": 1.0
+                                      },
+                                      {
+                                        "derivative": -7.857143,
+                                        "location": 0.031000001,
+                                        "value": 0.93
+                                      },
+                                      {
+                                        "derivative": -7.857143,
+                                        "location": 0.12900001,
+                                        "value": 0.07
+                                      },
+                                      {
+                                        "derivative": 0.0,
+                                        "location": 0.15,
+                                        "value": 0.0
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "argument2": {
+                        "type": "minecraft:mul",
+                        "argument1": {
+                          "type": "minecraft:mul",
+                          "argument1": {
+                            "type": "minecraft:clamp",
+                            "input": {
+                              "type": "minecraft:add",
+                              "argument1": 55.0,
+                              "argument2": {
+                                "type": "minecraft:mul",
+                                "argument1": 50.0,
+                                "argument2": {
+                                  "type": "minecraft:noise",
+                                  "noise": "guworld:southern_border/landform/mesa_height",
+                                  "xz_scale": 1.0,
+                                  "y_scale": 0.0
+                                }
+                              }
+                            },
+                            "max": 80.0,
+                            "min": 30.0
+                          },
+                          "argument2": {
+                            "type": "minecraft:spline",
+                            "spline": {
+                              "coordinate": {
+                                "type": "minecraft:noise",
+                                "noise": "guworld:southern_border/landform/mesa",
+                                "xz_scale": 1.0,
+                                "y_scale": 0.0
+                              },
+                              "points": [
+                                {
+                                  "derivative": 0.0,
+                                  "location": 0.049999997,
+                                  "value": 0.0
+                                },
+                                {
+                                  "derivative": 0.0,
+                                  "location": 0.12499999,
+                                  "value": 0.12
+                                }
+                              ]
+                            }
+                          }
+                        },
+                        "argument2": {
+                          "type": "minecraft:spline",
+                          "spline": {
+                            "coordinate": "guworld:southern_border/channel",
+                            "points": [
+                              {
+                                "derivative": 0.0,
+                                "location": 1.5,
+                                "value": 0.0
+                              },
+                              {
+                                "derivative": 0.0,
+                                "location": 4.0,
+                                "value": 1.0
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "argument2": {
+                  "type": "minecraft:mul",
+                  "argument1": {
+                    "type": "minecraft:add",
+                    "argument1": {
+                      "type": "minecraft:spline",
+                      "spline": {
+                        "coordinate": {
+                          "type": "minecraft:noise",
+                          "noise": "guworld:southern_border/landform/type",
+                          "xz_scale": 1.0,
+                          "y_scale": 0.0
+                        },
+                        "points": [
+                          {
+                            "derivative": 0.0,
+                            "location": -0.022999998,
+                            "value": 0.0
+                          },
+                          {
+                            "derivative": 0.0,
+                            "location": 0.037,
+                            "value": 1.0
+                          }
+                        ]
+                      }
+                    },
+                    "argument2": {
+                      "type": "minecraft:mul",
+                      "argument1": -1.0,
+                      "argument2": {
+                        "type": "minecraft:spline",
+                        "spline": {
+                          "coordinate": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/landform/type",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          },
+                          "points": [
+                            {
+                              "derivative": 0.0,
+                              "location": 0.184,
+                              "value": 0.0
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": 0.244,
+                              "value": 1.0
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "argument2": {
+                    "type": "minecraft:add",
+                    "argument1": {
+                      "type": "minecraft:add",
+                      "argument1": 65.0,
+                      "argument2": {
+                        "type": "minecraft:mul",
+                        "argument1": 1.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": {
+                            "type": "minecraft:add",
+                            "argument1": -65.0,
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": 1.0,
+                              "argument2": {
+                                "type": "minecraft:add",
+                                "argument1": {
+                                  "type": "minecraft:add",
+                                  "argument1": {
+                                    "type": "minecraft:add",
+                                    "argument1": 175.0,
+                                    "argument2": {
+                                      "type": "minecraft:mul",
+                                      "argument1": 20.0,
+                                      "argument2": {
+                                        "type": "minecraft:noise",
+                                        "noise": "guworld:southern_border/landform/plateau",
+                                        "xz_scale": 1.0,
+                                        "y_scale": 0.0
+                                      }
+                                    }
+                                  },
+                                  "argument2": {
+                                    "type": "minecraft:mul",
+                                    "argument1": -1.0,
+                                    "argument2": {
+                                      "type": "minecraft:clamp",
+                                      "input": {
+                                        "type": "minecraft:add",
+                                        "argument1": 65.0,
+                                        "argument2": {
+                                          "type": "minecraft:mul",
+                                          "argument1": 40.0,
+                                          "argument2": {
+                                            "type": "minecraft:noise",
+                                            "noise": "guworld:southern_border/landform/pillar_depth",
+                                            "xz_scale": 1.0,
+                                            "y_scale": 0.0
+                                          }
+                                        }
+                                      },
+                                      "max": 90.0,
+                                      "min": 40.0
+                                    }
+                                  }
+                                },
+                                "argument2": {
+                                  "type": "minecraft:mul",
+                                  "argument1": 3.0,
+                                  "argument2": {
+                                    "type": "minecraft:noise",
+                                    "noise": "guworld:southern_border/landform/canyon",
+                                    "xz_scale": 1.0,
+                                    "y_scale": 0.0
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "argument2": {
+                            "type": "minecraft:add",
+                            "argument1": 1.0,
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": -0.85,
+                              "argument2": {
+                                "type": "minecraft:spline",
+                                "spline": {
+                                  "coordinate": {
+                                    "type": "minecraft:abs",
+                                    "argument": "guworld:southern_border/great_river"
+                                  },
+                                  "points": [
+                                    {
+                                      "derivative": 0.0,
+                                      "location": 0.01,
+                                      "value": 1.0
+                                    },
+                                    {
+                                      "derivative": -7.857143,
+                                      "location": 0.031000001,
+                                      "value": 0.93
+                                    },
+                                    {
+                                      "derivative": -7.857143,
+                                      "location": 0.12900001,
+                                      "value": 0.07
+                                    },
+                                    {
+                                      "derivative": 0.0,
+                                      "location": 0.15,
+                                      "value": 0.0
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "argument2": {
+                      "type": "minecraft:mul",
+                      "argument1": 0.0,
+                      "argument2": {
+                        "type": "minecraft:spline",
+                        "spline": {
+                          "coordinate": "guworld:southern_border/channel",
+                          "points": [
+                            {
+                              "derivative": 0.0,
+                              "location": 1.5,
+                              "value": 0.0
+                            },
+                            {
+                              "derivative": 0.0,
+                              "location": 4.0,
+                              "value": 1.0
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": {
+                  "type": "minecraft:spline",
+                  "spline": {
+                    "coordinate": {
+                      "type": "minecraft:noise",
+                      "noise": "guworld:southern_border/landform/type",
+                      "xz_scale": 1.0,
+                      "y_scale": 0.0
+                    },
+                    "points": [
+                      {
+                        "derivative": 0.0,
+                        "location": 0.184,
+                        "value": 0.0
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.244,
+                        "value": 1.0
+                      }
+                    ]
+                  }
+                },
+                "argument2": {
+                  "type": "minecraft:add",
+                  "argument1": {
+                    "type": "minecraft:add",
+                    "argument1": 65.0,
+                    "argument2": {
+                      "type": "minecraft:mul",
+                      "argument1": 1.0,
+                      "argument2": {
+                        "type": "minecraft:mul",
+                        "argument1": {
+                          "type": "minecraft:add",
+                          "argument1": -65.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 1.0,
+                            "argument2": {
+                              "type": "minecraft:add",
+                              "argument1": 80.0,
+                              "argument2": {
+                                "type": "minecraft:mul",
+                                "argument1": 6.0,
+                                "argument2": {
+                                  "type": "minecraft:noise",
+                                  "noise": "guworld:southern_border/landform/hills",
+                                  "xz_scale": 1.0,
+                                  "y_scale": 0.0
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "argument2": {
+                          "type": "minecraft:add",
+                          "argument1": 1.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": -0.85,
+                            "argument2": {
+                              "type": "minecraft:spline",
+                              "spline": {
+                                "coordinate": {
+                                  "type": "minecraft:abs",
+                                  "argument": "guworld:southern_border/great_river"
+                                },
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.01,
+                                    "value": 1.0
+                                  },
+                                  {
+                                    "derivative": -7.857143,
+                                    "location": 0.031000001,
+                                    "value": 0.93
+                                  },
+                                  {
+                                    "derivative": -7.857143,
+                                    "location": 0.12900001,
+                                    "value": 0.07
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.15,
+                                    "value": 0.0
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "argument2": {
+                    "type": "minecraft:mul",
+                    "argument1": {
+                      "type": "minecraft:range_choice",
+                      "input": {
+                        "type": "minecraft:add",
+                        "argument1": {
+                          "type": "minecraft:add",
+                          "argument1": {
+                            "type": "minecraft:add",
+                            "argument1": -0.06650000065565109,
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": 0.5,
+                              "argument2": "guworld:southern_border/landform/zone"
+                            }
+                          },
+                          "argument2": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/landform/escarpment",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          }
+                        },
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": -0.08,
+                          "argument2": {
+                            "type": "minecraft:spline",
+                            "spline": {
+                              "coordinate": {
+                                "type": "minecraft:abs",
+                                "argument": {
+                                  "type": "minecraft:noise",
+                                  "noise": "guworld:southern_border/landform/cove",
+                                  "xz_scale": 1.0,
+                                  "y_scale": 0.0
+                                }
+                              },
+                              "points": [
+                                {
+                                  "derivative": 0.0,
+                                  "location": 0.0,
+                                  "value": 1.0
+                                },
+                                {
+                                  "derivative": 0.0,
+                                  "location": 0.1,
+                                  "value": 0.0
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "max_exclusive": -0.015000000596046448,
+                      "min_inclusive": -1000000.0,
+                      "when_in_range": 0.0,
+                      "when_out_of_range": {
+                        "type": "minecraft:range_choice",
+                        "input": {
+                          "type": "minecraft:add",
+                          "argument1": {
+                            "type": "minecraft:add",
+                            "argument1": {
+                              "type": "minecraft:add",
+                              "argument1": -0.06650000065565109,
+                              "argument2": {
+                                "type": "minecraft:mul",
+                                "argument1": 0.5,
+                                "argument2": "guworld:southern_border/landform/zone"
+                              }
+                            },
+                            "argument2": {
+                              "type": "minecraft:noise",
+                              "noise": "guworld:southern_border/landform/escarpment",
+                              "xz_scale": 1.0,
+                              "y_scale": 0.0
+                            }
+                          },
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": -0.08,
+                            "argument2": {
+                              "type": "minecraft:spline",
+                              "spline": {
+                                "coordinate": {
+                                  "type": "minecraft:abs",
+                                  "argument": {
+                                    "type": "minecraft:noise",
+                                    "noise": "guworld:southern_border/landform/cove",
+                                    "xz_scale": 1.0,
+                                    "y_scale": 0.0
+                                  }
+                                },
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.0,
+                                    "value": 1.0
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.1,
+                                    "value": 0.0
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        "max_exclusive": 0.054999999701976776,
+                        "min_inclusive": -0.015000000596046448,
+                        "when_in_range": {
+                          "type": "minecraft:add",
+                          "argument1": 0.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": {
+                              "type": "minecraft:add",
+                              "argument1": 45.0,
+                              "argument2": {
+                                "type": "minecraft:mul",
+                                "argument1": 12.0,
+                                "argument2": {
+                                  "type": "minecraft:noise",
+                                  "noise": "guworld:southern_border/landform/tier",
+                                  "xz_scale": 1.0,
+                                  "y_scale": 0.0
+                                }
+                              }
+                            },
+                            "argument2": {
+                              "type": "minecraft:spline",
+                              "spline": {
+                                "coordinate": {
+                                  "type": "minecraft:add",
+                                  "argument1": {
+                                    "type": "minecraft:add",
+                                    "argument1": {
+                                      "type": "minecraft:add",
+                                      "argument1": -0.06650000065565109,
+                                      "argument2": {
+                                        "type": "minecraft:mul",
+                                        "argument1": 0.5,
+                                        "argument2": "guworld:southern_border/landform/zone"
+                                      }
+                                    },
+                                    "argument2": {
+                                      "type": "minecraft:noise",
+                                      "noise": "guworld:southern_border/landform/escarpment",
+                                      "xz_scale": 1.0,
+                                      "y_scale": 0.0
+                                    }
+                                  },
+                                  "argument2": {
+                                    "type": "minecraft:mul",
+                                    "argument1": -0.08,
+                                    "argument2": {
+                                      "type": "minecraft:spline",
+                                      "spline": {
+                                        "coordinate": {
+                                          "type": "minecraft:abs",
+                                          "argument": {
+                                            "type": "minecraft:noise",
+                                            "noise": "guworld:southern_border/landform/cove",
+                                            "xz_scale": 1.0,
+                                            "y_scale": 0.0
+                                          }
+                                        },
+                                        "points": [
+                                          {
+                                            "derivative": 0.0,
+                                            "location": 0.0,
+                                            "value": 1.0
+                                          },
+                                          {
+                                            "derivative": 0.0,
+                                            "location": 0.1,
+                                            "value": 0.0
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                },
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": -0.05,
+                                    "value": 0.85
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.009999998,
+                                    "value": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        "when_out_of_range": {
+                          "type": "minecraft:add",
+                          "argument1": {
+                            "type": "minecraft:add",
+                            "argument1": 0.0,
+                            "argument2": {
+                              "type": "minecraft:mul",
+                              "argument1": {
+                                "type": "minecraft:add",
+                                "argument1": 45.0,
+                                "argument2": {
+                                  "type": "minecraft:mul",
+                                  "argument1": 12.0,
+                                  "argument2": {
+                                    "type": "minecraft:noise",
+                                    "noise": "guworld:southern_border/landform/tier",
+                                    "xz_scale": 1.0,
+                                    "y_scale": 0.0
+                                  }
+                                }
+                              },
+                              "argument2": {
+                                "type": "minecraft:spline",
+                                "spline": {
+                                  "coordinate": {
+                                    "type": "minecraft:add",
+                                    "argument1": {
+                                      "type": "minecraft:add",
+                                      "argument1": {
+                                        "type": "minecraft:add",
+                                        "argument1": -0.06650000065565109,
+                                        "argument2": {
+                                          "type": "minecraft:mul",
+                                          "argument1": 0.5,
+                                          "argument2": "guworld:southern_border/landform/zone"
+                                        }
+                                      },
+                                      "argument2": {
+                                        "type": "minecraft:noise",
+                                        "noise": "guworld:southern_border/landform/escarpment",
+                                        "xz_scale": 1.0,
+                                        "y_scale": 0.0
+                                      }
+                                    },
+                                    "argument2": {
+                                      "type": "minecraft:mul",
+                                      "argument1": -0.08,
+                                      "argument2": {
+                                        "type": "minecraft:spline",
+                                        "spline": {
+                                          "coordinate": {
+                                            "type": "minecraft:abs",
+                                            "argument": {
+                                              "type": "minecraft:noise",
+                                              "noise": "guworld:southern_border/landform/cove",
+                                              "xz_scale": 1.0,
+                                              "y_scale": 0.0
+                                            }
+                                          },
+                                          "points": [
+                                            {
+                                              "derivative": 0.0,
+                                              "location": 0.0,
+                                              "value": 1.0
+                                            },
+                                            {
+                                              "derivative": 0.0,
+                                              "location": 0.1,
+                                              "value": 0.0
+                                            }
+                                          ]
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "points": [
+                                    {
+                                      "derivative": 0.0,
+                                      "location": -0.05,
+                                      "value": 0.85
+                                    },
+                                    {
+                                      "derivative": 0.0,
+                                      "location": 0.009999998,
+                                      "value": 1.0
+                                    }
+                                  ]
+                                }
+                              }
+                            }
+                          },
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": {
+                              "type": "minecraft:add",
+                              "argument1": 45.0,
+                              "argument2": {
+                                "type": "minecraft:mul",
+                                "argument1": 12.0,
+                                "argument2": {
+                                  "type": "minecraft:noise",
+                                  "noise": "guworld:southern_border/landform/tier",
+                                  "xz_scale": 1.0,
+                                  "y_scale": 0.0
+                                }
+                              }
+                            },
+                            "argument2": {
+                              "type": "minecraft:spline",
+                              "spline": {
+                                "coordinate": {
+                                  "type": "minecraft:add",
+                                  "argument1": {
+                                    "type": "minecraft:add",
+                                    "argument1": {
+                                      "type": "minecraft:add",
+                                      "argument1": -0.06650000065565109,
+                                      "argument2": {
+                                        "type": "minecraft:mul",
+                                        "argument1": 0.5,
+                                        "argument2": "guworld:southern_border/landform/zone"
+                                      }
+                                    },
+                                    "argument2": {
+                                      "type": "minecraft:noise",
+                                      "noise": "guworld:southern_border/landform/escarpment",
+                                      "xz_scale": 1.0,
+                                      "y_scale": 0.0
+                                    }
+                                  },
+                                  "argument2": {
+                                    "type": "minecraft:mul",
+                                    "argument1": -0.08,
+                                    "argument2": {
+                                      "type": "minecraft:spline",
+                                      "spline": {
+                                        "coordinate": {
+                                          "type": "minecraft:abs",
+                                          "argument": {
+                                            "type": "minecraft:noise",
+                                            "noise": "guworld:southern_border/landform/cove",
+                                            "xz_scale": 1.0,
+                                            "y_scale": 0.0
+                                          }
+                                        },
+                                        "points": [
+                                          {
+                                            "derivative": 0.0,
+                                            "location": 0.0,
+                                            "value": 1.0
+                                          },
+                                          {
+                                            "derivative": 0.0,
+                                            "location": 0.1,
+                                            "value": 0.0
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                },
+                                "points": [
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.02,
+                                    "value": 0.85
+                                  },
+                                  {
+                                    "derivative": 0.0,
+                                    "location": 0.08,
+                                    "value": 1.0
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "argument2": {
+                      "type": "minecraft:spline",
+                      "spline": {
+                        "coordinate": "guworld:southern_border/channel",
+                        "points": [
+                          {
+                            "derivative": 0.0,
+                            "location": 1.5,
+                            "value": 0.0
+                          },
+                          {
+                            "derivative": 0.0,
+                            "location": 4.0,
+                            "value": 1.0
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": -1.0,
+              "argument2": "guworld:southern_border/ground"
+            }
+          }
+        }
+      },
+      "points": [
+        {
+          "derivative": 1.0,
+          "location": 300.0,
+          "value": 300.0
+        },
+        {
+          "derivative": 0.0,
+          "location": 340.0,
+          "value": 320.0
+        }
+      ]
+    }
+  }
+}

@@ -12,7 +12,8 @@ import java.util.Map;
  *
  * <p>This is a copy of Guzhenren's {@code TraditionalGlyphs}, cut down to the glyphs this mod uses:
  * the two mods never compile against each other, so neither can borrow the other's table. A glyph
- * added here takes the Traditional form Guzhenren's table already gives it.
+ * added here takes the Traditional form Guzhenren's table gives it, or OpenCC {@code s2tw}'s where that table has
+ * none.
  *
  * <p>A token in {@link #PAIRS} is its Simplified half followed by its Traditional half (宝寶). A
  * glyph with more than one Traditional form goes in as a whole phrase token (冲刷沖刷) and never on
@@ -31,8 +32,8 @@ import java.util.Map;
 
 public final class TraditionalGlyphs {
 
-    private static final String PAIRS = "宝寶 黄黃";
-    private static final String UNCHANGED = "南天疆";
+    private static final String PAIRS = "云雲 兰蘭 叶葉 宝寶 桦樺 泽澤 热熱 袭襲 针針 间間 雾霧 风風 黄黃";
+    private static final String UNCHANGED = "丘丹南原喀天山岩峰嶂平斯木林桃森河沼洞流海溶特甸疆石砂穴竹繁花茂草裸陵雨霞高黑";
     private static final Map<String, String> TOKENS = parseTokens();
     private static final int LONGEST = TOKENS.keySet().stream().mapToInt(String::length).max().orElse(1);
 

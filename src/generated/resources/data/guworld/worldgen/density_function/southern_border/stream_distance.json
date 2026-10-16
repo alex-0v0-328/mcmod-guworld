@@ -1,0 +1,582 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:mul",
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:abs",
+          "argument": {
+            "type": "minecraft:shifted_noise",
+            "noise": "guworld:southern_border/stream_b",
+            "shift_x": {
+              "type": "minecraft:add",
+              "argument1": 0.0,
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": 12.0,
+                "argument2": {
+                  "type": "minecraft:noise",
+                  "noise": "guworld:southern_border/river_warp_x",
+                  "xz_scale": 1.0,
+                  "y_scale": 0.0
+                }
+              }
+            },
+            "shift_y": 0.0,
+            "shift_z": {
+              "type": "minecraft:add",
+              "argument1": 0.0,
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": 12.0,
+                "argument2": {
+                  "type": "minecraft:noise",
+                  "noise": "guworld:southern_border/river_warp_z",
+                  "xz_scale": 1.0,
+                  "y_scale": 0.0
+                }
+              }
+            },
+            "xz_scale": 1.0,
+            "y_scale": 0.0
+          }
+        },
+        "argument2": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": {
+              "type": "minecraft:mul",
+              "argument1": 0.2,
+              "argument2": {
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:abs",
+                  "argument": {
+                    "type": "minecraft:add",
+                    "argument1": {
+                      "type": "minecraft:shifted_noise",
+                      "noise": "guworld:southern_border/stream_b",
+                      "shift_x": {
+                        "type": "minecraft:add",
+                        "argument1": 0.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": 12.0,
+                          "argument2": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/river_warp_x",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          }
+                        }
+                      },
+                      "shift_y": 0.0,
+                      "shift_z": {
+                        "type": "minecraft:add",
+                        "argument1": 0.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": 12.0,
+                          "argument2": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/river_warp_z",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          }
+                        }
+                      },
+                      "xz_scale": 1.0,
+                      "y_scale": 0.0
+                    },
+                    "argument2": {
+                      "type": "minecraft:mul",
+                      "argument1": -1.0,
+                      "argument2": {
+                        "type": "minecraft:shifted_noise",
+                        "noise": "guworld:southern_border/stream_b",
+                        "shift_x": {
+                          "type": "minecraft:add",
+                          "argument1": 4.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 12.0,
+                            "argument2": {
+                              "type": "minecraft:noise",
+                              "noise": "guworld:southern_border/river_warp_x",
+                              "xz_scale": 1.0,
+                              "y_scale": 0.0
+                            }
+                          }
+                        },
+                        "shift_y": 0.0,
+                        "shift_z": {
+                          "type": "minecraft:add",
+                          "argument1": 0.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 12.0,
+                            "argument2": {
+                              "type": "minecraft:noise",
+                              "noise": "guworld:southern_border/river_warp_z",
+                              "xz_scale": 1.0,
+                              "y_scale": 0.0
+                            }
+                          }
+                        },
+                        "xz_scale": 1.0,
+                        "y_scale": 0.0
+                      }
+                    }
+                  }
+                },
+                "argument2": {
+                  "type": "minecraft:abs",
+                  "argument": {
+                    "type": "minecraft:add",
+                    "argument1": {
+                      "type": "minecraft:shifted_noise",
+                      "noise": "guworld:southern_border/stream_b",
+                      "shift_x": {
+                        "type": "minecraft:add",
+                        "argument1": 0.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": 12.0,
+                          "argument2": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/river_warp_x",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          }
+                        }
+                      },
+                      "shift_y": 0.0,
+                      "shift_z": {
+                        "type": "minecraft:add",
+                        "argument1": 0.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": 12.0,
+                          "argument2": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/river_warp_z",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          }
+                        }
+                      },
+                      "xz_scale": 1.0,
+                      "y_scale": 0.0
+                    },
+                    "argument2": {
+                      "type": "minecraft:mul",
+                      "argument1": -1.0,
+                      "argument2": {
+                        "type": "minecraft:shifted_noise",
+                        "noise": "guworld:southern_border/stream_b",
+                        "shift_x": {
+                          "type": "minecraft:add",
+                          "argument1": 0.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 12.0,
+                            "argument2": {
+                              "type": "minecraft:noise",
+                              "noise": "guworld:southern_border/river_warp_x",
+                              "xz_scale": 1.0,
+                              "y_scale": 0.0
+                            }
+                          }
+                        },
+                        "shift_y": 0.0,
+                        "shift_z": {
+                          "type": "minecraft:add",
+                          "argument1": 4.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 12.0,
+                            "argument2": {
+                              "type": "minecraft:noise",
+                              "noise": "guworld:southern_border/river_warp_z",
+                              "xz_scale": 1.0,
+                              "y_scale": 0.0
+                            }
+                          }
+                        },
+                        "xz_scale": 1.0,
+                        "y_scale": 0.0
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "points": [
+              {
+                "derivative": 0.0,
+                "location": 2.0E-5,
+                "value": 50000.0
+              },
+              {
+                "derivative": -4.0000003E8,
+                "location": 5.0E-5,
+                "value": 20000.0
+              },
+              {
+                "derivative": -1.0000001E8,
+                "location": 1.0E-4,
+                "value": 10000.0
+              },
+              {
+                "derivative": -2.5000002E7,
+                "location": 2.0E-4,
+                "value": 5000.0
+              },
+              {
+                "derivative": -3999999.5,
+                "location": 5.0E-4,
+                "value": 1999.9999
+              },
+              {
+                "derivative": -999999.9,
+                "location": 0.001,
+                "value": 999.99994
+              },
+              {
+                "derivative": -249999.97,
+                "location": 0.002,
+                "value": 499.99997
+              },
+              {
+                "derivative": -40000.0,
+                "location": 0.005,
+                "value": 200.0
+              },
+              {
+                "derivative": 0.0,
+                "location": 0.01,
+                "value": 100.0
+              }
+            ]
+          }
+        }
+      },
+      "argument2": {
+        "type": "minecraft:add",
+        "argument1": 1.0,
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": -1.0,
+          "argument2": {
+            "type": "minecraft:cache_once",
+            "argument": {
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": "guworld:southern_border/great_river",
+                "points": [
+                  {
+                    "derivative": 0.0,
+                    "location": -0.01,
+                    "value": 0.0
+                  },
+                  {
+                    "derivative": 0.0,
+                    "location": 0.01,
+                    "value": 1.0
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": {
+          "type": "minecraft:abs",
+          "argument": {
+            "type": "minecraft:shifted_noise",
+            "noise": "guworld:southern_border/stream_a",
+            "shift_x": {
+              "type": "minecraft:add",
+              "argument1": 0.0,
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": 12.0,
+                "argument2": {
+                  "type": "minecraft:noise",
+                  "noise": "guworld:southern_border/river_warp_x",
+                  "xz_scale": 1.0,
+                  "y_scale": 0.0
+                }
+              }
+            },
+            "shift_y": 0.0,
+            "shift_z": {
+              "type": "minecraft:add",
+              "argument1": 0.0,
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": 12.0,
+                "argument2": {
+                  "type": "minecraft:noise",
+                  "noise": "guworld:southern_border/river_warp_z",
+                  "xz_scale": 1.0,
+                  "y_scale": 0.0
+                }
+              }
+            },
+            "xz_scale": 1.0,
+            "y_scale": 0.0
+          }
+        },
+        "argument2": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": {
+              "type": "minecraft:mul",
+              "argument1": 0.2,
+              "argument2": {
+                "type": "minecraft:add",
+                "argument1": {
+                  "type": "minecraft:abs",
+                  "argument": {
+                    "type": "minecraft:add",
+                    "argument1": {
+                      "type": "minecraft:shifted_noise",
+                      "noise": "guworld:southern_border/stream_a",
+                      "shift_x": {
+                        "type": "minecraft:add",
+                        "argument1": 0.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": 12.0,
+                          "argument2": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/river_warp_x",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          }
+                        }
+                      },
+                      "shift_y": 0.0,
+                      "shift_z": {
+                        "type": "minecraft:add",
+                        "argument1": 0.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": 12.0,
+                          "argument2": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/river_warp_z",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          }
+                        }
+                      },
+                      "xz_scale": 1.0,
+                      "y_scale": 0.0
+                    },
+                    "argument2": {
+                      "type": "minecraft:mul",
+                      "argument1": -1.0,
+                      "argument2": {
+                        "type": "minecraft:shifted_noise",
+                        "noise": "guworld:southern_border/stream_a",
+                        "shift_x": {
+                          "type": "minecraft:add",
+                          "argument1": 4.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 12.0,
+                            "argument2": {
+                              "type": "minecraft:noise",
+                              "noise": "guworld:southern_border/river_warp_x",
+                              "xz_scale": 1.0,
+                              "y_scale": 0.0
+                            }
+                          }
+                        },
+                        "shift_y": 0.0,
+                        "shift_z": {
+                          "type": "minecraft:add",
+                          "argument1": 0.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 12.0,
+                            "argument2": {
+                              "type": "minecraft:noise",
+                              "noise": "guworld:southern_border/river_warp_z",
+                              "xz_scale": 1.0,
+                              "y_scale": 0.0
+                            }
+                          }
+                        },
+                        "xz_scale": 1.0,
+                        "y_scale": 0.0
+                      }
+                    }
+                  }
+                },
+                "argument2": {
+                  "type": "minecraft:abs",
+                  "argument": {
+                    "type": "minecraft:add",
+                    "argument1": {
+                      "type": "minecraft:shifted_noise",
+                      "noise": "guworld:southern_border/stream_a",
+                      "shift_x": {
+                        "type": "minecraft:add",
+                        "argument1": 0.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": 12.0,
+                          "argument2": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/river_warp_x",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          }
+                        }
+                      },
+                      "shift_y": 0.0,
+                      "shift_z": {
+                        "type": "minecraft:add",
+                        "argument1": 0.0,
+                        "argument2": {
+                          "type": "minecraft:mul",
+                          "argument1": 12.0,
+                          "argument2": {
+                            "type": "minecraft:noise",
+                            "noise": "guworld:southern_border/river_warp_z",
+                            "xz_scale": 1.0,
+                            "y_scale": 0.0
+                          }
+                        }
+                      },
+                      "xz_scale": 1.0,
+                      "y_scale": 0.0
+                    },
+                    "argument2": {
+                      "type": "minecraft:mul",
+                      "argument1": -1.0,
+                      "argument2": {
+                        "type": "minecraft:shifted_noise",
+                        "noise": "guworld:southern_border/stream_a",
+                        "shift_x": {
+                          "type": "minecraft:add",
+                          "argument1": 0.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 12.0,
+                            "argument2": {
+                              "type": "minecraft:noise",
+                              "noise": "guworld:southern_border/river_warp_x",
+                              "xz_scale": 1.0,
+                              "y_scale": 0.0
+                            }
+                          }
+                        },
+                        "shift_y": 0.0,
+                        "shift_z": {
+                          "type": "minecraft:add",
+                          "argument1": 4.0,
+                          "argument2": {
+                            "type": "minecraft:mul",
+                            "argument1": 12.0,
+                            "argument2": {
+                              "type": "minecraft:noise",
+                              "noise": "guworld:southern_border/river_warp_z",
+                              "xz_scale": 1.0,
+                              "y_scale": 0.0
+                            }
+                          }
+                        },
+                        "xz_scale": 1.0,
+                        "y_scale": 0.0
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "points": [
+              {
+                "derivative": 0.0,
+                "location": 2.0E-5,
+                "value": 50000.0
+              },
+              {
+                "derivative": -4.0000003E8,
+                "location": 5.0E-5,
+                "value": 20000.0
+              },
+              {
+                "derivative": -1.0000001E8,
+                "location": 1.0E-4,
+                "value": 10000.0
+              },
+              {
+                "derivative": -2.5000002E7,
+                "location": 2.0E-4,
+                "value": 5000.0
+              },
+              {
+                "derivative": -3999999.5,
+                "location": 5.0E-4,
+                "value": 1999.9999
+              },
+              {
+                "derivative": -999999.9,
+                "location": 0.001,
+                "value": 999.99994
+              },
+              {
+                "derivative": -249999.97,
+                "location": 0.002,
+                "value": 499.99997
+              },
+              {
+                "derivative": -40000.0,
+                "location": 0.005,
+                "value": 200.0
+              },
+              {
+                "derivative": 0.0,
+                "location": 0.01,
+                "value": 100.0
+              }
+            ]
+          }
+        }
+      },
+      "argument2": {
+        "type": "minecraft:cache_once",
+        "argument": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "guworld:southern_border/great_river",
+            "points": [
+              {
+                "derivative": 0.0,
+                "location": -0.01,
+                "value": 0.0
+              },
+              {
+                "derivative": 0.0,
+                "location": 0.01,
+                "value": 1.0
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

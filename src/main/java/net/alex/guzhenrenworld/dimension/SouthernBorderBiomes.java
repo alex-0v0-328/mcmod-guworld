@@ -1,31 +1,68 @@
 package net.alex.guzhenrenworld.dimension;
 
-import com.mojang.datafixers.util.Pair;
+import static net.alex.guzhenrenworld.biome.BiomeTable.Cell.of;
+import static net.alex.guzhenrenworld.biome.Ports.CLOUD_FOREST;
+import static net.alex.guzhenrenworld.biome.Ports.FORESTED_PLATEAU;
+import static net.alex.guzhenrenworld.biome.Ports.HOT_SPRINGS;
+import static net.alex.guzhenrenworld.biome.Ports.MISTY_MOUNTAINS;
+import static net.alex.guzhenrenworld.biome.Ports.ORCHID_SWAMP;
+import static net.alex.guzhenrenworld.biome.Ports.PEACH_GROVE;
+import static net.alex.guzhenrenworld.biome.Ports.PLATEAU;
+import static net.alex.guzhenrenworld.biome.Ports.RAINFOREST;
+import static net.alex.guzhenrenworld.biome.Replicas.BAMBOO_JUNGLE;
+import static net.alex.guzhenrenworld.biome.Replicas.BIRCH_FOREST;
+import static net.alex.guzhenrenworld.biome.Replicas.DARK_FOREST;
+import static net.alex.guzhenrenworld.biome.Replicas.FOREST;
+import static net.alex.guzhenrenworld.biome.Replicas.MEADOW;
+import static net.alex.guzhenrenworld.biome.Replicas.PLAINS;
+import static net.alex.guzhenrenworld.biome.Replicas.STONY_PEAKS;
+import static net.alex.guzhenrenworld.biome.Replicas.TAIGA;
+import static net.alex.guzhenrenworld.biome.Replicas.WINDSWEPT_HILLS;
+
 import java.util.ArrayList;
 import java.util.List;
+import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.biome.BiomeTable;
+import net.alex.guzhenrenworld.biome.Ports;
+import net.alex.guzhenrenworld.biome.Replicas;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.biome.Climate;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 
 /**
- * The Southern Border [南疆] biome table: which vanilla biome stands where, by altitude, temperature and humidity.
+ * The Southern Border [南疆] biome table on the shared {@link BiomeTable}: Gu World's vanilla replicas, the biomes
+ * ported from Terralith, and the region's four landform biomes, which {@link SouthernBorderBiomeSettings} builds.
  *
- * <p>{@link #SURFACE} is indexed {@code [elevation][temperature][humidity]}. The six {@link #ELEVATIONS} bands
- * read {@code SouthernBorderTerrain}'s elevation, so in blocks they are plain floor below y 94, hills to 164,
- * mid slopes to 269, high slopes to 348, peaks to 383 and snowy summits above, the few highest points. The
- * three {@link #TEMPERATURES} are cold, mild and warm, cut so that, measured over eight kilometers, cold is a
- * few percent and warm about half the region, the south; the three {@link #HUMIDITIES} are dry, medium and
- * wet, cut so dry is about a tenth and wet over two fifths, since the region leans wet. Each surface biome goes
- * in twice per weirdness half, at depth 0 and 1, as vanilla adds its surface biomes, so the ground under a
- * biome keeps it.
+ * <p>The relief axis is {@code SouthernBorderTerrain}'s elevation, so the five {@link #ELEVATIONS} bands are, in
+ * blocks, lowland below y 90 (valley floors, plains, floodplains), hills to 150 (the lower benches), mid slopes to
+ * 220 (the upper benches), high slopes to 280 and peaks above; each band carries its own family:
+ * <ul>
+ *   <li>Lowland: plains and meadows, forests from birch to dark forest, bamboo, peach groves, and in the warm, wet
+ *   south rainforest and orchid swamps.</li>
+ *   <li>Hills: the plateau family on the benches, forests, cloud forest where it is wet, rainforest where it is hot;
+ *   hot springs rare on the cool to mild, dry to medium plateaus.</li>
+ *   <li>Mid slopes: plateaus, taiga, misty mountains and cloud forest; hot springs rare again.</li>
+ *   <li>High slopes: windswept hills, taiga and misty mountains.</li>
+ *   <li>Peaks: stony peaks.</li>
+ * </ul>
+ * The weirdness is a 512-block variant noise with its sign kept ({@code SouthernBorderTerrain}), so neighboring
+ * patches of one climate alternate between a cell's normal and variant biome, and the noise's far tops carry the
+ * rare one.
  *
- * <p>Rivers take the narrow weirdness band {@link #RIVER_CHANNEL} on the two lowest bands only, where the
- * terrain carves its channels; every land entry stays outside that band, so the two never tie. The terrain
- * scales its shore by {@link #RIVER_WEIRDNESS}, so the band covers exactly the channels that hold water. Lush
- * caves sit under the wet third and dripstone caves under the dry third, between {@link #CAVE_DEPTH}.
+ * <p>The landform code stands in as continentalness: the ordinary table takes the band below 0.1, where the code is
+ * -1, and each of the four {@link #LANDFORMS} takes the band of its code in {@code SouthernBorderLandforms.CODES},
+ * whatever the altitude and climate. Rivers take the weirdness band within {@link #RIVER_WEIRDNESS} of zero on the
+ * two lowest bands, through the landforms too; the terrain sets the weirdness inside that band exactly where a
+ * channel holds water. Lush caves sit under the wettest humidity band and dripstone caves under the driest, between
+ * {@link #CAVE_DEPTH}, under ordinary ground only.
+ *
+ * <p>None of these biomes joins a vanilla biome tag, so no vanilla structure starts here, the strongholds included,
+ * and nothing another mod adds to the overworld's biomes reaches them. {@link #LAND}, every surface biome but the
+ * river, is where the spirit spring [元泉] may stand. {@link #addTranslations} names the {@link #LANDFORMS}.
  *
  * <p>⚠ The table is a first prototype for Alex to judge in game, not a settled pick.
  *
@@ -37,85 +74,109 @@ import net.minecraft.world.level.biome.Climate;
 
 public final class SouthernBorderBiomes {
 
+    public static final ResourceKey<Biome> KARST_PEAK_FOREST = key("karst_peak_forest");
+    public static final ResourceKey<Biome> DANXIA = key("danxia");
+    public static final ResourceKey<Biome> SANDSTONE_PILLARS = key("sandstone_pillars");
+    public static final ResourceKey<Biome> ZHANGSHIYAN_CLIFFS = key("zhangshiyan_cliffs");
+    public static final List<ResourceKey<Biome>> LANDFORMS =
+            List.of(KARST_PEAK_FOREST, DANXIA, SANDSTONE_PILLARS, ZHANGSHIYAN_CLIFFS);
+    public static final List<ResourceKey<Biome>> LAND = getLand();
     static final float RIVER_WEIRDNESS = 0.012F;
     private static final List<Climate.Parameter> ELEVATIONS = List.of(
-            Climate.Parameter.span(-1.0F, -0.75F),
-            Climate.Parameter.span(-0.75F, -0.35F),
-            Climate.Parameter.span(-0.35F, 0.25F),
-            Climate.Parameter.span(0.25F, 0.7F),
-            Climate.Parameter.span(0.7F, 0.9F),
-            Climate.Parameter.span(0.9F, 1.0F));
-    private static final List<Climate.Parameter> TEMPERATURES = List.of(
-            Climate.Parameter.span(-1.0F, -0.4F),
-            Climate.Parameter.span(-0.4F, -0.03F),
-            Climate.Parameter.span(-0.03F, 1.0F));
-    private static final List<Climate.Parameter> HUMIDITIES = List.of(
-            Climate.Parameter.span(-1.0F, -0.45F),
-            Climate.Parameter.span(-0.45F, 0.0F),
-            Climate.Parameter.span(0.0F, 1.0F));
-    private static final List<List<List<ResourceKey<Biome>>>> SURFACE = List.of(
-            List.of(
-                    List.of(Biomes.TAIGA, Biomes.TAIGA, Biomes.TAIGA),
-                    List.of(Biomes.PLAINS, Biomes.PLAINS, Biomes.SWAMP),
-                    List.of(Biomes.SAVANNA, Biomes.SPARSE_JUNGLE, Biomes.JUNGLE)),
-            List.of(
-                    List.of(Biomes.TAIGA, Biomes.TAIGA, Biomes.OLD_GROWTH_SPRUCE_TAIGA),
-                    List.of(Biomes.BIRCH_FOREST, Biomes.FOREST, Biomes.DARK_FOREST),
-                    List.of(Biomes.SAVANNA_PLATEAU, Biomes.BAMBOO_JUNGLE, Biomes.JUNGLE)),
-            List.of(
-                    List.of(Biomes.OLD_GROWTH_PINE_TAIGA, Biomes.OLD_GROWTH_PINE_TAIGA, Biomes.OLD_GROWTH_PINE_TAIGA),
-                    List.of(Biomes.WINDSWEPT_FOREST, Biomes.FOREST, Biomes.OLD_GROWTH_BIRCH_FOREST),
-                    List.of(Biomes.WINDSWEPT_SAVANNA, Biomes.FOREST, Biomes.BAMBOO_JUNGLE)),
-            List.of(
-                    List.of(Biomes.GROVE, Biomes.GROVE, Biomes.GROVE),
-                    List.of(Biomes.WINDSWEPT_HILLS, Biomes.CHERRY_GROVE, Biomes.OLD_GROWTH_SPRUCE_TAIGA),
-                    List.of(Biomes.WINDSWEPT_HILLS, Biomes.MEADOW, Biomes.OLD_GROWTH_SPRUCE_TAIGA)),
-            List.of(
-                    List.of(Biomes.SNOWY_SLOPES, Biomes.SNOWY_SLOPES, Biomes.SNOWY_SLOPES),
-                    List.of(Biomes.STONY_PEAKS, Biomes.STONY_PEAKS, Biomes.STONY_PEAKS),
-                    List.of(Biomes.STONY_PEAKS, Biomes.STONY_PEAKS, Biomes.STONY_PEAKS)),
-            List.of(
-                    List.of(Biomes.JAGGED_PEAKS, Biomes.JAGGED_PEAKS, Biomes.JAGGED_PEAKS),
-                    List.of(Biomes.JAGGED_PEAKS, Biomes.JAGGED_PEAKS, Biomes.JAGGED_PEAKS),
-                    List.of(Biomes.JAGGED_PEAKS, Biomes.JAGGED_PEAKS, Biomes.JAGGED_PEAKS)));
-    private static final Climate.Parameter FULL_RANGE = Climate.Parameter.span(-1.0F, 1.0F);
-    private static final Climate.Parameter RIVER_CHANNEL = Climate.Parameter.span(-RIVER_WEIRDNESS, RIVER_WEIRDNESS);
-    private static final List<Climate.Parameter> LAND_WEIRDNESS = List.of(
-            Climate.Parameter.span(-1.0F, -RIVER_WEIRDNESS),
-            Climate.Parameter.span(RIVER_WEIRDNESS, 1.0F));
-    private static final Climate.Parameter LOWLANDS = Climate.Parameter.span(-1.0F, -0.35F);
+            Climate.Parameter.span(-1.0F, -0.704F),
+            Climate.Parameter.span(-0.704F, -0.259F),
+            Climate.Parameter.span(-0.259F, 0.259F),
+            Climate.Parameter.span(0.259F, 0.704F),
+            Climate.Parameter.span(0.704F, 1.0F));
+    private static final Climate.Parameter ORDINARY = Climate.Parameter.span(-1.0F, 0.1F);
+    private static final Climate.Parameter LOWLANDS = Climate.Parameter.span(-1.0F, -0.259F);
     private static final Climate.Parameter CAVE_DEPTH = Climate.Parameter.span(0.2F, 0.9F);
-    private static final float[] SURFACE_DEPTHS = { 0.0F, 1.0F };
+    private static final List<List<BiomeTable.Cell>> LOWLAND = List.of(
+            List.of(of(PLAINS, MEADOW), of(PLAINS, MEADOW), of(TAIGA, FOREST), of(TAIGA, FOREST),
+                    of(TAIGA, DARK_FOREST)),
+            List.of(of(PLAINS, MEADOW), of(PLAINS, MEADOW), of(FOREST, BIRCH_FOREST), of(FOREST, DARK_FOREST),
+                    of(DARK_FOREST, ORCHID_SWAMP)),
+            List.of(of(PLAINS, MEADOW), of(PLAINS, PEACH_GROVE), of(FOREST, PEACH_GROVE), of(BAMBOO_JUNGLE, FOREST),
+                    of(ORCHID_SWAMP, DARK_FOREST)),
+            List.of(of(PLAINS), of(PLAINS, PEACH_GROVE), of(FOREST, BAMBOO_JUNGLE), of(RAINFOREST, BAMBOO_JUNGLE),
+                    of(ORCHID_SWAMP, RAINFOREST)),
+            List.of(of(PLAINS), of(PLAINS, RAINFOREST), of(RAINFOREST, BAMBOO_JUNGLE),
+                    of(RAINFOREST, BAMBOO_JUNGLE), of(RAINFOREST, ORCHID_SWAMP)));
+    private static final List<List<BiomeTable.Cell>> HILLS = List.of(
+            List.of(of(TAIGA, WINDSWEPT_HILLS), of(TAIGA, FOREST), of(TAIGA, FOREST), of(TAIGA, DARK_FOREST),
+                    of(TAIGA, DARK_FOREST)),
+            List.of(of(MEADOW, PLATEAU), new BiomeTable.Cell(PLATEAU, MEADOW, HOT_SPRINGS),
+                    new BiomeTable.Cell(FORESTED_PLATEAU, BIRCH_FOREST, HOT_SPRINGS), of(FOREST, DARK_FOREST),
+                    of(CLOUD_FOREST, DARK_FOREST)),
+            List.of(of(MEADOW, PLATEAU), new BiomeTable.Cell(PLATEAU, PEACH_GROVE, HOT_SPRINGS),
+                    new BiomeTable.Cell(FORESTED_PLATEAU, FOREST, HOT_SPRINGS), of(BAMBOO_JUNGLE, FOREST),
+                    of(CLOUD_FOREST, MISTY_MOUNTAINS)),
+            List.of(of(PLATEAU, MEADOW), of(PLATEAU, PEACH_GROVE), of(FOREST, FORESTED_PLATEAU),
+                    of(BAMBOO_JUNGLE, RAINFOREST), of(RAINFOREST, CLOUD_FOREST)),
+            List.of(of(PLATEAU, MEADOW), of(PLATEAU, FORESTED_PLATEAU), of(RAINFOREST, BAMBOO_JUNGLE),
+                    of(RAINFOREST, BAMBOO_JUNGLE), of(RAINFOREST, CLOUD_FOREST)));
+    private static final List<List<BiomeTable.Cell>> MID_SLOPES = List.of(
+            List.of(of(TAIGA, WINDSWEPT_HILLS), of(TAIGA, WINDSWEPT_HILLS), of(TAIGA, WINDSWEPT_HILLS),
+                    of(TAIGA, WINDSWEPT_HILLS), of(TAIGA, WINDSWEPT_HILLS)),
+            List.of(of(WINDSWEPT_HILLS, PLATEAU), new BiomeTable.Cell(TAIGA, FORESTED_PLATEAU, HOT_SPRINGS),
+                    of(TAIGA, BIRCH_FOREST), of(MISTY_MOUNTAINS, TAIGA), of(CLOUD_FOREST, MISTY_MOUNTAINS)),
+            List.of(of(PLATEAU, WINDSWEPT_HILLS), new BiomeTable.Cell(FORESTED_PLATEAU, TAIGA, HOT_SPRINGS),
+                    of(MISTY_MOUNTAINS, FORESTED_PLATEAU), of(CLOUD_FOREST, MISTY_MOUNTAINS),
+                    of(CLOUD_FOREST, MISTY_MOUNTAINS)),
+            List.of(of(PLATEAU, MEADOW), new BiomeTable.Cell(FORESTED_PLATEAU, PLATEAU, HOT_SPRINGS),
+                    of(FOREST, MISTY_MOUNTAINS), of(CLOUD_FOREST, MISTY_MOUNTAINS), of(CLOUD_FOREST, RAINFOREST)),
+            List.of(of(PLATEAU, MEADOW), of(FORESTED_PLATEAU, PLATEAU), of(RAINFOREST, MISTY_MOUNTAINS),
+                    of(CLOUD_FOREST, RAINFOREST), of(CLOUD_FOREST, MISTY_MOUNTAINS)));
+    private static final List<BiomeTable.Cell> HIGH_SLOPE_WARM = List.of(of(WINDSWEPT_HILLS, PLATEAU),
+            of(WINDSWEPT_HILLS, MISTY_MOUNTAINS), of(MISTY_MOUNTAINS, TAIGA), of(MISTY_MOUNTAINS, CLOUD_FOREST),
+            of(MISTY_MOUNTAINS));
+    private static final List<List<BiomeTable.Cell>> HIGH_SLOPES = List.of(
+            List.of(of(WINDSWEPT_HILLS, STONY_PEAKS), of(WINDSWEPT_HILLS, TAIGA), of(TAIGA, WINDSWEPT_HILLS),
+                    of(TAIGA), of(TAIGA)),
+            List.of(of(WINDSWEPT_HILLS), of(WINDSWEPT_HILLS, TAIGA), of(TAIGA, MISTY_MOUNTAINS),
+                    of(MISTY_MOUNTAINS, TAIGA), of(MISTY_MOUNTAINS)),
+            HIGH_SLOPE_WARM, HIGH_SLOPE_WARM, HIGH_SLOPE_WARM);
+    private static final List<BiomeTable.Cell> PEAK = List.of(of(STONY_PEAKS), of(STONY_PEAKS), of(STONY_PEAKS),
+            of(STONY_PEAKS), of(STONY_PEAKS));
+    private static final List<List<BiomeTable.Cell>> PEAKS = List.of(PEAK, PEAK, PEAK, PEAK, PEAK);
 
     private SouthernBorderBiomes() {}
 
     public static Climate.ParameterList<Holder<Biome>> getParameters(HolderGetter<Biome> biomes) {
-        List<Pair<Climate.ParameterPoint, Holder<Biome>>> entries = new ArrayList<>();
-        for (int elevation = 0; elevation < ELEVATIONS.size(); elevation++) {
-            for (int temperature = 0; temperature < TEMPERATURES.size(); temperature++) {
-                for (int humidity = 0; humidity < HUMIDITIES.size(); humidity++) {
-                    Holder<Biome> biome = biomes.getOrThrow(SURFACE.get(elevation).get(temperature).get(humidity));
-                    for (Climate.Parameter weirdness : LAND_WEIRDNESS) {
-                        addSurface(entries, biome, TEMPERATURES.get(temperature), HUMIDITIES.get(humidity),
-                                ELEVATIONS.get(elevation), weirdness);
-                    }
-                }
-            }
+        BiomeTable table = new BiomeTable(ORDINARY, RIVER_WEIRDNESS)
+                .addBand(ELEVATIONS.get(0), LOWLAND)
+                .addBand(ELEVATIONS.get(1), HILLS)
+                .addBand(ELEVATIONS.get(2), MID_SLOPES)
+                .addBand(ELEVATIONS.get(3), HIGH_SLOPES)
+                .addBand(ELEVATIONS.get(4), PEAKS);
+        for (int index = 0; index < LANDFORMS.size(); index++) {
+            float code = SouthernBorderLandforms.CODES.get(index);
+            table.addFixed(LANDFORMS.get(index), Climate.Parameter.span(code - 0.1F, code + 0.1F));
         }
-        addSurface(entries, biomes.getOrThrow(Biomes.RIVER), FULL_RANGE, FULL_RANGE, LOWLANDS, RIVER_CHANNEL);
-        entries.add(Pair.of(Climate.parameters(FULL_RANGE, HUMIDITIES.getLast(), FULL_RANGE, FULL_RANGE, CAVE_DEPTH,
-                FULL_RANGE, 0.0F), biomes.getOrThrow(Biomes.LUSH_CAVES)));
-        entries.add(Pair.of(Climate.parameters(FULL_RANGE, HUMIDITIES.getFirst(), FULL_RANGE, FULL_RANGE, CAVE_DEPTH,
-                FULL_RANGE, 0.0F), biomes.getOrThrow(Biomes.DRIPSTONE_CAVES)));
-        return new Climate.ParameterList<>(entries);
+        return table.addRiver(Replicas.RIVER, LOWLANDS)
+                .addCave(Replicas.LUSH_CAVES, BiomeTable.HUMIDITIES.getLast(), CAVE_DEPTH)
+                .addCave(Replicas.DRIPSTONE_CAVES, BiomeTable.HUMIDITIES.getFirst(), CAVE_DEPTH)
+                .build(biomes);
     }
 
-    private static void addSurface(List<Pair<Climate.ParameterPoint, Holder<Biome>>> entries, Holder<Biome> biome,
-            Climate.Parameter temperature, Climate.Parameter humidity, Climate.Parameter elevation,
-            Climate.Parameter weirdness) {
-        for (float depth : SURFACE_DEPTHS) {
-            entries.add(Pair.of(Climate.parameters(temperature, humidity, FULL_RANGE, elevation,
-                    Climate.Parameter.point(depth), weirdness, 0.0F), biome));
+    public static void addTranslations(LanguageProvider languageProvider, List<String> names) {
+        if (names.size() != LANDFORMS.size()) {
+            throw new IllegalArgumentException(names.size() + " landform names for " + LANDFORMS.size() + " biomes");
         }
+        for (int index = 0; index < LANDFORMS.size(); index++) {
+            languageProvider.add(LANDFORMS.get(index).location().toLanguageKey("biome"), names.get(index));
+        }
+    }
+
+    private static List<ResourceKey<Biome>> getLand() {
+        List<ResourceKey<Biome>> land = new ArrayList<>(List.of(PLAINS, FOREST, BIRCH_FOREST, DARK_FOREST,
+                BAMBOO_JUNGLE, MEADOW, TAIGA, WINDSWEPT_HILLS, STONY_PEAKS));
+        land.addAll(Ports.BIOMES);
+        land.addAll(LANDFORMS);
+        return List.copyOf(land);
+    }
+
+    private static ResourceKey<Biome> key(String name) {
+        return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
     }
 }

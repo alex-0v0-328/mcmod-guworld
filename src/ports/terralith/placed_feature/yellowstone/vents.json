@@ -1,0 +1,62 @@
+{
+  "feature": "guworld:yellowstone/vents",
+  "placement": [
+    {
+      "count": 30,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "OCEAN_FLOOR",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "direction_of_search": "down",
+      "max_steps": 6,
+      "target_condition": {
+        "predicates": [
+          {
+            "blocks": [
+              "minecraft:magma_block"
+            ],
+            "offset": [
+              0,
+              1,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:water"
+            ],
+            "offset": [
+              0,
+              2,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:air"
+            ],
+            "offset": [
+              0,
+              5,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:environment_scan"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

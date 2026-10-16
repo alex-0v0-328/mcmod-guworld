@@ -1,7 +1,11 @@
 package net.alex.guzhenrenworld.datagen.lang;
 
+import java.util.List;
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.biome.Ports;
+import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.SouthernBorder;
+import net.alex.guzhenrenworld.dimension.SouthernBorderBiomes;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -39,5 +43,9 @@ public class ZhCnLanguageProvider extends LanguageProvider {
     protected void addTranslations() {
         TreasureYellowHeaven.addTranslations(this, "宝黄天");
         SouthernBorder.addTranslations(this, "南疆");
+        Replicas.addTranslations(this, List.of("平原", "森林", "桦木森林", "黑森林", "竹林", "草甸", "针叶林", "风袭丘陵",
+                "裸岩山峰", "河流", "繁茂洞穴", "溶洞"));
+        Ports.addTranslations(this, List.of("高原", "林间高原", "云雾林", "雾山", "雨林", "热海", "兰花沼泽", "桃林"));
+        SouthernBorderBiomes.addTranslations(this, List.of("喀斯特峰林", "丹霞", "砂岩峰林", "嶂石岩"));
     }
 }

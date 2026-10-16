@@ -38,6 +38,27 @@
     "minecraft:beach",
     "minecraft:snowy_beach",
     "minecraft:stony_shore",
-    "minecraft:mushroom_fields"
+    "minecraft:mushroom_fields",
+    "guworld:plains",
+    "guworld:forest",
+    "guworld:birch_forest",
+    "guworld:dark_forest",
+    "guworld:bamboo_jungle",
+    "guworld:meadow",
+    "guworld:taiga",
+    "guworld:windswept_hills",
+    "guworld:stony_peaks",
+    "guworld:plateau",
+    "guworld:forested_plateau",
+    "guworld:cloud_forest",
+    "guworld:misty_mountains",
+    "guworld:rainforest",
+    "guworld:hot_springs",
+    "guworld:orchid_swamp",
+    "guworld:peach_grove",
+    "guworld:karst_peak_forest",
+    "guworld:danxia",
+    "guworld:sandstone_pillars",
+    "guworld:zhangshiyan_cliffs"
   ]
 }
