@@ -32,9 +32,10 @@ import org.jetbrains.annotations.Nullable;
  * the calcite basin and the rim holds the water instead of letting it sheet outward. Outer
  * {@code x} cells keep the original terrain (dirt stays dirt).
  * {@link #placeStructure} lays both grid layers and the source around the ground block at layer
- * two's level, first clearing {@link #CLEAR_HEIGHT_ABOVE} cells over every non-{@code x} column
- * ({@link #BASIN_COLUMNS}, enough for double plants and snow layers); it is public for GameTests,
- * which run on a {@code ServerLevel}.
+ * two's level. Every non-{@code x} column ({@link #BASIN_COLUMNS}) is first leveled to g: ground up to
+ * {@link #MAX_RISE} lower is filled with dirt up to the basin, and {@link #CLEAR_HEIGHT_ABOVE} cells above g
+ * are cleared, enough for ground up to {@link #MAX_RISE} higher with double plants or snow on it. It is
+ * public for GameTests, which run on a {@code ServerLevel}.
  *
  * <p>The spring itself is Guzhenren's block, reached by id through {@link GuzhenrenBlocks#SPIRIT_SPRING}
  * because this mod never compiles against Guzhenren; the first flow tick goes to the fluid the
@@ -44,41 +45,39 @@ import org.jetbrains.annotations.Nullable;
  * 20%, 15%, 10%, 5% ({@link #CLUSTER_SIZE_WEIGHTS}; {@link #getClusterSize} maps a [0,100)
  * roll through the cumulative weights). The members ring the cluster's first spring, 8..10 blocks
  * (horizontal) from it ({@link #isWithinReach}) and at least 8 from every other ({@link #isSeparationAcceptable}),
- * so the 7x7 basins never overlap and stand 1..3 blocks apart; a whole cluster spans about 27x27 blocks.
- * Every spring stays within the Chebyshev bound {@link #MAX_ORIGIN_OFFSET} of the feature origin: the
- * origin sits inside the generating chunk and features may write one chunk past its border, so ±12
- * keeps every 7x7 inside the 3x3 chunk window instead of clipping outer columns. {@link #findMemberSpot}
- * tries {@link #MEMBER_SPOT_ATTEMPTS} random candidates per member; a member whose candidates all fail
- * terrain checks is dropped -- the rolled size is the attempt, not a quota.
+ * so the 7x7 basins never overlap; a whole cluster spans about 25x25 blocks. Every spring stays within the
+ * Chebyshev bound {@link #MAX_ORIGIN_OFFSET} of the feature origin: the origin sits inside the generating chunk and
+ * features may read and write one chunk past its border, so ±9 keeps every 15x15 flatness check, and with it every
+ * 7x7 basin, inside the 3x3 chunk window. {@link #findMemberSpot} tries {@link #MEMBER_SPOT_ATTEMPTS} random
+ * candidates per member; a member whose candidates all fail terrain checks is dropped -- the rolled size is the
+ * attempt, not a quota.
  *
  * <p>Anchor search: {@link #findAnchorSpot} tries the origin column, then up to
  * {@link #ANCHOR_SPOT_ATTEMPTS} random columns within the same ±{@link #MAX_ORIGIN_OFFSET} bound.
- * Judged at the origin alone, the strict terrain rules let ≈1-2% of rolls through, so a spring stood
- * about one per 50,000 chunks; the search keeps the rules and only gives each roll more columns
- * (≈4% of rolls now grow a cluster). A {@code /place feature} likewise lands on qualifying ground
- * within that bound of the player instead of failing on the column underfoot.
+ * The terrain rules alone would let few rolls through at the origin column; the search keeps the rules and only
+ * gives each roll more columns. A {@code /place feature} likewise lands on qualifying ground within that bound of
+ * the player instead of failing on the column underfoot.
  *
- * <p>Surface placement ({@link #findSurfaceGround}, public for GameTests) happens on flat, dry land only:
- * vegetation runs before us ({@code VEGETAL_DECORATION} precedes {@code TOP_LAYER_MODIFICATION}),
- * so above every non-{@code x} column the two cells over the ground are cleared to air. Logs and
- * leaves at the center, and any structure column whose own surface height differs from the center's
- * veto the spot ({@link #isTerrainUneven}) -- slopes, ponds and trees all move the heightmap, so
- * bumps never leave plants floating above the carve -- and stalk plants that dodge the heightmap
- * (no collision: bamboo, sugar cane) veto from the clear band. {@link #isTerrainWet} vetoes any
+ * <p>Surface placement ({@link #findSurfaceGround}, public for GameTests) happens on level, dry land only,
+ * on a mountain top, at a mountain foot or on a plain alike: the ground of the 15x15 square around the center
+ * (radius {@link #FLAT_RADIUS}, about twice the basin's side) may differ by at most {@link #MAX_RISE} blocks from
+ * its lowest to its highest column ({@link #isTerrainRough}). Vegetation runs before us ({@code VEGETAL_DECORATION}
+ * precedes {@code TOP_LAYER_MODIFICATION}), so slopes, ponds and trees all move the heightmap the check reads:
+ * a tree within the square vetoes it, and so do logs and leaves at the center. Stalk plants that dodge the
+ * heightmap (no collision: bamboo, sugar cane) veto from the basin's clear band. {@link #isTerrainWet} vetoes any
  * structure column that is ice or holds a fluid in its ground or the cell above: water level with the
  * ground passes the height rule, and vanilla's {@code freeze_top_layer} runs earlier in the same step
  * (a biome modifier appends after the biome's own features), so a frozen pond or river is flat ice with
  * no fluid at the surface. The searches reach ±{@link #MAX_ORIGIN_OFFSET} past the biome filter, into
  * rivers and frozen oceans as well.
  *
- * <p>⚠ The terrain checks reach up to ±15 blocks into neighbor chunks, which may not have grown their trees
+ * <p>⚠ The terrain checks reach up to ±16 blocks into neighbor chunks, which may not have grown their trees
  * yet, so whether a spot qualifies can depend on the order chunks generate in, as vanilla tree placement
  * does.
  *
- * <p>⚠ Layout, rarity and the cluster numbers are Alex's picks, not
- * silent tunables. Symbol legend: {@code x}=keep, {@code a}=air (the
- * basin well), {@code y}=cobblestone, {@code t}=mossy cobblestone, {@code f}=calcite,
- * {@code c}=cobblestone slab (bottom), {@code m}=mossy cobblestone slab (bottom).
+ * <p>⚠ Layout, rarity, flatness and the cluster numbers are Alex's picks, not silent tunables. Symbol legend:
+ * {@code x}=keep, {@code a}=air (the basin well), {@code y}=cobblestone, {@code t}=mossy cobblestone,
+ * {@code f}=calcite, {@code c}=cobblestone slab (bottom), {@code m}=mossy cobblestone slab (bottom).
  *
  * @author Alex
  * @version 1.0.0
@@ -104,7 +103,9 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
             "xyccmyx",
             "xxttyxx" };
     private static final int RADIUS = 3;
-    private static final int CLEAR_HEIGHT_ABOVE = 2;
+    private static final int FLAT_RADIUS = 7;
+    private static final int MAX_RISE = 3;
+    private static final int CLEAR_HEIGHT_ABOVE = MAX_RISE + 2;
     private static final List<BlockPos> BASIN_COLUMNS = collectBasinColumns();
 
     public SpiritSpringFeature() {
@@ -136,7 +137,7 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
     static final int CLUSTER_MIN_SEPARATION = 8;
     static final int CLUSTER_MAX_REACH = 10;
     private static final int MEMBER_SPOT_ATTEMPTS = 32;
-    private static final int MAX_ORIGIN_OFFSET = 12;
+    private static final int MAX_ORIGIN_OFFSET = 9;
 
     static int getClusterSize(int roll) {
         int cumulative = 0;
@@ -195,23 +196,32 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
     }
     //endregion
 
-    //region Terrain [地形] -- flat, dry, treeless ground only
+    //region Terrain [地形] -- level, dry, treeless ground only
     public static @Nullable BlockPos findSurfaceGround(WorldGenLevel level, int x, int z) {
         BlockPos groundCenter = new BlockPos(x, getGroundY(level, x, z), z);
         BlockState groundState = level.getBlockState(groundCenter);
         if (groundState.is(BlockTags.LOGS) || groundState.is(BlockTags.LEAVES)) return null;
-        if (isTerrainUneven(level, groundCenter) || isTerrainWet(level, groundCenter)) return null;
+        if (isTerrainRough(level, groundCenter) || isTerrainWet(level, groundCenter)) return null;
         return groundCenter;
     }
 
-    private static int getGroundY(WorldGenLevel level, int x, int z) {
+    private static int getGroundY(LevelAccessor level, int x, int z) {
         return level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1;
     }
 
-    private static boolean isTerrainUneven(WorldGenLevel level, BlockPos groundCenter) {
+    private static boolean isTerrainRough(WorldGenLevel level, BlockPos groundCenter) {
+        int lowest = groundCenter.getY();
+        int highest = groundCenter.getY();
+        for (int offsetX = -FLAT_RADIUS; offsetX <= FLAT_RADIUS; offsetX++) {
+            for (int offsetZ = -FLAT_RADIUS; offsetZ <= FLAT_RADIUS; offsetZ++) {
+                int y = getGroundY(level, groundCenter.getX() + offsetX, groundCenter.getZ() + offsetZ);
+                lowest = Math.min(lowest, y);
+                highest = Math.max(highest, y);
+            }
+        }
+        if (highest - lowest > MAX_RISE) return true;
         for (BlockPos offset : BASIN_COLUMNS) {
             BlockPos ground = groundCenter.offset(offset);
-            if (getGroundY(level, ground.getX(), ground.getZ()) != groundCenter.getY()) return true;
             for (int offsetY = 1; offsetY <= CLEAR_HEIGHT_ABOVE; offsetY++) {
                 Block above = level.getBlockState(ground.above(offsetY)).getBlock();
                 if (above instanceof BambooStalkBlock || above instanceof SugarCaneBlock) return true;
@@ -222,7 +232,8 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
 
     private static boolean isTerrainWet(WorldGenLevel level, BlockPos groundCenter) {
         for (BlockPos offset : BASIN_COLUMNS) {
-            BlockPos ground = groundCenter.offset(offset);
+            BlockPos column = groundCenter.offset(offset);
+            BlockPos ground = column.atY(getGroundY(level, column.getX(), column.getZ()));
             if (level.getBlockState(ground).is(BlockTags.ICE)) return true;
             if (!level.getFluidState(ground).isEmpty() || !level.getFluidState(ground.above()).isEmpty()) return true;
         }
@@ -232,6 +243,12 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
 
     //region Placement [放置] -- the two grid layers, the clear band and the source
     public static void placeStructure(LevelAccessor level, BlockPos groundCenter) {
+        for (BlockPos offset : BASIN_COLUMNS) {
+            BlockPos column = groundCenter.offset(offset);
+            for (int y = getGroundY(level, column.getX(), column.getZ()) + 1; y < groundCenter.getY() - 1; y++) {
+                level.setBlock(column.atY(y), Blocks.DIRT.defaultBlockState(), 2);
+            }
+        }
         placeLayer(level, groundCenter.below(), LAYER_ONE);
         placeLayer(level, groundCenter, LAYER_TWO);
         for (BlockPos offset : BASIN_COLUMNS) {
