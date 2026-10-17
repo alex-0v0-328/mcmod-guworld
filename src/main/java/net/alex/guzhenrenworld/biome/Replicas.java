@@ -15,9 +15,11 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.SurfaceRuleData;
 import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
@@ -27,7 +29,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  * namespace ({@code guworld:plains} for {@code minecraft:plains}), with vanilla's climate, colors, music, mob spawns
  * and features in vanilla's order, so a region can place it and later tune it without touching the overworld.
  *
- * <p>Two things differ, both because the heightfield regions carve their own caves:
+ * <p>Three things differ; the first two because the heightfield regions carve their own caves:
  * <ul>
  *   <li>No replica carves. A carver's tunnel reaches up to eight chunks from where it starts, so a tunnel from one
  *   biome cuts a cliff face or a pillar standing in another open. {@link #getUncarved} drops a template's carvers,
@@ -35,6 +37,9 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  *   <li>Vanilla's overworld surface rules name their biomes by key, so a replica would lose its biome's surface,
  *   stony peaks their stone and calcite, the windswept hills their bare stone. {@link #getSurfaceRules} returns
  *   vanilla's rules with every replica added beside the biome it copies.</li>
+ *   <li>Every spawn sits under its own entity type's category ({@link #getSpawnsByCategory}). Vanilla's bamboo jungle
+ *   lists the ocelot under monsters, which spends the monster cap on it and makes NeoForge warn for a modded biome;
+ *   the rebuild moves such a spawn, with its spawn cost, to its type's category.</li>
  * </ul>
  *
  * <p>{@link #TEMPLATES} pairs each replica with its vanilla biome; {@link #BIOMES} lists the replicas in that order,
@@ -100,9 +105,22 @@ public final class Replicas {
                 .temperatureAdjustment(climate.temperatureModifier())
                 .downfall(climate.downfall())
                 .specialEffects(template.getModifiedSpecialEffects())
-                .mobSpawnSettings(template.getMobSettings())
+                .mobSpawnSettings(getSpawnsByCategory(template.getMobSettings()))
                 .generationSettings(new BiomeGenerationSettings(Map.of(), features))
                 .build();
+    }
+
+    private static MobSpawnSettings getSpawnsByCategory(MobSpawnSettings template) {
+        MobSpawnSettings.Builder builder = new MobSpawnSettings.Builder()
+                .creatureGenerationProbability(template.getCreatureProbability());
+        for (MobCategory category : MobCategory.values()) {
+            for (MobSpawnSettings.SpawnerData spawner : template.getMobs(category).unwrap()) {
+                builder.addSpawn(spawner.type.getCategory(), spawner);
+                MobSpawnSettings.MobSpawnCost cost = template.getMobSpawnCost(spawner.type);
+                if (cost != null) builder.addMobCharge(spawner.type, cost.charge(), cost.energyBudget());
+            }
+        }
+        return builder.build();
     }
 
     public static SurfaceRules.RuleSource getSurfaceRules() {
