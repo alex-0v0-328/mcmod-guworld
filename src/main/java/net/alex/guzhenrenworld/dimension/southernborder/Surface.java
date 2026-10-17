@@ -1,4 +1,4 @@
-package net.alex.guzhenrenworld.dimension;
+package net.alex.guzhenrenworld.dimension.southernborder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +36,14 @@ import net.minecraft.world.level.levelgen.VerticalAnchor;
  *
  * @author Alex
  * @version 1.0.0
- * @see SouthernBorderBiomes
+ * @see BiomeLayout
  * @since 1.0.0
  */
 
-final class SouthernBorderSurface {
+final class Surface {
 
     private static final int ROCK_BOTTOM = 48;
-    private static final int ROCK_TOP = (int) SouthernBorderLandforms.PEAK_Y;
+    private static final int ROCK_TOP = (int) Landforms.PEAK_Y;
     private static final int[] BAND_THICKNESS = { 3, 2, 4, 2, 5, 3, 2, 6, 2, 4, 3, 5 };
     private static final List<Block> DANXIA_BANDS = List.of(Blocks.RED_TERRACOTTA, Blocks.RED_SANDSTONE,
             Blocks.ORANGE_TERRACOTTA, Blocks.RED_SANDSTONE, Blocks.TERRACOTTA, Blocks.RED_TERRACOTTA,
@@ -53,10 +53,10 @@ final class SouthernBorderSurface {
     private static final List<Block> PILLAR_BANDS = List.of(Blocks.STONE, Blocks.ANDESITE,
             Blocks.LIGHT_GRAY_TERRACOTTA, Blocks.STONE, Blocks.TUFF, Blocks.ANDESITE, Blocks.STONE);
 
-    private SouthernBorderSurface() {}
+    private Surface() {}
 
     static SurfaceRules.RuleSource getRules() {
-        float[] cuts = SouthernBorderLandforms.TYPE_CUTS;
+        float[] cuts = Landforms.TYPE_CUTS;
         SurfaceRules.RuleSource landforms = SurfaceRules.sequence(
                 getTopsoil(),
                 SurfaceRules.ifTrue(getType(cuts[0], cuts[1]), getBands(DANXIA_BANDS)),
@@ -67,8 +67,8 @@ final class SouthernBorderSurface {
                         SurfaceRules.sequence(getStreaks(-0.0125, 0.0125, Blocks.CALCITE),
                                 getStreaks(0.25, 0.3, Blocks.ANDESITE))));
         return SurfaceRules.sequence(
-                SurfaceRules.ifTrue(SurfaceRules.noiseCondition(SouthernBorderLandforms.ZONE_NOISE,
-                                SouthernBorderLandforms.ZONE_MIDDLE - SouthernBorderLandforms.ZONE_HALF_WIDTH),
+                SurfaceRules.ifTrue(SurfaceRules.noiseCondition(Landforms.ZONE_NOISE,
+                                Landforms.ZONE_MIDDLE - Landforms.ZONE_HALF_WIDTH),
                         SurfaceRules.ifTrue(getAbove(ROCK_BOTTOM),
                                 SurfaceRules.ifTrue(SurfaceRules.waterBlockCheck(-1, 0), landforms))),
                 Ports.getSurfaceRules(),
@@ -82,7 +82,7 @@ final class SouthernBorderSurface {
     }
 
     private static SurfaceRules.ConditionSource getType(double low, double high) {
-        return SurfaceRules.noiseCondition(SouthernBorderLandforms.TYPE_NOISE, low, high);
+        return SurfaceRules.noiseCondition(Landforms.TYPE_NOISE, low, high);
     }
 
     private static SurfaceRules.RuleSource getStreaks(double low, double high, Block block) {

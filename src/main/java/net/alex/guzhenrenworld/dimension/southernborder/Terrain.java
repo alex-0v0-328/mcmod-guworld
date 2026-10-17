@@ -1,16 +1,17 @@
-package net.alex.guzhenrenworld.dimension;
+package net.alex.guzhenrenworld.dimension.southernborder;
 
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getBlend;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getChoice;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getCoordinate;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getDifference;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getFunction;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getNoise;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getScaled;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSmoothstep;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSpline;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getBlend;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getChoice;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getCoordinate;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getDifference;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getFunction;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getNoise;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getScaled;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSmoothstep;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSpline;
 
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.terrain.HeightfieldRouter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -36,7 +37,7 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *   crests and faint on the valley floors. Every mountain noise is read at {@link #MOUNTAIN_SCALE}, which
  *   stretches the ranges and keeps their flanks walkable. The mountain share ({@link #MOUNTAINS}, 0..1, a
  *   four-kilometer noise) shifts the sum down by up to 1 where it is low, so the plains keep only the odd hill;
- *   the river valleys ({@link SouthernBorderRivers}) shift it down further. A spline turns the sum into blocks,
+ *   the river valleys ({@link Rivers}) shift it down further. A spline turns the sum into blocks,
  *   flat at 0, up to {@link #PEAK_RISE}. {@link #RIDGE} holds the main ridge and {@link #RANGE} the sum without
  *   spurs and stream hollows, a field that changes only over kilometers, which also tells the streams where their
  *   headwaters lie.</li>
@@ -44,14 +45,14 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *   +115..118 blocks and steepens it just above, so those mountainsides carry shelves some tens of blocks wide
  *   and low summits end in flat tops, the ground the clan villages [山寨] will stand on. A kilometer-scale noise
  *   shifts both shelves by up to ±{@link #BENCH_SWING} blocks, so they never line up like contour rings.</li>
- *   <li>Mountain detail ({@link SouthernBorderMountains}): slope-following ridges on the flanks and vanilla's jagged
+ *   <li>Mountain detail ({@link Mountains}): slope-following ridges on the flanks and vanilla's jagged
  *   noise on the peaks, added to the rise before the benches are cut, so shelves stay flat.</li>
  *   <li>Detail: ±(0.6 + 2.5 × rise / 100, capped at 3.1) blocks of 64-block bumps.</li>
  * </ul>
  * The sum bends smoothly from y {@link #GROUND_CAP_START} toward {@link #GROUND_CAP}, which open ground never passes,
  * so the router's roughness and the jagged peaks stay under the y 320 cap.
  *
- * <p>{@link SouthernBorderLandforms} reshapes a third of this ground into cliff country and caps it at y 320. A
+ * <p>{@link Landforms} reshapes a third of this ground into cliff country and caps it at y 320. A
  * cliff is two heights and an edge: {@link #FOOT}, the ground at its foot, {@link #TOP}, the ground on top, and the
  * landform edge field, positive where the top holds; open ground has the two heights equal. The rivers flood and
  * carve both heights, and {@link #HEIGHT}, the actual surface, takes the top where the edge is positive and the
@@ -62,7 +63,7 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * as continentalness. The weirdness is a 512-block variant noise, stretched {@link #VARIANT_SPREAD} times so its far
  * tops, where the table's rare biomes sit, cover a few percent, with its sign kept and its size held at
  * {@link #LAND_WEIRDNESS} or more ({@link #getWeirdness}), except inside a channel that holds water, where it is the
- * river shore scaled into the river band, below {@code SouthernBorderBiomes.RIVER_WEIRDNESS}. The full vanilla cave set
+ * river shore scaled into the river band, below {@code BiomeLayout.RIVER_WEIRDNESS}. The full vanilla cave set
  * stays under the floor, below {@link #CAVE_CEILING_Y}; above it the mountains keep only cave tunnels
  * ({@link HeightfieldRouter}), and the landform zones none, so their walls stay whole.
  *
@@ -81,7 +82,7 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * @since 1.0.0
  */
 
-public final class SouthernBorderTerrain {
+public final class Terrain {
 
     private static final ResourceKey<NormalNoise.NoiseParameters> CONTINENT_NOISE = noiseKey("continent");
     private static final ResourceKey<NormalNoise.NoiseParameters> BASIN_NOISE = noiseKey("basin");
@@ -125,12 +126,12 @@ public final class SouthernBorderTerrain {
     private static final float GROUND_CAP_START = 294.0F;
     private static final float GROUND_CAP = 314.0F;
 
-    private SouthernBorderTerrain() {}
+    private Terrain() {}
 
     public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context) {
-        SouthernBorderRivers.registerNoises(context);
-        SouthernBorderMountains.registerNoises(context);
-        SouthernBorderLandforms.registerNoises(context);
+        Rivers.registerNoises(context);
+        Mountains.registerNoises(context);
+        Landforms.registerNoises(context);
         context.register(CONTINENT_NOISE, new NormalNoise.NoiseParameters(-12, 1.0, 1.0, 0.5));
         context.register(BASIN_NOISE, new NormalNoise.NoiseParameters(-10, 1.0, 0.5));
         context.register(ROLLING_NOISE, new NormalNoise.NoiseParameters(-8, 1.0));
@@ -149,7 +150,7 @@ public final class SouthernBorderTerrain {
 
     public static void registerDensityFunctions(BootstrapContext<DensityFunction> context) {
         HolderGetter<NormalNoise.NoiseParameters> noises = context.lookup(Registries.NOISE);
-        SouthernBorderRivers.Rivers rivers = SouthernBorderRivers.register(context);
+        Rivers.Network rivers = Rivers.register(context);
         Holder<DensityFunction> mountains = context.register(MOUNTAINS, DensityFunctions.flatCache(
                 getSmoothstep(getCoordinate(getNoise(noises, CONTINENT_NOISE)), MOUNTAINS_START, MOUNTAINS_FULL)));
         Holder<DensityFunction> ridge = context.register(RIDGE, DensityFunctions.flatCache(getRidge(noises)));
@@ -158,9 +159,9 @@ public final class SouthernBorderTerrain {
         Holder<DensityFunction> rise = context.register(RISE,
                 DensityFunctions.flatCache(getRise(noises, ridge, range, rivers.getStreamCut())));
         Holder<DensityFunction> ground = context.register(GROUND, DensityFunctions.flatCache(getGround(noises, rise)));
-        SouthernBorderLandforms.Cliffs cliffs =
-                SouthernBorderLandforms.register(context, ground, rivers.getGreatValley(), rivers.channel());
-        SouthernBorderMountains.registerRoughness(context, rise, cliffs.weight());
+        Landforms.Cliffs cliffs =
+                Landforms.register(context, ground, rivers.getGreatValley(), rivers.channel());
+        Mountains.registerRoughness(context, rise, cliffs.weight());
         Holder<DensityFunction> land =
                 context.register(LAND, DensityFunctions.flatCache(rivers.getFloodplain(cliffs.foot())));
         DensityFunction wet = rivers.getWet(land);
@@ -174,26 +175,26 @@ public final class SouthernBorderTerrain {
         DensityFunction onTop = getSmoothstep(getCoordinate(cliffs.edge()), -0.05F, 0.05F);
         Holder<DensityFunction> height = context.register(HEIGHT, getColumnCached(DensityFunctions.lerp(onTop,
                 new DensityFunctions.HolderHolder(foot), new DensityFunctions.HolderHolder(top))));
-        SouthernBorderRivers.registerShore(context, rivers, height);
+        Rivers.registerShore(context, rivers, height);
         context.register(ELEVATION, DensityFunctions.flatCache(
                 getBlend(-185.0 / 135.0, 1.0 / 135.0, new DensityFunctions.HolderHolder(height)).clamp(-1.0, 1.0)));
     }
 
     public static NoiseRouter createRouter(HolderGetter<DensityFunction> functions,
             HolderGetter<NormalNoise.NoiseParameters> noises) {
-        DensityFunction shore = SouthernBorderRivers.getShore(functions);
+        DensityFunction shore = Rivers.getShore(functions);
         return HeightfieldRouter.create(functions, noises, new HeightfieldRouter.Region(
                 new HeightfieldRouter.Surface(getFunction(functions, HEIGHT), getFunction(functions, FOOT),
-                        getFunction(functions, TOP), SouthernBorderLandforms.getEdge(functions),
-                        new HeightfieldRouter.Detail(SouthernBorderMountains.getRoughness(functions),
-                                SouthernBorderLandforms.getFaces(functions),
-                                SouthernBorderLandforms.getSolids(functions))),
+                        getFunction(functions, TOP), Landforms.getEdge(functions),
+                        new HeightfieldRouter.Detail(Mountains.getRoughness(functions),
+                                Landforms.getFaces(functions),
+                                Landforms.getSolids(functions))),
                 CAVE_CEILING_Y,
                 shore,
-                SouthernBorderLandforms.getWeight(functions),
+                Landforms.getWeight(functions),
                 DensityFunctions.flatCache(getNoise(noises, TEMPERATURE_NOISE)),
                 DensityFunctions.flatCache(getNoise(noises, VEGETATION_NOISE)),
-                SouthernBorderLandforms.getLandform(functions),
+                Landforms.getLandform(functions),
                 getFunction(functions, ELEVATION),
                 getWeirdness(DensityFunctions.flatCache(getScaled(VARIANT_SPREAD, getNoise(noises, VARIANT_NOISE))),
                         shore)));
@@ -203,7 +204,7 @@ public final class SouthernBorderTerrain {
         DensityFunction land = getChoice(variant, 0.0,
                 DensityFunctions.min(variant, DensityFunctions.constant(-LAND_WEIRDNESS)),
                 DensityFunctions.max(variant, DensityFunctions.constant(LAND_WEIRDNESS)));
-        return getChoice(shore, 1.0, getScaled(0.99 * SouthernBorderBiomes.RIVER_WEIRDNESS, shore), land);
+        return getChoice(shore, 1.0, getScaled(0.99 * BiomeLayout.RIVER_WEIRDNESS, shore), land);
     }
 
     private static DensityFunction getRidge(HolderGetter<NormalNoise.NoiseParameters> noises) {
@@ -236,7 +237,7 @@ public final class SouthernBorderTerrain {
     private static DensityFunction getGround(HolderGetter<NormalNoise.NoiseParameters> noises,
             Holder<DensityFunction> rise) {
         DensityFunction risen = DensityFunctions.add(new DensityFunctions.HolderHolder(rise),
-                SouthernBorderMountains.getDetail(noises, rise));
+                Mountains.getDetail(noises, rise));
         DensityFunction shift = getScaled(BENCH_SWING, getNoise(noises, BENCH_NOISE));
         DensityFunction terraced =
                 getDifference(getSpline(getCoordinate(DensityFunctions.add(risen, shift)), TERRACE), shift);

@@ -1,4 +1,4 @@
-package net.alex.guzhenrenworld.dimension;
+package net.alex.guzhenrenworld.terrain;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -29,15 +29,14 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *
  * @author Alex
  * @version 1.0.0
- * @see SouthernBorderTerrain
  * @since 1.0.0
  */
 
-final class DensityShapes {
+public final class DensityShapes {
 
     private DensityShapes() {}
 
-    static DensityFunction getSpline(DensityFunctions.Spline.Coordinate coordinate, float... points) {
+    public static DensityFunction getSpline(DensityFunctions.Spline.Coordinate coordinate, float... points) {
         CubicSpline.Builder<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> builder =
                 CubicSpline.builder(coordinate);
         for (int index = 0; index < points.length; index += 3) {
@@ -46,63 +45,64 @@ final class DensityShapes {
         return DensityFunctions.spline(builder.build());
     }
 
-    static DensityFunction getSmoothstep(DensityFunctions.Spline.Coordinate coordinate, float start, float end) {
+    public static DensityFunction getSmoothstep(DensityFunctions.Spline.Coordinate coordinate, float start, float end) {
         return getSmoothstep(coordinate, start, 0.0F, end, 1.0F);
     }
 
-    static DensityFunction getSmoothstep(DensityFunctions.Spline.Coordinate coordinate, float start, float startValue,
-            float end, float endValue) {
+    public static DensityFunction getSmoothstep(
+            DensityFunctions.Spline.Coordinate coordinate, float start, float startValue, float end, float endValue) {
         return getSpline(coordinate, start, startValue, 0.0F, end, endValue, 0.0F);
     }
 
-    static DensityFunction getRamp(DensityFunctions.Spline.Coordinate coordinate, float start, float end) {
+    public static DensityFunction getRamp(DensityFunctions.Spline.Coordinate coordinate, float start, float end) {
         float span = end - start;
         float slope = -1.1F / span;
         return getSpline(coordinate, start, 1.0F, 0.0F, start + 0.15F * span, 0.93F, slope,
                 end - 0.15F * span, 0.07F, slope, end, 0.0F, 0.0F);
     }
 
-    static DensityFunction getSoftMin(DensityFunction first, DensityFunction second, float rounding) {
+    public static DensityFunction getSoftMin(DensityFunction first, DensityFunction second, float rounding) {
         return DensityFunctions.add(second, getSpline(getCoordinate(getDifference(first, second)),
                 -rounding, -rounding, 1.0F, 0.0F, -0.25F * rounding, 0.5F, rounding, 0.0F, 0.0F));
     }
 
-    static DensityFunction getDifference(DensityFunction minuend, DensityFunction subtrahend) {
+    public static DensityFunction getDifference(DensityFunction minuend, DensityFunction subtrahend) {
         return DensityFunctions.add(minuend, getScaled(-1.0, subtrahend));
     }
 
-    static DensityFunction getBlend(double base, double scale, DensityFunction value) {
+    public static DensityFunction getBlend(double base, double scale, DensityFunction value) {
         return DensityFunctions.add(DensityFunctions.constant(base), getScaled(scale, value));
     }
 
-    static DensityFunction getScaled(double scale, DensityFunction value) {
+    public static DensityFunction getScaled(double scale, DensityFunction value) {
         return DensityFunctions.mul(DensityFunctions.constant(scale), value);
     }
 
-    static DensityFunction getChoice(DensityFunction input, double threshold, DensityFunction below,
+    public static DensityFunction getChoice(DensityFunction input, double threshold, DensityFunction below,
             DensityFunction above) {
         return DensityFunctions.rangeChoice(input, -1000000.0, threshold, below, above);
     }
 
-    static DensityFunction getNoise(HolderGetter<NormalNoise.NoiseParameters> noises,
+    public static DensityFunction getNoise(HolderGetter<NormalNoise.NoiseParameters> noises,
             ResourceKey<NormalNoise.NoiseParameters> key) {
         return getNoise(noises, key, 1.0);
     }
 
-    static DensityFunction getNoise(HolderGetter<NormalNoise.NoiseParameters> noises,
+    public static DensityFunction getNoise(HolderGetter<NormalNoise.NoiseParameters> noises,
             ResourceKey<NormalNoise.NoiseParameters> key, double horizontalScale) {
         return DensityFunctions.noise(noises.getOrThrow(key), horizontalScale, 0.0);
     }
 
-    static DensityFunction getFunction(HolderGetter<DensityFunction> functions, ResourceKey<DensityFunction> key) {
+    public static DensityFunction getFunction(
+            HolderGetter<DensityFunction> functions, ResourceKey<DensityFunction> key) {
         return new DensityFunctions.HolderHolder(functions.getOrThrow(key));
     }
 
-    static DensityFunctions.Spline.Coordinate getCoordinate(DensityFunction function) {
+    public static DensityFunctions.Spline.Coordinate getCoordinate(DensityFunction function) {
         return new DensityFunctions.Spline.Coordinate(Holder.direct(function));
     }
 
-    static DensityFunctions.Spline.Coordinate getCoordinate(Holder<DensityFunction> registered) {
+    public static DensityFunctions.Spline.Coordinate getCoordinate(Holder<DensityFunction> registered) {
         return new DensityFunctions.Spline.Coordinate(registered);
     }
 }

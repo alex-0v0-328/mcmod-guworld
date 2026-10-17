@@ -5,10 +5,10 @@ import java.util.concurrent.CompletableFuture;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
-import net.alex.guzhenrenworld.dimension.SouthernBorder;
-import net.alex.guzhenrenworld.dimension.SouthernBorderBiomeSettings;
-import net.alex.guzhenrenworld.dimension.SouthernBorderTerrain;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
+import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
+import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
+import net.alex.guzhenrenworld.dimension.southernborder.Terrain;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
@@ -23,8 +23,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * <p>Extends {@link DatapackBuiltinEntriesProvider}. Builds in one {@code RegistrySetBuilder} the entries
  * the function packages bootstrap: the Treasure Yellow Heaven dimension's type, biome and level stem
  * ({@link TreasureYellowHeaven}); the Southern Border [南疆] dimension's type, noise settings and level stem
- * ({@link SouthernBorder}) with its noises and density functions ({@link SouthernBorderTerrain}) and its landform
- * biomes ({@link SouthernBorderBiomeSettings}); Gu World's shared biomes, the vanilla replicas ({@link Replicas}) and
+ * ({@link SouthernBorder}) with its noises and density functions ({@link Terrain}) and its landform
+ * biomes ({@link BiomeSettings}); Gu World's shared biomes, the vanilla replicas ({@link Replicas}) and
  * the biomes ported from Terralith with their noises and features ({@link Ports}); and the Spirit Spring
  * [元泉] configured and placed feature and biome modifier ({@link SpiritSpring}). A registry two
  * dimensions both fill gets one bootstrap that runs both. The tag provider takes {@code getRegistryProvider()}
@@ -49,13 +49,13 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 TreasureYellowHeaven.registerBiome(context);
                 Replicas.registerBiomes(context);
                 Ports.registerBiomes(context);
-                SouthernBorderBiomeSettings.registerBiomes(context);
+                BiomeSettings.registerBiomes(context);
             })
             .add(Registries.NOISE, context -> {
-                SouthernBorderTerrain.registerNoises(context);
+                Terrain.registerNoises(context);
                 Ports.registerNoises(context);
             })
-            .add(Registries.DENSITY_FUNCTION, SouthernBorderTerrain::registerDensityFunctions)
+            .add(Registries.DENSITY_FUNCTION, Terrain::registerDensityFunctions)
             .add(Registries.NOISE_SETTINGS, SouthernBorder::registerNoiseSettings)
             .add(Registries.LEVEL_STEM, context -> {
                 TreasureYellowHeaven.registerLevelStem(context);
