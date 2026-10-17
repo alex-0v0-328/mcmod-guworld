@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import net.alex.guzhenrenworld.biome.Ports;
+import net.alex.guzhenrenworld.biome.Replicas;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
@@ -12,7 +13,6 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
@@ -32,7 +32,8 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  * </ul>
  *
  * <p>All four drop lakes and fluid springs ({@link #getCliffSafe}), so no lava pool sits on a pillar top and no lava
- * spring pours down a wall, and none carves, for the reason {@code Replicas} gives.
+ * spring pours down a wall, and none carves: each is rebuilt through {@link Replicas#getUncarved}, for the reason
+ * {@code Replicas} gives.
  *
  * <p>⚠ The dressing is a first prototype for Alex to judge in game, not a settled pick.
  *
@@ -89,16 +90,7 @@ public final class SouthernBorderBiomeSettings {
             holders.addAll(dressing.getOrDefault(step, List.of()));
             features.add(getCliffSafe(step, holders));
         }
-        Biome.ClimateSettings climate = template.getModifiedClimateSettings();
-        context.register(key, new Biome.BiomeBuilder()
-                .hasPrecipitation(climate.hasPrecipitation())
-                .temperature(climate.temperature())
-                .temperatureAdjustment(climate.temperatureModifier())
-                .downfall(climate.downfall())
-                .specialEffects(template.getModifiedSpecialEffects())
-                .mobSpawnSettings(template.getMobSettings())
-                .generationSettings(new BiomeGenerationSettings(Map.of(), features))
-                .build());
+        context.register(key, Replicas.getUncarved(template, features));
     }
 
     private static HolderSet<PlacedFeature> getCliffSafe(GenerationStep.Decoration step,

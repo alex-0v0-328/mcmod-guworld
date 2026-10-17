@@ -1,8 +1,12 @@
 package net.alex.guzhenrenworld.dimension;
 
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getBlend;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getChoice;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getCoordinate;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getDifference;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getNoise;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getScaled;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getSmoothstep;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getSpline;
 
 import java.util.List;
@@ -147,7 +151,7 @@ final class SouthernBorderShapes {
     }
 
     private static Shape getKarst(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> zone) {
-        DensityFunction cluster = getSpline(getCoordinate(zone), 0.25F, 0.0F, 0.0F, 0.4F, 1.0F, 0.0F);
+        DensityFunction cluster = getSmoothstep(getCoordinate(zone), 0.25F, 0.4F);
         DensityFunction base = DensityFunctions.add(getBlend(67.0, 3.0, getNoise(noises, PLAIN_NOISE)),
                 getScaled(4.0, cluster));
         DensityFunction towers = DensityFunctions.add(DensityFunctions.max(
@@ -164,10 +168,10 @@ final class SouthernBorderShapes {
         DensityFunction mesa = getNoise(noises, MESA_NOISE);
         DensityFunction castle = getNoise(noises, CASTLE_NOISE);
         DensityFunction height = getBlend(55.0, 50.0, getNoise(noises, MESA_HEIGHT_NOISE)).clamp(30.0, 80.0);
-        DensityFunction apron = getSpline(getCoordinate(mesa),
-                DANXIA_THRESHOLD - 0.08F, 0.0F, 0.0F, DANXIA_THRESHOLD - 0.005F, 0.12F, 0.0F);
-        DensityFunction flat = getSpline(getCoordinate(getAbove(mesa, DANXIA_THRESHOLD + 0.005F)),
-                DANXIA_THRESHOLD + 0.005F, 0.9F, 0.0F, DANXIA_THRESHOLD + 0.15F, 1.0F, 0.0F);
+        DensityFunction apron = getSmoothstep(getCoordinate(mesa),
+                DANXIA_THRESHOLD - 0.08F, 0.0F, DANXIA_THRESHOLD - 0.005F, 0.12F);
+        DensityFunction flat = getSmoothstep(getCoordinate(getAbove(mesa, DANXIA_THRESHOLD + 0.005F)),
+                DANXIA_THRESHOLD + 0.005F, 0.9F, DANXIA_THRESHOLD + 0.15F, 1.0F);
         DensityFunction mesaTop = DensityFunctions.add(DensityFunctions.mul(height, flat),
                 getScaled(1.5, getNoise(noises, MESA_TOP_NOISE)));
         DensityFunction castleTop = DensityFunctions.mul(getScaled(0.8, height),
@@ -175,24 +179,24 @@ final class SouthernBorderShapes {
                         CASTLE_THRESHOLD + 0.01F, 0.85F, 2.0F, CASTLE_THRESHOLD + 0.1F, 1.0F, 0.0F));
         DensityFunction mesaEdge = getScaled(MESA_EDGE, getBlend(-DANXIA_THRESHOLD, 1.0, mesa));
         DensityFunction castleEdge = getScaled(CASTLE_EDGE, getBlend(-CASTLE_THRESHOLD, 1.0, castle));
-        DensityFunction castleLeads = DensityFunctions.add(castleEdge, getScaled(-1.0, mesaEdge));
+        DensityFunction castleLeads = getDifference(castleEdge, mesaEdge);
         return new Shape(getBlend(74.0, 10.0, getNoise(noises, HILLS_NOISE)), DensityFunctions.mul(height, apron),
-                DensityFunctions.rangeChoice(castleLeads, -1000000.0, 0.0, mesaTop, castleTop),
+                getChoice(castleLeads, 0.0, mesaTop, castleTop),
                 DensityFunctions.max(mesaEdge, castleEdge), getFaces(noises, 0.6, 0.5), NO_SOLIDS);
     }
 
     private static Shape getPillars(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> zone) {
         DensityFunction depth = getBlend(65.0, 40.0, getNoise(noises, PILLAR_DEPTH_NOISE)).clamp(40.0, 90.0);
-        DensityFunction floor = DensityFunctions.add(DensityFunctions.add(
-                getBlend(175.0, 20.0, getNoise(noises, PLATEAU_NOISE)), getScaled(-1.0, depth)),
+        DensityFunction floor = DensityFunctions.add(
+                getDifference(getBlend(175.0, 20.0, getNoise(noises, PLATEAU_NOISE)), depth),
                 getScaled(3.0, getNoise(noises, CANYON_NOISE)));
-        DensityFunction rim = getSpline(getCoordinate(zone),
-                SouthernBorderLandforms.ZONE_MIDDLE, 1.0F, 0.0F, 0.18F, 0.0F, 0.0F);
+        DensityFunction rim =
+                getSmoothstep(getCoordinate(zone), SouthernBorderLandforms.ZONE_MIDDLE, 1.0F, 0.18F, 0.0F);
         DensityFunction pillars = DensityFunctions.add(DensityFunctions.max(
                 getNoise(noises, PILLAR_NOISE, PILLAR_SCALE),
                 getBlend(STOUT_PILLAR_LIFT, 1.0, getNoise(noises, STOUT_PILLAR_NOISE, STOUT_PILLAR_SCALE))), rim);
-        DensityFunction flat = getSpline(getCoordinate(getAbove(pillars, PILLAR_THRESHOLD + 0.01F)),
-                PILLAR_THRESHOLD + 0.01F, 0.92F, 0.0F, PILLAR_THRESHOLD + 0.2F, 1.0F, 0.0F);
+        DensityFunction flat = getSmoothstep(getCoordinate(getAbove(pillars, PILLAR_THRESHOLD + 0.01F)),
+                PILLAR_THRESHOLD + 0.01F, 0.92F, PILLAR_THRESHOLD + 0.2F, 1.0F);
         DensityFunction height = DensityFunctions.mul(flat, DensityFunctions.add(depth,
                 getScaled(PILLAR_TOP_SWING, getNoise(noises, PILLAR_TOP_NOISE))));
         DensityFunction core = DensityFunctions.flatCache(pillars);
@@ -203,7 +207,7 @@ final class SouthernBorderShapes {
 
     private static DensityFunction getPillarSolids(HolderGetter<NormalNoise.NoiseParameters> noises,
             DensityFunction core, DensityFunction height, DensityFunction base) {
-        DensityFunction rise = DensityFunctions.add(getY(), getScaled(-1.0, base));
+        DensityFunction rise = getDifference(getY(), base);
         DensityFunction phased = DensityFunctions.add(rise,
                 getScaled(PILLAR_STEP_PHASE, getNoise(noises, PILLAR_TOP_NOISE, 0.5)));
         float[] steps = new float[(PILLAR_STEPS + 1) * 6];
@@ -214,18 +218,18 @@ final class SouthernBorderShapes {
             steps[index + 3] = step * PILLAR_STEP + 2.0F;
             steps[index + 4] = (step + 1) * PILLAR_STEP_IN;
         }
-        DensityFunction threshold = DensityFunctions.add(DensityFunctions.add(
+        DensityFunction threshold = getDifference(DensityFunctions.add(
                 getBlend(PILLAR_THRESHOLD - PILLAR_STEP_IN, 1.0, getSpline(getCoordinate(phased), steps)),
-                getScaled(-PILLAR_SKIRT, getSpline(getCoordinate(rise), 0.0F, 1.0F, 0.0F, 12.0F, 0.0F, 0.0F))),
-                getScaled(-1.0, getFaces(noises, 0.0, PILLAR_JOINT)));
-        DensityFunction body = getScaled(PILLAR_EDGE, DensityFunctions.add(core, getScaled(-1.0, threshold)));
-        DensityFunction cap = getScaled(0.125, DensityFunctions.add(height, getScaled(-1.0, rise)));
+                getScaled(-PILLAR_SKIRT, getSmoothstep(getCoordinate(rise), 0.0F, 1.0F, 12.0F, 0.0F))),
+                getFaces(noises, 0.0, PILLAR_JOINT));
+        DensityFunction body = getScaled(PILLAR_EDGE, getDifference(core, threshold));
+        DensityFunction cap = getScaled(0.125, getDifference(height, rise));
         return DensityFunctions.min(body, cap).clamp(-1.0, 1.0);
     }
 
     private static Shape getCliffs(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> zone) {
-        DensityFunction coves = getSpline(getCoordinate(getNoise(noises, COVE_NOISE).abs()),
-                0.0F, 1.0F, 0.0F, 0.1F, 0.0F, 0.0F);
+        DensityFunction coves =
+                getSmoothstep(getCoordinate(getNoise(noises, COVE_NOISE).abs()), 0.0F, 1.0F, 0.1F, 0.0F);
         DensityFunction slope = DensityFunctions.add(DensityFunctions.add(
                 getBlend(-0.5 * SouthernBorderLandforms.ZONE_MIDDLE, 0.5, new DensityFunctions.HolderHolder(zone)),
                 getNoise(noises, ESCARPMENT_NOISE)), getScaled(-COVE_DEPTH, coves));
@@ -235,8 +239,8 @@ final class SouthernBorderShapes {
         DensityFunction[] edges = new DensityFunction[TIERS.length];
         DensityFunction below = DensityFunctions.zero();
         for (int tier = 0; tier < TIERS.length; tier++) {
-            DensityFunction step = DensityFunctions.mul(riser, getSpline(getCoordinate(slope),
-                    TIERS[tier], 0.85F, 0.0F, TIERS[tier] + 0.06F, 1.0F, 0.0F));
+            DensityFunction step = DensityFunctions.mul(riser,
+                    getSmoothstep(getCoordinate(slope), TIERS[tier], 0.85F, TIERS[tier] + 0.06F, 1.0F));
             feet[tier] = below;
             tops[tier] = DensityFunctions.add(below, step);
             edges[tier] = getScaled(CLIFF_EDGE, getBlend(-TIERS[tier], 1.0, slope));
@@ -249,16 +253,15 @@ final class SouthernBorderShapes {
     private static DensityFunction getNearest(DensityFunction slope, DensityFunction[] tiers) {
         float lower = (TIERS[0] + TIERS[1]) / 2.0F;
         float upper = (TIERS[1] + TIERS[2]) / 2.0F;
-        return DensityFunctions.rangeChoice(slope, -1000000.0, lower, tiers[0],
-                DensityFunctions.rangeChoice(slope, lower, upper, tiers[1], tiers[2]));
+        return getChoice(slope, lower, tiers[0], DensityFunctions.rangeChoice(slope, lower, upper, tiers[1], tiers[2]));
     }
 
     private static DensityFunction getFaces(HolderGetter<NormalNoise.NoiseParameters> noises, double bedding,
             double joints) {
-        DensityFunction beds = getSpline(getCoordinate(DensityFunctions.noise(noises.getOrThrow(BEDDING_NOISE),
-                BEDDING_XZ_SCALE, 1.0)), 0.2F, 0.0F, 0.0F, 0.45F, 1.0F, 0.0F);
-        DensityFunction clefts = getSpline(getCoordinate(DensityFunctions.noise(noises.getOrThrow(JOINT_NOISE), 1.0,
-                JOINT_Y_SCALE).abs()), 0.0F, 1.0F, 0.0F, 0.07F, 0.0F, 0.0F);
+        DensityFunction beddingNoise = DensityFunctions.noise(noises.getOrThrow(BEDDING_NOISE), BEDDING_XZ_SCALE, 1.0);
+        DensityFunction jointNoise = DensityFunctions.noise(noises.getOrThrow(JOINT_NOISE), 1.0, JOINT_Y_SCALE);
+        DensityFunction beds = getSmoothstep(getCoordinate(beddingNoise), 0.2F, 0.45F);
+        DensityFunction clefts = getSmoothstep(getCoordinate(jointNoise.abs()), 0.0F, 1.0F, 0.07F, 0.0F);
         return DensityFunctions.add(getScaled(-bedding, beds), getScaled(-joints, clefts));
     }
 
@@ -268,16 +271,6 @@ final class SouthernBorderShapes {
 
     private static DensityFunction getAbove(DensityFunction value, float floor) {
         return DensityFunctions.max(value, DensityFunctions.constant(floor));
-    }
-
-    private static DensityFunction getNoise(HolderGetter<NormalNoise.NoiseParameters> noises,
-            ResourceKey<NormalNoise.NoiseParameters> key) {
-        return getNoise(noises, key, 1.0);
-    }
-
-    private static DensityFunction getNoise(HolderGetter<NormalNoise.NoiseParameters> noises,
-            ResourceKey<NormalNoise.NoiseParameters> key, double scale) {
-        return DensityFunctions.noise(noises.getOrThrow(key), scale, 0.0);
     }
 
     private static ResourceKey<NormalNoise.NoiseParameters> noiseKey(String name) {

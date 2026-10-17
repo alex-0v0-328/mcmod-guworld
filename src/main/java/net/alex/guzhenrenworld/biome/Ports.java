@@ -1,5 +1,7 @@
 package net.alex.guzhenrenworld.biome;
 
+import static net.alex.guzhenrenworld.biome.Keys.key;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
@@ -108,7 +110,7 @@ public final class Ports {
         }
         for (String name : names) {
             Biome ported = decode(Biome.DIRECT_CODEC, registryOps, "biome", name);
-            context.register(ResourceKey.create(Registries.BIOME, GuWorld.id(name)), Replicas.getUncarved(ported));
+            context.register(key(name), Replicas.getUncarved(ported));
         }
     }
 
@@ -129,12 +131,7 @@ public final class Ports {
     }
 
     public static void addTranslations(LanguageProvider languageProvider, List<String> names) {
-        if (names.size() != BIOMES.size()) {
-            throw new IllegalArgumentException(names.size() + " ported biome names for " + BIOMES.size() + " biomes");
-        }
-        for (int index = 0; index < BIOMES.size(); index++) {
-            languageProvider.add(BIOMES.get(index).location().toLanguageKey("biome"), names.get(index));
-        }
+        Keys.addTranslations(languageProvider, BIOMES, names);
     }
 
     private static <T> void register(BootstrapContext<T> context, ResourceKey<? extends Registry<T>> registry,
@@ -181,10 +178,6 @@ public final class Ports {
         } catch (IOException exception) {
             throw new IllegalStateException("cannot read " + file, exception);
         }
-    }
-
-    private static ResourceKey<Biome> key(String name) {
-        return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
     }
 
     private static ResourceKey<PlacedFeature> placedKey(String name) {
