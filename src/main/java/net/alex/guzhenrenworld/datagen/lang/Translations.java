@@ -13,7 +13,8 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  *
  * <p>{@link #addDimension} writes a dimension's name and its Traveler's Titles title; {@link #addTitleColor} adds the
  * title's color, the {@code travelerstitles.*} convention's lowercase hex without {@code #}, which is no rendering, so
- * every language writes the same value. {@link #addBiomes} names a list of biomes in the list's order.
+ * every language writes the same value. {@link #addBiomes} names a list of biomes in the list's order. Every key is
+ * spelled by {@link #getLanguageKey}, the type, then the registered id.
  *
  * <p>⚠ {@link #addBiomes} throws when the two lists differ in length, so a biome added without a name fails
  * {@code runData} instead of shipping a raw key.
@@ -29,12 +30,12 @@ final class Translations {
     private Translations() {}
 
     static void addDimension(LanguageProvider languageProvider, ResourceKey<LevelStem> dimension, String name) {
-        languageProvider.add(dimension.location().toLanguageKey("dimension"), name);
-        languageProvider.add(dimension.location().toLanguageKey("travelerstitles"), name);
+        languageProvider.add(getLanguageKey("dimension", dimension), name);
+        languageProvider.add(getLanguageKey("travelerstitles", dimension), name);
     }
 
     static void addTitleColor(LanguageProvider languageProvider, ResourceKey<LevelStem> dimension, int color) {
-        languageProvider.add(dimension.location().toLanguageKey("travelerstitles", "color"), "%06x".formatted(color));
+        languageProvider.add(getLanguageKey("travelerstitles", dimension) + ".color", "%06x".formatted(color));
     }
 
     static void addBiomes(LanguageProvider languageProvider, List<ResourceKey<Biome>> biomes, List<String> names) {
@@ -42,7 +43,11 @@ final class Translations {
             throw new IllegalArgumentException(names.size() + " names for the " + biomes.size() + " biomes " + biomes);
         }
         for (int index = 0; index < biomes.size(); index++) {
-            languageProvider.add(biomes.get(index).location().toLanguageKey("biome"), names.get(index));
+            languageProvider.add(getLanguageKey("biome", biomes.get(index)), names.get(index));
         }
+    }
+
+    private static String getLanguageKey(String type, ResourceKey<?> key) {
+        return key.location().toLanguageKey(type);
     }
 }
