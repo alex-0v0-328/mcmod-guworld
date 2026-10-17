@@ -135,7 +135,8 @@ final class Rivers {
     private static final float GREAT_RIVER_DEPTH = 9.0F;
     private static final float STREAM_DEPTH = 4.0F;
     private static final float[] CHANNEL_PROFILE = {
-            0.0F, 59.0F, 0.0F, 1.5F, 59.7F, 0.9F, 3.5F, 63.0F, 1.5F, 5.0F, 64.3F, 0.4F, 14.0F, 66.0F, 0.2F };
+            0.0F, SEA_LEVEL - STREAM_DEPTH, 0.0F, 1.5F, 59.7F, 0.9F, 3.5F, 63.0F, 1.5F, 5.0F, 64.3F, 0.4F,
+            14.0F, 66.0F, 0.2F };
     private static final float[] STREAM_PROFILE = getWalled(26.0F, 73.0F, 0.8F, 60.0F, 106.0F, 1.0F,
             300.0F, 346.0F, 1.0F);
     private static final float[] GORGE_PROFILE = getWalled(18.0F, 100.0F, 12.0F, 22.0F, 340.0F, 30.0F);
@@ -152,10 +153,8 @@ final class Rivers {
             DensityFunction floodplain) {
 
         DensityFunction getGreatValleys() {
-            DensityFunctions.Spline.Coordinate line = getCoordinate(great);
-            return DensityFunctions.add(
-                    getScaled(GREAT_VALLEY_CUT, getRamp(line, GREAT_RIVER_WIDTH, GREAT_VALLEY_WIDTH)),
-                    getScaled(BASIN_CUT, getRamp(line, GREAT_RIVER_WIDTH, BASIN_WIDTH)));
+            return DensityFunctions.add(getScaled(GREAT_VALLEY_CUT, getGreatValley()),
+                    getScaled(BASIN_CUT, getRamp(getCoordinate(great), GREAT_RIVER_WIDTH, BASIN_WIDTH)));
         }
 
         DensityFunction getStreamCut() {
