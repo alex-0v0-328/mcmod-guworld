@@ -19,10 +19,11 @@ import net.minecraft.world.level.levelgen.VerticalAnchor;
  * surface rule's noise condition reads the same noise the terrain does, once per column, so the rest of the region
  * never pays for a biome lookup per block. Inside, the landform type noise picks the rock by the same cuts the terrain
  * uses ({@link #getType}), not the biome: the game frays every biome border, so rock chosen by biome comes out as a
- * mosaic of two rocks on a wall where two landforms meet. Above y {@link #ROCK_BOTTOM}:
+ * mosaic of two rocks on a wall where two landforms meet. They run only in a dry column: a riverbed or lake floor
+ * inside a zone falls through to the ported and vanilla rules and gets their bed of sand, gravel and clay, while a
+ * wall beside the water has no water above it and keeps its rock. Above y {@link #ROCK_BOTTOM}:
  * <ul>
- *   <li>Every landform keeps grass on top and dirt under it where the ground is dry, cliff tops and ledges
- *   included.</li>
+ *   <li>Every landform keeps grass on top and dirt under it, cliff tops and ledges included.</li>
  *   <li>Danxia and the Zhangshiyan cliffs are red beds: horizontal bands of terracotta and red sandstone from the
  *   foot to the top ({@link #DANXIA_BANDS}, {@link #CLIFF_BANDS}), each band 2..6 blocks thick and lifted by the
  *   column's surface depth, so the bands wave a little along a wall.</li>
@@ -68,16 +69,16 @@ final class SouthernBorderSurface {
         return SurfaceRules.sequence(
                 SurfaceRules.ifTrue(SurfaceRules.noiseCondition(SouthernBorderLandforms.ZONE_NOISE,
                                 SouthernBorderLandforms.ZONE_MIDDLE - SouthernBorderLandforms.ZONE_HALF_WIDTH),
-                        SurfaceRules.ifTrue(getAbove(ROCK_BOTTOM), landforms)),
+                        SurfaceRules.ifTrue(getAbove(ROCK_BOTTOM),
+                                SurfaceRules.ifTrue(SurfaceRules.waterBlockCheck(-1, 0), landforms))),
                 Ports.getSurfaceRules(),
                 Replicas.getSurfaceRules());
     }
 
     private static SurfaceRules.RuleSource getTopsoil() {
-        SurfaceRules.ConditionSource dry = SurfaceRules.waterBlockCheck(-1, 0);
         return SurfaceRules.sequence(
-                SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, SurfaceRules.ifTrue(dry, getState(Blocks.GRASS_BLOCK))),
-                SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, SurfaceRules.ifTrue(dry, getState(Blocks.DIRT))));
+                SurfaceRules.ifTrue(SurfaceRules.ON_FLOOR, getState(Blocks.GRASS_BLOCK)),
+                SurfaceRules.ifTrue(SurfaceRules.UNDER_FLOOR, getState(Blocks.DIRT)));
     }
 
     private static SurfaceRules.ConditionSource getType(double low, double high) {
