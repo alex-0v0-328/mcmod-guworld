@@ -1,5 +1,7 @@
 package net.alex.guzhenrenworld.dimension.southernborder;
 
+import static net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder.functionKey;
+import static net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder.noiseKey;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getBlend;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getChoice;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getCoordinate;
@@ -10,7 +12,6 @@ import static net.alex.guzhenrenworld.terrain.DensityShapes.getScaled;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getSmoothstep;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getSpline;
 
-import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.terrain.HeightfieldRouter;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -261,13 +262,5 @@ public final class Terrain {
     private static DensityFunction getMountainNoise(HolderGetter<NormalNoise.NoiseParameters> noises,
             ResourceKey<NormalNoise.NoiseParameters> key) {
         return getNoise(noises, key, MOUNTAIN_SCALE);
-    }
-
-    private static ResourceKey<NormalNoise.NoiseParameters> noiseKey(String name) {
-        return ResourceKey.create(Registries.NOISE, GuWorld.id("southern_border/" + name));
-    }
-
-    private static ResourceKey<DensityFunction> functionKey(String name) {
-        return ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id("southern_border/" + name));
     }
 }

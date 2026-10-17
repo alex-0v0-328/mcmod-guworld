@@ -1,5 +1,7 @@
 package net.alex.guzhenrenworld.dimension.southernborder;
 
+import static net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder.landformFunctionKey;
+import static net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder.landformNoiseKey;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getBlend;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getChoice;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getCoordinate;
@@ -11,7 +13,6 @@ import static net.alex.guzhenrenworld.terrain.DensityShapes.getSmoothstep;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getSpline;
 
 import java.util.List;
-import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -64,16 +65,16 @@ final class Landforms {
     static final float ZONE_MIDDLE = 0.133F;
     static final float ZONE_HALF_WIDTH = 0.08F;
     static final float PEAK_Y = 320.0F;
-    static final ResourceKey<NormalNoise.NoiseParameters> ZONE_NOISE = noiseKey("zone");
-    static final ResourceKey<NormalNoise.NoiseParameters> TYPE_NOISE = noiseKey("type");
-    private static final ResourceKey<DensityFunction> ZONE = functionKey("zone");
-    private static final ResourceKey<DensityFunction> WEIGHT = functionKey("weight");
-    private static final ResourceKey<DensityFunction> LANDFORM = functionKey("landform");
-    private static final ResourceKey<DensityFunction> SHAPED_FOOT = functionKey("foot");
-    private static final ResourceKey<DensityFunction> SHAPED_TOP = functionKey("top");
-    private static final ResourceKey<DensityFunction> EDGE = functionKey("edge");
-    private static final ResourceKey<DensityFunction> FACES = functionKey("faces");
-    private static final ResourceKey<DensityFunction> SOLIDS = functionKey("solids");
+    static final ResourceKey<NormalNoise.NoiseParameters> ZONE_NOISE = landformNoiseKey("zone");
+    static final ResourceKey<NormalNoise.NoiseParameters> TYPE_NOISE = landformNoiseKey("type");
+    private static final ResourceKey<DensityFunction> ZONE = landformFunctionKey("zone");
+    private static final ResourceKey<DensityFunction> WEIGHT = landformFunctionKey("weight");
+    private static final ResourceKey<DensityFunction> LANDFORM = landformFunctionKey("landform");
+    private static final ResourceKey<DensityFunction> SHAPED_FOOT = landformFunctionKey("foot");
+    private static final ResourceKey<DensityFunction> SHAPED_TOP = landformFunctionKey("top");
+    private static final ResourceKey<DensityFunction> EDGE = landformFunctionKey("edge");
+    private static final ResourceKey<DensityFunction> FACES = landformFunctionKey("faces");
+    private static final ResourceKey<DensityFunction> SOLIDS = landformFunctionKey("solids");
     static final float[] TYPE_CUTS = { -0.216F, 0.007F, 0.214F };
     private static final float TYPE_FADE = 0.03F;
     private static final double VALLEY_SINK = 0.85;
@@ -186,13 +187,5 @@ final class Landforms {
 
     private static DensityFunction getHalf(DensityFunctions.Spline.Coordinate weight) {
         return getSmoothstep(weight, 0.499F, 0.501F);
-    }
-
-    private static ResourceKey<NormalNoise.NoiseParameters> noiseKey(String name) {
-        return ResourceKey.create(Registries.NOISE, GuWorld.id("southern_border/landform/" + name));
-    }
-
-    private static ResourceKey<DensityFunction> functionKey(String name) {
-        return ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id("southern_border/landform/" + name));
     }
 }
