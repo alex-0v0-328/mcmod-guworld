@@ -1,11 +1,11 @@
-package net.alex.guzhenrenworld.dimension;
+package net.alex.guzhenrenworld.dimension.southernborder;
 
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getBlend;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getCoordinate;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getDifference;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getFunction;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getScaled;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSmoothstep;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getBlend;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getCoordinate;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getDifference;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getFunction;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getScaled;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSmoothstep;
 
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.Holder;
@@ -19,7 +19,7 @@ import net.minecraft.world.level.levelgen.DensityFunctions;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 /**
- * The mountain detail of the Southern Border [南疆]: what turns {@code SouthernBorderTerrain}'s smooth ridged rise
+ * The mountain detail of the Southern Border [南疆]: what turns {@code Terrain}'s smooth ridged rise
  * into mountains that read as worn by water, every id under {@code guworld:southern_border/}. The method is
  * Tectonic's mountain ridges.
  *
@@ -40,11 +40,11 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *
  * @author Alex
  * @version 1.0.0
- * @see SouthernBorderTerrain
+ * @see Terrain
  * @since 1.0.0
  */
 
-final class SouthernBorderMountains {
+final class Mountains {
 
     private static final ResourceKey<NormalNoise.NoiseParameters> RIDGE_BASE_NOISE = noiseKey("ridge_base");
     private static final ResourceKey<NormalNoise.NoiseParameters> RIDGE_DETAIL_NOISE = noiseKey("ridge_detail");
@@ -67,7 +67,7 @@ final class SouthernBorderMountains {
     private static final float ROUGHNESS_FULL = 200.0F;
     private static final float ROUGHNESS_MAX = 0.75F;
 
-    private SouthernBorderMountains() {}
+    private Mountains() {}
 
     static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context) {
         context.register(RIDGE_BASE_NOISE, new NormalNoise.NoiseParameters(-8, 1.0, 0.2));

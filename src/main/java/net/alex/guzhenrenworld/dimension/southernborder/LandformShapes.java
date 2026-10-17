@@ -1,13 +1,13 @@
-package net.alex.guzhenrenworld.dimension;
+package net.alex.guzhenrenworld.dimension.southernborder;
 
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getBlend;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getChoice;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getCoordinate;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getDifference;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getNoise;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getScaled;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSmoothstep;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSpline;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getBlend;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getChoice;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getCoordinate;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getDifference;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getNoise;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getScaled;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSmoothstep;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSpline;
 
 import java.util.List;
 import java.util.function.UnaryOperator;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.levelgen.DensityFunctions;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 /**
- * The shapes of the four Southern Border [南疆] landforms, in the order {@link SouthernBorderLandforms} blends them;
+ * The shapes of the four Southern Border [南疆] landforms, in the order {@link Landforms} blends them;
  * noise ids live under {@code guworld:southern_border/landform/}. {@link #getShapes} takes the zone noise and the
  * middle its zones start at, both the landforms' own, so a shape depends on nothing above it.
  *
@@ -66,11 +66,11 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *
  * @author Alex
  * @version 1.0.0
- * @see SouthernBorderLandforms
+ * @see Landforms
  * @since 1.0.0
  */
 
-final class SouthernBorderShapes {
+final class LandformShapes {
 
     private static final ResourceKey<NormalNoise.NoiseParameters> PLAIN_NOISE = noiseKey("plain");
     private static final ResourceKey<NormalNoise.NoiseParameters> TOWER_NOISE = noiseKey("tower");
@@ -118,7 +118,7 @@ final class SouthernBorderShapes {
     private static final double JOINT_Y_SCALE = 0.08;
     static final UnaryOperator<DensityFunction> NO_SOLIDS = base -> DensityFunctions.constant(-1.0);
 
-    private SouthernBorderShapes() {}
+    private LandformShapes() {}
 
     record Shape(DensityFunction base, DensityFunction foot, DensityFunction top, DensityFunction edge,
             DensityFunction faces, UnaryOperator<DensityFunction> solids) {}

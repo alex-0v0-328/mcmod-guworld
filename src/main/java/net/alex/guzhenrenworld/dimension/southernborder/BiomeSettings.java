@@ -1,4 +1,4 @@
-package net.alex.guzhenrenworld.dimension;
+package net.alex.guzhenrenworld.dimension.southernborder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +18,13 @@ import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 /**
- * Builds the four Southern Border [南疆] landform biomes of {@link SouthernBorderBiomes}: each a vanilla biome with
+ * Builds the four Southern Border [南疆] landform biomes of {@link BiomeLayout}: each a vanilla biome with
  * vanilla's climate, colors and features, plus the Terralith dressing ported for its kind of rock
  * ({@link Ports}), placed in the generation step Terralith places it in:
  * <ul>
  *   <li>Karst peak forest [喀斯特峰林]: vanilla's forest, with Terralith's stony spires dressing: moss and dripstone
  *   patches on the towers, bushes, oaks, azaleas and grass on their tops.</li>
- *   <li>Danxia [丹霞]: vanilla's forest; its red beds are surface rules ({@code SouthernBorderSurface}).</li>
+ *   <li>Danxia [丹霞]: vanilla's forest; its red beds are surface rules ({@code Surface}).</li>
  *   <li>Sandstone pillars [砂岩峰林]: vanilla's taiga, with Terralith's windswept spires dressing: grass caps on the
  *   ledges, spruces, tall foliage and grass on the tops.</li>
  *   <li>Zhangshiyan cliffs [嶂石岩]: vanilla's meadow, with grass caps on the ledges and Terralith's Yosemite
@@ -39,29 +39,29 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  *
  * @author Alex
  * @version 1.0.0
- * @see SouthernBorderBiomes
+ * @see BiomeLayout
  * @since 1.0.0
  */
 
-public final class SouthernBorderBiomeSettings {
+public final class BiomeSettings {
 
-    private SouthernBorderBiomeSettings() {}
+    private BiomeSettings() {}
 
     public static void registerBiomes(BootstrapContext<Biome> context) {
         HolderGetter<PlacedFeature> placed = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
         Biome forest = OverworldBiomes.forest(placed, carvers, false, false, false);
-        register(context, SouthernBorderBiomes.KARST_PEAK_FOREST, forest, Map.of(
+        register(context, BiomeLayout.KARST_PEAK_FOREST, forest, Map.of(
                 GenerationStep.Decoration.RAW_GENERATION, getFeatures(placed, Ports.SPIRES_CLIFF),
                 GenerationStep.Decoration.VEGETAL_DECORATION, getFeatures(placed, Ports.SHRUBLAND_BUSHES,
                         Ports.SPIRES_OAK_TREE, Ports.SPIRES_AZALEA, Ports.SPIRES_GRASS)));
-        register(context, SouthernBorderBiomes.DANXIA, forest, Map.of());
-        register(context, SouthernBorderBiomes.SANDSTONE_PILLARS, OverworldBiomes.taiga(placed, carvers, false),
+        register(context, BiomeLayout.DANXIA, forest, Map.of());
+        register(context, BiomeLayout.SANDSTONE_PILLARS, OverworldBiomes.taiga(placed, carvers, false),
                 Map.of(GenerationStep.Decoration.RAW_GENERATION, getFeatures(placed, Ports.CLIFF_GRASS_UPPER,
                                 Ports.CLIFF_GRASS_LOWER),
                         GenerationStep.Decoration.VEGETAL_DECORATION, getFeatures(placed, Ports.SPIRES_SPRUCE_TREES,
                                 Ports.SPIRES_TALL_FOLIAGE, Ports.SPIRES_PATCH_GRASS)));
-        register(context, SouthernBorderBiomes.ZHANGSHIYAN_CLIFFS,
+        register(context, BiomeLayout.ZHANGSHIYAN_CLIFFS,
                 OverworldBiomes.meadowOrCherryGrove(placed, carvers, false), Map.of(
                         GenerationStep.Decoration.RAW_GENERATION, getFeatures(placed, Ports.CLIFF_GRASS_UPPER,
                                 Ports.CLIFF_GRASS_LOWER),

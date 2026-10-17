@@ -1,15 +1,15 @@
-package net.alex.guzhenrenworld.dimension;
+package net.alex.guzhenrenworld.dimension.southernborder;
 
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getBlend;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getCoordinate;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getDifference;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getFunction;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getNoise;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getRamp;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getScaled;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSmoothstep;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSoftMin;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSpline;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getBlend;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getCoordinate;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getDifference;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getFunction;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getNoise;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getRamp;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getScaled;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSmoothstep;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSoftMin;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSpline;
 
 import java.util.Arrays;
 import net.alex.guzhenrenworld.GuWorld;
@@ -45,32 +45,33 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * </ul>
  *
  * <p>Water stands only below the sea level, {@link #SEA_LEVEL}, the height the dimension's noise settings fill water
- * to, so a river holds water along its whole course only if its bed is set to a fixed height, never lowered by some amount from the ground around, which rises and falls along the course and would
- * break the river into a string of pools. Vanilla, Tectonic and Terralith set their river floors to one height and end
- * the rivers once, where a smooth large-scale field, erosion, crosses a threshold. The streams here do the same, and
- * the great rivers set floodplain and bed to fixed heights inside valleys deep enough to hold them.
+ * to, so a river holds water along its whole course only if its bed is set to a fixed height, never lowered by some
+ * amount from the ground around, which rises and falls along the course and would break the river into a string of
+ * pools. Vanilla, Tectonic and Terralith set their river floors to one height and end the rivers once, where a smooth
+ * large-scale field, erosion, crosses a threshold. The streams here do the same, and the great rivers set floodplain
+ * and bed to fixed heights inside valleys deep enough to hold them.
  * <ul>
  *   <li>Great rivers ({@link #GREAT_RIVER}): a four-kilometer noise, a few per eight kilometers. Within
  *   ±{@link #BASIN_WIDTH} of the line the mountains sink by up to {@link #BASIN_CUT}, within
- *   ±{@link #GREAT_VALLEY_WIDTH} by {@link #GREAT_VALLEY_CUT} more ({@link Rivers#getGreatValleys}), so every great
+ *   ±{@link #GREAT_VALLEY_WIDTH} by {@link #GREAT_VALLEY_CUT} more ({@link Network#getGreatValleys}), so every great
  *   river crosses the ranges down a broad valley. Within {@link #GREAT_FLOODPLAIN} blocks of the channel low ground
  *   is flattened to a floodplain {@link #FLOODPLAIN_Y} ± {@link #FLOODPLAIN_SWING} by a 128-block noise
- *   ({@link Rivers#getFloodplain}); the flattening holds below about y 72 and fades out by y 90, both lifted or
+ *   ({@link Network#getFloodplain}); the flattening holds below about y 72 and fades out by y 90, both lifted or
  *   lowered up to {@link #FLOODPLAIN_EDGE_SWING} blocks by the same noise, so the floodplain edge wanders instead of
- *   following one contour. The channel ({@link Rivers#getCarved}), ±{@link #GREAT_HALF_WIDTH} blocks before
+ *   following one contour. The channel ({@link Network#getCarved}), ±{@link #GREAT_HALF_WIDTH} blocks before
  *   widening, 24..48 blocks wide, sinks to {@link #GREAT_RIVER_DEPTH} below sea level where the floodplain lies below
  *   y 66 and fades out by y 74.</li>
- *   <li>Streams ({@link #STREAM}): two two-kilometer noises, one on each side of the great rivers, blended across
- *   the great channel, so a stream that meets a great river joins it like a tributary instead of crossing it.
- *   {@link Rivers#getStreamCut} sinks the mountains by {@link #STREAM_VALLEY_CUT} within ±{@link #STREAM_VALLEY_WIDTH}
- *   of the line. The valley ({@link Rivers#getStreamValley}) is a profile over the distance: {@link #CHANNEL_PROFILE},
- *   the bed {@link #STREAM_DEPTH} below sea level, the water line at ±{@link #STREAM_HALF_WIDTH} blocks before
- *   widening (5..10 blocks wide), a low bank and a floodplain a few blocks above the water, then the walls
- *   {@link #getWalled} adds: those of {@link #STREAM_PROFILE} steepen to one block per block, those of
- *   {@link #GORGE_PROFILE}, taken by the landform zone weight, rise tens of blocks per block, so a stream cuts a gorge
- *   through cliff country instead of planing its tops away; the weight is 0 outside, so foot and top share a profile
- *   there. The ground takes the lower of itself and the profile, rounded over {@link #VALLEY_ROUNDING} blocks.</li>
- *   <li>Headwaters: {@code SouthernBorderTerrain}'s range field, its ridged relief without spurs, changes only over
+ *   <li>Streams ({@link #STREAM}): two two-kilometer noises, one on each side of the great rivers, blended across the
+ *   great channel, so a stream that meets a great river joins it like a tributary instead of crossing it. {@link
+ *   Network#getStreamCut} sinks the mountains by {@link #STREAM_VALLEY_CUT} within ±{@link #STREAM_VALLEY_WIDTH} of the
+ *   line. The valley ({@link Network#getStreamValley}) is a profile over the distance: {@link #CHANNEL_PROFILE}, the
+ *   bed {@link #STREAM_DEPTH} below sea level, the water line at ±{@link #STREAM_HALF_WIDTH} blocks before widening
+ *   (5..10 blocks wide), a low bank and a floodplain a few blocks above the water, then the walls {@link #getWalled}
+ *   adds: those of {@link #STREAM_PROFILE} steepen to one block per block, those of {@link #GORGE_PROFILE}, taken by
+ *   the landform zone weight, rise tens of blocks per block, so a stream cuts a gorge through cliff country instead of
+ *   planing its tops away; the weight is 0 outside, so foot and top share a profile there. The ground takes the lower
+ *   of itself and the profile, rounded over {@link #VALLEY_ROUNDING} blocks.</li>
+ *   <li>Headwaters: {@code Terrain}'s range field, its ridged relief without spurs, changes only over
  *   kilometers. Below {@link #REACH_FULL} the valley is whole; toward {@link #REACH_END} the profile rises by up to
  *   {@link #STREAM_LIFT} blocks, a share of that field alone, so the water ends once, where the bed passes sea level,
  *   and a dry valley climbs on until its floor passes the ground. A lift read off the ground would follow every hill
@@ -82,18 +83,18 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * <p>{@link #CHANNEL} is the distance to the nearer channel in widened half-widths, 0 at the line and 1 at the bank;
  * {@link #SHORE} is that distance where the surface stands below sea level and at least {@link #DRY_SHORE} where it
  * does not. The router keeps cave entrances out of the riverbeds with it, and the biome table reads it, scaled by
- * {@code SouthernBorderBiomes.RIVER_WEIRDNESS}, as the weirdness, so the river biome covers exactly the wet
+ * {@code BiomeLayout.RIVER_WEIRDNESS}, as the weirdness, so the river biome covers exactly the wet
  * channels.
  *
  * <p>⚠ Every number here is a prototype for Alex to judge in game, not a settled pick.
  *
  * @author Alex
  * @version 1.0.0
- * @see SouthernBorderTerrain
+ * @see Terrain
  * @since 1.0.0
  */
 
-public final class SouthernBorderRivers {
+final class Rivers {
 
     private static final ResourceKey<NormalNoise.NoiseParameters> GREAT_RIVER_NOISE = noiseKey("great_river");
     private static final ResourceKey<NormalNoise.NoiseParameters> STREAM_A_NOISE = noiseKey("stream_a");
@@ -143,9 +144,9 @@ public final class SouthernBorderRivers {
     private static final float REACH_END = 0.75F;
     private static final double DRY_SHORE = 8.0;
 
-    private SouthernBorderRivers() {}
+    private Rivers() {}
 
-    record Rivers(DensityFunction great, Holder<DensityFunction> stream, Holder<DensityFunction> greatDistance,
+    record Network(DensityFunction great, Holder<DensityFunction> stream, Holder<DensityFunction> greatDistance,
             Holder<DensityFunction> streamDistance, Holder<DensityFunction> narrowing, Holder<DensityFunction> channel,
             DensityFunction floodplain) {
 
@@ -207,7 +208,7 @@ public final class SouthernBorderRivers {
         context.register(FLOODPLAIN_NOISE, new NormalNoise.NoiseParameters(-7, 1.0));
     }
 
-    static Rivers register(BootstrapContext<DensityFunction> context) {
+    static Network register(BootstrapContext<DensityFunction> context) {
         HolderGetter<NormalNoise.NoiseParameters> noises = context.lookup(Registries.NOISE);
         Holder<DensityFunction> greatRiver = context.register(GREAT_RIVER,
                 DensityFunctions.flatCache(getWarped(noises, GREAT_RIVER_NOISE, WARP_BLOCKS, 0.0, 0.0)));
@@ -227,11 +228,11 @@ public final class SouthernBorderRivers {
                 getHalfWidths(greatDistance, narrowing, GREAT_HALF_WIDTH),
                 getHalfWidths(streamDistance, narrowing, STREAM_HALF_WIDTH))));
         DensityFunction floodplain = getBlend(FLOODPLAIN_Y, FLOODPLAIN_SWING, getNoise(noises, FLOODPLAIN_NOISE));
-        return new Rivers(new DensityFunctions.HolderHolder(greatRiver).abs(), stream, greatDistance, streamDistance,
+        return new Network(new DensityFunctions.HolderHolder(greatRiver).abs(), stream, greatDistance, streamDistance,
                 narrowing, channel, floodplain);
     }
 
-    static void registerShore(BootstrapContext<DensityFunction> context, Rivers rivers,
+    static void registerShore(BootstrapContext<DensityFunction> context, Network rivers,
             Holder<DensityFunction> height) {
         DensityFunction dry = getSmoothstep(getCoordinate(height),
                 SEA_LEVEL - 0.5F, SEA_LEVEL + 1.0F);

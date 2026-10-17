@@ -3,6 +3,7 @@ package net.alex.guzhenrenworld.dimension;
 import com.mojang.logging.LogUtils;
 import java.util.Map;
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;

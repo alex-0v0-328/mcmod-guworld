@@ -1,14 +1,14 @@
-package net.alex.guzhenrenworld.dimension;
+package net.alex.guzhenrenworld.dimension.southernborder;
 
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getBlend;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getChoice;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getCoordinate;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getDifference;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getFunction;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getNoise;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getScaled;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSmoothstep;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSpline;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getBlend;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getChoice;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getCoordinate;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getDifference;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getFunction;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getNoise;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getScaled;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSmoothstep;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSpline;
 
 import java.util.List;
 import net.alex.guzhenrenworld.GuWorld;
@@ -23,7 +23,7 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 /**
  * The cliff country of the Southern Border [南疆]: where its four landforms, modeled on southern China, replace
- * {@code SouthernBorderTerrain}'s ground. {@link SouthernBorderShapes} holds what each looks like; ids live under
+ * {@code Terrain}'s ground. {@link LandformShapes} holds what each looks like; ids live under
  * {@code guworld:southern_border/landform/}.
  *
  * <p>A cliff is three 2D fields ({@link Cliffs}): the ground at its foot, the ground on its top, and an edge field,
@@ -54,11 +54,11 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *
  * @author Alex
  * @version 1.0.0
- * @see SouthernBorderTerrain
+ * @see Terrain
  * @since 1.0.0
  */
 
-public final class SouthernBorderLandforms {
+final class Landforms {
 
     static final List<Float> CODES = List.of(0.2F, 0.4F, 0.6F, 0.8F);
     static final float ZONE_MIDDLE = 0.133F;
@@ -79,7 +79,7 @@ public final class SouthernBorderLandforms {
     private static final double VALLEY_SINK = 0.85;
     private static final float FACE_REACH = 0.5F;
 
-    private SouthernBorderLandforms() {}
+    private Landforms() {}
 
     record Cliffs(Holder<DensityFunction> foot, Holder<DensityFunction> top, Holder<DensityFunction> edge,
             Holder<DensityFunction> weight) {}
@@ -90,7 +90,7 @@ public final class SouthernBorderLandforms {
     public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context) {
         context.register(ZONE_NOISE, new NormalNoise.NoiseParameters(-10, 1.0, 0.5));
         context.register(TYPE_NOISE, new NormalNoise.NoiseParameters(-11, 1.0));
-        SouthernBorderShapes.registerNoises(context);
+        LandformShapes.registerNoises(context);
     }
 
     static Cliffs register(BootstrapContext<DensityFunction> context, Holder<DensityFunction> ground,
@@ -100,7 +100,7 @@ public final class SouthernBorderLandforms {
         Holder<DensityFunction> weight = context.register(WEIGHT, DensityFunctions.flatCache(
                 getSmoothstep(getCoordinate(zone), ZONE_MIDDLE - ZONE_HALF_WIDTH, ZONE_MIDDLE + ZONE_HALF_WIDTH)));
         DensityFunction zoneWeight = new DensityFunctions.HolderHolder(weight);
-        Mix mix = getMix(getTypes(getNoise(noises, TYPE_NOISE)), SouthernBorderShapes.getShapes(noises, zone, ZONE_MIDDLE),
+        Mix mix = getMix(getTypes(getNoise(noises, TYPE_NOISE)), LandformShapes.getShapes(noises, zone, ZONE_MIDDLE),
                 getSmoothstep(getCoordinate(channel), 1.5F, 4.0F), getBlend(1.0, -VALLEY_SINK, valley));
         context.register(LANDFORM, DensityFunctions.flatCache(getBlend(-1.0, 1.0,
                 DensityFunctions.mul(getHalf(getCoordinate(weight)), mix.codes()))));
@@ -144,18 +144,18 @@ public final class SouthernBorderLandforms {
         return getSpline(getCoordinate(blended), 300.0F, 300.0F, 1.0F, 340.0F, PEAK_Y, 0.0F);
     }
 
-    private static Mix getMix(List<DensityFunction> types, List<SouthernBorderShapes.Shape> shapes,
+    private static Mix getMix(List<DensityFunction> types, List<LandformShapes.Shape> shapes,
             DensityFunction clear, DensityFunction sink) {
         Mix mix = new Mix(DensityFunctions.zero(), DensityFunctions.zero(), DensityFunctions.zero(),
                 DensityFunctions.zero(), DensityFunctions.zero(), DensityFunctions.zero(), DensityFunctions.zero());
         for (int index = 0; index < shapes.size(); index++) {
-            SouthernBorderShapes.Shape shape = shapes.get(index);
+            LandformShapes.Shape shape = shapes.get(index);
             DensityFunction type = types.get(index);
-            DensityFunction base = getBlend(SouthernBorderRivers.FLOODPLAIN_Y, 1.0,
-                    DensityFunctions.mul(getBlend(-SouthernBorderRivers.FLOODPLAIN_Y, 1.0, shape.base()), sink));
+            DensityFunction base = getBlend(Rivers.FLOODPLAIN_Y, 1.0,
+                    DensityFunctions.mul(getBlend(-Rivers.FLOODPLAIN_Y, 1.0, shape.base()), sink));
             DensityFunction body = DensityFunctions.lerp(clear, DensityFunctions.constant(-1.0),
                     shape.solids().apply(base));
-            boolean solid = shape.solids() != SouthernBorderShapes.NO_SOLIDS;
+            boolean solid = shape.solids() != LandformShapes.NO_SOLIDS;
             mix = new Mix(
                     getSum(mix.foot(), type, DensityFunctions.add(base, DensityFunctions.mul(shape.foot(), clear))),
                     getSum(mix.top(), type, DensityFunctions.add(base, DensityFunctions.mul(shape.top(), clear))),

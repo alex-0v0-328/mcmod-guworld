@@ -2,7 +2,7 @@ package net.alex.guzhenrenworld.datagen;
 
 import java.util.concurrent.CompletableFuture;
 import net.alex.guzhenrenworld.GuWorld;
-import net.alex.guzhenrenworld.dimension.SouthernBorderBiomes;
+import net.alex.guzhenrenworld.dimension.southernborder.BiomeLayout;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -18,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * <p>Extends {@link TagsProvider} for {@link Biome}. Fills the Spirit Spring [元泉] generation tag
  * {@link SpiritSpring#BIOMES} from {@link SpiritSpring#LAND_BIOMES}, the overworld list the spring's package owns,
- * and {@link SouthernBorderBiomes#LAND}, the Southern Border's land biomes.
+ * and {@link BiomeLayout#LAND}, the Southern Border's land biomes.
  *
  * <p>⚠ There can only be one per data run: a tags provider is named after its registry and mod, so a
  * second biome tags provider fails datagen as a duplicate; add the next biome tag here instead.
@@ -37,6 +37,6 @@ public class BiomeTagsProvider extends TagsProvider<Biome> {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider registries) {
-        tag(SpiritSpring.BIOMES).addAll(SpiritSpring.LAND_BIOMES).addAll(SouthernBorderBiomes.LAND);
+        tag(SpiritSpring.BIOMES).addAll(SpiritSpring.LAND_BIOMES).addAll(BiomeLayout.LAND);
     }
 }

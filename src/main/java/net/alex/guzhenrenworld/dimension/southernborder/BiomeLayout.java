@@ -1,4 +1,4 @@
-package net.alex.guzhenrenworld.dimension;
+package net.alex.guzhenrenworld.dimension.southernborder;
 
 import static net.alex.guzhenrenworld.biome.BiomeTable.Cell.of;
 import static net.alex.guzhenrenworld.biome.Ports.CLOUD_FOREST;
@@ -34,9 +34,9 @@ import net.minecraft.world.level.biome.Climate;
 
 /**
  * The Southern Border [南疆] biome table on the shared {@link BiomeTable}: Gu World's vanilla replicas, the biomes
- * ported from Terralith, and the region's four landform biomes, which {@link SouthernBorderBiomeSettings} builds.
+ * ported from Terralith, and the region's four landform biomes, which {@link BiomeSettings} builds.
  *
- * <p>The relief axis is {@code SouthernBorderTerrain}'s elevation, so the five {@link #ELEVATIONS} bands are, in
+ * <p>The relief axis is {@code Terrain}'s elevation, so the five {@link #ELEVATIONS} bands are, in
  * blocks, lowland below y 90 (valley floors, plains, floodplains), hills to 150 (the lower benches), mid slopes to
  * 220 (the upper benches), high slopes to 280 and peaks above; each band carries its own family:
  * <ul>
@@ -48,12 +48,12 @@ import net.minecraft.world.level.biome.Climate;
  *   <li>High slopes: windswept hills, taiga and misty mountains.</li>
  *   <li>Peaks: stony peaks.</li>
  * </ul>
- * The weirdness is a 512-block variant noise with its sign kept ({@code SouthernBorderTerrain}), so neighboring
+ * The weirdness is a 512-block variant noise with its sign kept ({@code Terrain}), so neighboring
  * patches of one climate alternate between a cell's normal and variant biome, and the noise's far tops carry the
  * rare one.
  *
  * <p>The landform code stands in as continentalness: the ordinary table takes the band below 0.1, where the code is
- * -1, and each of the four {@link #LANDFORMS} takes the band of its code in {@code SouthernBorderLandforms.CODES},
+ * -1, and each of the four {@link #LANDFORMS} takes the band of its code in {@code Landforms.CODES},
  * whatever the altitude and climate. Rivers take the weirdness band within {@link #RIVER_WEIRDNESS} of zero on the
  * two lowest bands, through the landforms too; the terrain sets the weirdness inside that band exactly where a
  * channel holds water. Lush caves sit under the wettest humidity band and dripstone caves under the driest, between
@@ -67,11 +67,11 @@ import net.minecraft.world.level.biome.Climate;
  *
  * @author Alex
  * @version 1.0.0
- * @see SouthernBorderTerrain
+ * @see Terrain
  * @since 1.0.0
  */
 
-public final class SouthernBorderBiomes {
+public final class BiomeLayout {
 
     public static final ResourceKey<Biome> KARST_PEAK_FOREST = key("karst_peak_forest");
     public static final ResourceKey<Biome> DANXIA = key("danxia");
@@ -139,7 +139,7 @@ public final class SouthernBorderBiomes {
             of(STONY_PEAKS), of(STONY_PEAKS));
     private static final List<List<BiomeTable.Cell>> PEAKS = List.of(PEAK, PEAK, PEAK, PEAK, PEAK);
 
-    private SouthernBorderBiomes() {}
+    private BiomeLayout() {}
 
     public static Climate.ParameterList<Holder<Biome>> getParameters(HolderGetter<Biome> biomes) {
         BiomeTable table = new BiomeTable(ORDINARY, RIVER_WEIRDNESS)
@@ -149,7 +149,7 @@ public final class SouthernBorderBiomes {
                 .addBand(ELEVATIONS.get(3), HIGH_SLOPES)
                 .addBand(ELEVATIONS.get(4), PEAKS);
         for (int index = 0; index < LANDFORMS.size(); index++) {
-            float code = SouthernBorderLandforms.CODES.get(index);
+            float code = Landforms.CODES.get(index);
             table.addFixed(LANDFORMS.get(index), Climate.Parameter.span(code - 0.1F, code + 0.1F));
         }
         return table.addRiver(Replicas.RIVER, LOWLANDS)

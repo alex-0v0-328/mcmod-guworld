@@ -1,7 +1,7 @@
-package net.alex.guzhenrenworld.dimension;
+package net.alex.guzhenrenworld.terrain;
 
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getChoice;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getFunction;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getChoice;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getFunction;
 
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;

@@ -4,9 +4,9 @@ import java.util.List;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
-import net.alex.guzhenrenworld.dimension.SouthernBorder;
-import net.alex.guzhenrenworld.dimension.SouthernBorderBiomes;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
+import net.alex.guzhenrenworld.dimension.southernborder.BiomeLayout;
+import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
@@ -40,7 +40,7 @@ public class EnUsLanguageProvider extends LanguageProvider {
                 "Dripstone Caves"));
         Translations.addBiomes(this, Ports.BIOMES, List.of("Plateau", "Forested Plateau", "Cloud Forest",
                 "Misty Mountains", "Rainforest", "Hot Springs", "Orchid Swamp", "Peach Grove"));
-        Translations.addBiomes(this, SouthernBorderBiomes.LANDFORMS, List.of("Karst Peak Forest", "Danxia",
+        Translations.addBiomes(this, BiomeLayout.LANDFORMS, List.of("Karst Peak Forest", "Danxia",
                 "Sandstone Pillars", "Zhangshiyan Cliffs"));
     }
 }

@@ -36,7 +36,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
  * the bootstraps {@code datagen.DatapackProvider} runs: the configured and placed feature, and the biome
  * modifier adding it to {@link #BIOMES} at {@code TOP_LAYER_MODIFICATION} (after vegetation);
  * {@code datagen.BiomeTagsProvider} fills that tag from {@link #LAND_BIOMES} and the Southern Border's land
- * biomes ({@code SouthernBorderBiomes.LAND}). Guzhenren keeps the spring's
+ * biomes ({@code BiomeLayout.LAND}). Guzhenren keeps the spring's
  * block, fluid, item and client rendering; every worldgen id here is in the {@code guworld} namespace.
  *
  * <p>{@link #LAND_BIOMES} is 39 overworld land biomes, moved here with the spring's worldgen as a copy of
