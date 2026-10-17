@@ -1,6 +1,7 @@
 package net.alex.guzhenrenworld.dimension;
 
 import static net.alex.guzhenrenworld.biome.BiomeTable.Cell.of;
+import static net.alex.guzhenrenworld.biome.Keys.key;
 import static net.alex.guzhenrenworld.biome.Ports.CLOUD_FOREST;
 import static net.alex.guzhenrenworld.biome.Ports.FORESTED_PLATEAU;
 import static net.alex.guzhenrenworld.biome.Ports.HOT_SPRINGS;
@@ -21,13 +22,12 @@ import static net.alex.guzhenrenworld.biome.Replicas.WINDSWEPT_HILLS;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.BiomeTable;
+import net.alex.guzhenrenworld.biome.Keys;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
@@ -89,7 +89,7 @@ public final class SouthernBorderBiomes {
             Climate.Parameter.span(0.259F, 0.704F),
             Climate.Parameter.span(0.704F, 1.0F));
     private static final Climate.Parameter ORDINARY = Climate.Parameter.span(-1.0F, 0.1F);
-    private static final Climate.Parameter LOWLANDS = Climate.Parameter.span(-1.0F, -0.259F);
+    private static final Climate.Parameter LOWLANDS = Climate.Parameter.span(ELEVATIONS.get(0), ELEVATIONS.get(1));
     private static final Climate.Parameter CAVE_DEPTH = Climate.Parameter.span(0.2F, 0.9F);
     private static final List<List<BiomeTable.Cell>> LOWLAND = List.of(
             List.of(of(PLAINS, MEADOW), of(PLAINS, MEADOW), of(TAIGA, FOREST), of(TAIGA, FOREST),
@@ -160,12 +160,7 @@ public final class SouthernBorderBiomes {
     }
 
     public static void addTranslations(LanguageProvider languageProvider, List<String> names) {
-        if (names.size() != LANDFORMS.size()) {
-            throw new IllegalArgumentException(names.size() + " landform names for " + LANDFORMS.size() + " biomes");
-        }
-        for (int index = 0; index < LANDFORMS.size(); index++) {
-            languageProvider.add(LANDFORMS.get(index).location().toLanguageKey("biome"), names.get(index));
-        }
+        Keys.addTranslations(languageProvider, LANDFORMS, names);
     }
 
     private static List<ResourceKey<Biome>> getLand() {
@@ -174,9 +169,5 @@ public final class SouthernBorderBiomes {
         land.addAll(Ports.BIOMES);
         land.addAll(LANDFORMS);
         return List.copyOf(land);
-    }
-
-    private static ResourceKey<Biome> key(String name) {
-        return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
     }
 }

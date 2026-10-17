@@ -2,8 +2,12 @@ package net.alex.guzhenrenworld.dimension;
 
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getBlend;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getCoordinate;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getDifference;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getFunction;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getNoise;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getRamp;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getScaled;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getSmoothstep;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getSoftMin;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getSpline;
 
@@ -160,11 +164,11 @@ public final class SouthernBorderRivers {
         }
 
         DensityFunction getFloodplain(Holder<DensityFunction> ground) {
-            DensityFunction plain = getSpline(getCoordinate(getNarrowed(greatDistance, narrowing)),
-                    GREAT_HALF_WIDTH, 0.0F, 0.0F, GREAT_FLOODPLAIN, 1.0F, 0.0F);
+            DensityFunction plain = getSmoothstep(getCoordinate(getNarrowed(greatDistance, narrowing)),
+                    GREAT_HALF_WIDTH, GREAT_FLOODPLAIN);
             DensityFunction shifted = DensityFunctions.add(new DensityFunctions.HolderHolder(ground),
                     getScaled(-FLOODPLAIN_EDGE_SWING / FLOODPLAIN_SWING, getBlend(-FLOODPLAIN_Y, 1.0, floodplain)));
-            DensityFunction lowland = getSpline(getCoordinate(shifted), 72.0F, 1.0F, 0.0F, 90.0F, 0.0F, 0.0F);
+            DensityFunction lowland = getSmoothstep(getCoordinate(shifted), 72.0F, 1.0F, 90.0F, 0.0F);
             DensityFunction keep = getBlend(1.0, -1.0, DensityFunctions.mul(getBlend(1.0, -1.0, plain), lowland));
             return DensityFunctions.lerp(keep, floodplain, new DensityFunctions.HolderHolder(ground));
         }
@@ -174,23 +178,22 @@ public final class SouthernBorderRivers {
             DensityFunctions.Spline.Coordinate distance = getCoordinate(getNarrowed(streamDistance, narrowing));
             DensityFunction profile = DensityFunctions.lerp(new DensityFunctions.HolderHolder(zones),
                     getSpline(distance, STREAM_PROFILE), getSpline(distance, GORGE_PROFILE));
-            DensityFunction valley = DensityFunctions.add(profile, getScaled(STREAM_LIFT,
-                    getSpline(getCoordinate(range), REACH_FULL, 0.0F, 0.0F, REACH_END, 1.0F, 0.0F)));
+            DensityFunction valley = DensityFunctions.add(profile,
+                    getScaled(STREAM_LIFT, getSmoothstep(getCoordinate(range), REACH_FULL, REACH_END)));
             return getSoftMin(new DensityFunctions.HolderHolder(land), valley, VALLEY_ROUNDING);
         }
 
         DensityFunction getWet(Holder<DensityFunction> land) {
-            return getSpline(getCoordinate(land),
-                    SouthernBorder.SEA_LEVEL + 3.0F, 1.0F, 0.0F, SouthernBorder.SEA_LEVEL + 11.0F, 0.0F, 0.0F);
+            return getSmoothstep(getCoordinate(land),
+                    SouthernBorder.SEA_LEVEL + 3.0F, 1.0F, SouthernBorder.SEA_LEVEL + 11.0F, 0.0F);
         }
 
         DensityFunction getCarved(Holder<DensityFunction> land, DensityFunction wet) {
-            DensityFunction inside = getSpline(getCoordinate(getHalfWidths(greatDistance, narrowing, GREAT_HALF_WIDTH)),
-                    0.0F, 1.0F, 0.0F, 1.0F, 0.0F, 0.0F);
+            DensityFunction inside = getSmoothstep(
+                    getCoordinate(getHalfWidths(greatDistance, narrowing, GREAT_HALF_WIDTH)), 0.0F, 1.0F, 1.0F, 0.0F);
             return DensityFunctions.lerp(DensityFunctions.mul(inside, wet), new DensityFunctions.HolderHolder(land),
                     DensityFunctions.constant(SouthernBorder.SEA_LEVEL - GREAT_RIVER_DEPTH));
         }
-
     }
 
     static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context) {
@@ -207,8 +210,7 @@ public final class SouthernBorderRivers {
         HolderGetter<NormalNoise.NoiseParameters> noises = context.lookup(Registries.NOISE);
         Holder<DensityFunction> greatRiver = context.register(GREAT_RIVER,
                 DensityFunctions.flatCache(getWarped(noises, GREAT_RIVER_NOISE, WARP_BLOCKS, 0.0, 0.0)));
-        DensityFunction side = getSpline(getCoordinate(greatRiver),
-                -GREAT_RIVER_WIDTH, 0.0F, 0.0F, GREAT_RIVER_WIDTH, 1.0F, 0.0F);
+        DensityFunction side = getSmoothstep(getCoordinate(greatRiver), -GREAT_RIVER_WIDTH, GREAT_RIVER_WIDTH);
         Holder<DensityFunction> stream = context.register(STREAM, DensityFunctions.flatCache(DensityFunctions.lerp(
                 side, getWarped(noises, STREAM_B_NOISE, WARP_BLOCKS / 2.0, 0.0, 0.0).abs(),
                 getWarped(noises, STREAM_A_NOISE, WARP_BLOCKS / 2.0, 0.0, 0.0).abs())));
@@ -223,22 +225,21 @@ public final class SouthernBorderRivers {
         Holder<DensityFunction> channel = context.register(CHANNEL, DensityFunctions.flatCache(DensityFunctions.min(
                 getHalfWidths(greatDistance, narrowing, GREAT_HALF_WIDTH),
                 getHalfWidths(streamDistance, narrowing, STREAM_HALF_WIDTH))));
-        DensityFunction floodplain = getBlend(FLOODPLAIN_Y, FLOODPLAIN_SWING,
-                DensityFunctions.noise(noises.getOrThrow(FLOODPLAIN_NOISE), 1.0, 0.0));
+        DensityFunction floodplain = getBlend(FLOODPLAIN_Y, FLOODPLAIN_SWING, getNoise(noises, FLOODPLAIN_NOISE));
         return new Rivers(new DensityFunctions.HolderHolder(greatRiver).abs(), stream, greatDistance, streamDistance,
                 narrowing, channel, floodplain);
     }
 
     static void registerShore(BootstrapContext<DensityFunction> context, Rivers rivers,
             Holder<DensityFunction> height) {
-        DensityFunction dry = getSpline(getCoordinate(height),
-                SouthernBorder.SEA_LEVEL - 0.5F, 0.0F, 0.0F, SouthernBorder.SEA_LEVEL + 1.0F, 1.0F, 0.0F);
+        DensityFunction dry = getSmoothstep(getCoordinate(height),
+                SouthernBorder.SEA_LEVEL - 0.5F, SouthernBorder.SEA_LEVEL + 1.0F);
         context.register(SHORE, DensityFunctions.flatCache(DensityFunctions.add(
                 new DensityFunctions.HolderHolder(rivers.channel()), getScaled(DRY_SHORE, dry))));
     }
 
     static DensityFunction getShore(HolderGetter<DensityFunction> functions) {
-        return new DensityFunctions.HolderHolder(functions.getOrThrow(SHORE));
+        return getFunction(functions, SHORE);
     }
 
     private static DensityFunction getNarrowed(Holder<DensityFunction> distance, Holder<DensityFunction> narrowing) {
@@ -260,10 +261,8 @@ public final class SouthernBorderRivers {
     private static DensityFunction getDistance(HolderGetter<NormalNoise.NoiseParameters> noises,
             ResourceKey<NormalNoise.NoiseParameters> key, double warp) {
         DensityFunction here = getWarped(noises, key, warp, 0.0, 0.0);
-        DensityFunction east = DensityFunctions.add(here,
-                getScaled(-1.0, getWarped(noises, key, warp, SLOPE_STEP, 0.0)));
-        DensityFunction south = DensityFunctions.add(here,
-                getScaled(-1.0, getWarped(noises, key, warp, 0.0, SLOPE_STEP)));
+        DensityFunction east = getDifference(here, getWarped(noises, key, warp, SLOPE_STEP, 0.0));
+        DensityFunction south = getDifference(here, getWarped(noises, key, warp, 0.0, SLOPE_STEP));
         DensityFunction slope = getScaled(SLOPE_NORM / SLOPE_STEP, DensityFunctions.add(east.abs(), south.abs()));
         float[] points = new float[SLOPES.length * 3];
         for (int index = 0; index < SLOPES.length; index++) {
@@ -277,14 +276,12 @@ public final class SouthernBorderRivers {
 
     private static DensityFunction getWarped(HolderGetter<NormalNoise.NoiseParameters> noises,
             ResourceKey<NormalNoise.NoiseParameters> key, double blocks, double eastward, double southward) {
-        return DensityFunctions.shiftedNoise2d(
-                getBlend(eastward, blocks, DensityFunctions.noise(noises.getOrThrow(WARP_X_NOISE), 1.0, 0.0)),
-                getBlend(southward, blocks, DensityFunctions.noise(noises.getOrThrow(WARP_Z_NOISE), 1.0, 0.0)),
-                1.0, noises.getOrThrow(key));
+        return DensityFunctions.shiftedNoise2d(getBlend(eastward, blocks, getNoise(noises, WARP_X_NOISE)),
+                getBlend(southward, blocks, getNoise(noises, WARP_Z_NOISE)), 1.0, noises.getOrThrow(key));
     }
 
     private static DensityFunction getNarrowing(HolderGetter<NormalNoise.NoiseParameters> noises) {
-        return getSpline(getCoordinate(DensityFunctions.noise(noises.getOrThrow(WIDTH_NOISE), 1.0, 0.0)),
+        return getSpline(getCoordinate(getNoise(noises, WIDTH_NOISE)),
                 -0.5F, 1.0F / 0.75F, 0.0F, 0.0F, 1.0F, -0.65F, 0.5F, 1.0F / 1.5F, 0.0F);
     }
 

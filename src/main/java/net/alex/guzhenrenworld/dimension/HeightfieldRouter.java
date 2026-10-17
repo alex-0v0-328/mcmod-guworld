@@ -1,5 +1,8 @@
 package net.alex.guzhenrenworld.dimension;
 
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getChoice;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getFunction;
+
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -106,17 +109,14 @@ public final class HeightfieldRouter {
         DensityFunction wall = getWall(region.surface());
         DensityFunction cover = DensityFunctions.min(surface,
                 getRelativeHeight(DensityFunctions.constant(region.caveCeiling()), SURFACE_BLOCKS_PER_UNIT));
-        DensityFunction open = DensityFunctions.rangeChoice(region.cliffs(), -1000000.0, CLIFF_GUARD,
-                DensityFunctions.min(wall,
-                        DensityFunctions.mul(DensityFunctions.constant(5.0), getFunction(functions, ENTRANCES))),
-                wall);
-        DensityFunction entrances = DensityFunctions.rangeChoice(region.shore(), -1000000.0, SHORE_GUARD, wall, open);
-        DensityFunction carved = DensityFunctions.rangeChoice(cover, -1000000.0, SURFACE_DENSITY_THRESHOLD,
-                entrances, getUnderground(functions, noises, cover));
-        DensityFunction noodleCover =
-                DensityFunctions.rangeChoice(region.cliffs(), -1000000.0, CLIFF_GUARD, surface, cover);
-        DensityFunction noodles = DensityFunctions.rangeChoice(noodleCover, -1000000.0, SURFACE_DENSITY_THRESHOLD,
-                DensityFunctions.constant(NO_CAVE), getFunction(functions, NOODLE));
+        DensityFunction open = getChoice(region.cliffs(), CLIFF_GUARD, DensityFunctions.min(wall,
+                DensityFunctions.mul(DensityFunctions.constant(5.0), getFunction(functions, ENTRANCES))), wall);
+        DensityFunction entrances = getChoice(region.shore(), SHORE_GUARD, wall, open);
+        DensityFunction carved = getChoice(cover, SURFACE_DENSITY_THRESHOLD, entrances,
+                getUnderground(functions, noises, cover));
+        DensityFunction noodleCover = getChoice(region.cliffs(), CLIFF_GUARD, surface, cover);
+        DensityFunction noodles = getChoice(noodleCover, SURFACE_DENSITY_THRESHOLD, DensityFunctions.constant(NO_CAVE),
+                getFunction(functions, NOODLE));
         DensityFunction initial = DensityFunctions.add(surface, DensityFunctions.constant(CHEESE_NOISE_TARGET));
         return new NoiseRouter(
                 DensityFunctions.noise(noises.getOrThrow(Noises.AQUIFER_BARRIER), 0.5),
@@ -195,11 +195,6 @@ public final class HeightfieldRouter {
     private static DensityFunction postProcess(DensityFunction density) {
         return DensityFunctions.mul(DensityFunctions.interpolated(DensityFunctions.blendDensity(density)),
                 DensityFunctions.constant(0.64)).squeeze();
-    }
-
-    private static DensityFunction getFunction(HolderGetter<DensityFunction> functions,
-            ResourceKey<DensityFunction> key) {
-        return new DensityFunctions.HolderHolder(functions.getOrThrow(key));
     }
 
     private static ResourceKey<DensityFunction> vanillaKey(String path) {

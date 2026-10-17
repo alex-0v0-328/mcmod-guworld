@@ -2,8 +2,10 @@ package net.alex.guzhenrenworld.dimension;
 
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getBlend;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getCoordinate;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getDifference;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getFunction;
 import static net.alex.guzhenrenworld.dimension.DensityShapes.getScaled;
-import static net.alex.guzhenrenworld.dimension.DensityShapes.getSpline;
+import static net.alex.guzhenrenworld.dimension.DensityShapes.getSmoothstep;
 
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.Holder;
@@ -76,33 +78,33 @@ final class SouthernBorderMountains {
     static DensityFunction getDetail(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> rise) {
         Holder<NormalNoise.NoiseParameters> base = noises.getOrThrow(RIDGE_BASE_NOISE);
         DensityFunction here = DensityFunctions.noise(base, BASE_SCALE, 0.0);
-        DensityFunction slopeX = DensityFunctions.add(here, getScaled(-1.0, DensityFunctions.shiftedNoise2d(
-                DensityFunctions.constant(SLOPE_STEP), DensityFunctions.zero(), BASE_SCALE, base)));
-        DensityFunction slopeZ = DensityFunctions.add(here, getScaled(-1.0, DensityFunctions.shiftedNoise2d(
-                DensityFunctions.zero(), DensityFunctions.constant(SLOPE_STEP), BASE_SCALE, base)));
+        DensityFunction slopeX = getDifference(here, DensityFunctions.shiftedNoise2d(
+                DensityFunctions.constant(SLOPE_STEP), DensityFunctions.zero(), BASE_SCALE, base));
+        DensityFunction slopeZ = getDifference(here, DensityFunctions.shiftedNoise2d(
+                DensityFunctions.zero(), DensityFunctions.constant(SLOPE_STEP), BASE_SCALE, base));
         DensityFunction detail = DensityFunctions.shiftedNoise2d(getScaled(SLOPE_SHIFT, slopeX.abs()),
                 getScaled(SLOPE_SHIFT, slopeZ.abs()), DETAIL_SCALE, noises.getOrThrow(RIDGE_DETAIL_NOISE));
         DensityFunction ridges = DensityFunctions.add(here, getScaled(0.6, detail));
         DensityFunction jagged =
                 DensityFunctions.noise(noises.getOrThrow(JAGGED_NOISE), JAGGED_SCALE, 0.0).halfNegative();
         return DensityFunctions.add(DensityFunctions.mul(getScaled(-RIDGE_BLOCKS, ridges),
-                        getSpline(getCoordinate(rise), DETAIL_START, 0.0F, 0.0F, DETAIL_FULL, 1.0F, 0.0F)),
+                        getSmoothstep(getCoordinate(rise), DETAIL_START, DETAIL_FULL)),
                 DensityFunctions.mul(jagged,
-                        getSpline(getCoordinate(rise), JAGGED_START, 0.0F, 0.0F, JAGGED_FULL, JAGGED_BLOCKS, 0.0F)));
+                        getSmoothstep(getCoordinate(rise), JAGGED_START, 0.0F, JAGGED_FULL, JAGGED_BLOCKS)));
     }
 
     static void registerRoughness(BootstrapContext<DensityFunction> context, Holder<DensityFunction> rise,
             Holder<DensityFunction> zones) {
         HolderGetter<NormalNoise.NoiseParameters> noises = context.lookup(Registries.NOISE);
         DensityFunction gate = DensityFunctions.mul(
-                getSpline(getCoordinate(rise), ROUGHNESS_START, 0.0F, 0.0F, ROUGHNESS_FULL, ROUGHNESS_MAX, 0.0F),
+                getSmoothstep(getCoordinate(rise), ROUGHNESS_START, 0.0F, ROUGHNESS_FULL, ROUGHNESS_MAX),
                 getBlend(1.0, -1.0, new DensityFunctions.HolderHolder(zones)));
         context.register(ROUGHNESS, DensityFunctions.mul(DensityFunctions.flatCache(gate),
                 DensityFunctions.noise(noises.getOrThrow(ROUGHNESS_NOISE), 1.0, 2.0)));
     }
 
     static DensityFunction getRoughness(HolderGetter<DensityFunction> functions) {
-        return new DensityFunctions.HolderHolder(functions.getOrThrow(ROUGHNESS));
+        return getFunction(functions, ROUGHNESS);
     }
 
     private static ResourceKey<NormalNoise.NoiseParameters> noiseKey(String name) {

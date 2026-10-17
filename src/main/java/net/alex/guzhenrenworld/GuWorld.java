@@ -16,9 +16,9 @@ import net.neoforged.fml.common.Mod;
  * a Guzhenren block by its id alone ({@link GuzhenrenBlocks}).
  *
  * <p>Holds the {@code MOD_ID} constant and the {@link #id} helper, and nothing else. Each function lives
- * in one package ({@code dimension}, {@code feature}, client-only drawing in {@code client}) and wires
- * itself through {@code @EventBusSubscriber}, as {@code datagen} does, so this package depends on none of
- * them and the package graph stays acyclic.
+ * in one package ({@code biome}, {@code dimension}, {@code feature}, client-only drawing in {@code client}) and
+ * wires itself through {@code @EventBusSubscriber} or the {@code datagen} providers, so this package depends on
+ * none of them and the package graph stays acyclic.
  *
  * <p>⚠ The package is {@code net.alex.guzhenrenworld}, never {@code net.alex.guzhenren.world}:
  * Guzhenren already owns the {@code net.alex.guzhenren} packages, and NeoForge loads every mod as its

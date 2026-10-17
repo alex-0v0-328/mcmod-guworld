@@ -1,5 +1,7 @@
 package net.alex.guzhenrenworld.biome;
 
+import static net.alex.guzhenrenworld.biome.Keys.key;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -7,8 +9,8 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
 import java.util.Map;
-import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.SurfaceRuleData;
@@ -30,7 +32,8 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  * <p>Two things differ, both because the heightfield regions carve their own caves:
  * <ul>
  *   <li>No replica carves. A carver's tunnel reaches up to eight chunks from where it starts, so a tunnel from one
- *   biome cuts a cliff face or a pillar standing in another open.</li>
+ *   biome cuts a cliff face or a pillar standing in another open. {@link #getUncarved} drops a template's carvers,
+ *   keeping its features or taking the ones it is given, for every biome Gu World builds on a vanilla one.</li>
  *   <li>Vanilla's overworld surface rules name their biomes by key, so a replica would lose its biome's surface,
  *   stony peaks their stone and calcite, the windswept hills their bare stone. {@link #getSurfaceRules} returns
  *   vanilla's rules with every replica added beside the biome it copies.</li>
@@ -86,6 +89,10 @@ public final class Replicas {
     }
 
     public static Biome getUncarved(Biome template) {
+        return getUncarved(template, template.getGenerationSettings().features());
+    }
+
+    public static Biome getUncarved(Biome template, List<HolderSet<PlacedFeature>> features) {
         Biome.ClimateSettings climate = template.getModifiedClimateSettings();
         return new Biome.BiomeBuilder()
                 .hasPrecipitation(climate.hasPrecipitation())
@@ -94,7 +101,7 @@ public final class Replicas {
                 .downfall(climate.downfall())
                 .specialEffects(template.getModifiedSpecialEffects())
                 .mobSpawnSettings(template.getMobSettings())
-                .generationSettings(new BiomeGenerationSettings(Map.of(), template.getGenerationSettings().features()))
+                .generationSettings(new BiomeGenerationSettings(Map.of(), features))
                 .build();
     }
 
@@ -106,12 +113,7 @@ public final class Replicas {
     }
 
     public static void addTranslations(LanguageProvider languageProvider, List<String> names) {
-        if (names.size() != TEMPLATES.size()) {
-            throw new IllegalArgumentException(names.size() + " replica names for " + TEMPLATES.size() + " replicas");
-        }
-        for (int index = 0; index < TEMPLATES.size(); index++) {
-            languageProvider.add(TEMPLATES.get(index).getKey().location().toLanguageKey("biome"), names.get(index));
-        }
+        Keys.addTranslations(languageProvider, TEMPLATES.stream().map(Map.Entry::getKey).toList(), names);
     }
 
     private static void register(BootstrapContext<Biome> context, ResourceKey<Biome> key, Biome template) {
@@ -134,9 +136,5 @@ public final class Replicas {
             }
         }
         object.entrySet().forEach(entry -> addReplicas(entry.getValue()));
-    }
-
-    private static ResourceKey<Biome> key(String name) {
-        return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
     }
 }
