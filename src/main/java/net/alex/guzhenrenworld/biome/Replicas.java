@@ -1,7 +1,5 @@
 package net.alex.guzhenrenworld.biome;
 
-import static net.alex.guzhenrenworld.biome.Keys.key;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -9,6 +7,7 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
 import java.util.Map;
+import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
@@ -22,7 +21,6 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import net.neoforged.neoforge.common.data.LanguageProvider;
 
 /**
  * Gu World's replicas of vanilla overworld biomes: each one vanilla's biome under its vanilla name in this mod's
@@ -39,7 +37,8 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  *   vanilla's rules with every replica added beside the biome it copies.</li>
  * </ul>
  *
- * <p>{@link #TEMPLATES} pairs each replica with its vanilla biome; {@link #addTranslations} names them in that order.
+ * <p>{@link #TEMPLATES} pairs each replica with its vanilla biome; {@link #BIOMES} lists the replicas in that order,
+ * the order the language providers name them in.
  *
  * @author Alex
  * @version 1.0.0
@@ -68,6 +67,7 @@ public final class Replicas {
             Map.entry(TAIGA, Biomes.TAIGA), Map.entry(WINDSWEPT_HILLS, Biomes.WINDSWEPT_HILLS),
             Map.entry(STONY_PEAKS, Biomes.STONY_PEAKS), Map.entry(RIVER, Biomes.RIVER),
             Map.entry(LUSH_CAVES, Biomes.LUSH_CAVES), Map.entry(DRIPSTONE_CAVES, Biomes.DRIPSTONE_CAVES));
+    public static final List<ResourceKey<Biome>> BIOMES = TEMPLATES.stream().map(Map.Entry::getKey).toList();
 
     private Replicas() {}
 
@@ -112,10 +112,6 @@ public final class Replicas {
         return SurfaceRules.RuleSource.CODEC.parse(JsonOps.INSTANCE, vanilla).getOrThrow();
     }
 
-    public static void addTranslations(LanguageProvider languageProvider, List<String> names) {
-        Keys.addTranslations(languageProvider, TEMPLATES.stream().map(Map.Entry::getKey).toList(), names);
-    }
-
     private static void register(BootstrapContext<Biome> context, ResourceKey<Biome> key, Biome template) {
         context.register(key, getUncarved(template));
     }
@@ -136,5 +132,9 @@ public final class Replicas {
             }
         }
         object.entrySet().forEach(entry -> addReplicas(entry.getValue()));
+    }
+
+    private static ResourceKey<Biome> key(String name) {
+        return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
     }
 }

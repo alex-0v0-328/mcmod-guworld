@@ -1,7 +1,5 @@
 package net.alex.guzhenrenworld.biome;
 
-import static net.alex.guzhenrenworld.biome.Keys.key;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
@@ -30,7 +28,6 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
-import net.neoforged.neoforge.common.data.LanguageProvider;
 
 /**
  * Biomes and features ported from Terralith 2.5.8 (Stardust Labs; Alex holds the authors' permission to use and
@@ -130,10 +127,6 @@ public final class Ports {
         return tags;
     }
 
-    public static void addTranslations(LanguageProvider languageProvider, List<String> names) {
-        Keys.addTranslations(languageProvider, BIOMES, names);
-    }
-
     private static <T> void register(BootstrapContext<T> context, ResourceKey<? extends Registry<T>> registry,
             Codec<T> codec, String kind) {
         RegistryOps<JsonElement> registryOps = getOps(context);
@@ -178,6 +171,10 @@ public final class Ports {
         } catch (IOException exception) {
             throw new IllegalStateException("cannot read " + file, exception);
         }
+    }
+
+    private static ResourceKey<Biome> key(String name) {
+        return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
     }
 
     private static ResourceKey<PlacedFeature> placedKey(String name) {

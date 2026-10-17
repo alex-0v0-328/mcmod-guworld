@@ -1,7 +1,6 @@
 package net.alex.guzhenrenworld.dimension;
 
 import static net.alex.guzhenrenworld.biome.BiomeTable.Cell.of;
-import static net.alex.guzhenrenworld.biome.Keys.key;
 import static net.alex.guzhenrenworld.biome.Ports.CLOUD_FOREST;
 import static net.alex.guzhenrenworld.biome.Ports.FORESTED_PLATEAU;
 import static net.alex.guzhenrenworld.biome.Ports.HOT_SPRINGS;
@@ -22,16 +21,16 @@ import static net.alex.guzhenrenworld.biome.Replicas.WINDSWEPT_HILLS;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.BiomeTable;
-import net.alex.guzhenrenworld.biome.Keys;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
-import net.neoforged.neoforge.common.data.LanguageProvider;
 
 /**
  * The Southern Border [南疆] biome table on the shared {@link BiomeTable}: Gu World's vanilla replicas, the biomes
@@ -62,7 +61,7 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  *
  * <p>None of these biomes joins a vanilla biome tag, so no vanilla structure starts here, the strongholds included,
  * and nothing another mod adds to the overworld's biomes reaches them. {@link #LAND}, every surface biome but the
- * river, is where the spirit spring [元泉] may stand. {@link #addTranslations} names the {@link #LANDFORMS}.
+ * river, is where the spirit spring [元泉] may stand. The language providers name the {@link #LANDFORMS} in their order.
  *
  * <p>⚠ The table is a first prototype for Alex to judge in game, not a settled pick.
  *
@@ -159,15 +158,15 @@ public final class SouthernBorderBiomes {
                 .build(biomes);
     }
 
-    public static void addTranslations(LanguageProvider languageProvider, List<String> names) {
-        Keys.addTranslations(languageProvider, LANDFORMS, names);
-    }
-
     private static List<ResourceKey<Biome>> getLand() {
         List<ResourceKey<Biome>> land = new ArrayList<>(List.of(PLAINS, FOREST, BIRCH_FOREST, DARK_FOREST,
                 BAMBOO_JUNGLE, MEADOW, TAIGA, WINDSWEPT_HILLS, STONY_PEAKS));
         land.addAll(Ports.BIOMES);
         land.addAll(LANDFORMS);
         return List.copyOf(land);
+    }
+
+    private static ResourceKey<Biome> key(String name) {
+        return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
     }
 }

@@ -18,11 +18,10 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
-import net.neoforged.neoforge.common.data.LanguageProvider;
 
 /**
  * The Southern Border [南疆] dimension, one of the four regions beyond the Central Continent [中州], which is
- * the overworld: its keys, and the datapack entries and strings behind them.
+ * the overworld: its keys, and the datapack entries behind them.
  *
  * <p>Every key shares the one location {@code guworld:southern_border}. {@link #registerDimensionType},
  * {@link #registerNoiseSettings} and {@link #registerLevelStem} are the bootstraps {@code datagen.DatapackProvider}
@@ -39,9 +38,6 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  * <p>The region is finite: {@link #BORDER_SIZE} is the side of its square world border around 0, 0, eight
  * kilometers (about 262,000 chunks), which {@link RegionBorders} applies to {@link #LEVEL}. The vanilla border
  * wall stands in until the regional walls [界壁] are built (wiki《南疆》).
- *
- * <p>{@link #addTranslations} writes the dimension name and the Traveler's Titles title from the registered
- * key, the way {@code TreasureYellowHeaven} does, without a title color.
  *
  * <p>⚠ Every key shares the location of Guzhenren's level key
  * {@code net.alex.guzhenren.registry.world.ModDimensions#SOUTHERN_BORDER}, the admin travel there (Guzhenren
@@ -115,11 +111,5 @@ public final class SouthernBorder {
                 dimensionTypes.getOrThrow(DIMENSION_TYPE),
                 new NoiseBasedChunkGenerator(biomeSource, noiseSettings.getOrThrow(NOISE_SETTINGS))
         ));
-    }
-
-    public static void addTranslations(LanguageProvider languageProvider, String name) {
-        ResourceLocation dimensionId = LEVEL_STEM.location();
-        languageProvider.add(dimensionId.toLanguageKey("dimension"), name);
-        languageProvider.add(dimensionId.toLanguageKey("travelerstitles"), name);
     }
 }
