@@ -100,7 +100,7 @@ public final class SouthernBorderLandforms {
         Holder<DensityFunction> weight = context.register(WEIGHT, DensityFunctions.flatCache(
                 getSmoothstep(getCoordinate(zone), ZONE_MIDDLE - ZONE_HALF_WIDTH, ZONE_MIDDLE + ZONE_HALF_WIDTH)));
         DensityFunction zoneWeight = new DensityFunctions.HolderHolder(weight);
-        Mix mix = getMix(getTypes(getNoise(noises, TYPE_NOISE)), SouthernBorderShapes.getShapes(noises, zone),
+        Mix mix = getMix(getTypes(getNoise(noises, TYPE_NOISE)), SouthernBorderShapes.getShapes(noises, zone, ZONE_MIDDLE),
                 getSmoothstep(getCoordinate(channel), 1.5F, 4.0F), getBlend(1.0, -VALLEY_SINK, valley));
         context.register(LANDFORM, DensityFunctions.flatCache(getBlend(-1.0, 1.0,
                 DensityFunctions.mul(getHalf(getCoordinate(weight)), mix.codes()))));

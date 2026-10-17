@@ -23,7 +23,8 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 /**
  * The shapes of the four Southern Border [南疆] landforms, in the order {@link SouthernBorderLandforms} blends them;
- * noise ids live under {@code guworld:southern_border/landform/}.
+ * noise ids live under {@code guworld:southern_border/landform/}. {@link #getShapes} takes the zone noise and the
+ * middle its zones start at, both the landforms' own, so a shape depends on nothing above it.
  *
  * <p>Each {@link Shape} is a base height in blocks, the cliff foot and top above that base, the edge field, scaled
  * so it runs from -1 to 1 across some 8 blocks of its noise, the 3D faces added to that edge, and the 3D solids
@@ -115,7 +116,6 @@ final class SouthernBorderShapes {
     private static final double CLIFF_EDGE = 130.0;
     private static final double BEDDING_XZ_SCALE = 0.03;
     private static final double JOINT_Y_SCALE = 0.08;
-
     static final UnaryOperator<DensityFunction> NO_SOLIDS = base -> DensityFunctions.constant(-1.0);
 
     private SouthernBorderShapes() {}
@@ -146,8 +146,10 @@ final class SouthernBorderShapes {
         context.register(TIER_NOISE, new NormalNoise.NoiseParameters(-9, 1.0));
     }
 
-    static List<Shape> getShapes(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> zone) {
-        return List.of(getKarst(noises, zone), getDanxia(noises), getPillars(noises, zone), getCliffs(noises, zone));
+    static List<Shape> getShapes(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> zone,
+            float zoneMiddle) {
+        return List.of(getKarst(noises, zone), getDanxia(noises), getPillars(noises, zone, zoneMiddle),
+                getCliffs(noises, zone, zoneMiddle));
     }
 
     private static Shape getKarst(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> zone) {
@@ -185,13 +187,14 @@ final class SouthernBorderShapes {
                 DensityFunctions.max(mesaEdge, castleEdge), getFaces(noises, 0.6, 0.5), NO_SOLIDS);
     }
 
-    private static Shape getPillars(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> zone) {
+    private static Shape getPillars(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> zone,
+            float zoneMiddle) {
         DensityFunction depth = getBlend(65.0, 40.0, getNoise(noises, PILLAR_DEPTH_NOISE)).clamp(40.0, 90.0);
         DensityFunction floor = DensityFunctions.add(
                 getDifference(getBlend(175.0, 20.0, getNoise(noises, PLATEAU_NOISE)), depth),
                 getScaled(3.0, getNoise(noises, CANYON_NOISE)));
         DensityFunction rim =
-                getSmoothstep(getCoordinate(zone), SouthernBorderLandforms.ZONE_MIDDLE, 1.0F, 0.18F, 0.0F);
+                getSmoothstep(getCoordinate(zone), zoneMiddle, 1.0F, 0.18F, 0.0F);
         DensityFunction pillars = DensityFunctions.add(DensityFunctions.max(
                 getNoise(noises, PILLAR_NOISE, PILLAR_SCALE),
                 getBlend(STOUT_PILLAR_LIFT, 1.0, getNoise(noises, STOUT_PILLAR_NOISE, STOUT_PILLAR_SCALE))), rim);
@@ -227,11 +230,12 @@ final class SouthernBorderShapes {
         return DensityFunctions.min(body, cap).clamp(-1.0, 1.0);
     }
 
-    private static Shape getCliffs(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> zone) {
+    private static Shape getCliffs(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> zone,
+            float zoneMiddle) {
         DensityFunction coves =
                 getSmoothstep(getCoordinate(getNoise(noises, COVE_NOISE).abs()), 0.0F, 1.0F, 0.1F, 0.0F);
         DensityFunction slope = DensityFunctions.add(DensityFunctions.add(
-                getBlend(-0.5 * SouthernBorderLandforms.ZONE_MIDDLE, 0.5, new DensityFunctions.HolderHolder(zone)),
+                getBlend(-0.5 * zoneMiddle, 0.5, new DensityFunctions.HolderHolder(zone)),
                 getNoise(noises, ESCARPMENT_NOISE)), getScaled(-COVE_DEPTH, coves));
         DensityFunction riser = getBlend(45.0, 12.0, getNoise(noises, TIER_NOISE));
         DensityFunction[] feet = new DensityFunction[TIERS.length];

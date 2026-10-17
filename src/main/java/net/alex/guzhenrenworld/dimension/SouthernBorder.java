@@ -29,7 +29,7 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
  * -64..383 ({@link #MIN_Y}, {@link #HEIGHT}), so peaks, capped at y 320, keep 63 blocks of air; both are read off the
  * router's noise column, which the type must cover. The noise settings are a {@link HeightfieldRouter} over
  * {@link SouthernBorderTerrain}, with {@link SouthernBorderSurface}'s rules ahead of vanilla's overworld ones, sea
- * level {@link #SEA_LEVEL}, aquifers and ore veins; the level stem pairs them with the multi-noise biome source of
+ * level {@link SouthernBorderRivers#SEA_LEVEL}, aquifers and ore veins; the level stem pairs them with the multi-noise biome source of
  * {@link SouthernBorderBiomes}. The settings name no spawn target: the overworld stays the spawn dimension.
  *
  * <p>Built-in structure sets apply as in any noise dimension, but every structure checks its biome tags and none of
@@ -61,7 +61,6 @@ public final class SouthernBorder {
     public static final double BORDER_SIZE = 8192.0;
     private static final int MIN_Y = HeightfieldRouter.NOISE_SETTINGS.minY();
     private static final int HEIGHT = HeightfieldRouter.NOISE_SETTINGS.height();
-    static final int SEA_LEVEL = 63;
 
     private SouthernBorder() {}
 
@@ -94,7 +93,7 @@ public final class SouthernBorder {
                         context.lookup(Registries.NOISE)),
                 SouthernBorderSurface.getRules(),
                 List.of(),
-                SEA_LEVEL,
+                SouthernBorderRivers.SEA_LEVEL,
                 false,
                 true,
                 true,
