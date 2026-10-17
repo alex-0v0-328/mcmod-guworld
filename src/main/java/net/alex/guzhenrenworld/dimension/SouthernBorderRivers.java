@@ -44,8 +44,8 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *   reciprocal, which scales the distances.</li>
  * </ul>
  *
- * <p>Water stands only below the sea level, so a river holds water along its whole course only if its bed is set to a
- * fixed height, never lowered by some amount from the ground around, which rises and falls along the course and would
+ * <p>Water stands only below the sea level, {@link #SEA_LEVEL}, the height the dimension's noise settings fill water
+ * to, so a river holds water along its whole course only if its bed is set to a fixed height, never lowered by some amount from the ground around, which rises and falls along the course and would
  * break the river into a string of pools. Vanilla, Tectonic and Terralith set their river floors to one height and end
  * the rivers once, where a smooth large-scale field, erosion, crosses a threshold. The streams here do the same, and
  * the great rivers set floodplain and bed to fixed heights inside valleys deep enough to hold them.
@@ -121,6 +121,7 @@ public final class SouthernBorderRivers {
     private static final float GREAT_BRIDGE = 0.006F;
     private static final float STREAM_HALF_WIDTH = 3.5F;
     private static final float GREAT_FLOODPLAIN = 70.0F;
+    static final int SEA_LEVEL = 63;
     static final double FLOODPLAIN_Y = 65.0;
     private static final double FLOODPLAIN_SWING = 2.0;
     private static final double FLOODPLAIN_EDGE_SWING = 6.0;
@@ -185,14 +186,14 @@ public final class SouthernBorderRivers {
 
         DensityFunction getWet(Holder<DensityFunction> land) {
             return getSmoothstep(getCoordinate(land),
-                    SouthernBorder.SEA_LEVEL + 3.0F, 1.0F, SouthernBorder.SEA_LEVEL + 11.0F, 0.0F);
+                    SEA_LEVEL + 3.0F, 1.0F, SEA_LEVEL + 11.0F, 0.0F);
         }
 
         DensityFunction getCarved(Holder<DensityFunction> land, DensityFunction wet) {
             DensityFunction inside = getSmoothstep(
                     getCoordinate(getHalfWidths(greatDistance, narrowing, GREAT_HALF_WIDTH)), 0.0F, 1.0F, 1.0F, 0.0F);
             return DensityFunctions.lerp(DensityFunctions.mul(inside, wet), new DensityFunctions.HolderHolder(land),
-                    DensityFunctions.constant(SouthernBorder.SEA_LEVEL - GREAT_RIVER_DEPTH));
+                    DensityFunctions.constant(SEA_LEVEL - GREAT_RIVER_DEPTH));
         }
     }
 
@@ -233,7 +234,7 @@ public final class SouthernBorderRivers {
     static void registerShore(BootstrapContext<DensityFunction> context, Rivers rivers,
             Holder<DensityFunction> height) {
         DensityFunction dry = getSmoothstep(getCoordinate(height),
-                SouthernBorder.SEA_LEVEL - 0.5F, SouthernBorder.SEA_LEVEL + 1.0F);
+                SEA_LEVEL - 0.5F, SEA_LEVEL + 1.0F);
         context.register(SHORE, DensityFunctions.flatCache(DensityFunctions.add(
                 new DensityFunctions.HolderHolder(rivers.channel()), getScaled(DRY_SHORE, dry))));
     }
