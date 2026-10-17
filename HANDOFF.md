@@ -14,6 +14,7 @@
   - 本分支的搬包和 key 精简。
 - 南疆河床的规则改动只改了 `noise_settings/southern_border.json`。结构比较确认，只是在地貌岩带外面多包了一层"柱子是干的"条件，同时去掉了表土里重复的水检查。
 - 和 Guzhenren 一起开服冒烟：三个维度加载，南疆强制加载 81 个区块，生成时没有报错。
+- 复刻群系按实体类型归类刷怪：`runData` 只改了 `bamboo_jungle.json`（豹猫从 monster 移到 creature）；开服日志里不再有 MONSTER 分类的警告。
 
 云端跑不了：L2 JUnit、GameTest、客户端。本地按顺序做：
 
@@ -37,6 +38,7 @@
    - `DensityShapes`、`HeightfieldRouter` 移到 `terrain` 包，并改为公开类。
    - `Rivers`、`Landforms` 改为包私有。
    - noise 和 density function 的 key 改由 `SouthernBorder.noiseKey`、`functionKey`、`landformNoiseKey`、`landformFunctionKey` 统一生成，各类的私有副本已删除。
+   - `Replicas` 的刷怪表不再原样照搬原版：每条刷怪项放到实体类型自己的分类下。测试里如果拿复刻群系和原版逐分类比较刷怪，竹林要按这个规则比。
 4. 进游戏看南疆地貌区里的河床和湖底：应该是沙、砾石、粘土，崖壁仍是岩带。
 5. 把结果报告给 Alex，等 Alex 合并。
 
@@ -53,6 +55,7 @@
    - 依赖方向为 `dimension → dimension.southernborder → terrain`。
    - 南疆的 noise 和 density function key 都由区域入口类生成。
    - 测试一节里提到的类名按第一节第 3 条更新。
+   - 复刻群系：气候、颜色、音乐、地物沿用原版；不雕刻洞穴；刷怪项按实体类型自己的分类放（原版竹林把豹猫放在 monster 下，复刻版放在 creature 下，不占敌对生物上限）。
 3. **《世界》**：如果页面里列了 Gu World 的类名，也按上面更新。
 
 ## 三、待办
@@ -71,5 +74,5 @@
    - `BiomeLayout.RIVER_WEIRDNESS` 归属：它缩放的是河岸，应该放在 `Rivers`。
    - 散落的魔数（y 50..320、300/340、72/90、66/74）可以由已有常量推导。
    - `RegionBorders` 两处应用循环可以合并（日志行为要保留）。
-2. 冒烟日志里的警告：`guworld:bamboo_jungle` 复刻群系把豹猫加在 MONSTER 分类下。这是照搬原版竹林，NeoForge 只对模组群系报警告；要不要改成 CREATURE，由 Alex 决定。
+2. `runData` 日志里有两条 ERROR：移植自 Terralith 的 `guworld:sakura/birch`、`sakura/birch_sparse` 在 `guworld:peach_grove` 里缺 `BiomeFilter.biome()`。这是 Terralith 原数据的样子，本分支没动；要不要在移植脚本里补上，留给 Alex 定。
 3. 语言表可以改成和 Guzhenren 一样的三列单表。
