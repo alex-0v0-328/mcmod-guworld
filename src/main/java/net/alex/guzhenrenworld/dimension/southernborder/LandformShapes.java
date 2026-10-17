@@ -1,5 +1,6 @@
 package net.alex.guzhenrenworld.dimension.southernborder;
 
+import static net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder.landformNoiseKey;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getBlend;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getChoice;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getCoordinate;
@@ -11,10 +12,8 @@ import static net.alex.guzhenrenworld.terrain.DensityShapes.getSpline;
 
 import java.util.List;
 import java.util.function.UnaryOperator;
-import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -72,26 +71,26 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 final class LandformShapes {
 
-    private static final ResourceKey<NormalNoise.NoiseParameters> PLAIN_NOISE = noiseKey("plain");
-    private static final ResourceKey<NormalNoise.NoiseParameters> TOWER_NOISE = noiseKey("tower");
-    private static final ResourceKey<NormalNoise.NoiseParameters> TWIN_TOWER_NOISE = noiseKey("twin_tower");
-    private static final ResourceKey<NormalNoise.NoiseParameters> TOWER_HEIGHT_NOISE = noiseKey("tower_height");
-    private static final ResourceKey<NormalNoise.NoiseParameters> HILLS_NOISE = noiseKey("hills");
-    private static final ResourceKey<NormalNoise.NoiseParameters> MESA_NOISE = noiseKey("mesa");
-    private static final ResourceKey<NormalNoise.NoiseParameters> MESA_HEIGHT_NOISE = noiseKey("mesa_height");
-    private static final ResourceKey<NormalNoise.NoiseParameters> MESA_TOP_NOISE = noiseKey("mesa_top");
-    private static final ResourceKey<NormalNoise.NoiseParameters> CASTLE_NOISE = noiseKey("castle");
-    private static final ResourceKey<NormalNoise.NoiseParameters> PLATEAU_NOISE = noiseKey("plateau");
-    private static final ResourceKey<NormalNoise.NoiseParameters> PILLAR_NOISE = noiseKey("pillar");
-    private static final ResourceKey<NormalNoise.NoiseParameters> STOUT_PILLAR_NOISE = noiseKey("stout_pillar");
-    private static final ResourceKey<NormalNoise.NoiseParameters> PILLAR_DEPTH_NOISE = noiseKey("pillar_depth");
-    private static final ResourceKey<NormalNoise.NoiseParameters> PILLAR_TOP_NOISE = noiseKey("pillar_top");
-    private static final ResourceKey<NormalNoise.NoiseParameters> BEDDING_NOISE = noiseKey("bedding");
-    private static final ResourceKey<NormalNoise.NoiseParameters> JOINT_NOISE = noiseKey("joint");
-    private static final ResourceKey<NormalNoise.NoiseParameters> CANYON_NOISE = noiseKey("canyon");
-    private static final ResourceKey<NormalNoise.NoiseParameters> ESCARPMENT_NOISE = noiseKey("escarpment");
-    private static final ResourceKey<NormalNoise.NoiseParameters> COVE_NOISE = noiseKey("cove");
-    private static final ResourceKey<NormalNoise.NoiseParameters> TIER_NOISE = noiseKey("tier");
+    private static final ResourceKey<NormalNoise.NoiseParameters> PLAIN_NOISE = landformNoiseKey("plain");
+    private static final ResourceKey<NormalNoise.NoiseParameters> TOWER_NOISE = landformNoiseKey("tower");
+    private static final ResourceKey<NormalNoise.NoiseParameters> TWIN_TOWER_NOISE = landformNoiseKey("twin_tower");
+    private static final ResourceKey<NormalNoise.NoiseParameters> TOWER_HEIGHT_NOISE = landformNoiseKey("tower_height");
+    private static final ResourceKey<NormalNoise.NoiseParameters> HILLS_NOISE = landformNoiseKey("hills");
+    private static final ResourceKey<NormalNoise.NoiseParameters> MESA_NOISE = landformNoiseKey("mesa");
+    private static final ResourceKey<NormalNoise.NoiseParameters> MESA_HEIGHT_NOISE = landformNoiseKey("mesa_height");
+    private static final ResourceKey<NormalNoise.NoiseParameters> MESA_TOP_NOISE = landformNoiseKey("mesa_top");
+    private static final ResourceKey<NormalNoise.NoiseParameters> CASTLE_NOISE = landformNoiseKey("castle");
+    private static final ResourceKey<NormalNoise.NoiseParameters> PLATEAU_NOISE = landformNoiseKey("plateau");
+    private static final ResourceKey<NormalNoise.NoiseParameters> PILLAR_NOISE = landformNoiseKey("pillar");
+    private static final ResourceKey<NormalNoise.NoiseParameters> STOUT_PILLAR_NOISE = landformNoiseKey("stout_pillar");
+    private static final ResourceKey<NormalNoise.NoiseParameters> PILLAR_DEPTH_NOISE = landformNoiseKey("pillar_depth");
+    private static final ResourceKey<NormalNoise.NoiseParameters> PILLAR_TOP_NOISE = landformNoiseKey("pillar_top");
+    private static final ResourceKey<NormalNoise.NoiseParameters> BEDDING_NOISE = landformNoiseKey("bedding");
+    private static final ResourceKey<NormalNoise.NoiseParameters> JOINT_NOISE = landformNoiseKey("joint");
+    private static final ResourceKey<NormalNoise.NoiseParameters> CANYON_NOISE = landformNoiseKey("canyon");
+    private static final ResourceKey<NormalNoise.NoiseParameters> ESCARPMENT_NOISE = landformNoiseKey("escarpment");
+    private static final ResourceKey<NormalNoise.NoiseParameters> COVE_NOISE = landformNoiseKey("cove");
+    private static final ResourceKey<NormalNoise.NoiseParameters> TIER_NOISE = landformNoiseKey("tier");
     private static final float KARST_THRESHOLD = 0.38F;
     private static final double TOWER_SCALE = 2.0;
     private static final float DANXIA_THRESHOLD = 0.13F;
@@ -275,9 +274,5 @@ final class LandformShapes {
 
     private static DensityFunction getAbove(DensityFunction value, float floor) {
         return DensityFunctions.max(value, DensityFunctions.constant(floor));
-    }
-
-    private static ResourceKey<NormalNoise.NoiseParameters> noiseKey(String name) {
-        return ResourceKey.create(Registries.NOISE, GuWorld.id("southern_border/landform/" + name));
     }
 }

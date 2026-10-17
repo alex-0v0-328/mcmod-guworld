@@ -1,5 +1,7 @@
 package net.alex.guzhenrenworld.dimension.southernborder;
 
+import static net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder.functionKey;
+import static net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder.noiseKey;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getBlend;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getCoordinate;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getDifference;
@@ -12,7 +14,6 @@ import static net.alex.guzhenrenworld.terrain.DensityShapes.getSoftMin;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getSpline;
 
 import java.util.Arrays;
-import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -285,13 +286,5 @@ final class Rivers {
     private static DensityFunction getNarrowing(HolderGetter<NormalNoise.NoiseParameters> noises) {
         return getSpline(getCoordinate(getNoise(noises, WIDTH_NOISE)),
                 -0.5F, 1.0F / 0.75F, 0.0F, 0.0F, 1.0F, -0.65F, 0.5F, 1.0F / 1.5F, 0.0F);
-    }
-
-    private static ResourceKey<NormalNoise.NoiseParameters> noiseKey(String name) {
-        return ResourceKey.create(Registries.NOISE, GuWorld.id("southern_border/" + name));
-    }
-
-    private static ResourceKey<DensityFunction> functionKey(String name) {
-        return ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id("southern_border/" + name));
     }
 }

@@ -17,8 +17,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 /**
  * The Southern Border [南疆] dimension, one of the four regions beyond the Central Continent [中州], which is
@@ -31,7 +33,9 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
  * column, which the type must cover. The noise settings are a {@link HeightfieldRouter} over {@link Terrain}, with
  * {@link Surface}'s rules ahead of vanilla's overworld ones, sea level {@link Rivers#SEA_LEVEL}, aquifers and ore
  * veins; the level stem pairs them with the multi-noise biome source of {@link BiomeLayout}. The settings name no spawn
- * target: the overworld stays the spawn dimension.
+ * target: the overworld stays the spawn dimension. The region's parts name their noises and density functions under
+ * that location through {@link #noiseKey} and {@link #functionKey}, the landform ones one folder deeper through
+ * {@link #landformNoiseKey} and {@link #landformFunctionKey}.
  *
  * <p>Built-in structure sets apply as in any noise dimension, but every structure checks its biome tags and none of
  * this region's own biomes is in one, so no vanilla structure generates here, strongholds included.
@@ -112,4 +116,20 @@ public final class SouthernBorder {
                 new NoiseBasedChunkGenerator(biomeSource, noiseSettings.getOrThrow(NOISE_SETTINGS))
         ));
     }
+
+    static ResourceKey<NormalNoise.NoiseParameters> noiseKey(String name) {
+        return ResourceKey.create(Registries.NOISE, getPartId(name));
+    }
+
+    static ResourceKey<DensityFunction> functionKey(String name) {
+        return ResourceKey.create(Registries.DENSITY_FUNCTION, getPartId(name));
+    }
+
+    static ResourceKey<NormalNoise.NoiseParameters> landformNoiseKey(String name) {
+        return noiseKey("landform/" + name);
+    }
+
+    static ResourceKey<DensityFunction> landformFunctionKey(String name) { return functionKey("landform/" + name); }
+
+    private static ResourceLocation getPartId(String name) { return ID.withSuffix("/" + name); }
 }
