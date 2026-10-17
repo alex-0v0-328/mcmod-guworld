@@ -14,7 +14,7 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  * The Chinese strings of this mod, beside the English ones.
  *
  * <p>Extends {@link LanguageProvider} for {@code zh_cn}. Keys are built the same way as in
- * {@link EnUsLanguageProvider}, by the function packages.
+ * {@link EnUsLanguageProvider}, by {@link Translations}.
  *
  * <p>⚠ These renderings are the authority, not a translation of the English. Deriving either side
  * from the other is how a name quietly comes to mean something it never meant.
@@ -41,11 +41,14 @@ public class ZhCnLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        TreasureYellowHeaven.addTranslations(this, "宝黄天");
-        SouthernBorder.addTranslations(this, "南疆");
-        Replicas.addTranslations(this, List.of("平原", "森林", "桦木森林", "黑森林", "竹林", "草甸", "针叶林", "风袭丘陵",
-                "裸岩山峰", "河流", "繁茂洞穴", "溶洞"));
-        Ports.addTranslations(this, List.of("高原", "林间高原", "云雾林", "雾山", "雨林", "热海", "兰花沼泽", "桃林"));
-        SouthernBorderBiomes.addTranslations(this, List.of("喀斯特峰林", "丹霞", "砂岩峰林", "嶂石岩"));
+        Translations.addDimension(this, TreasureYellowHeaven.LEVEL_STEM, "宝黄天");
+        Translations.addTitleColor(this, TreasureYellowHeaven.LEVEL_STEM, TreasureYellowHeaven.COLOR);
+        Translations.addBiomes(this, List.of(TreasureYellowHeaven.BIOME), List.of("宝黄天"));
+        Translations.addDimension(this, SouthernBorder.LEVEL_STEM, "南疆");
+        Translations.addBiomes(this, Replicas.BIOMES, List.of("平原", "森林", "桦木森林", "黑森林", "竹林", "草甸",
+                "针叶林", "风袭丘陵", "裸岩山峰", "河流", "繁茂洞穴", "溶洞"));
+        Translations.addBiomes(this, Ports.BIOMES, List.of("高原", "林间高原", "云雾林", "雾山", "雨林", "热海", "兰花沼泽",
+                "桃林"));
+        Translations.addBiomes(this, SouthernBorderBiomes.LANDFORMS, List.of("喀斯特峰林", "丹霞", "砂岩峰林", "嶂石岩"));
     }
 }

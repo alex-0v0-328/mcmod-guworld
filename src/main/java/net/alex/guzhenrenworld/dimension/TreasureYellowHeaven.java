@@ -21,27 +21,22 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.FlatLevelSource;
 import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings;
-import net.neoforged.neoforge.common.data.LanguageProvider;
 
 /**
- * The Treasure Yellow Heaven [宝黄天] dimension: its keys, and the datapack entries and strings behind them.
+ * The Treasure Yellow Heaven [宝黄天] dimension: its keys, and the datapack entries behind them.
  *
  * <p>Every key shares the one location {@code guworld:treasure_yellow_heaven}. {@link #registerDimensionType},
  * {@link #registerBiome} and {@link #registerLevelStem} are the bootstraps {@code datagen.DatapackProvider}
  * runs: the dimension type, its one biome, and its level stem, a flat generator with no layers, so the
  * dimension is pure void. {@link #EFFECTS} is the special-effects id the dimension type names and
  * {@code client.dimension.TreasureYellowHeavenEffects} registers. {@link #COLOR} paints the sky, the fog
- * and the water, and is the title color {@link #addTranslations} writes.
+ * and the water, and is the Traveler's Titles color the language providers write; they name the dimension and its
+ * biome from these keys.
  *
  * <p>Beds and respawn anchors work here, and a bed sets the spawn: the type is natural, which also lets
  * clocks and compasses work. Players cannot place blocks in this dimension, but should one ever get here,
  * it works instead of exploding. The flat generator names an empty structure set list, as vanilla's void
  * preset does: left unset it would consider every registered structure set, other mods' included.
- *
- * <p>{@link #addTranslations} builds every key from the registered keys, never from a raw string, so a
- * renamed dimension cannot leave a key behind pointing at nothing; each language provider passes only
- * its own rendering of the name. The {@code travelerstitles.*} pair is the Traveler's Titles
- * convention: the dimension title, and its color as lowercase hex without {@code #}.
  *
  * <p>⚠ Every key shares the location of Guzhenren's level key
  * {@code net.alex.guzhenren.registry.world.ModDimensions#TREASURE_YELLOW_HEAVEN}; the level stem is
@@ -60,7 +55,7 @@ public final class TreasureYellowHeaven {
     public static final ResourceKey<Biome> BIOME = ResourceKey.create(Registries.BIOME, ID);
     public static final ResourceKey<LevelStem> LEVEL_STEM = ResourceKey.create(Registries.LEVEL_STEM, ID);
     public static final ResourceLocation EFFECTS = ID;
-    private static final int COLOR = 0xF4D35E;
+    public static final int COLOR = 0xF4D35E;
 
     private TreasureYellowHeaven() {}
 
@@ -109,13 +104,5 @@ public final class TreasureYellowHeaven {
                 dimensionTypes.getOrThrow(DIMENSION_TYPE),
                 new FlatLevelSource(settings)
         ));
-    }
-
-    public static void addTranslations(LanguageProvider languageProvider, String name) {
-        ResourceLocation dimensionId = LEVEL_STEM.location();
-        languageProvider.add(dimensionId.toLanguageKey("dimension"), name);
-        languageProvider.add(BIOME.location().toLanguageKey("biome"), name);
-        languageProvider.add(dimensionId.toLanguageKey("travelerstitles"), name);
-        languageProvider.add(dimensionId.toLanguageKey("travelerstitles", "color"), "%06x".formatted(COLOR));
     }
 }

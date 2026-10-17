@@ -13,8 +13,9 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 /**
  * The English strings of this mod.
  *
- * <p>Extends {@link LanguageProvider} for {@code en_us}. Each function package builds its own keys
- * ({@link TreasureYellowHeaven#addTranslations}); this table passes only the English renderings.
+ * <p>Extends {@link LanguageProvider} for {@code en_us}. {@link Translations} builds every key from the registered
+ * keys and lists the function packages hold; this table passes only the English renderings, in the lists' order. The
+ * Treasure Yellow Heaven's one biome carries the dimension's name.
  *
  * @author Alex
  * @version 1.0.0
@@ -30,13 +31,16 @@ public class EnUsLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
-        TreasureYellowHeaven.addTranslations(this, "Treasure Yellow Heaven");
-        SouthernBorder.addTranslations(this, "Southern Border");
-        Replicas.addTranslations(this, List.of("Plains", "Forest", "Birch Forest", "Dark Forest", "Bamboo Jungle",
-                "Meadow", "Taiga", "Windswept Hills", "Stony Peaks", "River", "Lush Caves", "Dripstone Caves"));
-        Ports.addTranslations(this, List.of("Plateau", "Forested Plateau", "Cloud Forest", "Misty Mountains",
-                "Rainforest", "Hot Springs", "Orchid Swamp", "Peach Grove"));
-        SouthernBorderBiomes.addTranslations(this, List.of("Karst Peak Forest", "Danxia", "Sandstone Pillars",
-                "Zhangshiyan Cliffs"));
+        Translations.addDimension(this, TreasureYellowHeaven.LEVEL_STEM, "Treasure Yellow Heaven");
+        Translations.addTitleColor(this, TreasureYellowHeaven.LEVEL_STEM, TreasureYellowHeaven.COLOR);
+        Translations.addBiomes(this, List.of(TreasureYellowHeaven.BIOME), List.of("Treasure Yellow Heaven"));
+        Translations.addDimension(this, SouthernBorder.LEVEL_STEM, "Southern Border");
+        Translations.addBiomes(this, Replicas.BIOMES, List.of("Plains", "Forest", "Birch Forest", "Dark Forest",
+                "Bamboo Jungle", "Meadow", "Taiga", "Windswept Hills", "Stony Peaks", "River", "Lush Caves",
+                "Dripstone Caves"));
+        Translations.addBiomes(this, Ports.BIOMES, List.of("Plateau", "Forested Plateau", "Cloud Forest",
+                "Misty Mountains", "Rainforest", "Hot Springs", "Orchid Swamp", "Peach Grove"));
+        Translations.addBiomes(this, SouthernBorderBiomes.LANDFORMS, List.of("Karst Peak Forest", "Danxia",
+                "Sandstone Pillars", "Zhangshiyan Cliffs"));
     }
 }
