@@ -58,7 +58,8 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * cliff is two heights and an edge: {@link #FOOT}, the ground at its foot, {@link #TOP}, the ground on top, and the
  * landform edge field, positive where the top holds; open ground has the two heights equal. The rivers flood and
  * carve both heights, and {@link #HEIGHT}, the actual surface, takes the top where the edge is positive and the
- * foot elsewhere.
+ * foot elsewhere. Outside the zones the zone weight is exactly 0 and the top's chain would return the foot's value
+ * bit for bit, so {@link #TOP} reads {@link #FOOT} there and computes its own chain only inside.
  *
  * <p>{@link #ELEVATION} is the surface mapped to -1 at {@link #ELEVATION_LOW_Y} (y 50) and 1 at the peak cap, y 320,
  * clamped; it is the erosion parameter of the
@@ -111,6 +112,7 @@ public final class Terrain {
     private static final ResourceKey<DensityFunction> TOP = functionKey("top");
     private static final ResourceKey<DensityFunction> HEIGHT = functionKey("height");
     private static final ResourceKey<DensityFunction> ELEVATION = functionKey("elevation");
+    private static final ResourceKey<DensityFunction> VARIANT = functionKey("variant");
     private static final double FLOOR_Y = 70.0;
     private static final double FLOOR_SWING = 6.0;
     private static final double ROLLING_SWING = 2.5;
@@ -176,8 +178,10 @@ public final class Terrain {
                 rivers.getStreamValley(Holder.direct(rivers.getFloodplain(cliffs.top())), range, zoneWeight);
         Holder<DensityFunction> foot =
                 context.register(FOOT, getColumnCached(rivers.getCarved(Holder.direct(footValley), wet)));
-        Holder<DensityFunction> top =
-                context.register(TOP, getColumnCached(rivers.getCarved(Holder.direct(topValley), wet)));
+        DensityFunction carvedTop = rivers.getCarved(Holder.direct(topValley), wet);
+        Holder<DensityFunction> top = context.register(TOP, getColumnCached(getChoice(
+                new DensityFunctions.HolderHolder(zoneWeight), Double.MIN_VALUE,
+                new DensityFunctions.HolderHolder(foot), carvedTop)));
         DensityFunction onTop = getSmoothstep(getCoordinate(cliffs.edge()), -0.05F, 0.05F);
         Holder<DensityFunction> height = context.register(HEIGHT, getColumnCached(DensityFunctions.lerp(onTop,
                 new DensityFunctions.HolderHolder(foot), new DensityFunctions.HolderHolder(top))));
@@ -186,6 +190,8 @@ public final class Terrain {
         double half = (ELEVATION_HIGH_Y - ELEVATION_LOW_Y) / 2.0;
         context.register(ELEVATION, DensityFunctions.flatCache(
                 getBlend(-middle / half, 1.0 / half, new DensityFunctions.HolderHolder(height)).clamp(-1.0, 1.0)));
+        context.register(VARIANT,
+                DensityFunctions.flatCache(getScaled(VARIANT_SPREAD, getNoise(noises, VARIANT_NOISE))));
     }
 
     public static NoiseRouter createRouter(HolderGetter<DensityFunction> functions,
@@ -204,8 +210,7 @@ public final class Terrain {
                 DensityFunctions.flatCache(getNoise(noises, VEGETATION_NOISE)),
                 Landforms.getLandform(functions),
                 getFunction(functions, ELEVATION),
-                getWeirdness(DensityFunctions.flatCache(getScaled(VARIANT_SPREAD, getNoise(noises, VARIANT_NOISE))),
-                        shore)));
+                getWeirdness(getFunction(functions, VARIANT), shore)));
     }
 
     private static DensityFunction getWeirdness(DensityFunction variant, DensityFunction shore) {

@@ -6,41 +6,7 @@
       "type": "minecraft:mul",
       "argument1": {
         "type": "minecraft:abs",
-        "argument": {
-          "type": "minecraft:shifted_noise",
-          "noise": "guworld:southern_border/great_river",
-          "shift_x": {
-            "type": "minecraft:add",
-            "argument1": 0.0,
-            "argument2": {
-              "type": "minecraft:mul",
-              "argument1": 24.0,
-              "argument2": {
-                "type": "minecraft:noise",
-                "noise": "guworld:southern_border/river_warp_x",
-                "xz_scale": 1.0,
-                "y_scale": 0.0
-              }
-            }
-          },
-          "shift_y": 0.0,
-          "shift_z": {
-            "type": "minecraft:add",
-            "argument1": 0.0,
-            "argument2": {
-              "type": "minecraft:mul",
-              "argument1": 24.0,
-              "argument2": {
-                "type": "minecraft:noise",
-                "noise": "guworld:southern_border/river_warp_z",
-                "xz_scale": 1.0,
-                "y_scale": 0.0
-              }
-            }
-          },
-          "xz_scale": 1.0,
-          "y_scale": 0.0
-        }
+        "argument": "guworld:southern_border/great_river"
       },
       "argument2": {
         "type": "minecraft:spline",
@@ -54,41 +20,7 @@
                 "type": "minecraft:abs",
                 "argument": {
                   "type": "minecraft:add",
-                  "argument1": {
-                    "type": "minecraft:shifted_noise",
-                    "noise": "guworld:southern_border/great_river",
-                    "shift_x": {
-                      "type": "minecraft:add",
-                      "argument1": 0.0,
-                      "argument2": {
-                        "type": "minecraft:mul",
-                        "argument1": 24.0,
-                        "argument2": {
-                          "type": "minecraft:noise",
-                          "noise": "guworld:southern_border/river_warp_x",
-                          "xz_scale": 1.0,
-                          "y_scale": 0.0
-                        }
-                      }
-                    },
-                    "shift_y": 0.0,
-                    "shift_z": {
-                      "type": "minecraft:add",
-                      "argument1": 0.0,
-                      "argument2": {
-                        "type": "minecraft:mul",
-                        "argument1": 24.0,
-                        "argument2": {
-                          "type": "minecraft:noise",
-                          "noise": "guworld:southern_border/river_warp_z",
-                          "xz_scale": 1.0,
-                          "y_scale": 0.0
-                        }
-                      }
-                    },
-                    "xz_scale": 1.0,
-                    "y_scale": 0.0
-                  },
+                  "argument1": "guworld:southern_border/great_river",
                   "argument2": {
                     "type": "minecraft:mul",
                     "argument1": -1.0,
@@ -101,12 +33,7 @@
                         "argument2": {
                           "type": "minecraft:mul",
                           "argument1": 24.0,
-                          "argument2": {
-                            "type": "minecraft:noise",
-                            "noise": "guworld:southern_border/river_warp_x",
-                            "xz_scale": 1.0,
-                            "y_scale": 0.0
-                          }
+                          "argument2": "guworld:southern_border/river_warp_x"
                         }
                       },
                       "shift_y": 0.0,
@@ -116,12 +43,7 @@
                         "argument2": {
                           "type": "minecraft:mul",
                           "argument1": 24.0,
-                          "argument2": {
-                            "type": "minecraft:noise",
-                            "noise": "guworld:southern_border/river_warp_z",
-                            "xz_scale": 1.0,
-                            "y_scale": 0.0
-                          }
+                          "argument2": "guworld:southern_border/river_warp_z"
                         }
                       },
                       "xz_scale": 1.0,
@@ -134,41 +56,7 @@
                 "type": "minecraft:abs",
                 "argument": {
                   "type": "minecraft:add",
-                  "argument1": {
-                    "type": "minecraft:shifted_noise",
-                    "noise": "guworld:southern_border/great_river",
-                    "shift_x": {
-                      "type": "minecraft:add",
-                      "argument1": 0.0,
-                      "argument2": {
-                        "type": "minecraft:mul",
-                        "argument1": 24.0,
-                        "argument2": {
-                          "type": "minecraft:noise",
-                          "noise": "guworld:southern_border/river_warp_x",
-                          "xz_scale": 1.0,
-                          "y_scale": 0.0
-                        }
-                      }
-                    },
-                    "shift_y": 0.0,
-                    "shift_z": {
-                      "type": "minecraft:add",
-                      "argument1": 0.0,
-                      "argument2": {
-                        "type": "minecraft:mul",
-                        "argument1": 24.0,
-                        "argument2": {
-                          "type": "minecraft:noise",
-                          "noise": "guworld:southern_border/river_warp_z",
-                          "xz_scale": 1.0,
-                          "y_scale": 0.0
-                        }
-                      }
-                    },
-                    "xz_scale": 1.0,
-                    "y_scale": 0.0
-                  },
+                  "argument1": "guworld:southern_border/great_river",
                   "argument2": {
                     "type": "minecraft:mul",
                     "argument1": -1.0,
@@ -181,12 +69,7 @@
                         "argument2": {
                           "type": "minecraft:mul",
                           "argument1": 24.0,
-                          "argument2": {
-                            "type": "minecraft:noise",
-                            "noise": "guworld:southern_border/river_warp_x",
-                            "xz_scale": 1.0,
-                            "y_scale": 0.0
-                          }
+                          "argument2": "guworld:southern_border/river_warp_x"
                         }
                       },
                       "shift_y": 0.0,
@@ -196,12 +79,7 @@
                         "argument2": {
                           "type": "minecraft:mul",
                           "argument1": 24.0,
-                          "argument2": {
-                            "type": "minecraft:noise",
-                            "noise": "guworld:southern_border/river_warp_z",
-                            "xz_scale": 1.0,
-                            "y_scale": 0.0
-                          }
+                          "argument2": "guworld:southern_border/river_warp_z"
                         }
                       },
                       "xz_scale": 1.0,

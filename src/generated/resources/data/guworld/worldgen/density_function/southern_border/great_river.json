@@ -9,12 +9,7 @@
       "argument2": {
         "type": "minecraft:mul",
         "argument1": 24.0,
-        "argument2": {
-          "type": "minecraft:noise",
-          "noise": "guworld:southern_border/river_warp_x",
-          "xz_scale": 1.0,
-          "y_scale": 0.0
-        }
+        "argument2": "guworld:southern_border/river_warp_x"
       }
     },
     "shift_y": 0.0,
@@ -24,12 +19,7 @@
       "argument2": {
         "type": "minecraft:mul",
         "argument1": 24.0,
-        "argument2": {
-          "type": "minecraft:noise",
-          "noise": "guworld:southern_border/river_warp_z",
-          "xz_scale": 1.0,
-          "y_scale": 0.0
-        }
+        "argument2": "guworld:southern_border/river_warp_z"
       }
     },
     "xz_scale": 1.0,

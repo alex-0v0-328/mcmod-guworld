@@ -38,7 +38,9 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * the rivers natural:
  * <ul>
  *   <li>Every river noise is read {@link #WARP_BLOCKS} blocks off its true position by two 256-block warp noises
- *   (streams half that), so courses wander in bends a few hundred blocks long.</li>
+ *   (streams half that), so courses wander in bends a few hundred blocks long. The warp noises and each river's
+ *   centered sample ({@link #GREAT_RIVER}, {@link #STREAM_A}, {@link #STREAM_B}) are registered, so a column reads
+ *   each once and a distance adds only the two shifted samples its slope needs.</li>
  *   <li>The great river noise carries octaves down to 256 blocks, so its course bends at several scales.</li>
  *   <li>A 512-block width noise scales every half-width by 0.75..1.5 ({@link #getNarrowing}), so a river narrows into
  *   runs and opens into broad reaches, and its floodplain and valley with it; {@link #NARROWING} holds its
@@ -105,7 +107,11 @@ final class Rivers {
     private static final ResourceKey<NormalNoise.NoiseParameters> WARP_Z_NOISE = noiseKey("river_warp_z");
     private static final ResourceKey<NormalNoise.NoiseParameters> WIDTH_NOISE = noiseKey("river_width");
     private static final ResourceKey<NormalNoise.NoiseParameters> FLOODPLAIN_NOISE = noiseKey("floodplain");
+    private static final ResourceKey<DensityFunction> WARP_X = functionKey("river_warp_x");
+    private static final ResourceKey<DensityFunction> WARP_Z = functionKey("river_warp_z");
     private static final ResourceKey<DensityFunction> GREAT_RIVER = functionKey("great_river");
+    private static final ResourceKey<DensityFunction> STREAM_A = functionKey("stream_a");
+    private static final ResourceKey<DensityFunction> STREAM_B = functionKey("stream_b");
     private static final ResourceKey<DensityFunction> STREAM = functionKey("stream");
     private static final ResourceKey<DensityFunction> GREAT_DISTANCE = functionKey("great_distance");
     private static final ResourceKey<DensityFunction> STREAM_DISTANCE = functionKey("stream_distance");
@@ -215,18 +221,25 @@ final class Rivers {
 
     static Network register(BootstrapContext<DensityFunction> context) {
         HolderGetter<NormalNoise.NoiseParameters> noises = context.lookup(Registries.NOISE);
+        Warp warp = new Warp(noises,
+                context.register(WARP_X, DensityFunctions.flatCache(getNoise(noises, WARP_X_NOISE))),
+                context.register(WARP_Z, DensityFunctions.flatCache(getNoise(noises, WARP_Z_NOISE))));
         Holder<DensityFunction> greatRiver = context.register(GREAT_RIVER,
-                DensityFunctions.flatCache(getWarped(noises, GREAT_RIVER_NOISE, WARP_BLOCKS, 0.0, 0.0)));
+                DensityFunctions.flatCache(warp.sample(GREAT_RIVER_NOISE, WARP_BLOCKS, 0.0, 0.0)));
+        Holder<DensityFunction> streamA = context.register(STREAM_A,
+                DensityFunctions.flatCache(warp.sample(STREAM_A_NOISE, WARP_BLOCKS / 2.0, 0.0, 0.0)));
+        Holder<DensityFunction> streamB = context.register(STREAM_B,
+                DensityFunctions.flatCache(warp.sample(STREAM_B_NOISE, WARP_BLOCKS / 2.0, 0.0, 0.0)));
         DensityFunction side = getSmoothstep(getCoordinate(greatRiver), -GREAT_RIVER_WIDTH, GREAT_RIVER_WIDTH);
         Holder<DensityFunction> stream = context.register(STREAM, DensityFunctions.flatCache(DensityFunctions.lerp(
-                side, getWarped(noises, STREAM_B_NOISE, WARP_BLOCKS / 2.0, 0.0, 0.0).abs(),
-                getWarped(noises, STREAM_A_NOISE, WARP_BLOCKS / 2.0, 0.0, 0.0).abs())));
+                side, new DensityFunctions.HolderHolder(streamB).abs(),
+                new DensityFunctions.HolderHolder(streamA).abs())));
         Holder<DensityFunction> greatDistance = context.register(GREAT_DISTANCE, DensityFunctions.flatCache(
-                DensityFunctions.min(getDistance(noises, GREAT_RIVER_NOISE, WARP_BLOCKS), getScaled(
+                DensityFunctions.min(warp.getDistance(greatRiver, GREAT_RIVER_NOISE, WARP_BLOCKS), getScaled(
                         GREAT_HALF_WIDTH / GREAT_BRIDGE, new DensityFunctions.HolderHolder(greatRiver).abs()))));
         Holder<DensityFunction> streamDistance = context.register(STREAM_DISTANCE, DensityFunctions.flatCache(
-                DensityFunctions.lerp(side, getDistance(noises, STREAM_B_NOISE, WARP_BLOCKS / 2.0),
-                        getDistance(noises, STREAM_A_NOISE, WARP_BLOCKS / 2.0))));
+                DensityFunctions.lerp(side, warp.getDistance(streamB, STREAM_B_NOISE, WARP_BLOCKS / 2.0),
+                        warp.getDistance(streamA, STREAM_A_NOISE, WARP_BLOCKS / 2.0))));
         Holder<DensityFunction> narrowing =
                 context.register(NARROWING, DensityFunctions.flatCache(getNarrowing(noises)));
         Holder<DensityFunction> channel = context.register(CHANNEL, DensityFunctions.flatCache(DensityFunctions.min(
@@ -265,26 +278,30 @@ final class Rivers {
         return points;
     }
 
-    private static DensityFunction getDistance(HolderGetter<NormalNoise.NoiseParameters> noises,
-            ResourceKey<NormalNoise.NoiseParameters> key, double warp) {
-        DensityFunction here = getWarped(noises, key, warp, 0.0, 0.0);
-        DensityFunction east = getDifference(here, getWarped(noises, key, warp, SLOPE_STEP, 0.0));
-        DensityFunction south = getDifference(here, getWarped(noises, key, warp, 0.0, SLOPE_STEP));
-        DensityFunction slope = getScaled(SLOPE_NORM / SLOPE_STEP, DensityFunctions.add(east.abs(), south.abs()));
-        float[] points = new float[SLOPES.length * 3];
-        for (int index = 0; index < SLOPES.length; index++) {
-            boolean end = index == 0 || index == SLOPES.length - 1;
-            points[index * 3] = SLOPES[index];
-            points[index * 3 + 1] = 1.0F / SLOPES[index];
-            points[index * 3 + 2] = end ? 0.0F : -1.0F / (SLOPES[index] * SLOPES[index]);
-        }
-        return DensityFunctions.mul(here.abs(), getSpline(getCoordinate(slope), points));
-    }
+    private record Warp(HolderGetter<NormalNoise.NoiseParameters> noises, Holder<DensityFunction> x,
+            Holder<DensityFunction> z) {
 
-    private static DensityFunction getWarped(HolderGetter<NormalNoise.NoiseParameters> noises,
-            ResourceKey<NormalNoise.NoiseParameters> key, double blocks, double eastward, double southward) {
-        return DensityFunctions.shiftedNoise2d(getBlend(eastward, blocks, getNoise(noises, WARP_X_NOISE)),
-                getBlend(southward, blocks, getNoise(noises, WARP_Z_NOISE)), 1.0, noises.getOrThrow(key));
+        DensityFunction sample(ResourceKey<NormalNoise.NoiseParameters> key, double blocks, double eastward,
+                double southward) {
+            return DensityFunctions.shiftedNoise2d(getBlend(eastward, blocks, new DensityFunctions.HolderHolder(x)),
+                    getBlend(southward, blocks, new DensityFunctions.HolderHolder(z)), 1.0, noises.getOrThrow(key));
+        }
+
+        DensityFunction getDistance(Holder<DensityFunction> here, ResourceKey<NormalNoise.NoiseParameters> key,
+                double blocks) {
+            DensityFunction center = new DensityFunctions.HolderHolder(here);
+            DensityFunction east = getDifference(center, sample(key, blocks, SLOPE_STEP, 0.0));
+            DensityFunction south = getDifference(center, sample(key, blocks, 0.0, SLOPE_STEP));
+            DensityFunction slope = getScaled(SLOPE_NORM / SLOPE_STEP, DensityFunctions.add(east.abs(), south.abs()));
+            float[] points = new float[SLOPES.length * 3];
+            for (int index = 0; index < SLOPES.length; index++) {
+                boolean end = index == 0 || index == SLOPES.length - 1;
+                points[index * 3] = SLOPES[index];
+                points[index * 3 + 1] = 1.0F / SLOPES[index];
+                points[index * 3 + 2] = end ? 0.0F : -1.0F / (SLOPES[index] * SLOPES[index]);
+            }
+            return DensityFunctions.mul(center.abs(), getSpline(getCoordinate(slope), points));
+        }
     }
 
     private static DensityFunction getNarrowing(HolderGetter<NormalNoise.NoiseParameters> noises) {
