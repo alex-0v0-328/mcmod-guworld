@@ -1,0 +1,6 @@
+{
+  "noise": "minecraft:aquifer_barrier",
+  "type": "minecraft:noise",
+  "xz_scale": 1,
+  "y_scale": 0.5
+}

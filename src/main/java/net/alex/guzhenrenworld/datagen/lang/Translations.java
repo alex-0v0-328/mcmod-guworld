@@ -6,7 +6,7 @@ import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
-import net.alex.guzhenrenworld.dimension.southernborder.BiomeLayout;
+import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
@@ -75,12 +75,16 @@ public class Translations extends LanguageProvider {
                 "Rainforest", "雨林",
                 "Hot Springs", "热海",
                 "Orchid Swamp", "兰花沼泽",
-                "Peach Grove", "桃林");
-        addBiomes(BiomeLayout.LANDFORMS,
-                "Karst Peak Forest", "喀斯特峰林",
-                "Danxia", "丹霞",
-                "Sandstone Pillars", "砂岩峰林",
-                "Zhangshiyan Cliffs", "嶂石岩");
+                "Peach Grove", "桃林",
+                "Rocky Peaks", "裸岩峰",
+                "Emerald Peaks", "翠峰",
+                "Jungle Mountains", "丛林山",
+                "Painted Mountains", "彩岩山",
+                "Granite Cliffs", "花岗岩崖",
+                "Alpine Meadow", "高山草甸",
+                "Zhangshiyan Cliffs", "嶂石岩",
+                "Karst Peak Forest", "喀斯特峰林");
+        addBiomes(List.of(BiomeSettings.BAMBOO_SEA), "Bamboo Sea", "竹海");
     }
 
     private void addDimension(ResourceKey<LevelStem> dimension, String english, String simplified) {

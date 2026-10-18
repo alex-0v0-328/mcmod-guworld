@@ -3,7 +3,8 @@ package net.alex.guzhenrenworld.dimension.southernborder;
 import java.util.List;
 import java.util.OptionalLong;
 import net.alex.guzhenrenworld.GuWorld;
-import net.alex.guzhenrenworld.terrain.HeightfieldRouter;
+import net.alex.guzhenrenworld.biome.Ports;
+import net.alex.guzhenrenworld.biome.Replicas;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -12,15 +13,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
-import net.minecraft.world.level.levelgen.synth.NormalNoise;
+import net.minecraft.world.level.levelgen.NoiseSettings;
+import net.minecraft.world.level.levelgen.SurfaceRules;
 
 /**
  * The Southern Border [南疆] dimension, one of the four regions beyond the Central Continent [中州], which is
@@ -28,21 +30,19 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *
  * <p>Every key shares the one location {@code guworld:southern_border}. {@link #registerDimensionType}, {@link
  * #registerNoiseSettings} and {@link #registerLevelStem} are the bootstraps {@code datagen.DatapackProvider} runs. The
- * dimension type is the overworld's (sky, effects, beds, raids, monster light) with a taller column, -64..383 ({@link
- * #MIN_Y}, {@link #HEIGHT}), so peaks, capped at y 320, keep 63 blocks of air; both are read off the router's noise
- * column, which the type must cover. The noise settings are a {@link HeightfieldRouter} over {@link Terrain}, with
- * {@link Surface}'s rules ahead of vanilla's overworld ones, sea level {@link Rivers#SEA_LEVEL}, aquifers and ore
- * veins; the level stem pairs them with the multi-noise biome source of {@link BiomeLayout}. The settings name no spawn
- * target: the overworld stays the spawn dimension. The region's parts name their noises and density functions under
- * that location through {@link #noiseKey} and {@link #functionKey}, the landform ones one folder deeper through
- * {@link #landformNoiseKey} and {@link #landformFunctionKey}.
+ * dimension type is the overworld's (sky, effects, beds, raids, monster light) with a taller column, y {@link #MIN_Y}
+ * up to {@link #MAX_Y}: peaks reach about y 272 ({@link Terrain}), and a dimension's floor and height must both be
+ * multiples of 16, so the build limit is 367 rather than any value in between. The noise column covers the whole
+ * type with Terralith's 4-block cells, {@code size_vertical} 1.
  *
- * <p>Built-in structure sets apply as in any noise dimension, but every structure checks its biome tags and none of
- * this region's own biomes is in one, so no vanilla structure generates here, strongholds included.
+ * <p>The noise settings run Terralith's overworld router ({@link Ports#getNoiseRouter}) over {@link Terrain}'s hooks,
+ * with the ported surface rules ahead of vanilla's, sea level 63, aquifers and ore veins; the level stem pairs them
+ * with {@link BiomeLayout}'s multi-noise source. The settings name no spawn target: the overworld stays the spawn
+ * dimension. Built-in structure sets apply as in any noise dimension, but every structure checks its biome tags and
+ * none of this region's biomes is in one, so no vanilla structure generates here.
  *
  * <p>The region is finite: {@link #BORDER_SIZE} is the side of its square world border around 0, 0, eight kilometers
- * (about 262,000 chunks), which {@link net.alex.guzhenrenworld.dimension.RegionBorders} applies to {@link #LEVEL}. The
- * vanilla border wall stands in until the regional walls [界壁] are built (wiki《南疆》).
+ * (about 262,000 chunks), which {@link net.alex.guzhenrenworld.dimension.RegionBorders} applies to {@link #LEVEL}.
  *
  * <p>⚠ Every key shares the location of Guzhenren's level key
  * {@code net.alex.guzhenren.registry.world.ModDimensions#SOUTHERN_BORDER}, the admin travel there (Guzhenren
@@ -64,8 +64,10 @@ public final class SouthernBorder {
     public static final ResourceKey<LevelStem> LEVEL_STEM = ResourceKey.create(Registries.LEVEL_STEM, ID);
     public static final ResourceKey<Level> LEVEL = ResourceKey.create(Registries.DIMENSION, ID);
     public static final double BORDER_SIZE = 8192.0;
-    private static final int MIN_Y = HeightfieldRouter.NOISE_SETTINGS.minY();
-    private static final int HEIGHT = HeightfieldRouter.NOISE_SETTINGS.height();
+    public static final int MIN_Y = -64;
+    public static final int MAX_Y = 367;
+    private static final int HEIGHT = MAX_Y + 1 - MIN_Y;
+    private static final int SEA_LEVEL = 63;
 
     private SouthernBorder() {}
 
@@ -91,14 +93,13 @@ public final class SouthernBorder {
 
     public static void registerNoiseSettings(BootstrapContext<NoiseGeneratorSettings> context) {
         context.register(NOISE_SETTINGS, new NoiseGeneratorSettings(
-                HeightfieldRouter.NOISE_SETTINGS,
+                NoiseSettings.create(MIN_Y, HEIGHT, 1, 1),
                 Blocks.STONE.defaultBlockState(),
                 Blocks.WATER.defaultBlockState(),
-                Terrain.createRouter(context.lookup(Registries.DENSITY_FUNCTION),
-                        context.lookup(Registries.NOISE)),
-                Surface.getRules(),
+                Ports.getNoiseRouter(context),
+                SurfaceRules.sequence(Ports.getSurfaceRules(), Replicas.getSurfaceRules()),
                 List.of(),
-                Rivers.SEA_LEVEL,
+                SEA_LEVEL,
                 false,
                 true,
                 true,
@@ -110,26 +111,10 @@ public final class SouthernBorder {
         HolderGetter<DimensionType> dimensionTypes = context.lookup(Registries.DIMENSION_TYPE);
         HolderGetter<NoiseGeneratorSettings> noiseSettings = context.lookup(Registries.NOISE_SETTINGS);
         MultiNoiseBiomeSource biomeSource = MultiNoiseBiomeSource.createFromList(
-                BiomeLayout.getParameters(context.lookup(Registries.BIOME)));
+                new Climate.ParameterList<>(BiomeLayout.getParameters(context.lookup(Registries.BIOME))));
         context.register(LEVEL_STEM, new LevelStem(
                 dimensionTypes.getOrThrow(DIMENSION_TYPE),
                 new NoiseBasedChunkGenerator(biomeSource, noiseSettings.getOrThrow(NOISE_SETTINGS))
         ));
     }
-
-    static ResourceKey<NormalNoise.NoiseParameters> noiseKey(String name) {
-        return ResourceKey.create(Registries.NOISE, getPartId(name));
-    }
-
-    static ResourceKey<DensityFunction> functionKey(String name) {
-        return ResourceKey.create(Registries.DENSITY_FUNCTION, getPartId(name));
-    }
-
-    static ResourceKey<NormalNoise.NoiseParameters> landformNoiseKey(String name) {
-        return noiseKey("landform/" + name);
-    }
-
-    static ResourceKey<DensityFunction> landformFunctionKey(String name) { return functionKey("landform/" + name); }
-
-    private static ResourceLocation getPartId(String name) { return ID.withSuffix("/" + name); }
 }

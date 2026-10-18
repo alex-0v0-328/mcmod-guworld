@@ -1,0 +1,8 @@
+{
+  "argument": {
+    "argument1": "guworld:terralith/overworld/cliff/carve",
+    "argument2": 64,
+    "type": "minecraft:min"
+  },
+  "type": "minecraft:cache_once"
+}

@@ -1,0 +1,19 @@
+{
+  "feature": "guworld:mountains/painted/surface_dx",
+  "placement": [
+    {
+      "count": 70,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "MOTION_BLOCKING_NO_LEAVES",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

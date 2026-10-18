@@ -1,0 +1,11 @@
+{
+  "argument": {
+    "input": "guworld:terralith/overworld/subtract_terrain_base",
+    "max_exclusive": 2.0,
+    "min_inclusive": -1000000,
+    "type": "minecraft:range_choice",
+    "when_in_range": "guworld:terralith/overworld/cliff/carve",
+    "when_out_of_range": 64
+  },
+  "type": "cache_once"
+}

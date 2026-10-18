@@ -1,0 +1,13 @@
+{
+  "argument": {
+    "argument1": {
+      "noise": "guworld:terralith/math/dune/height_boost",
+      "type": "minecraft:noise",
+      "xz_scale": 1.0,
+      "y_scale": 0.0
+    },
+    "argument2": 0.0,
+    "type": "minecraft:add"
+  },
+  "type": "minecraft:flat_cache"
+}

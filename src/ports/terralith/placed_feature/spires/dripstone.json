@@ -1,0 +1,64 @@
+{
+  "feature": {
+    "config": {
+      "chance_of_dripstone_column_at_max_distance_from_center": 0.5,
+      "density": {
+        "max_exclusive": 1,
+        "min_inclusive": 0.1,
+        "type": "minecraft:uniform"
+      },
+      "dripstone_block_layer_thickness": {
+        "max_inclusive": 1,
+        "min_inclusive": 1,
+        "type": "minecraft:uniform"
+      },
+      "floor_to_ceiling_search_range": 50,
+      "height": {
+        "max_inclusive": 7,
+        "min_inclusive": 1,
+        "type": "minecraft:uniform"
+      },
+      "height_deviation": 3,
+      "max_distance_from_center_affecting_height_bias": 2,
+      "max_distance_from_edge_affecting_chance_of_dripstone_column": 2,
+      "max_stalagmite_stalactite_height_diff": 4,
+      "radius": {
+        "max_inclusive": 2,
+        "min_inclusive": 1,
+        "type": "minecraft:uniform"
+      },
+      "wetness": 0
+    },
+    "type": "minecraft:dripstone_cluster"
+  },
+  "placement": [
+    {
+      "count": 13,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "OCEAN_FLOOR",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "predicate": {
+        "blocks": [
+          "minecraft:dripstone_block"
+        ],
+        "offset": [
+          0,
+          -1,
+          0
+        ],
+        "type": "minecraft:matching_blocks"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

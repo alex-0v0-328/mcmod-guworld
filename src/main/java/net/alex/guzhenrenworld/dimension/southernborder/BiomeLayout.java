@@ -1,69 +1,49 @@
 package net.alex.guzhenrenworld.dimension.southernborder;
 
-import static net.alex.guzhenrenworld.biome.BiomeTable.Cell.of;
-import static net.alex.guzhenrenworld.biome.Ports.CLOUD_FOREST;
-import static net.alex.guzhenrenworld.biome.Ports.FORESTED_PLATEAU;
-import static net.alex.guzhenrenworld.biome.Ports.HOT_SPRINGS;
-import static net.alex.guzhenrenworld.biome.Ports.MISTY_MOUNTAINS;
-import static net.alex.guzhenrenworld.biome.Ports.ORCHID_SWAMP;
-import static net.alex.guzhenrenworld.biome.Ports.PEACH_GROVE;
-import static net.alex.guzhenrenworld.biome.Ports.PLATEAU;
-import static net.alex.guzhenrenworld.biome.Ports.RAINFOREST;
-import static net.alex.guzhenrenworld.biome.Replicas.BAMBOO_JUNGLE;
-import static net.alex.guzhenrenworld.biome.Replicas.BIRCH_FOREST;
-import static net.alex.guzhenrenworld.biome.Replicas.DARK_FOREST;
-import static net.alex.guzhenrenworld.biome.Replicas.FOREST;
-import static net.alex.guzhenrenworld.biome.Replicas.MEADOW;
-import static net.alex.guzhenrenworld.biome.Replicas.PLAINS;
-import static net.alex.guzhenrenworld.biome.Replicas.STONY_PEAKS;
-import static net.alex.guzhenrenworld.biome.Replicas.TAIGA;
-import static net.alex.guzhenrenworld.biome.Replicas.WINDSWEPT_HILLS;
-
+import com.mojang.datafixers.util.Pair;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import net.alex.guzhenrenworld.GuWorld;
-import net.alex.guzhenrenworld.biome.BiomeTable;
+import java.util.Map;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
 
 /**
- * The Southern Border [南疆] biome table on the shared {@link BiomeTable}: Gu World's vanilla replicas, the biomes
- * ported from Terralith, and the region's four landform biomes, which {@link BiomeSettings} builds.
+ * Where the Southern Border [南疆] places its biomes: Terralith's overworld multi-noise table as shipped
+ * ({@link Ports#getBiomeParameters}), with every source biome mapped onto the region's own ({@link #SOURCES}), so each
+ * of Terralith's parameter cells keeps its terrain archetype and gets the Southern Border biome of its kind.
  *
- * <p>The relief axis is {@code Terrain}'s elevation, so the five {@link #ELEVATIONS} bands are, in
- * blocks, lowland below y 90 (valley floors, plains, floodplains), hills to 150 (the lower benches), mid slopes to
- * 220 (the upper benches), high slopes to 280 and peaks above; each band carries its own family:
+ * <p>The roster, by terrain band:
  * <ul>
- *   <li>Lowland: plains and meadows, forests from birch to dark forest, bamboo, peach groves, and in the warm, wet
- *   south rainforest and orchid swamps.</li>
- *   <li>Hills: the plateau family on the benches, forests, cloud forest where it is wet, rainforest where it is hot;
- *   hot springs rare on the cool to mild, dry to medium plateaus.</li>
- *   <li>Mid slopes: plateaus, taiga, misty mountains and cloud forest; hot springs rare again.</li>
- *   <li>High slopes: windswept hills, taiga and misty mountains.</li>
- *   <li>Peaks: stony peaks.</li>
+ *   <li>Mountains: misty mountains, cloud forest, rocky peaks, emerald peaks, jungle mountains, painted mountains,
+ *   granite cliffs, alpine meadow; and the two landforms, Zhangshiyan cliffs on Terralith's cliff and canyon cells and
+ *   karst peak forest on its spire cells.</li>
+ *   <li>Hills and plateaus: bamboo sea ({@link BiomeSettings}), rainforest, plateau, forested plateau, peach
+ *   grove.</li>
+ *   <li>Flats: plains, orchid swamp, hot springs, and the river.</li>
+ *   <li>Underground: lush caves and dripstone caves.</li>
  * </ul>
- * The weirdness is a 512-block variant noise with its sign kept ({@code Terrain}), so neighboring
- * patches of one climate alternate between a cell's normal and variant biome, and the noise's far tops carry the
- * rare one.
+ * A source biome goes to the roster biome of the same landform and the nearest vegetation; cold sources take the
+ * mountain-forest and meadow biomes, deserts and dry shrubland the plains, badlands the painted mountains. Terralith
+ * keeps its haze mountain, emerald peaks and jungle mountains rare, so each also takes a common neighbor: the
+ * misty mountains vanilla's mountain slopes, the emerald peaks the jagged peaks, the jungle mountains the rocky
+ * jungle. Ocean,
+ * beach and island sources are mapped for completeness only: {@link Terrain}'s continentalness never reaches their
+ * cells. {@link #LAND} is every surface biome but the river, where the spirit spring [元泉] may stand.
  *
- * <p>The landform code stands in as continentalness: the ordinary table takes the band below 0.1, where the code is
- * -1, and each of the four {@link #LANDFORMS} takes the band of its code in {@code Landforms.CODES},
- * whatever the altitude and climate. Rivers take the weirdness band within {@link Rivers#RIVER_WEIRDNESS} of zero on
- * the two lowest bands, through the landforms too; the terrain sets the weirdness inside that band exactly where a
- * channel holds water. Lush caves sit under the wettest humidity band and dripstone caves under the driest, between
- * {@link #CAVE_DEPTH}, under ordinary ground only.
+ * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link #SPIRE_EROSION} and
+ * up, grows its low-factor spire terrain whatever biome sits there. So a land cell there becomes karst peak forest
+ * ({@link #isSpireCell}) unless it holds one of {@link #KEPT_ON_SPIRES}: the river, the caves, the swamp, the hot
+ * springs and the Zhangshiyan cliffs keep their own.
  *
- * <p>None of these biomes joins a vanilla biome tag, so no vanilla structure starts here, the strongholds included,
- * and nothing another mod adds to the overworld's biomes reaches them. {@link #LAND}, every surface biome but the
- * river, is where the spirit spring [元泉] may stand. The language table names the {@link #LANDFORMS} in their order.
- *
- * <p>⚠ The table is a first prototype for Alex to judge in game, not a settled pick.
+ * <p>⚠ {@link #getParameters} throws on a source biome {@link #SOURCES} does not map, so a re-port that adds one fails
+ * {@code runData} instead of dropping cells.
  *
  * @author Alex
  * @version 1.0.0
@@ -73,99 +53,102 @@ import net.minecraft.world.level.biome.Climate;
 
 public final class BiomeLayout {
 
-    public static final ResourceKey<Biome> KARST_PEAK_FOREST = key("karst_peak_forest");
-    public static final ResourceKey<Biome> DANXIA = key("danxia");
-    public static final ResourceKey<Biome> SANDSTONE_PILLARS = key("sandstone_pillars");
-    public static final ResourceKey<Biome> ZHANGSHIYAN_CLIFFS = key("zhangshiyan_cliffs");
-    public static final List<ResourceKey<Biome>> LANDFORMS =
-            List.of(KARST_PEAK_FOREST, DANXIA, SANDSTONE_PILLARS, ZHANGSHIYAN_CLIFFS);
-    public static final List<ResourceKey<Biome>> LAND = getLand();
-    private static final List<Climate.Parameter> ELEVATIONS = List.of(
-            Climate.Parameter.span(-1.0F, -0.704F),
-            Climate.Parameter.span(-0.704F, -0.259F),
-            Climate.Parameter.span(-0.259F, 0.259F),
-            Climate.Parameter.span(0.259F, 0.704F),
-            Climate.Parameter.span(0.704F, 1.0F));
-    private static final Climate.Parameter ORDINARY = Climate.Parameter.span(-1.0F, 0.1F);
-    private static final Climate.Parameter LOWLANDS = Climate.Parameter.span(ELEVATIONS.get(0), ELEVATIONS.get(1));
-    private static final Climate.Parameter CAVE_DEPTH = Climate.Parameter.span(0.2F, 0.9F);
-    private static final List<List<BiomeTable.Cell>> LOWLAND = List.of(
-            List.of(of(PLAINS, MEADOW), of(PLAINS, MEADOW), of(TAIGA, FOREST), of(TAIGA, FOREST),
-                    of(TAIGA, DARK_FOREST)),
-            List.of(of(PLAINS, MEADOW), of(PLAINS, MEADOW), of(FOREST, BIRCH_FOREST), of(FOREST, DARK_FOREST),
-                    of(DARK_FOREST, ORCHID_SWAMP)),
-            List.of(of(PLAINS, MEADOW), of(PLAINS, PEACH_GROVE), of(FOREST, PEACH_GROVE), of(BAMBOO_JUNGLE, FOREST),
-                    of(ORCHID_SWAMP, DARK_FOREST)),
-            List.of(of(PLAINS), of(PLAINS, PEACH_GROVE), of(FOREST, BAMBOO_JUNGLE), of(RAINFOREST, BAMBOO_JUNGLE),
-                    of(ORCHID_SWAMP, RAINFOREST)),
-            List.of(of(PLAINS), of(PLAINS, RAINFOREST), of(RAINFOREST, BAMBOO_JUNGLE),
-                    of(RAINFOREST, BAMBOO_JUNGLE), of(RAINFOREST, ORCHID_SWAMP)));
-    private static final List<List<BiomeTable.Cell>> HILLS = List.of(
-            List.of(of(TAIGA, WINDSWEPT_HILLS), of(TAIGA, FOREST), of(TAIGA, FOREST), of(TAIGA, DARK_FOREST),
-                    of(TAIGA, DARK_FOREST)),
-            List.of(of(MEADOW, PLATEAU), new BiomeTable.Cell(PLATEAU, MEADOW, HOT_SPRINGS),
-                    new BiomeTable.Cell(FORESTED_PLATEAU, BIRCH_FOREST, HOT_SPRINGS), of(FOREST, DARK_FOREST),
-                    of(CLOUD_FOREST, DARK_FOREST)),
-            List.of(of(MEADOW, PLATEAU), new BiomeTable.Cell(PLATEAU, PEACH_GROVE, HOT_SPRINGS),
-                    new BiomeTable.Cell(FORESTED_PLATEAU, FOREST, HOT_SPRINGS), of(BAMBOO_JUNGLE, FOREST),
-                    of(CLOUD_FOREST, MISTY_MOUNTAINS)),
-            List.of(of(PLATEAU, MEADOW), of(PLATEAU, PEACH_GROVE), of(FOREST, FORESTED_PLATEAU),
-                    of(BAMBOO_JUNGLE, RAINFOREST), of(RAINFOREST, CLOUD_FOREST)),
-            List.of(of(PLATEAU, MEADOW), of(PLATEAU, FORESTED_PLATEAU), of(RAINFOREST, BAMBOO_JUNGLE),
-                    of(RAINFOREST, BAMBOO_JUNGLE), of(RAINFOREST, CLOUD_FOREST)));
-    private static final List<List<BiomeTable.Cell>> MID_SLOPES = List.of(
-            List.of(of(TAIGA, WINDSWEPT_HILLS), of(TAIGA, WINDSWEPT_HILLS), of(TAIGA, WINDSWEPT_HILLS),
-                    of(TAIGA, WINDSWEPT_HILLS), of(TAIGA, WINDSWEPT_HILLS)),
-            List.of(of(WINDSWEPT_HILLS, PLATEAU), new BiomeTable.Cell(TAIGA, FORESTED_PLATEAU, HOT_SPRINGS),
-                    of(TAIGA, BIRCH_FOREST), of(MISTY_MOUNTAINS, TAIGA), of(CLOUD_FOREST, MISTY_MOUNTAINS)),
-            List.of(of(PLATEAU, WINDSWEPT_HILLS), new BiomeTable.Cell(FORESTED_PLATEAU, TAIGA, HOT_SPRINGS),
-                    of(MISTY_MOUNTAINS, FORESTED_PLATEAU), of(CLOUD_FOREST, MISTY_MOUNTAINS),
-                    of(CLOUD_FOREST, MISTY_MOUNTAINS)),
-            List.of(of(PLATEAU, MEADOW), new BiomeTable.Cell(FORESTED_PLATEAU, PLATEAU, HOT_SPRINGS),
-                    of(FOREST, MISTY_MOUNTAINS), of(CLOUD_FOREST, MISTY_MOUNTAINS), of(CLOUD_FOREST, RAINFOREST)),
-            List.of(of(PLATEAU, MEADOW), of(FORESTED_PLATEAU, PLATEAU), of(RAINFOREST, MISTY_MOUNTAINS),
-                    of(CLOUD_FOREST, RAINFOREST), of(CLOUD_FOREST, MISTY_MOUNTAINS)));
-    private static final List<BiomeTable.Cell> HIGH_SLOPE_WARM = List.of(of(WINDSWEPT_HILLS, PLATEAU),
-            of(WINDSWEPT_HILLS, MISTY_MOUNTAINS), of(MISTY_MOUNTAINS, TAIGA), of(MISTY_MOUNTAINS, CLOUD_FOREST),
-            of(MISTY_MOUNTAINS));
-    private static final List<List<BiomeTable.Cell>> HIGH_SLOPES = List.of(
-            List.of(of(WINDSWEPT_HILLS, STONY_PEAKS), of(WINDSWEPT_HILLS, TAIGA), of(TAIGA, WINDSWEPT_HILLS),
-                    of(TAIGA), of(TAIGA)),
-            List.of(of(WINDSWEPT_HILLS), of(WINDSWEPT_HILLS, TAIGA), of(TAIGA, MISTY_MOUNTAINS),
-                    of(MISTY_MOUNTAINS, TAIGA), of(MISTY_MOUNTAINS)),
-            HIGH_SLOPE_WARM, HIGH_SLOPE_WARM, HIGH_SLOPE_WARM);
-    private static final List<BiomeTable.Cell> PEAK = List.of(of(STONY_PEAKS), of(STONY_PEAKS), of(STONY_PEAKS),
-            of(STONY_PEAKS), of(STONY_PEAKS));
-    private static final List<List<BiomeTable.Cell>> PEAKS = List.of(PEAK, PEAK, PEAK, PEAK, PEAK);
+    private static final Map<ResourceKey<Biome>, List<String>> GROUPS = Map.ofEntries(
+            Map.entry(Replicas.RIVER, List.of("minecraft:river", "minecraft:frozen_river", "terralith:warm_river")),
+            Map.entry(Replicas.PLAINS, List.of("minecraft:plains", "minecraft:sunflower_plains",
+                    "minecraft:snowy_plains", "minecraft:ice_spikes", "minecraft:savanna", "minecraft:desert",
+                    "minecraft:beach", "minecraft:snowy_beach", "minecraft:stony_shore", "minecraft:mushroom_fields",
+                    "minecraft:ocean", "minecraft:deep_ocean", "minecraft:cold_ocean", "minecraft:deep_cold_ocean",
+                    "minecraft:frozen_ocean", "minecraft:deep_frozen_ocean", "minecraft:lukewarm_ocean",
+                    "minecraft:deep_lukewarm_ocean", "minecraft:warm_ocean", "terralith:deep_warm_ocean",
+                    "terralith:gravel_beach", "terralith:alpha_islands", "terralith:alpha_islands_winter",
+                    "terralith:mirage_isles", "terralith:skylands_autumn", "terralith:skylands_spring",
+                    "terralith:skylands_summer", "terralith:skylands_winter", "terralith:steppe",
+                    "terralith:shrubland", "terralith:cold_shrubland", "terralith:hot_shrubland",
+                    "terralith:rocky_shrubland", "terralith:brushland", "terralith:gravel_desert",
+                    "terralith:lush_desert", "terralith:ancient_sands", "terralith:ashen_savanna",
+                    "terralith:wintry_lowlands", "terralith:yosemite_lowlands", "terralith:valley_clearing",
+                    "terralith:desert_oasis", "terralith:red_oasis")),
+            Map.entry(Ports.ORCHID_SWAMP, List.of("minecraft:swamp", "minecraft:mangrove_swamp",
+                    "terralith:orchid_swamp", "terralith:ice_marsh")),
+            Map.entry(Ports.HOT_SPRINGS, List.of("terralith:yellowstone")),
+            Map.entry(Ports.FORESTED_PLATEAU, List.of("minecraft:forest", "minecraft:flower_forest",
+                    "minecraft:birch_forest", "minecraft:old_growth_birch_forest", "terralith:birch_taiga",
+                    "terralith:lavender_forest", "terralith:forested_highlands")),
+            Map.entry(BiomeSettings.BAMBOO_SEA, List.of("minecraft:bamboo_jungle", "minecraft:sparse_jungle")),
+            Map.entry(Ports.RAINFOREST, List.of("minecraft:jungle", "minecraft:dark_forest",
+                    "terralith:tropical_jungle", "terralith:amethyst_rainforest")),
+            Map.entry(Ports.CLOUD_FOREST, List.of("minecraft:taiga", "minecraft:snowy_taiga",
+                    "minecraft:old_growth_pine_taiga", "minecraft:old_growth_spruce_taiga",
+                    "terralith:siberian_taiga", "terralith:siberian_grove", "terralith:wintry_forest",
+                    "terralith:snowy_maple_forest", "terralith:moonlight_grove", "terralith:moonlight_valley",
+                    "terralith:cloud_forest")),
+            Map.entry(Ports.PLATEAU, List.of("minecraft:savanna_plateau", "minecraft:windswept_hills",
+                    "minecraft:windswept_forest", "minecraft:windswept_gravelly_hills", "minecraft:windswept_savanna",
+                    "terralith:highlands", "terralith:temperate_highlands", "terralith:arid_highlands",
+                    "terralith:shield", "terralith:shield_clearing", "terralith:snowy_shield",
+                    "terralith:savanna_slopes", "terralith:blooming_plateau")),
+            Map.entry(Ports.PEACH_GROVE, List.of("minecraft:cherry_grove", "terralith:sakura_grove",
+                    "terralith:sakura_valley", "terralith:snowy_cherry_grove", "terralith:blooming_valley",
+                    "terralith:lavender_valley", "terralith:lush_valley")),
+            Map.entry(Ports.ALPINE_MEADOW, List.of("minecraft:meadow", "terralith:alpine_highlands")),
+            Map.entry(Ports.ROCKY_PEAKS, List.of("minecraft:frozen_peaks", "minecraft:stony_peaks",
+                    "terralith:rocky_mountains")),
+            Map.entry(Ports.EMERALD_PEAKS, List.of("minecraft:jagged_peaks", "terralith:emerald_peaks",
+                    "terralith:scarlet_mountains")),
+            Map.entry(Ports.MISTY_MOUNTAINS, List.of("minecraft:grove", "minecraft:snowy_slopes",
+                    "terralith:alpine_grove", "terralith:haze_mountain")),
+            Map.entry(Ports.JUNGLE_MOUNTAINS, List.of("terralith:jungle_mountains", "terralith:rocky_jungle")),
+            Map.entry(Ports.PAINTED_MOUNTAINS, List.of("minecraft:badlands", "minecraft:eroded_badlands",
+                    "minecraft:wooded_badlands", "terralith:painted_mountains", "terralith:snowy_badlands",
+                    "terralith:savanna_badlands", "terralith:warped_mesa")),
+            Map.entry(Ports.GRANITE_CLIFFS, List.of("terralith:granite_cliffs", "terralith:frozen_cliffs",
+                    "terralith:volcanic_peaks", "terralith:volcanic_crater", "terralith:caldera",
+                    "terralith:basalt_cliffs", "terralith:white_cliffs")),
+            Map.entry(Ports.ZHANGSHIYAN_CLIFFS, List.of("terralith:yosemite_cliffs", "terralith:white_mesa",
+                    "terralith:sandstone_valley", "terralith:glacial_chasm", "terralith:amethyst_canyon",
+                    "terralith:desert_canyon", "terralith:bryce_canyon")),
+            Map.entry(Ports.KARST_PEAK_FOREST, List.of("terralith:stony_spires", "terralith:windswept_spires",
+                    "terralith:desert_spires", "terralith:fractured_savanna")),
+            Map.entry(Replicas.LUSH_CAVES, List.of("minecraft:lush_caves", "terralith:cave/underground_jungle",
+                    "terralith:cave/fungal_caves")),
+            Map.entry(Replicas.DRIPSTONE_CAVES, List.of("minecraft:dripstone_caves", "minecraft:deep_dark",
+                    "terralith:cave/andesite_caves", "terralith:cave/deep_caves", "terralith:cave/diorite_caves",
+                    "terralith:cave/frostfire_caves", "terralith:cave/granite_caves", "terralith:cave/infested_caves",
+                    "terralith:cave/mantle_caves", "terralith:cave/thermal_caves", "terralith:cave/tuff_caves")));
+    public static final Map<ResourceLocation, ResourceKey<Biome>> SOURCES = getSources();
+    private static final float SPIRE_EROSION = 0.565F;
+    private static final List<ResourceKey<Biome>> KEPT_ON_SPIRES = List.of(Replicas.RIVER, Replicas.LUSH_CAVES,
+            Replicas.DRIPSTONE_CAVES, Ports.ORCHID_SWAMP, Ports.HOT_SPRINGS, Ports.ZHANGSHIYAN_CLIFFS);
+    public static final List<ResourceKey<Biome>> LAND = GROUPS.keySet().stream()
+            .filter(biome -> biome != Replicas.RIVER && biome != Replicas.LUSH_CAVES
+                    && biome != Replicas.DRIPSTONE_CAVES)
+            .sorted((first, second) -> first.location().compareTo(second.location())).toList();
 
     private BiomeLayout() {}
 
-    public static Climate.ParameterList<Holder<Biome>> getParameters(HolderGetter<Biome> biomes) {
-        BiomeTable table = new BiomeTable(ORDINARY, Rivers.RIVER_WEIRDNESS)
-                .addBand(ELEVATIONS.get(0), LOWLAND)
-                .addBand(ELEVATIONS.get(1), HILLS)
-                .addBand(ELEVATIONS.get(2), MID_SLOPES)
-                .addBand(ELEVATIONS.get(3), HIGH_SLOPES)
-                .addBand(ELEVATIONS.get(4), PEAKS);
-        for (int index = 0; index < LANDFORMS.size(); index++) {
-            float code = Landforms.CODES.get(index);
-            table.addFixed(LANDFORMS.get(index), Climate.Parameter.span(code - 0.1F, code + 0.1F));
+    public static List<Pair<Climate.ParameterPoint, Holder<Biome>>> getParameters(HolderGetter<Biome> biomes) {
+        List<Pair<Climate.ParameterPoint, Holder<Biome>>> parameters = new ArrayList<>();
+        for (Map.Entry<Climate.ParameterPoint, ResourceLocation> entry : Ports.getBiomeParameters()) {
+            ResourceKey<Biome> biome = SOURCES.get(entry.getValue());
+            if (biome == null) throw new IllegalStateException("no Southern Border biome for " + entry.getValue());
+            if (isSpireCell(entry.getKey()) && !KEPT_ON_SPIRES.contains(biome)) biome = Ports.KARST_PEAK_FOREST;
+            parameters.add(Pair.of(entry.getKey(), biomes.getOrThrow(biome)));
         }
-        return table.addRiver(Replicas.RIVER, LOWLANDS)
-                .addCave(Replicas.LUSH_CAVES, BiomeTable.HUMIDITIES.getLast(), CAVE_DEPTH)
-                .addCave(Replicas.DRIPSTONE_CAVES, BiomeTable.HUMIDITIES.getFirst(), CAVE_DEPTH)
-                .build(biomes);
+        return parameters;
     }
 
-    private static List<ResourceKey<Biome>> getLand() {
-        List<ResourceKey<Biome>> land = new ArrayList<>(List.of(PLAINS, FOREST, BIRCH_FOREST, DARK_FOREST,
-                BAMBOO_JUNGLE, MEADOW, TAIGA, WINDSWEPT_HILLS, STONY_PEAKS));
-        land.addAll(Ports.BIOMES);
-        land.addAll(LANDFORMS);
-        return List.copyOf(land);
+    private static boolean isSpireCell(Climate.ParameterPoint point) {
+        return point.erosion().min() >= Climate.quantizeCoord(SPIRE_EROSION);
     }
 
-    private static ResourceKey<Biome> key(String name) {
-        return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
+    private static Map<ResourceLocation, ResourceKey<Biome>> getSources() {
+        Map<ResourceLocation, ResourceKey<Biome>> sources = new HashMap<>();
+        GROUPS.forEach((biome, names) -> names.forEach(name -> {
+            if (sources.put(ResourceLocation.parse(name), biome) != null) {
+                throw new IllegalStateException(name + " is mapped twice");
+            }
+        }));
+        return Map.copyOf(sources);
     }
 }

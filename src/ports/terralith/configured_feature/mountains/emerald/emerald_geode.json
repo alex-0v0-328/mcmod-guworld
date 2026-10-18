@@ -1,0 +1,83 @@
+{
+  "config": {
+    "blocks": {
+      "alternate_inner_layer_provider": {
+        "state": {
+          "Name": "minecraft:deepslate_emerald_ore"
+        },
+        "type": "minecraft:simple_state_provider"
+      },
+      "cannot_replace": "#guworld:stop_emerald_geode",
+      "filling_provider": {
+        "state": {
+          "Name": "minecraft:air"
+        },
+        "type": "minecraft:simple_state_provider"
+      },
+      "inner_layer_provider": {
+        "state": {
+          "Name": "minecraft:cobbled_deepslate"
+        },
+        "type": "minecraft:simple_state_provider"
+      },
+      "inner_placements": [
+        {
+          "Name": "minecraft:deepslate_emerald_ore"
+        },
+        {
+          "Name": "minecraft:deepslate_emerald_ore"
+        },
+        {
+          "Name": "minecraft:deepslate_emerald_ore"
+        }
+      ],
+      "invalid_blocks": "#guworld:stop_emerald_geode",
+      "middle_layer_provider": {
+        "state": {
+          "Name": "minecraft:calcite"
+        },
+        "type": "minecraft:simple_state_provider"
+      },
+      "outer_layer_provider": {
+        "state": {
+          "Name": "minecraft:smooth_basalt"
+        },
+        "type": "minecraft:simple_state_provider"
+      }
+    },
+    "crack": {
+      "base_crack_size": 2,
+      "crack_point_offset": 2,
+      "generate_crack_chance": 0.95
+    },
+    "distribution_points": {
+      "max_inclusive": 4,
+      "min_inclusive": 2,
+      "type": "minecraft:uniform"
+    },
+    "invalid_blocks_threshold": 4,
+    "layers": {
+      "filling": 1.7,
+      "inner_layer": 2.2,
+      "middle_layer": 3.2,
+      "outer_layer": 4.2
+    },
+    "max_gen_offset": 16,
+    "min_gen_offset": -16,
+    "noise_multiplier": 0.05,
+    "outer_wall_distance": {
+      "max_inclusive": 6,
+      "min_inclusive": 4,
+      "type": "minecraft:uniform"
+    },
+    "placements_require_layer0_alternate": true,
+    "point_offset": {
+      "max_inclusive": 2,
+      "min_inclusive": 1,
+      "type": "minecraft:uniform"
+    },
+    "use_alternate_layer0_chance": 0.15,
+    "use_potential_placements_chance": 1
+  },
+  "type": "minecraft:geode"
+}

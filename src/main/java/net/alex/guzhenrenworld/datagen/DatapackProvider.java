@@ -23,8 +23,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * <p>Extends {@link DatapackBuiltinEntriesProvider}. Builds in one {@code RegistrySetBuilder} the entries
  * the function packages bootstrap: the Treasure Yellow Heaven dimension's type, biome and level stem
  * ({@link TreasureYellowHeaven}); the Southern Border [南疆] dimension's type, noise settings and level stem
- * ({@link SouthernBorder}) with its noises and density functions ({@link Terrain}) and its landform
- * biomes ({@link BiomeSettings}); Gu World's shared biomes, the vanilla replicas ({@link Replicas}) and
+ * ({@link SouthernBorder}), its density functions, Terralith's router with the region's hooks ({@link Terrain}),
+ * and its bamboo sea with that biome's bamboo ({@link BiomeSettings}); Gu World's shared biomes, the vanilla replicas ({@link Replicas}) and
  * the biomes ported from Terralith with their noises and features ({@link Ports}); and the Spirit Spring
  * [元泉] configured and placed feature and biome modifier ({@link SpiritSpring}). A registry two
  * dimensions both fill gets one bootstrap that runs both. The tag provider takes {@code getRegistryProvider()}
@@ -51,10 +51,7 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 Ports.registerBiomes(context);
                 BiomeSettings.registerBiomes(context);
             })
-            .add(Registries.NOISE, context -> {
-                Terrain.registerNoises(context);
-                Ports.registerNoises(context);
-            })
+            .add(Registries.NOISE, Ports::registerNoises)
             .add(Registries.DENSITY_FUNCTION, Terrain::registerDensityFunctions)
             .add(Registries.NOISE_SETTINGS, SouthernBorder::registerNoiseSettings)
             .add(Registries.LEVEL_STEM, context -> {
@@ -68,6 +65,7 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
             .add(Registries.PLACED_FEATURE, context -> {
                 SpiritSpring.registerPlacedFeature(context);
                 Ports.registerPlacedFeatures(context);
+                BiomeSettings.registerPlacedFeatures(context);
             })
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, SpiritSpring::registerBiomeModifier);
 

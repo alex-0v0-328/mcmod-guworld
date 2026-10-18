@@ -1,0 +1,8 @@
+{
+  "type": "minecraft:range_choice",
+  "input": "guworld:terralith/overworld/arch/height_spline",
+  "max_exclusive": 1000000.0,
+  "min_inclusive": -10.0,
+  "when_in_range": "guworld:terralith/overworld/arch/base",
+  "when_out_of_range": -64.0
+}

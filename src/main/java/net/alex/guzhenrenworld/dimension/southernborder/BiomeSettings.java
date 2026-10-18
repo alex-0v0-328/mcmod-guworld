@@ -2,8 +2,7 @@ package net.alex.guzhenrenworld.dimension.southernborder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import net.alex.guzhenrenworld.biome.Ports;
+import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -11,31 +10,26 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.biome.OverworldBiomes;
+import net.minecraft.data.worldgen.features.VegetationFeatures;
+import net.minecraft.data.worldgen.placement.PlacementUtils;
+import net.minecraft.data.worldgen.placement.VegetationPlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
+import net.minecraft.world.level.levelgen.placement.NoiseBasedCountPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 /**
- * Builds the four Southern Border [南疆] landform biomes of {@link BiomeLayout}: each a vanilla biome with
- * vanilla's climate, colors and features, plus the Terralith dressing ported for its kind of rock
- * ({@link Ports}), placed in the generation step Terralith places it in:
- * <ul>
- *   <li>Karst peak forest [喀斯特峰林]: vanilla's forest, with Terralith's stony spires dressing: moss and dripstone
- *   patches on the towers, bushes, oaks, azaleas and grass on their tops.</li>
- *   <li>Danxia [丹霞]: vanilla's forest; its red beds are surface rules ({@code Surface}).</li>
- *   <li>Sandstone pillars [砂岩峰林]: vanilla's taiga, with Terralith's windswept spires dressing: grass caps on the
- *   ledges, spruces, tall foliage and grass on the tops.</li>
- *   <li>Zhangshiyan cliffs [嶂石岩]: vanilla's meadow, with grass caps on the ledges and Terralith's Yosemite
- *   oaks.</li>
- * </ul>
+ * The Southern Border [南疆] biome built here rather than ported: the bamboo sea [竹海], vanilla's bamboo jungle with
+ * its bamboo thinned. Vanilla grows {@link VegetationPlacements#BAMBOO} up to 160 clumps a chunk where its noise peaks,
+ * a wall nobody can walk through; {@link #BAMBOO} places the same podzol-floored bamboo at most {@link #BAMBOO_COUNT}
+ * times a chunk on the same noise, so the stands stay dense where the noise peaks and open up between them. The rest
+ * of the template, jungle trees, flowers, pandas and parrots, stays vanilla's, and like every Gu World biome it does
+ * not carve ({@link Replicas#getUncarved}).
  *
- * <p>All four drop lakes and fluid springs ({@link #getCliffSafe}), so no lava pool sits on a pillar top and no lava
- * spring pours down a wall, and none carves: each is rebuilt through {@link Replicas#getUncarved}, for the reason
- * {@code Replicas} gives.
- *
- * <p>⚠ The dressing is a first prototype for Alex to judge in game, not a settled pick.
+ * <p>⚠ {@link #BAMBOO_COUNT} is a first pick for Alex to judge in game.
  *
  * @author Alex
  * @version 1.0.0
@@ -45,57 +39,32 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 public final class BiomeSettings {
 
+    public static final ResourceKey<Biome> BAMBOO_SEA = ResourceKey.create(Registries.BIOME, GuWorld.id("bamboo_sea"));
+    private static final ResourceKey<PlacedFeature> BAMBOO =
+            ResourceKey.create(Registries.PLACED_FEATURE, GuWorld.id("bamboo_sea/bamboo"));
+    private static final int BAMBOO_COUNT = 60;
+    private static final double BAMBOO_NOISE_SCALE = 80.0;
+    private static final double BAMBOO_NOISE_OFFSET = 0.3;
+
     private BiomeSettings() {}
+
+    public static void registerPlacedFeatures(BootstrapContext<PlacedFeature> context) {
+        HolderGetter<ConfiguredFeature<?, ?>> configured = context.lookup(Registries.CONFIGURED_FEATURE);
+        PlacementUtils.register(context, BAMBOO, configured.getOrThrow(VegetationFeatures.BAMBOO_SOME_PODZOL),
+                NoiseBasedCountPlacement.of(BAMBOO_COUNT, BAMBOO_NOISE_SCALE, BAMBOO_NOISE_OFFSET),
+                InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
+    }
 
     public static void registerBiomes(BootstrapContext<Biome> context) {
         HolderGetter<PlacedFeature> placed = context.lookup(Registries.PLACED_FEATURE);
-        HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
-        Biome forest = OverworldBiomes.forest(placed, carvers, false, false, false);
-        register(context, BiomeLayout.KARST_PEAK_FOREST, forest, Map.of(
-                GenerationStep.Decoration.RAW_GENERATION, getFeatures(placed, Ports.SPIRES_CLIFF),
-                GenerationStep.Decoration.VEGETAL_DECORATION, getFeatures(placed, Ports.SHRUBLAND_BUSHES,
-                        Ports.SPIRES_OAK_TREE, Ports.SPIRES_AZALEA, Ports.SPIRES_GRASS)));
-        register(context, BiomeLayout.DANXIA, forest, Map.of());
-        register(context, BiomeLayout.SANDSTONE_PILLARS, OverworldBiomes.taiga(placed, carvers, false),
-                Map.of(GenerationStep.Decoration.RAW_GENERATION, getFeatures(placed, Ports.CLIFF_GRASS_UPPER,
-                                Ports.CLIFF_GRASS_LOWER),
-                        GenerationStep.Decoration.VEGETAL_DECORATION, getFeatures(placed, Ports.SPIRES_SPRUCE_TREES,
-                                Ports.SPIRES_TALL_FOLIAGE, Ports.SPIRES_PATCH_GRASS)));
-        register(context, BiomeLayout.ZHANGSHIYAN_CLIFFS,
-                OverworldBiomes.meadowOrCherryGrove(placed, carvers, false), Map.of(
-                        GenerationStep.Decoration.RAW_GENERATION, getFeatures(placed, Ports.CLIFF_GRASS_UPPER,
-                                Ports.CLIFF_GRASS_LOWER),
-                        GenerationStep.Decoration.VEGETAL_DECORATION, getFeatures(placed, Ports.YOSEMITE_OAKS)));
-    }
-
-    @SafeVarargs
-    private static List<Holder<PlacedFeature>> getFeatures(HolderGetter<PlacedFeature> placed,
-            ResourceKey<PlacedFeature>... keys) {
-        List<Holder<PlacedFeature>> features = new ArrayList<>();
-        for (ResourceKey<PlacedFeature> key : keys) {
-            features.add(placed.getOrThrow(key));
-        }
-        return features;
-    }
-
-    private static void register(BootstrapContext<Biome> context, ResourceKey<Biome> key, Biome template,
-            Map<GenerationStep.Decoration, List<Holder<PlacedFeature>>> dressing) {
+        Biome template = OverworldBiomes.bambooJungle(placed, context.lookup(Registries.CONFIGURED_CARVER));
+        Holder<PlacedFeature> thinned = placed.getOrThrow(BAMBOO);
         List<HolderSet<PlacedFeature>> features = new ArrayList<>();
-        List<HolderSet<PlacedFeature>> steps = template.getGenerationSettings().features();
-        for (GenerationStep.Decoration step : GenerationStep.Decoration.values()) {
+        for (HolderSet<PlacedFeature> step : template.getGenerationSettings().features()) {
             List<Holder<PlacedFeature>> holders = new ArrayList<>();
-            if (step.ordinal() < steps.size()) {
-                steps.get(step.ordinal()).forEach(holders::add);
-            }
-            holders.addAll(dressing.getOrDefault(step, List.of()));
-            features.add(getCliffSafe(step, holders));
+            step.forEach(holder -> holders.add(holder.is(VegetationPlacements.BAMBOO) ? thinned : holder));
+            features.add(HolderSet.direct(holders));
         }
-        context.register(key, Replicas.getUncarved(template, features));
-    }
-
-    private static HolderSet<PlacedFeature> getCliffSafe(GenerationStep.Decoration step,
-            List<Holder<PlacedFeature>> holders) {
-        boolean open = step == GenerationStep.Decoration.LAKES || step == GenerationStep.Decoration.FLUID_SPRINGS;
-        return open ? HolderSet.direct() : HolderSet.direct(holders);
+        context.register(BAMBOO_SEA, Replicas.getUncarved(template, features));
     }
 }

@@ -47,7 +47,6 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  *
  * @author Alex
  * @version 1.0.0
- * @see BiomeTable
  * @since 1.0.0
  */
 

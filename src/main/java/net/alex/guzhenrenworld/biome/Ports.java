@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.UnaryOperator;
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.core.Registry;
@@ -24,6 +25,9 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.NoiseRouter;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
@@ -42,19 +46,23 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * names of {@link #BIOMES}, and their surface rules, the subtrees of Terralith's overworld rule that name them, sit in
  * {@code surface_rule.json} ({@link #getSurfaceRules}).
  *
+ * <p>The terrain port is Terralith's overworld noise router ({@link #getNoiseRouter}) with the density functions and
+ * noises it reaches, under {@code guworld:terralith/}, and Terralith's overworld multi-noise list with its source biome
+ * ids untouched ({@link #getBiomeParameters}). The router reads a few hooks, {@code guworld:terralith/hook/*}, that the
+ * region using it registers itself; {@link #registerDensityFunctions} takes that region's patch for what it changes
+ * inside a ported function.
+ *
  * <p>{@link #registerBiomes} fails when the index and {@link #BIOMES} name different biomes, so a biome the port script
  * adds cannot register without a key the tables, translations and tags can name.
  *
  * <p>Ported biomes keep Terralith's climate, colors, mob spawns and features; like the replicas they do not carve
- * ({@link Replicas#getUncarved}). The block tags go out through the datagen tag provider ({@link #getBlockTags}). The
- * landform features ({@link #SPIRES_CLIFF} and the rest) dress the Southern Border's own landforms.
+ * ({@link Replicas#getUncarved}). The block tags go out through the datagen tag provider ({@link #getBlockTags}).
  *
  * <p>⚠ The files come from Terralith through Guzhenren's {@code tools/port_terralith.py}, never edited by hand: a
  * change goes into that script's lists, then a fresh port, then {@code runData}.
  *
  * @author Alex
  * @version 1.0.0
- * @see BiomeTable
  * @since 1.0.0
  */
 
@@ -69,19 +77,17 @@ public final class Ports {
     public static final ResourceKey<Biome> HOT_SPRINGS = key("hot_springs");
     public static final ResourceKey<Biome> ORCHID_SWAMP = key("orchid_swamp");
     public static final ResourceKey<Biome> PEACH_GROVE = key("peach_grove");
+    public static final ResourceKey<Biome> ROCKY_PEAKS = key("rocky_peaks");
+    public static final ResourceKey<Biome> EMERALD_PEAKS = key("emerald_peaks");
+    public static final ResourceKey<Biome> JUNGLE_MOUNTAINS = key("jungle_mountains");
+    public static final ResourceKey<Biome> PAINTED_MOUNTAINS = key("painted_mountains");
+    public static final ResourceKey<Biome> GRANITE_CLIFFS = key("granite_cliffs");
+    public static final ResourceKey<Biome> ALPINE_MEADOW = key("alpine_meadow");
+    public static final ResourceKey<Biome> ZHANGSHIYAN_CLIFFS = key("zhangshiyan_cliffs");
+    public static final ResourceKey<Biome> KARST_PEAK_FOREST = key("karst_peak_forest");
     public static final List<ResourceKey<Biome>> BIOMES = List.of(PLATEAU, FORESTED_PLATEAU, CLOUD_FOREST,
-            MISTY_MOUNTAINS, RAINFOREST, HOT_SPRINGS, ORCHID_SWAMP, PEACH_GROVE);
-    public static final ResourceKey<PlacedFeature> SPIRES_CLIFF = placedKey("spires/cliff");
-    public static final ResourceKey<PlacedFeature> SHRUBLAND_BUSHES = placedKey("shrubland/bushes");
-    public static final ResourceKey<PlacedFeature> SPIRES_OAK_TREE = placedKey("spires/oak_tree");
-    public static final ResourceKey<PlacedFeature> SPIRES_AZALEA = placedKey("spires/azalea_rare");
-    public static final ResourceKey<PlacedFeature> SPIRES_GRASS = placedKey("spires/grass");
-    public static final ResourceKey<PlacedFeature> CLIFF_GRASS_UPPER = placedKey("canyon/cliff/grass_upper");
-    public static final ResourceKey<PlacedFeature> CLIFF_GRASS_LOWER = placedKey("canyon/cliff/grass_lower");
-    public static final ResourceKey<PlacedFeature> SPIRES_SPRUCE_TREES = placedKey("spires/spruce_trees");
-    public static final ResourceKey<PlacedFeature> SPIRES_TALL_FOLIAGE = placedKey("spires/tall_foliage");
-    public static final ResourceKey<PlacedFeature> SPIRES_PATCH_GRASS = placedKey("spires/patch_grass");
-    public static final ResourceKey<PlacedFeature> YOSEMITE_OAKS = placedKey("yosemite/oaks");
+            MISTY_MOUNTAINS, RAINFOREST, HOT_SPRINGS, ORCHID_SWAMP, PEACH_GROVE, ROCKY_PEAKS, EMERALD_PEAKS,
+            JUNGLE_MOUNTAINS, PAINTED_MOUNTAINS, GRANITE_CLIFFS, ALPINE_MEADOW, ZHANGSHIYAN_CLIFFS, KARST_PEAK_FOREST);
     private static final String SOURCE = "terralith";
 
     private Ports() {}
@@ -96,6 +102,33 @@ public final class Ports {
 
     public static void registerPlacedFeatures(BootstrapContext<PlacedFeature> context) {
         register(context, Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC, "placed_feature");
+    }
+
+    public static void registerDensityFunctions(BootstrapContext<DensityFunction> context,
+            UnaryOperator<JsonElement> patch) {
+        RegistryOps<JsonElement> registryOps = getOps(context);
+        for (String name : getIndex("density_function")) {
+            DensityFunction function = DensityFunction.DIRECT_CODEC.parse(registryOps,
+                    patch.apply(read("density_function/" + name))).getOrThrow(
+                    message -> new IllegalStateException("ported density_function " + name + ": " + message));
+            context.register(ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id(name)), function);
+        }
+    }
+
+    public static NoiseRouter getNoiseRouter(BootstrapContext<?> context) {
+        return NoiseRouter.CODEC.parse(getOps(context), read("noise_router")).getOrThrow(
+                message -> new IllegalStateException("ported noise router: " + message));
+    }
+
+    public static List<Map.Entry<Climate.ParameterPoint, ResourceLocation>> getBiomeParameters() {
+        List<Map.Entry<Climate.ParameterPoint, ResourceLocation>> entries = new ArrayList<>();
+        for (JsonElement entry : read("biome_parameters").getAsJsonArray()) {
+            Climate.ParameterPoint point = Climate.ParameterPoint.CODEC.parse(JsonOps.INSTANCE,
+                    entry.getAsJsonObject().get("parameters")).getOrThrow(
+                    message -> new IllegalStateException("ported biome parameters: " + message));
+            entries.add(Map.entry(point, ResourceLocation.parse(entry.getAsJsonObject().get("biome").getAsString())));
+        }
+        return entries;
     }
 
     public static void registerBiomes(BootstrapContext<Biome> context) {
@@ -175,9 +208,5 @@ public final class Ports {
 
     private static ResourceKey<Biome> key(String name) {
         return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
-    }
-
-    private static ResourceKey<PlacedFeature> placedKey(String name) {
-        return ResourceKey.create(Registries.PLACED_FEATURE, GuWorld.id(name));
     }
 }

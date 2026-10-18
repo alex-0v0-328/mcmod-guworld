@@ -1,0 +1,181 @@
+{
+  "feature": "guworld:mountains/scarlet/remove_steep_snow",
+  "placement": [
+    {
+      "count": 20,
+      "type": "minecraft:count"
+    },
+    {
+      "count": 30,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:random_offset",
+      "xz_spread": {
+        "max_inclusive": 0,
+        "min_inclusive": 0,
+        "type": "minecraft:uniform"
+      },
+      "y_spread": 0
+    },
+    {
+      "heightmap": "WORLD_SURFACE_WG",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "predicate": {
+        "predicates": [
+          {
+            "blocks": [
+              "minecraft:netherrack",
+              "minecraft:deepslate",
+              "minecraft:blackstone",
+              "minecraft:crimson_nylium",
+              "tuff",
+              "deepslate_emerald_ore",
+              "minecraft:snow_block",
+              "deepslate_redstone_ore"
+            ],
+            "offset": [
+              0,
+              -1,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:snow"
+            ],
+            "offset": [
+              0,
+              0,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "predicate": {
+              "predicates": [
+                {
+                  "blocks": [
+                    "minecraft:air",
+                    "minecraft:snow",
+                    "minecraft:crimson_roots"
+                  ],
+                  "offset": [
+                    1,
+                    1,
+                    0
+                  ],
+                  "type": "minecraft:matching_blocks"
+                },
+                {
+                  "blocks": [
+                    "minecraft:air",
+                    "minecraft:snow",
+                    "minecraft:crimson_roots"
+                  ],
+                  "offset": [
+                    -1,
+                    1,
+                    0
+                  ],
+                  "type": "minecraft:matching_blocks"
+                },
+                {
+                  "blocks": [
+                    "minecraft:air",
+                    "minecraft:snow",
+                    "minecraft:crimson_roots"
+                  ],
+                  "offset": [
+                    0,
+                    1,
+                    1
+                  ],
+                  "type": "minecraft:matching_blocks"
+                },
+                {
+                  "blocks": [
+                    "minecraft:air",
+                    "minecraft:snow",
+                    "minecraft:crimson_roots"
+                  ],
+                  "offset": [
+                    0,
+                    1,
+                    -1
+                  ],
+                  "type": "minecraft:matching_blocks"
+                },
+                {
+                  "blocks": [
+                    "minecraft:air",
+                    "minecraft:snow",
+                    "minecraft:crimson_roots"
+                  ],
+                  "offset": [
+                    1,
+                    2,
+                    0
+                  ],
+                  "type": "minecraft:matching_blocks"
+                },
+                {
+                  "blocks": [
+                    "minecraft:air",
+                    "minecraft:snow",
+                    "minecraft:crimson_roots"
+                  ],
+                  "offset": [
+                    -1,
+                    2,
+                    0
+                  ],
+                  "type": "minecraft:matching_blocks"
+                },
+                {
+                  "blocks": [
+                    "minecraft:air",
+                    "minecraft:snow",
+                    "minecraft:crimson_roots"
+                  ],
+                  "offset": [
+                    0,
+                    2,
+                    1
+                  ],
+                  "type": "minecraft:matching_blocks"
+                },
+                {
+                  "blocks": [
+                    "minecraft:air",
+                    "minecraft:snow",
+                    "minecraft:crimson_roots"
+                  ],
+                  "offset": [
+                    0,
+                    2,
+                    -1
+                  ],
+                  "type": "minecraft:matching_blocks"
+                }
+              ],
+              "type": "minecraft:all_of"
+            },
+            "type": "minecraft:not"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

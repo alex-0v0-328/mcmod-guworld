@@ -35,8 +35,8 @@ import net.neoforged.neoforge.registries.RegisterEvent;
  * {@link #registerConfiguredFeature}, {@link #registerPlacedFeature} and {@link #registerBiomeModifier} are
  * the bootstraps {@code datagen.DatapackProvider} runs: the configured and placed feature, and the biome
  * modifier adding it to {@link #BIOMES} at {@code TOP_LAYER_MODIFICATION} (after vegetation);
- * {@code datagen.BiomeTagsProvider} fills that tag from {@link #LAND_BIOMES} and the Southern Border's land
- * biomes ({@code BiomeLayout.LAND}). Guzhenren keeps the spring's
+ * {@code datagen.BiomeTagsProvider} fills that tag from {@link #LAND_BIOMES} and the Southern Border's land biomes
+ * ({@code BiomeLayout.LAND}). Guzhenren keeps the spring's
  * block, fluid, item and client rendering; every worldgen id here is in the {@code guworld} namespace.
  *
  * <p>{@link #LAND_BIOMES} is 39 overworld land biomes, moved here with the spring's worldgen as a copy of
@@ -48,8 +48,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
  * <p>⚠ {@link #RARITY} is Alex's pick, one roll per 300 chunks. The roll is not the rate: a roll grows a
  * cluster only where {@code SpiritSpringFeature} finds level ground. In three 256-block overworld samples 1.2% of
  * columns pass its 15x15 rule, none in woods, so roughly 2% of rolls grow a cluster, about one per 15,000 overworld
- * chunks (an estimate from heightmaps, not a count of springs); Southern Border mesa tops and ledges pass far more
- * often, karst and pillar country almost never. There is no underground variant: a cave spot almost never passes
+ * chunks (an estimate from heightmaps, not a count of springs). There is no underground variant: a cave spot almost never passes
  * the level-ground check.
  *
  * @author Alex

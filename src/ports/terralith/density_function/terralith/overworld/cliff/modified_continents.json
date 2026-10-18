@@ -1,0 +1,8 @@
+{
+  "argument": {
+    "argument1": 0.0075,
+    "argument2": "guworld:terralith/hook/continents",
+    "type": "minecraft:add"
+  },
+  "type": "minecraft:flat_cache"
+}

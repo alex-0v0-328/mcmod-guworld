@@ -1,0 +1,12 @@
+{
+  "argument": {
+    "argument1": "guworld:terralith/overworld/arch/total",
+    "argument2": {
+      "argument1": "guworld:terralith/hook/dunes",
+      "argument2": "guworld:terralith/overworld/spikes/tendrils",
+      "type": "minecraft:max"
+    },
+    "type": "minecraft:max"
+  },
+  "type": "minecraft:cache_once"
+}
