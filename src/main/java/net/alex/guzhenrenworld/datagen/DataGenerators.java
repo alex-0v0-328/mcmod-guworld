@@ -2,9 +2,7 @@ package net.alex.guzhenrenworld.datagen;
 
 import java.util.concurrent.CompletableFuture;
 import net.alex.guzhenrenworld.GuWorld;
-import net.alex.guzhenrenworld.datagen.lang.EnUsLanguageProvider;
-import net.alex.guzhenrenworld.datagen.lang.ZhCnLanguageProvider;
-import net.alex.guzhenrenworld.datagen.lang.ZhTwLanguageProvider;
+import net.alex.guzhenrenworld.datagen.lang.Translations;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -17,7 +15,8 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
  * Wires every generator of this mod that runs at datagen time.
  *
  * <p>Annotated {@code @EventBusSubscriber}. On {@code GatherDataEvent} it adds every provider under
- * {@code datagen/}. Each is one NeoForge allows only once per run, so it lives here and collects its
+ * {@code datagen/}. Each is one NeoForge allows only once per run (the language table once per language), so it
+ * lives here and collects its
  * entries from the function packages ({@code biome}, {@code dimension}, {@code feature}). The output is the committed
  * source set {@code src/generated/resources}, written by {@code runData}. The data run loads Guzhenren
  * too, as a required mod, but NeoForge only executes the generators of the mod named by {@code --mod},
@@ -43,9 +42,9 @@ public final class DataGenerators {
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
-        generator.addProvider(event.includeClient(), new EnUsLanguageProvider(packOutput));
-        generator.addProvider(event.includeClient(), new ZhCnLanguageProvider(packOutput));
-        generator.addProvider(event.includeClient(), new ZhTwLanguageProvider(packOutput));
+        for (Translations.Language language : Translations.Language.values()) {
+            generator.addProvider(event.includeClient(), new Translations(packOutput, language));
+        }
 
         DatapackProvider datapackProvider = generator.addProvider(event.includeServer(),
                 new DatapackProvider(packOutput, lookupProvider));

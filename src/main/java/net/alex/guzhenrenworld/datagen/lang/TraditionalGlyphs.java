@@ -7,7 +7,7 @@ import java.util.Map;
  * The Simplified-to-Traditional glyph table behind this mod's {@code zh_tw}.
  *
  * <p>Traditional Chinese [繁中] differs from {@code zh_cn} in glyphs only, never in wording, so
- * {@link ZhTwLanguageProvider} derives every value through {@link #convert}. The glyphs follow the
+ * {@link Translations} derives every {@code zh_tw} value through {@link #convert}. The glyphs follow the
  * Taiwan standard (OpenCC {@code s2tw}); vocabulary stays as written.
  *
  * <p>This is a copy of Guzhenren's {@code TraditionalGlyphs}, cut down to the glyphs this mod uses:
@@ -26,7 +26,7 @@ import java.util.Map;
  *
  * @author Alex
  * @version 1.0.0
- * @see ZhTwLanguageProvider
+ * @see Translations
  * @since 1.0.0
  */
 
