@@ -54,14 +54,14 @@ import net.minecraft.world.level.biome.Climate;
  *
  * <p>The landform code stands in as continentalness: the ordinary table takes the band below 0.1, where the code is
  * -1, and each of the four {@link #LANDFORMS} takes the band of its code in {@code Landforms.CODES},
- * whatever the altitude and climate. Rivers take the weirdness band within {@link #RIVER_WEIRDNESS} of zero on the
- * two lowest bands, through the landforms too; the terrain sets the weirdness inside that band exactly where a
+ * whatever the altitude and climate. Rivers take the weirdness band within {@link Rivers#RIVER_WEIRDNESS} of zero on
+ * the two lowest bands, through the landforms too; the terrain sets the weirdness inside that band exactly where a
  * channel holds water. Lush caves sit under the wettest humidity band and dripstone caves under the driest, between
  * {@link #CAVE_DEPTH}, under ordinary ground only.
  *
  * <p>None of these biomes joins a vanilla biome tag, so no vanilla structure starts here, the strongholds included,
  * and nothing another mod adds to the overworld's biomes reaches them. {@link #LAND}, every surface biome but the
- * river, is where the spirit spring [元泉] may stand. The language providers name the {@link #LANDFORMS} in their order.
+ * river, is where the spirit spring [元泉] may stand. The language table names the {@link #LANDFORMS} in their order.
  *
  * <p>⚠ The table is a first prototype for Alex to judge in game, not a settled pick.
  *
@@ -80,7 +80,6 @@ public final class BiomeLayout {
     public static final List<ResourceKey<Biome>> LANDFORMS =
             List.of(KARST_PEAK_FOREST, DANXIA, SANDSTONE_PILLARS, ZHANGSHIYAN_CLIFFS);
     public static final List<ResourceKey<Biome>> LAND = getLand();
-    static final float RIVER_WEIRDNESS = 0.012F;
     private static final List<Climate.Parameter> ELEVATIONS = List.of(
             Climate.Parameter.span(-1.0F, -0.704F),
             Climate.Parameter.span(-0.704F, -0.259F),
@@ -142,7 +141,7 @@ public final class BiomeLayout {
     private BiomeLayout() {}
 
     public static Climate.ParameterList<Holder<Biome>> getParameters(HolderGetter<Biome> biomes) {
-        BiomeTable table = new BiomeTable(ORDINARY, RIVER_WEIRDNESS)
+        BiomeTable table = new BiomeTable(ORDINARY, Rivers.RIVER_WEIRDNESS)
                 .addBand(ELEVATIONS.get(0), LOWLAND)
                 .addBand(ELEVATIONS.get(1), HILLS)
                 .addBand(ELEVATIONS.get(2), MID_SLOPES)

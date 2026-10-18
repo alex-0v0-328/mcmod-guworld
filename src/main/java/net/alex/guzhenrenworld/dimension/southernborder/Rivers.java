@@ -57,7 +57,8 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *   ±{@link #GREAT_VALLEY_WIDTH} by {@link #GREAT_VALLEY_CUT} more ({@link Network#getGreatValleys}), so every great
  *   river crosses the ranges down a broad valley. Within {@link #GREAT_FLOODPLAIN} blocks of the channel low ground
  *   is flattened to a floodplain {@link #FLOODPLAIN_Y} ± {@link #FLOODPLAIN_SWING} by a 128-block noise
- *   ({@link Network#getFloodplain}); the flattening holds below about y 72 and fades out by y 90, both lifted or
+ *   ({@link Network#getFloodplain}); the flattening holds below about {@link #FLOODPLAIN_HOLD_Y} and fades out by
+ *   {@link #FLOODPLAIN_FADE_Y}, both lifted or
  *   lowered up to {@link #FLOODPLAIN_EDGE_SWING} blocks by the same noise, so the floodplain edge wanders instead of
  *   following one contour. The channel ({@link Network#getCarved}), ±{@link #GREAT_HALF_WIDTH} blocks before
  *   widening, 24..48 blocks wide, sinks to {@link #GREAT_RIVER_DEPTH} below sea level where the floodplain lies below
@@ -72,7 +73,7 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *   the landform zone weight, rise tens of blocks per block, so a stream cuts a gorge through cliff country instead of
  *   planing its tops away; the weight is 0 outside, so foot and top share a profile there. The ground takes the lower
  *   of itself and the profile, rounded over {@link #VALLEY_ROUNDING} blocks.</li>
- *   <li>Headwaters: {@code Terrain}'s range field, its ridged relief without spurs, changes only over
+ *   <li>Headwaters: {@code Terrain}'s range field, its ridged sum without spurs, changes only over
  *   kilometers. Below {@link #REACH_FULL} the valley is whole; toward {@link #REACH_END} the profile rises by up to
  *   {@link #STREAM_LIFT} blocks, a share of that field alone, so the water ends once, where the bed passes sea level,
  *   and a dry valley climbs on until its floor passes the ground. A lift read off the ground would follow every hill
@@ -83,8 +84,8 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *
  * <p>{@link #CHANNEL} is the distance to the nearer channel in widened half-widths, 0 at the line and 1 at the bank;
  * {@link #SHORE} is that distance where the surface stands below sea level and at least {@link #DRY_SHORE} where it
- * does not. The router keeps cave entrances out of the riverbeds with it, and the biome table reads it, scaled by
- * {@code BiomeLayout.RIVER_WEIRDNESS}, as the weirdness, so the river biome covers exactly the wet
+ * does not. The router keeps cave entrances out of the riverbeds with it, and the biome table reads it, scaled into
+ * the river band {@link #RIVER_WEIRDNESS} wide, as the weirdness, so the river biome covers exactly the wet
  * channels.
  *
  * <p>⚠ Every number here is a prototype for Alex to judge in game, not a settled pick.
@@ -124,7 +125,10 @@ final class Rivers {
     private static final float STREAM_HALF_WIDTH = 3.5F;
     private static final float GREAT_FLOODPLAIN = 70.0F;
     static final int SEA_LEVEL = 63;
+    static final float RIVER_WEIRDNESS = 0.012F;
     static final double FLOODPLAIN_Y = 65.0;
+    private static final float FLOODPLAIN_HOLD_Y = 72.0F;
+    private static final float FLOODPLAIN_FADE_Y = 90.0F;
     private static final double FLOODPLAIN_SWING = 2.0;
     private static final double FLOODPLAIN_EDGE_SWING = 6.0;
     private static final double WARP_BLOCKS = 24.0;
@@ -135,8 +139,8 @@ final class Rivers {
     private static final float GREAT_RIVER_DEPTH = 9.0F;
     private static final float STREAM_DEPTH = 4.0F;
     private static final float[] CHANNEL_PROFILE = {
-            0.0F, SEA_LEVEL - STREAM_DEPTH, 0.0F, 1.5F, 59.7F, 0.9F, 3.5F, 63.0F, 1.5F, 5.0F, 64.3F, 0.4F,
-            14.0F, 66.0F, 0.2F };
+            0.0F, SEA_LEVEL - STREAM_DEPTH, 0.0F, 1.5F, 59.7F, 0.9F, STREAM_HALF_WIDTH, SEA_LEVEL, 1.5F,
+            5.0F, 64.3F, 0.4F, 14.0F, SEA_LEVEL + 3.0F, 0.2F };
     private static final float[] STREAM_PROFILE = getWalled(26.0F, 73.0F, 0.8F, 60.0F, 106.0F, 1.0F,
             300.0F, 346.0F, 1.0F);
     private static final float[] GORGE_PROFILE = getWalled(18.0F, 100.0F, 12.0F, 22.0F, 340.0F, 30.0F);
@@ -170,15 +174,16 @@ final class Rivers {
                     GREAT_HALF_WIDTH, GREAT_FLOODPLAIN);
             DensityFunction shifted = DensityFunctions.add(new DensityFunctions.HolderHolder(ground),
                     getScaled(-FLOODPLAIN_EDGE_SWING / FLOODPLAIN_SWING, getBlend(-FLOODPLAIN_Y, 1.0, floodplain)));
-            DensityFunction lowland = getSmoothstep(getCoordinate(shifted), 72.0F, 1.0F, 90.0F, 0.0F);
+            DensityFunction lowland =
+                    getSmoothstep(getCoordinate(shifted), FLOODPLAIN_HOLD_Y, 1.0F, FLOODPLAIN_FADE_Y, 0.0F);
             DensityFunction keep = getBlend(1.0, -1.0, DensityFunctions.mul(getBlend(1.0, -1.0, plain), lowland));
             return DensityFunctions.lerp(keep, floodplain, new DensityFunctions.HolderHolder(ground));
         }
 
         DensityFunction getStreamValley(Holder<DensityFunction> land, Holder<DensityFunction> range,
-                Holder<DensityFunction> zones) {
+                Holder<DensityFunction> zoneWeight) {
             DensityFunctions.Spline.Coordinate distance = getCoordinate(getNarrowed(streamDistance, narrowing));
-            DensityFunction profile = DensityFunctions.lerp(new DensityFunctions.HolderHolder(zones),
+            DensityFunction profile = DensityFunctions.lerp(new DensityFunctions.HolderHolder(zoneWeight),
                     getSpline(distance, STREAM_PROFILE), getSpline(distance, GORGE_PROFILE));
             DensityFunction valley = DensityFunctions.add(profile,
                     getScaled(STREAM_LIFT, getSmoothstep(getCoordinate(range), REACH_FULL, REACH_END)));

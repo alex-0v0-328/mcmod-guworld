@@ -14,7 +14,9 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *
  * <p>{@link #getSpline} takes flat {@code location, value, derivative} triples. {@link #getSmoothstep} is its
  * commonest case, two points with flat ends: 0 at its start and 1 at its end, or the two values it is given, eased
- * in between. {@link #getRamp} falls from 1 at its start to 0 at its end almost linearly, flat at both ends, so a
+ * in between. {@link #getSoftCap} passes a height unchanged up to {@code start} and bends it over twice the gap
+ * toward {@code cap}, which it never passes, so a summit under a ceiling rounds off instead of being cut flat.
+ * {@link #getRamp} falls from 1 at its start to 0 at its end almost linearly, flat at both ends, so a
  * valley cut through it keeps an even slope instead of the steep middle of a smoothstep. {@link #getSoftMin} is the
  * lower of two heights with the crease between them rounded over {@code rounding} blocks, so a valley cut into the
  * ground meets it in a curve, not a sharp rim: the second height plus a spline of the gap, whose two quadratic pieces
@@ -52,6 +54,10 @@ public final class DensityShapes {
     public static DensityFunction getSmoothstep(
             DensityFunctions.Spline.Coordinate coordinate, float start, float startValue, float end, float endValue) {
         return getSpline(coordinate, start, startValue, 0.0F, end, endValue, 0.0F);
+    }
+
+    public static DensityFunction getSoftCap(DensityFunctions.Spline.Coordinate coordinate, float start, float cap) {
+        return getSpline(coordinate, start, start, 1.0F, 2.0F * cap - start, cap, 0.0F);
     }
 
     public static DensityFunction getRamp(DensityFunctions.Spline.Coordinate coordinate, float start, float end) {

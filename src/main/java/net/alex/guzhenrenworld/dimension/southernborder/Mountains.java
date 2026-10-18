@@ -95,11 +95,11 @@ final class Mountains {
     }
 
     static void registerRoughness(BootstrapContext<DensityFunction> context, Holder<DensityFunction> rise,
-            Holder<DensityFunction> zones) {
+            Holder<DensityFunction> zoneWeight) {
         HolderGetter<NormalNoise.NoiseParameters> noises = context.lookup(Registries.NOISE);
         DensityFunction gate = DensityFunctions.mul(
                 getSmoothstep(getCoordinate(rise), ROUGHNESS_START, 0.0F, ROUGHNESS_FULL, ROUGHNESS_MAX),
-                getBlend(1.0, -1.0, new DensityFunctions.HolderHolder(zones)));
+                getBlend(1.0, -1.0, new DensityFunctions.HolderHolder(zoneWeight)));
         context.register(ROUGHNESS, DensityFunctions.mul(DensityFunctions.flatCache(gate),
                 DensityFunctions.noise(noises.getOrThrow(ROUGHNESS_NOISE), 1.0, 2.0)));
     }

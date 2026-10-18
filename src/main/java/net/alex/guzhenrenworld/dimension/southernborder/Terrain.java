@@ -10,6 +10,7 @@ import static net.alex.guzhenrenworld.terrain.DensityShapes.getFunction;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getNoise;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getScaled;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getSmoothstep;
+import static net.alex.guzhenrenworld.terrain.DensityShapes.getSoftCap;
 import static net.alex.guzhenrenworld.terrain.DensityShapes.getSpline;
 
 import net.alex.guzhenrenworld.terrain.HeightfieldRouter;
@@ -59,12 +60,13 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * carve both heights, and {@link #HEIGHT}, the actual surface, takes the top where the edge is positive and the
  * foot elsewhere.
  *
- * <p>{@link #ELEVATION} is the surface mapped to -1 at y 50 and 1 at y 320, clamped; it is the erosion parameter of the
+ * <p>{@link #ELEVATION} is the surface mapped to -1 at {@link #ELEVATION_LOW_Y} (y 50) and 1 at the peak cap, y 320,
+ * clamped; it is the erosion parameter of the
  * biome table, so biome bands follow altitude and a peak biome only ever lands on a peak. The landform code stands in
  * as continentalness. The weirdness is a 512-block variant noise, stretched {@link #VARIANT_SPREAD} times so its far
  * tops, where the table's rare biomes sit, cover a few percent, with its sign kept and its size held at
  * {@link #LAND_WEIRDNESS} or more ({@link #getWeirdness}), except inside a channel that holds water, where it is the
- * river shore scaled into the river band, below {@code BiomeLayout.RIVER_WEIRDNESS}. The full vanilla cave set
+ * river shore scaled into the river band, below {@link Rivers#RIVER_WEIRDNESS}. The full vanilla cave set
  * stays under the floor, below {@link #CAVE_CEILING_Y}; above it the mountains keep only cave tunnels
  * ({@link HeightfieldRouter}), and the landform zones none, so their walls stay whole.
  *
@@ -126,6 +128,8 @@ public final class Terrain {
     private static final double VARIANT_SPREAD = 1.5;
     private static final float GROUND_CAP_START = 294.0F;
     private static final float GROUND_CAP = 314.0F;
+    private static final double ELEVATION_LOW_Y = 50.0;
+    private static final double ELEVATION_HIGH_Y = Landforms.PEAK_Y;
 
     private Terrain() {}
 
@@ -162,13 +166,14 @@ public final class Terrain {
         Holder<DensityFunction> ground = context.register(GROUND, DensityFunctions.flatCache(getGround(noises, rise)));
         Landforms.Cliffs cliffs =
                 Landforms.register(context, ground, rivers.getGreatValley(), rivers.channel());
-        Mountains.registerRoughness(context, rise, cliffs.weight());
+        Holder<DensityFunction> zoneWeight = cliffs.zoneWeight();
+        Mountains.registerRoughness(context, rise, zoneWeight);
         Holder<DensityFunction> land =
                 context.register(LAND, DensityFunctions.flatCache(rivers.getFloodplain(cliffs.foot())));
         DensityFunction wet = rivers.getWet(land);
-        DensityFunction footValley = rivers.getStreamValley(land, range, cliffs.weight());
+        DensityFunction footValley = rivers.getStreamValley(land, range, zoneWeight);
         DensityFunction topValley =
-                rivers.getStreamValley(Holder.direct(rivers.getFloodplain(cliffs.top())), range, cliffs.weight());
+                rivers.getStreamValley(Holder.direct(rivers.getFloodplain(cliffs.top())), range, zoneWeight);
         Holder<DensityFunction> foot =
                 context.register(FOOT, getColumnCached(rivers.getCarved(Holder.direct(footValley), wet)));
         Holder<DensityFunction> top =
@@ -177,8 +182,10 @@ public final class Terrain {
         Holder<DensityFunction> height = context.register(HEIGHT, getColumnCached(DensityFunctions.lerp(onTop,
                 new DensityFunctions.HolderHolder(foot), new DensityFunctions.HolderHolder(top))));
         Rivers.registerShore(context, rivers, height);
+        double middle = (ELEVATION_LOW_Y + ELEVATION_HIGH_Y) / 2.0;
+        double half = (ELEVATION_HIGH_Y - ELEVATION_LOW_Y) / 2.0;
         context.register(ELEVATION, DensityFunctions.flatCache(
-                getBlend(-185.0 / 135.0, 1.0 / 135.0, new DensityFunctions.HolderHolder(height)).clamp(-1.0, 1.0)));
+                getBlend(-middle / half, 1.0 / half, new DensityFunctions.HolderHolder(height)).clamp(-1.0, 1.0)));
     }
 
     public static NoiseRouter createRouter(HolderGetter<DensityFunction> functions,
@@ -192,7 +199,7 @@ public final class Terrain {
                                 Landforms.getSolids(functions))),
                 CAVE_CEILING_Y,
                 shore,
-                Landforms.getWeight(functions),
+                Landforms.getZoneWeight(functions),
                 DensityFunctions.flatCache(getNoise(noises, TEMPERATURE_NOISE)),
                 DensityFunctions.flatCache(getNoise(noises, VEGETATION_NOISE)),
                 Landforms.getLandform(functions),
@@ -205,7 +212,7 @@ public final class Terrain {
         DensityFunction land = getChoice(variant, 0.0,
                 DensityFunctions.min(variant, DensityFunctions.constant(-LAND_WEIRDNESS)),
                 DensityFunctions.max(variant, DensityFunctions.constant(LAND_WEIRDNESS)));
-        return getChoice(shore, 1.0, getScaled(0.99 * BiomeLayout.RIVER_WEIRDNESS, shore), land);
+        return getChoice(shore, 1.0, getScaled(0.99 * Rivers.RIVER_WEIRDNESS, shore), land);
     }
 
     private static DensityFunction getRidge(HolderGetter<NormalNoise.NoiseParameters> noises) {
@@ -226,9 +233,9 @@ public final class Terrain {
                         getScaled(-0.3, getMountainNoise(noises, SPUR_A_NOISE).abs()),
                         getScaled(-0.12, getMountainNoise(noises, SPUR_B_NOISE).abs())),
                 getScaled(-0.05, getMountainNoise(noises, SPUR_C_NOISE).abs()));
-        DensityFunction relief = getDifference(DensityFunctions.add(new DensityFunctions.HolderHolder(range),
+        DensityFunction ridged = getDifference(DensityFunctions.add(new DensityFunctions.HolderHolder(range),
                 DensityFunctions.mul(spurs, getBlend(0.3, 0.7, new DensityFunctions.HolderHolder(ridge)))), streamCut);
-        return getSpline(getCoordinate(relief),
+        return getSpline(getCoordinate(ridged),
                 0.0F, 0.0F, 0.0F,
                 0.3F, 0.22F * PEAK_RISE, 1.25F * PEAK_RISE,
                 0.75F, 0.8F * PEAK_RISE, 1.2F * PEAK_RISE,
@@ -251,8 +258,7 @@ public final class Terrain {
         DensityFunction detail = DensityFunctions.mul(getNoise(noises, DETAIL_NOISE),
                 getBlend(0.6, 2.5, getScaled(0.01, risen).clamp(0.0, 1.0)));
         DensityFunction summed = DensityFunctions.add(DensityFunctions.add(floor, benched), detail);
-        return getSpline(getCoordinate(summed), GROUND_CAP_START, GROUND_CAP_START, 1.0F, GROUND_CAP_START + 40.0F,
-                GROUND_CAP, 0.0F);
+        return getSoftCap(getCoordinate(summed), GROUND_CAP_START, GROUND_CAP);
     }
 
     private static DensityFunction getColumnCached(DensityFunction height) {

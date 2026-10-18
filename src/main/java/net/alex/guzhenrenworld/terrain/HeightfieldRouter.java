@@ -62,8 +62,9 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *
  * <p>The noise column is {@link #NOISE_SETTINGS}, -64..383 in cells 4 blocks across and 4 high, twice vanilla's
  * vertical resolution, so the 3D detail keeps its shape; a region's dimension type must cover it. The slide fades
- * the density to air over the top 16 blocks and to rock over the bottom 24, as vanilla's does over its own column; a
- * height above 368 gets its peak flattened.
+ * the density to air over the column's top 16 blocks, where vanilla's amplified preset fades (the plain overworld
+ * fades 64 blocks lower), and to rock over the bottom 24, as vanilla does; a height above 368 gets its peak
+ * flattened.
  *
  * @author Alex
  * @version 1.0.0

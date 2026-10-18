@@ -1,6 +1,8 @@
 package net.alex.guzhenrenworld.dimension;
 
 import com.mojang.logging.LogUtils;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
@@ -58,12 +60,10 @@ public final class RegionBorders {
     @SubscribeEvent
     public static void onServerStarted(ServerStartedEvent event) {
         MinecraftServer server = event.getServer();
-        SIZES.forEach((key, size) -> {
-            ServerLevel level = server.getLevel(key);
-            if (level == null) return;
-            applySize(level, size);
-            LOGGER.info("World border of {} set to {} blocks", key.location(), size);
-        });
+        for (ServerLevel level : applySizes(server)) {
+            ResourceKey<Level> key = level.dimension();
+            LOGGER.info("World border of {} set to {} blocks", key.location(), SIZES.get(key));
+        }
         server.overworld().getWorldBorder().addListener(new Reapplier(server));
     }
 
@@ -78,10 +78,17 @@ public final class RegionBorders {
     @SubscribeEvent
     public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent event) { sendBorder(event.getEntity()); }
 
-    private static void applySize(ServerLevel level, double size) {
-        WorldBorder border = level.getWorldBorder();
-        border.setCenter(0.0, 0.0);
-        border.setSize(size);
+    private static List<ServerLevel> applySizes(MinecraftServer server) {
+        List<ServerLevel> applied = new ArrayList<>();
+        SIZES.forEach((key, size) -> {
+            ServerLevel level = server.getLevel(key);
+            if (level == null) return;
+            WorldBorder border = level.getWorldBorder();
+            border.setCenter(0.0, 0.0);
+            border.setSize(size);
+            applied.add(level);
+        });
+        return applied;
     }
 
     private static void sendBorder(Player player) {
@@ -92,12 +99,7 @@ public final class RegionBorders {
     }
 
     private static void reapply(MinecraftServer server) {
-        SIZES.forEach((key, size) -> {
-            ServerLevel level = server.getLevel(key);
-            if (level == null) return;
-            applySize(level, size);
-            level.players().forEach(RegionBorders::sendBorder);
-        });
+        for (ServerLevel level : applySizes(server)) level.players().forEach(RegionBorders::sendBorder);
     }
 
     private record Reapplier(MinecraftServer server) implements BorderChangeListener {
