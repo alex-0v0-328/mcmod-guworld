@@ -125,7 +125,7 @@ public final class Replicas {
     public static SurfaceRules.RuleSource getSurfaceRules() {
         JsonElement vanilla = SurfaceRules.RuleSource.CODEC.encodeStart(JsonOps.INSTANCE, SurfaceRuleData.overworld())
                 .getOrThrow();
-        addReplicas(vanilla);
+        JsonTrees.forEachObject(vanilla, Replicas::addReplicas);
         return SurfaceRules.RuleSource.CODEC.parse(JsonOps.INSTANCE, vanilla).getOrThrow();
     }
 
@@ -133,22 +133,14 @@ public final class Replicas {
         context.register(key, getUncarved(template));
     }
 
-    private static void addReplicas(JsonElement rule) {
-        if (rule.isJsonArray()) {
-            rule.getAsJsonArray().forEach(Replicas::addReplicas);
-            return;
-        }
-        if (!rule.isJsonObject()) return;
-        JsonObject object = rule.getAsJsonObject();
-        if (object.has("biome_is")) {
-            JsonArray biomes = object.getAsJsonArray("biome_is");
-            for (Map.Entry<ResourceKey<Biome>, ResourceKey<Biome>> template : TEMPLATES) {
-                if (biomes.contains(new JsonPrimitive(template.getValue().location().toString()))) {
-                    biomes.add(template.getKey().location().toString());
-                }
+    private static void addReplicas(JsonObject rule) {
+        if (!rule.has("biome_is")) return;
+        JsonArray biomes = rule.getAsJsonArray("biome_is");
+        for (Map.Entry<ResourceKey<Biome>, ResourceKey<Biome>> template : TEMPLATES) {
+            if (biomes.contains(new JsonPrimitive(template.getValue().location().toString()))) {
+                biomes.add(template.getKey().location().toString());
             }
         }
-        object.entrySet().forEach(entry -> addReplicas(entry.getValue()));
     }
 
     private static ResourceKey<Biome> key(String name) {

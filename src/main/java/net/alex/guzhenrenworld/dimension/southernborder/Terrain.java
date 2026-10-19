@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import java.util.Set;
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.biome.JsonTrees;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -110,16 +111,11 @@ public final class Terrain {
     }
 
     private static JsonElement getPatched(JsonElement function) {
-        if (function.isJsonArray()) {
-            function.getAsJsonArray().forEach(Terrain::getPatched);
-        } else if (function.isJsonObject()) {
-            JsonObject object = function.getAsJsonObject();
-            if (isTerralithSlide(object)) {
-                object.add("from_y", new JsonPrimitive(TOP_SLIDE_START));
-                object.add("to_y", new JsonPrimitive(TOP_SLIDE_END));
-            }
-            object.entrySet().forEach(entry -> getPatched(entry.getValue()));
-        }
+        JsonTrees.forEachObject(function, object -> {
+            if (!isTerralithSlide(object)) return;
+            object.add("from_y", new JsonPrimitive(TOP_SLIDE_START));
+            object.add("to_y", new JsonPrimitive(TOP_SLIDE_END));
+        });
         return function;
     }
 
