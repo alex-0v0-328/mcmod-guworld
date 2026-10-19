@@ -38,8 +38,14 @@ import net.minecraft.world.level.levelgen.Noises;
  * continents 1.5×, erosion 2× (Terralith's own), height above sea level 1.02×. Measured over the region: heights p50 y
  * 99, p90 y 155, 6% of columns under water, all of it river or lake.
  *
+ * <p>The three hooks that vary only across the map, {@code continents}, {@code erosion} and {@code offset}, are
+ * flat-cached like the ported functions they read: the router reaches each from dozens of places, so a noise chunk
+ * computes each once per 4-block column and reads it back after. Their inputs are flat-cached already, so the
+ * terrain does not change.
+ *
  * <p>The ported router fades every column to air from y {@link #TOP_SLIDE_START} up to {@link #TOP_SLIDE_END};
  * {@link #getPatched} moves Terralith's slide, 250..292, there, so the raised peaks keep their tops.
+ * {@link SouthernBorder} ends its noise column just above {@link #TOP_SLIDE_END}.
  *
  * <p>⚠ These numbers are a first measured pass for Alex to judge in game, not a settled pick.
  *
@@ -62,7 +68,7 @@ public final class Terrain {
     private static final double VERTICAL_SCALE = 1.02;
     private static final double SEA_LEVEL_OFFSET = 0.50375;
     private static final int TOP_SLIDE_START = 280;
-    private static final int TOP_SLIDE_END = 330;
+    static final int TOP_SLIDE_END = 330;
     private static final int TERRALITH_SLIDE_START = 250;
     private static final int TERRALITH_SLIDE_END = 292;
 
@@ -77,13 +83,14 @@ public final class Terrain {
                 CONTINENT_SCALE / CONTINENT_STRETCH,
                 context.lookup(Registries.NOISE).getOrThrow(Noises.CONTINENTALNESS));
         register(context, "continents", DensityFunctions.flatCache(getRemapped(Holder.direct(continents), INLAND)));
-        register(context, "erosion", getRemapped(functions.getOrThrow(
-                ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id("terralith/overworld/erosion"))), EROSION_BANDS));
+        Holder<DensityFunction> erosion = functions.getOrThrow(
+                ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id("terralith/overworld/erosion")));
+        register(context, "erosion", DensityFunctions.flatCache(getRemapped(erosion, EROSION_BANDS)));
         DensityFunction offset = getFunction(functions, GuWorld.id("terralith/overworld/offset"));
         DensityFunction aboveSea = DensityFunctions.add(offset, DensityFunctions.constant(SEA_LEVEL_OFFSET)).clamp(
                 0.0, 1000.0);
-        register(context, "offset", DensityFunctions.add(offset,
-                DensityFunctions.mul(DensityFunctions.constant(VERTICAL_SCALE - 1.0), aboveSea)));
+        register(context, "offset", DensityFunctions.flatCache(DensityFunctions.add(offset,
+                DensityFunctions.mul(DensityFunctions.constant(VERTICAL_SCALE - 1.0), aboveSea))));
         register(context, "depth", DensityFunctions.add(DensityFunctions.yClampedGradient(-64, 320, 1.5, -1.5),
                 getFunction(functions, GuWorld.id("terralith/hook/offset"))));
         register(context, "dunes", DensityFunctions.constant(-1.0));
