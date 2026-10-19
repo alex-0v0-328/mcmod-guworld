@@ -5,6 +5,7 @@ import java.util.OptionalLong;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
+import net.alex.guzhenrenworld.biome.SurfacePruning;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -39,10 +40,11 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
  * air, so the 32 blocks up to the build limit are never sampled and the terrain is the same.
  *
  * <p>The noise settings run Terralith's overworld router ({@link Ports#getNoiseRouter}) over {@link Terrain}'s hooks,
- * with the ported surface rules ahead of vanilla's, sea level 63, aquifers and ore veins; the level stem pairs them
- * with {@link BiomeLayout}'s multi-noise source. The settings name no spawn target: the overworld stays the spawn
- * dimension. Built-in structure sets apply as in any noise dimension, but every structure checks its biome tags and
- * none of this region's biomes is in one, so no vanilla structure generates here.
+ * with the ported surface rules ahead of vanilla's, both cut to {@link BiomeLayout#ROSTER} ({@link SurfacePruning}),
+ * sea level 63, aquifers and ore veins; the level stem pairs them with {@link BiomeLayout}'s multi-noise source. The
+ * settings name no spawn target: the overworld stays the spawn dimension. Every structure checks its biome tags and
+ * none of this region's biomes is in one, so vanilla drops every structure set before the first chunk generates
+ * ({@code ChunkGeneratorStructureState.createForNormal}): no vanilla structure generates or costs time here.
  *
  * <p>The region is finite: {@link #BORDER_SIZE} is the side of its square world border around 0, 0, eight kilometers
  * (about 262,000 chunks), which {@link net.alex.guzhenrenworld.dimension.RegionBorders} applies to {@link #LEVEL}.
@@ -101,7 +103,8 @@ public final class SouthernBorder {
                 Blocks.STONE.defaultBlockState(),
                 Blocks.WATER.defaultBlockState(),
                 Ports.getNoiseRouter(context),
-                SurfaceRules.sequence(Ports.getSurfaceRules(), Replicas.getSurfaceRules()),
+                SurfacePruning.getPruned(SurfaceRules.sequence(Ports.getSurfaceRules(), Replicas.getSurfaceRules()),
+                        BiomeLayout.ROSTER),
                 List.of(),
                 SEA_LEVEL,
                 false,

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.minecraft.core.Holder;
@@ -35,7 +36,8 @@ import net.minecraft.world.level.biome.Climate;
  * misty mountains vanilla's mountain slopes, the emerald peaks the jagged peaks, the jungle mountains the rocky
  * jungle. Ocean,
  * beach and island sources are mapped for completeness only: {@link Terrain}'s continentalness never reaches their
- * cells. {@link #LAND} is every surface biome but the river, where the spirit spring [元泉] may stand.
+ * cells. {@link #ROSTER} is every biome the region can place, the spire cells' karst peak forest included, and
+ * {@link #LAND} every surface biome of it but the river, where the spirit spring [元泉] may stand.
  *
  * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link #SPIRE_EROSION} and
  * up, grows its low-factor spire terrain whatever biome sits there. So a land cell there becomes karst peak forest
@@ -116,11 +118,12 @@ public final class BiomeLayout {
                     "terralith:cave/andesite_caves", "terralith:cave/deep_caves", "terralith:cave/diorite_caves",
                     "terralith:cave/frostfire_caves", "terralith:cave/granite_caves", "terralith:cave/infested_caves",
                     "terralith:cave/mantle_caves", "terralith:cave/thermal_caves", "terralith:cave/tuff_caves")));
+    public static final Set<ResourceKey<Biome>> ROSTER = GROUPS.keySet();
     public static final Map<ResourceLocation, ResourceKey<Biome>> SOURCES = getSources();
     private static final float SPIRE_EROSION = 0.565F;
     private static final List<ResourceKey<Biome>> KEPT_ON_SPIRES = List.of(Replicas.RIVER, Replicas.LUSH_CAVES,
             Replicas.DRIPSTONE_CAVES, Ports.ORCHID_SWAMP, Ports.HOT_SPRINGS, Ports.ZHANGSHIYAN_CLIFFS);
-    public static final List<ResourceKey<Biome>> LAND = GROUPS.keySet().stream()
+    public static final List<ResourceKey<Biome>> LAND = ROSTER.stream()
             .filter(biome -> biome != Replicas.RIVER && biome != Replicas.LUSH_CAVES
                     && biome != Replicas.DRIPSTONE_CAVES)
             .sorted((first, second) -> first.location().compareTo(second.location())).toList();
