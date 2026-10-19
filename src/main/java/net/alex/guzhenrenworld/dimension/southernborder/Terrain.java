@@ -3,6 +3,7 @@ package net.alex.guzhenrenworld.dimension.southernborder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import java.util.Set;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.minecraft.core.Holder;
@@ -40,8 +41,10 @@ import net.minecraft.world.level.levelgen.Noises;
  *
  * <p>The three hooks that vary only across the map, {@code continents}, {@code erosion} and {@code offset}, are
  * flat-cached like the ported functions they read: the router reaches each from dozens of places, so a noise chunk
- * computes each once per 4-block column and reads it back after. Their inputs are flat-cached already, so the
- * terrain does not change.
+ * computes each once per 4-block column and reads it back after. So is the one ported function the router reads at
+ * every cell corner without a column cache, Terralith's spike size spline over temperature and erosion
+ * ({@link #COLUMN_CACHED}, wrapped by {@link #getPorted}). Their inputs are flat-cached already, and a cell corner
+ * stands on a 4-block column, so the terrain does not change.
  *
  * <p>The ported router fades every column to air from y {@link #TOP_SLIDE_START} up to {@link #TOP_SLIDE_END};
  * {@link #getPatched} moves Terralith's slide, 250..292, there, so the raised peaks keep their tops.
@@ -71,11 +74,12 @@ public final class Terrain {
     static final int TOP_SLIDE_END = 330;
     private static final int TERRALITH_SLIDE_START = 250;
     private static final int TERRALITH_SLIDE_END = 292;
+    private static final Set<String> COLUMN_CACHED = Set.of("terralith/overworld/spike/size_spline");
 
     private Terrain() {}
 
     public static void registerDensityFunctions(BootstrapContext<DensityFunction> context) {
-        Ports.registerDensityFunctions(context, Terrain::getPatched);
+        Ports.registerDensityFunctions(context, Terrain::getPorted);
         HolderGetter<DensityFunction> functions = context.lookup(Registries.DENSITY_FUNCTION);
         DensityFunction continents = DensityFunctions.shiftedNoise2d(
                 getFunction(functions, ResourceLocation.withDefaultNamespace("shift_x")),
@@ -94,6 +98,15 @@ public final class Terrain {
         register(context, "depth", DensityFunctions.add(DensityFunctions.yClampedGradient(-64, 320, 1.5, -1.5),
                 getFunction(functions, GuWorld.id("terralith/hook/offset"))));
         register(context, "dunes", DensityFunctions.constant(-1.0));
+    }
+
+    private static JsonElement getPorted(String name, JsonElement function) {
+        JsonElement patched = getPatched(function);
+        if (!COLUMN_CACHED.contains(name)) return patched;
+        JsonObject cached = new JsonObject();
+        cached.addProperty("type", "minecraft:flat_cache");
+        cached.add("argument", patched);
+        return cached;
     }
 
     private static JsonElement getPatched(JsonElement function) {

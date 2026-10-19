@@ -1,66 +1,69 @@
 {
-  "type": "minecraft:spline",
-  "spline": {
-    "coordinate": "guworld:terralith/overworld/temperature",
-    "points": [
-      {
-        "derivative": 0.0,
-        "location": -0.5,
-        "value": {
-          "coordinate": "guworld:terralith/hook/erosion",
-          "points": [
-            {
-              "derivative": 0.0,
-              "location": 0.375,
-              "value": -3.75
-            },
-            {
-              "derivative": 0.0,
-              "location": 0.385,
-              "value": -0.75
-            },
-            {
-              "derivative": 0.0,
-              "location": 0.4,
-              "value": {
-                "coordinate": "guworld:terralith/hook/continents",
-                "points": [
-                  {
-                    "derivative": 0.0,
-                    "location": -0.04,
-                    "value": -3.75
-                  },
-                  {
-                    "derivative": 0.0,
-                    "location": 0.02,
-                    "value": -0.75
-                  },
-                  {
-                    "derivative": 0.0,
-                    "location": 0.05,
-                    "value": 0.0
-                  },
-                  {
-                    "derivative": 0.0,
-                    "location": 0.15,
-                    "value": 0.0
-                  }
-                ]
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:spline",
+    "spline": {
+      "coordinate": "guworld:terralith/overworld/temperature",
+      "points": [
+        {
+          "derivative": 0.0,
+          "location": -0.5,
+          "value": {
+            "coordinate": "guworld:terralith/hook/erosion",
+            "points": [
+              {
+                "derivative": 0.0,
+                "location": 0.375,
+                "value": -3.75
+              },
+              {
+                "derivative": 0.0,
+                "location": 0.385,
+                "value": -0.75
+              },
+              {
+                "derivative": 0.0,
+                "location": 0.4,
+                "value": {
+                  "coordinate": "guworld:terralith/hook/continents",
+                  "points": [
+                    {
+                      "derivative": 0.0,
+                      "location": -0.04,
+                      "value": -3.75
+                    },
+                    {
+                      "derivative": 0.0,
+                      "location": 0.02,
+                      "value": -0.75
+                    },
+                    {
+                      "derivative": 0.0,
+                      "location": 0.05,
+                      "value": 0.0
+                    },
+                    {
+                      "derivative": 0.0,
+                      "location": 0.15,
+                      "value": 0.0
+                    }
+                  ]
+                }
               }
-            }
-          ]
+            ]
+          }
+        },
+        {
+          "derivative": 0.0,
+          "location": -0.465,
+          "value": -0.75
+        },
+        {
+          "derivative": 0.0,
+          "location": -0.435,
+          "value": -3.75
         }
-      },
-      {
-        "derivative": 0.0,
-        "location": -0.465,
-        "value": -0.75
-      },
-      {
-        "derivative": 0.0,
-        "location": -0.435,
-        "value": -3.75
-      }
-    ]
+      ]
+    }
   }
 }

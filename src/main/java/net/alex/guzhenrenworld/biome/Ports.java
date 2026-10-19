@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.UnaryOperator;
+import java.util.function.BiFunction;
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.core.Registry;
@@ -49,8 +49,8 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * <p>The terrain port is Terralith's overworld noise router ({@link #getNoiseRouter}) with the density functions and
  * noises it reaches, under {@code guworld:terralith/}, and Terralith's overworld multi-noise list with its source biome
  * ids untouched ({@link #getBiomeParameters}). The router reads a few hooks, {@code guworld:terralith/hook/*}, that the
- * region using it registers itself; {@link #registerDensityFunctions} takes that region's patch for what it changes
- * inside a ported function.
+ * region using it registers itself; {@link #registerDensityFunctions} takes that region's patch, handed each ported
+ * function's name with its JSON, for what it changes in one.
  *
  * <p>{@link #registerBiomes} fails when the index and {@link #BIOMES} name different biomes, so a biome the port script
  * adds cannot register without a key the tables, translations and tags can name.
@@ -105,11 +105,11 @@ public final class Ports {
     }
 
     public static void registerDensityFunctions(BootstrapContext<DensityFunction> context,
-            UnaryOperator<JsonElement> patch) {
+            BiFunction<String, JsonElement, JsonElement> patch) {
         RegistryOps<JsonElement> registryOps = getOps(context);
         for (String name : getIndex("density_function")) {
             DensityFunction function = DensityFunction.DIRECT_CODEC.parse(registryOps,
-                    patch.apply(read("density_function/" + name))).getOrThrow(
+                    patch.apply(name, read("density_function/" + name))).getOrThrow(
                     message -> new IllegalStateException("ported density_function " + name + ": " + message));
             context.register(ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id(name)), function);
         }
