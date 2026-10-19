@@ -217,9 +217,9 @@ public class SpiritSpringFeature extends Feature<NoneFeatureConfiguration> {
                 int y = getGroundY(level, groundCenter.getX() + offsetX, groundCenter.getZ() + offsetZ);
                 lowest = Math.min(lowest, y);
                 highest = Math.max(highest, y);
+                if (highest - lowest > MAX_RISE) return true;
             }
         }
-        if (highest - lowest > MAX_RISE) return true;
         for (BlockPos offset : BASIN_COLUMNS) {
             BlockPos ground = groundCenter.offset(offset);
             for (int offsetY = 1; offsetY <= CLEAR_HEIGHT_ABOVE; offsetY++) {
