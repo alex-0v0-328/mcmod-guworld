@@ -1,0 +1,47 @@
+{
+  "argument": {
+    "argument1": {
+      "argument1": {
+        "argument1": {
+          "argument1": "guworld:terrain/tectonic/__constants/noise/island_a",
+          "argument2": "guworld:terrain/tectonic/__constants/noise/island_b",
+          "type": "minecraft:max"
+        },
+        "argument2": 0.05,
+        "type": "minecraft:add"
+      },
+      "argument2": {
+        "spline": {
+          "coordinate": "guworld:terrain/tectonic/noise/raw_continents",
+          "points": [
+            {
+              "derivative": 0,
+              "location": -0.8,
+              "value": 0.7
+            },
+            {
+              "derivative": -1,
+              "location": -0.8,
+              "value": 0.7
+            },
+            {
+              "derivative": -2.5,
+              "location": -0.5,
+              "value": 0
+            },
+            {
+              "derivative": 0,
+              "location": -0.5,
+              "value": 0
+            }
+          ]
+        },
+        "type": "minecraft:spline"
+      },
+      "type": "minecraft:mul"
+    },
+    "argument2": -0.7,
+    "type": "minecraft:add"
+  },
+  "type": "minecraft:flat_cache"
+}

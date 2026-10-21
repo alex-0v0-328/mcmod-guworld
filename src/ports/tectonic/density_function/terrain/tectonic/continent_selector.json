@@ -1,0 +1,15 @@
+{
+  "argument": {
+    "argument": {
+      "argument1": 1,
+      "argument2": {
+        "argument1": -1,
+        "argument2": "guworld:terrain/tectonic/island_selector",
+        "type": "minecraft:mul"
+      },
+      "type": "minecraft:add"
+    },
+    "type": "minecraft:cache_2d"
+  },
+  "type": "minecraft:flat_cache"
+}

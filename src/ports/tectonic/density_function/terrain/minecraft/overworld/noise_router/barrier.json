@@ -1,0 +1,25 @@
+{
+  "input": "guworld:terrain/hook/underground_river_water",
+  "max_exclusive": 1.1,
+  "min_inclusive": 0.9,
+  "type": "minecraft:range_choice",
+  "when_in_range": {
+    "input": "minecraft:y",
+    "max_exclusive": 72,
+    "min_inclusive": 64,
+    "type": "minecraft:range_choice",
+    "when_in_range": {
+      "noise": "minecraft:aquifer_barrier",
+      "type": "minecraft:noise",
+      "xz_scale": 1.0,
+      "y_scale": 0.5
+    },
+    "when_out_of_range": -1
+  },
+  "when_out_of_range": {
+    "noise": "minecraft:aquifer_barrier",
+    "type": "minecraft:noise",
+    "xz_scale": 1.0,
+    "y_scale": 0.5
+  }
+}

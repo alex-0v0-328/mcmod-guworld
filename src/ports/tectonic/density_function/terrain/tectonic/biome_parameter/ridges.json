@@ -1,0 +1,158 @@
+{
+  "argument": {
+    "argument1": {
+      "argument1": "guworld:terrain/tectonic/island_selector",
+      "argument2": "guworld:terrain/tectonic/noise/island/ridges",
+      "type": "minecraft:mul"
+    },
+    "argument2": {
+      "argument1": "guworld:terrain/tectonic/continent_selector",
+      "argument2": {
+        "spline": {
+          "coordinate": "guworld:terrain/tectonic/noise/continent/erosion_folded",
+          "points": [
+            {
+              "derivative": 0,
+              "location": 0.349,
+              "value": {
+                "coordinate": "guworld:terrain/tectonic/noise/raw_continents",
+                "points": [
+                  {
+                    "derivative": 0,
+                    "location": -0.12,
+                    "value": {
+                      "coordinate": "guworld:terrain/tectonic/noise/continent/ridges",
+                      "points": [
+                        {
+                          "derivative": 0,
+                          "location": -1,
+                          "value": -1
+                        },
+                        {
+                          "derivative": 0,
+                          "location": 0,
+                          "value": -1
+                        },
+                        {
+                          "derivative": 0,
+                          "location": 0,
+                          "value": 1
+                        },
+                        {
+                          "derivative": 0,
+                          "location": 1,
+                          "value": 1
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "derivative": 0,
+                    "location": -0.12,
+                    "value": {
+                      "coordinate": "guworld:terrain/tectonic/noise/continent/ridges",
+                      "points": [
+                        {
+                          "derivative": 0,
+                          "location": -1,
+                          "value": -0.5
+                        },
+                        {
+                          "derivative": 0,
+                          "location": 0,
+                          "value": -0.5
+                        },
+                        {
+                          "derivative": 0,
+                          "location": 0,
+                          "value": 0.5
+                        },
+                        {
+                          "derivative": 0,
+                          "location": 1,
+                          "value": 0.5
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "derivative": 0,
+              "location": 0.35,
+              "value": {
+                "coordinate": "guworld:terrain/tectonic/noise/continent/ridges",
+                "points": [
+                  {
+                    "derivative": 1,
+                    "location": -1,
+                    "value": -1
+                  },
+                  {
+                    "derivative": 1,
+                    "location": -0.1,
+                    "value": -0.1
+                  },
+                  {
+                    "derivative": 2,
+                    "location": 0,
+                    "value": 0
+                  },
+                  {
+                    "derivative": 1,
+                    "location": 0.1,
+                    "value": 0.1
+                  },
+                  {
+                    "derivative": 1,
+                    "location": 1,
+                    "value": 1
+                  }
+                ]
+              }
+            },
+            {
+              "derivative": 0,
+              "location": 0.8,
+              "value": {
+                "coordinate": "guworld:terrain/tectonic/noise/continent/ridges",
+                "points": [
+                  {
+                    "derivative": 0,
+                    "location": -0.5,
+                    "value": -0.5
+                  },
+                  {
+                    "derivative": 1,
+                    "location": -0.1,
+                    "value": -0.1
+                  },
+                  {
+                    "derivative": 2,
+                    "location": 0,
+                    "value": 0
+                  },
+                  {
+                    "derivative": 1,
+                    "location": 0.1,
+                    "value": 0.1
+                  },
+                  {
+                    "derivative": 0,
+                    "location": 0.5,
+                    "value": 0.5
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "type": "minecraft:spline"
+      },
+      "type": "minecraft:mul"
+    },
+    "type": "minecraft:add"
+  },
+  "type": "minecraft:flat_cache"
+}

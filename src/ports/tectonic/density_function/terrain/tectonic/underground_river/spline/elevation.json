@@ -1,0 +1,38 @@
+{
+  "input": {
+    "argument1": 1,
+    "argument2": {
+      "argument1": "guworld:terrain/tectonic/underground_river/noise/height",
+      "argument2": {
+        "argument": {
+          "argument1": "guworld:terrain/tectonic/underground_river/noise/y_offset",
+          "argument2": {
+            "spline": {
+              "coordinate": "minecraft:y",
+              "points": [
+                {
+                  "derivative": 1,
+                  "location": 48,
+                  "value": 40
+                },
+                {
+                  "derivative": 1,
+                  "location": 60,
+                  "value": 60
+                }
+              ]
+            },
+            "type": "minecraft:spline"
+          },
+          "type": "minecraft:add"
+        },
+        "type": "minecraft:abs"
+      },
+      "type": "minecraft:mul"
+    },
+    "type": "minecraft:add"
+  },
+  "max": 1,
+  "min": 0,
+  "type": "minecraft:clamp"
+}

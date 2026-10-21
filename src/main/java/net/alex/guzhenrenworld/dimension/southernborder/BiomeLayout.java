@@ -2,6 +2,7 @@ package net.alex.guzhenrenworld.dimension.southernborder;
 
 import com.mojang.datafixers.util.Pair;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,8 +18,10 @@ import net.minecraft.world.level.biome.Climate;
 
 /**
  * Where the Southern Border [南疆] places its biomes: Terralith's overworld multi-noise table as shipped
- * ({@link Ports#getBiomeParameters}), with every source biome mapped onto the region's own ({@link #SOURCES}), so each
- * of Terralith's parameter cells keeps its terrain archetype and gets the Southern Border biome of its kind.
+ * ({@link Ports#getBiomeParameters}), with every source biome mapped onto the region's own ({@link #SOURCES}). The
+ * terrain under it is Tectonic's ({@link Terrain}), which remaps its own erosion and ridges into the bands Terralith's
+ * table expects, so each parameter cell keeps the terrain archetype Terralith gave it and gets the Southern Border
+ * biome of its kind.
  *
  * <p>The roster, by terrain band:
  * <ul>
@@ -40,9 +43,10 @@ import net.minecraft.world.level.biome.Climate;
  * {@link #LAND} every surface biome of it but the river, where the spirit spring [元泉] may stand.
  *
  * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link #SPIRE_EROSION} and
- * up, grows its low-factor spire terrain whatever biome sits there. So a land cell there becomes karst peak forest
- * ({@link #isSpireCell}) unless it holds one of {@link #KEPT_ON_SPIRES}: the river, the caves, the swamp, the hot
- * springs and the Zhangshiyan cliffs keep their own.
+ * up, which Tectonic reaches only where its own erosion runs past 1, grows Tectonic's low-factor spire terrain
+ * whatever biome sits there. So a land cell there becomes karst peak forest ({@link #isSpireCell}) unless it holds
+ * one of {@link #KEPT_ON_SPIRES}: the river, the caves, the swamp, the hot springs and the Zhangshiyan cliffs keep
+ * their own.
  *
  * <p>⚠ {@link #getParameters} throws on a source biome {@link #SOURCES} does not map, so a re-port that adds one fails
  * {@code runData} instead of dropping cells.
@@ -121,12 +125,12 @@ public final class BiomeLayout {
     public static final Set<ResourceKey<Biome>> ROSTER = GROUPS.keySet();
     public static final Map<ResourceLocation, ResourceKey<Biome>> SOURCES = getSources();
     private static final float SPIRE_EROSION = 0.565F;
-    private static final List<ResourceKey<Biome>> KEPT_ON_SPIRES = List.of(Replicas.RIVER, Replicas.LUSH_CAVES,
+    private static final Set<ResourceKey<Biome>> KEPT_ON_SPIRES = Set.of(Replicas.RIVER, Replicas.LUSH_CAVES,
             Replicas.DRIPSTONE_CAVES, Ports.ORCHID_SWAMP, Ports.HOT_SPRINGS, Ports.ZHANGSHIYAN_CLIFFS);
     public static final List<ResourceKey<Biome>> LAND = ROSTER.stream()
             .filter(biome -> biome != Replicas.RIVER && biome != Replicas.LUSH_CAVES
                     && biome != Replicas.DRIPSTONE_CAVES)
-            .sorted((first, second) -> first.location().compareTo(second.location())).toList();
+            .sorted(Comparator.comparing(ResourceKey::location)).toList();
 
     private BiomeLayout() {}
 

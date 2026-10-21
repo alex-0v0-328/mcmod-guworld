@@ -1,0 +1,58 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "guworld:terrain/tectonic/noise/full_continents",
+        "points": [
+          {
+            "derivative": 0.0,
+            "location": -1.1,
+            "value": {
+              "coordinate": "guworld:terrain/tectonic/noise/continent/erosion",
+              "points": [
+                {
+                  "derivative": 0.0,
+                  "location": -0.8,
+                  "value": 5.6
+                },
+                {
+                  "derivative": 0.0,
+                  "location": -0.75,
+                  "value": 0.4
+                },
+                {
+                  "derivative": 0.0,
+                  "location": -0.25,
+                  "value": 0.4
+                },
+                {
+                  "derivative": 0.0,
+                  "location": -0.2,
+                  "value": 5.6
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 0.55,
+                  "value": 5.6
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 0.6,
+                  "value": 1.2
+                }
+              ]
+            }
+          },
+          {
+            "derivative": 0.0,
+            "location": -1.05,
+            "value": 5.6
+          }
+        ]
+      }
+    }
+  }
+}

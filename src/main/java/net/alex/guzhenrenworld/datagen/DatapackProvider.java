@@ -23,12 +23,13 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * <p>Extends {@link DatapackBuiltinEntriesProvider}. Builds in one {@code RegistrySetBuilder} the entries
  * the function packages bootstrap: the Treasure Yellow Heaven dimension's type, biome and level stem
  * ({@link TreasureYellowHeaven}); the Southern Border [南疆] dimension's type, noise settings and level stem
- * ({@link SouthernBorder}), its density functions, Terralith's router with the region's hooks ({@link Terrain}),
- * and its bamboo sea with that biome's bamboo ({@link BiomeSettings}); Gu World's shared biomes, the vanilla replicas ({@link Replicas}) and
- * the biomes ported from Terralith with their noises and features ({@link Ports}); and the Spirit Spring
- * [元泉] configured and placed feature and biome modifier ({@link SpiritSpring}). A registry two
- * dimensions both fill gets one bootstrap that runs both. The tag provider takes {@code getRegistryProvider()}
- * from this instance, not the plain lookup, so the tag pass sees the biome this run generates.
+ * ({@link SouthernBorder}), its density functions, Tectonic's router with the region's hooks ({@link Terrain}),
+ * and its bamboo sea with that biome's bamboo ({@link BiomeSettings}); Gu World's shared biomes, the vanilla replicas
+ * ({@link Replicas}), the biomes ported from Terralith with their features, and the noises both ports read
+ * ({@link Ports}); and the Spirit Spring [元泉] configured and placed feature and biome modifier
+ * ({@link SpiritSpring}). A registry two dimensions both fill gets one bootstrap that runs both. The tag provider
+ * takes {@code getRegistryProvider()} from this instance, not the plain lookup, so the tag pass sees the biome this
+ * run generates.
  *
  * <p>⚠ There can only be one per data run. The builtin-entries provider reports a fixed name, so a
  * second instance fails datagen outright; add a registry to this one's builder instead.

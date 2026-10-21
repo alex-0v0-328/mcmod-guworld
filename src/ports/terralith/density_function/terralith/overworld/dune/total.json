@@ -1,8 +1,0 @@
-{
-  "input": "guworld:terralith/overworld/dune/size_spline",
-  "max_exclusive": 1000000,
-  "min_inclusive": -1,
-  "type": "minecraft:range_choice",
-  "when_in_range": "guworld:terralith/overworld/dune/noise",
-  "when_out_of_range": -64
-}

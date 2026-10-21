@@ -2,56 +2,54 @@ package net.alex.guzhenrenworld.dimension.southernborder;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import java.util.Set;
 import net.alex.guzhenrenworld.GuWorld;
-import net.alex.guzhenrenworld.biome.JsonTrees;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.CubicSpline;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
-import net.minecraft.world.level.levelgen.Noises;
 
 /**
- * The Southern Border [南疆] terrain: Terralith's overworld router as ported ({@link Ports}), reshaped only through
- * the hooks the port leaves in it, {@code guworld:terralith/hook/*}, which {@link #registerDensityFunctions} registers
- * beside the ported functions:
+ * The Southern Border [南疆] terrain: Tectonic's overworld router as Tectonic runs it beside Terralith, ported
+ * ({@link Ports}) with Tectonic's default config baked in, reshaped only through the hooks the port leaves in it,
+ * {@code guworld:terrain/hook/*}, which {@link #registerDensityFunctions} registers beside the ported functions:
  * <ul>
- *   <li>{@code continents}: vanilla's continentalness noise stretched {@link #CONTINENT_STRETCH} times wider, then
- *   remapped onto Terralith's inland bands ({@link #INLAND}), so the region has no ocean or beach; its water is the
- *   rivers, where weirdness folds to valleys, and the lakes aquifers fill below sea level.</li>
- *   <li>{@code erosion}: Terralith's erosion remapped band by band ({@link #EROSION_BANDS}, from its measured spread:
- *   tenth -0.41, median 0.10, ninth 0.47): the lowest 62% fall in its mountain bands, the highest 15% in its cliff
- *   and spire bands, and the hill and flat bands share the rest, so mountains, landforms included, take about half
- *   the land.</li>
- *   <li>{@code offset} and {@code depth}: Terralith's offset with everything above sea level raised
- *   {@link #VERTICAL_SCALE} times, the vertical stretch that, with the wider mountain bands, puts the highest peak at
- *   about y 275 (seed 12345 over the whole region); {@code depth} is vanilla's, the offset over the -64..320
- *   gradient.</li>
- *   <li>{@code dunes}: none. The other extra terrain, Terralith's arches and cold spikes, stays.</li>
+ *   <li>{@code ocean_offset}: Tectonic's continentalness is its folded continent noise plus this offset, where
+ *   Tectonic's -0.8 leaves a third of the world land. {@link #OCEAN_OFFSET} lifts the lowest ground, the noise's zero
+ *   lines where Tectonic's seas run, just inland of the coast band, so the region has no ocean, beach or island: its
+ *   water is the rivers Tectonic cuts where its ridge noise crosses zero, at about y 56 in every region but the
+ *   mountains, and the lakes along those lowest lines.</li>
+ *   <li>{@code vertical_scale}: the stretch of the height above sea level, {@link #VERTICAL_SCALE}, Tectonic's
+ *   own.</li>
+ *   <li>{@code min_y} and {@code max_y}: Tectonic's height limits, the dimension's floor and top
+ *   ({@link SouthernBorder#MIN_Y}, {@link SouthernBorder#TOP_Y}). The offset tops out 17 blocks under the top and the
+ *   terrain fades to air from 30 to 10 blocks under it, so the highest peaks stand at about y 300.</li>
+ *   <li>{@code dunes}: none. Tectonic raises dunes in hot, dry cells, which the region maps to plains.</li>
+ *   <li>{@code jungle_pillars}, {@code underground_rivers} with {@code underground_river_water}, and
+ *   {@code lava_tunnels}: three Tectonic features, each switched by one constant here and off for now
+ *   ({@link #JUNGLE_PILLARS}, {@link #UNDERGROUND_RIVERS}, {@link #LAVA_TUNNELS}). Jungle pillars are extruded
+ *   discs about 11 blocks wide and up to 100 tall with flat tops and sheer sides, the regular pillar shape Alex turned
+ *   down for the region's own landforms. Underground rivers carve water channels at y 32 to 72 under mountain
+ *   valleys and flood the aquifers there, lava tunnels run along the floor; both read their noises at every cell
+ *   corner or block of the column, about a quarter of the noise fill. A switch that is on points its hook back at the
+ *   ported function, one that is off at zero, so an off feature costs nothing.</li>
  * </ul>
- * Everything else stays Terralith's, its 2× wider erosion regions included, so the three axes stretch only a little:
- * continents 1.5×, erosion 2× (Terralith's own), height above sea level 1.02×. Measured over the region: heights p50 y
- * 99, p90 y 155, 6% of columns under water, all of it river or lake.
+ * Everything else stays as Tectonic and Terralith ship it: Tectonic's macro scale (continents about four times
+ * vanilla's, erosion and ridges twice), its climate-picked landform regions, slope-warped mountain ridges with
+ * weathering cracks and valley rivers; Terralith's cold spikes and megacave noise.
  *
- * <p>The three hooks that vary only across the map, {@code continents}, {@code erosion} and {@code offset}, are
- * flat-cached like the ported functions they read: the router reaches each from dozens of places, so a noise chunk
- * computes each once per 4-block column and reads it back after. So is the one ported function the router reads at
- * every cell corner without a column cache, Terralith's spike size spline over temperature and erosion
- * ({@link #COLUMN_CACHED}, wrapped by {@link #getPorted}). Their inputs are flat-cached already, and a cell corner
- * stands on a 4-block column, so the terrain does not change.
- *
- * <p>The ported router fades every column to air from y {@link #TOP_SLIDE_START} up to {@link #TOP_SLIDE_END};
- * {@link #getPatched} moves Terralith's slide, 250..292, there, so the raised peaks keep their tops.
- * {@link SouthernBorder} ends its noise column just above {@link #TOP_SLIDE_END}.
- *
- * <p>⚠ These numbers are a first measured pass for Alex to judge in game, not a settled pick.
+ * <p>{@link #getPorted} adds column caches that change no value, only how often one is computed. The ported functions
+ * in {@link #COLUMN_CACHED} vary only across the map, yet the router reads them per block or per cell corner; each
+ * gets a {@code flat_cache}, so a noise chunk computes it once per 4-block column, and every noise under them already
+ * sits inside a {@code flat_cache}, so they read the same value anywhere in a column. A {@code flat_cache} only
+ * serves its own chunk's grid, though: the aquifers' preliminary surface scan steps down columns of the neighboring
+ * chunks 4 blocks at a time, and there a {@code flat_cache} recomputes its input at every step, Tectonic's whole map
+ * chain of shifted noises and splines with it, a third of the noise fill. So every column cache, the ported ones
+ * included, holds a {@code cache_2d}, which keeps the last column's value: the scan computes each column once. None
+ * of them reads y.
  *
  * @author Alex
  * @version 1.0.0
@@ -61,95 +59,72 @@ import net.minecraft.world.level.levelgen.Noises;
 
 public final class Terrain {
 
-    private static final double CONTINENT_STRETCH = 1.5;
-    private static final double CONTINENT_SCALE = 0.25;
-    private static final float[][] INLAND = {
-            { -1.2F, -0.455F, -0.19F, -0.11F, 0.03F, 0.3F, 1.0F },
-            { -0.1F, 0.0F, 0.1F, 0.25F, 0.4F, 0.6F, 1.0F } };
-    private static final float[][] EROSION_BANDS = {
-            { -1.0F, -0.409F, 0.19F, 0.39F, 0.52F, 1.0F },
-            { -1.0F, -0.78F, -0.375F, 0.4F, 0.565F, 1.0F } };
-    private static final double VERTICAL_SCALE = 1.02;
-    private static final double SEA_LEVEL_OFFSET = 0.50375;
-    private static final int TOP_SLIDE_START = 280;
-    static final int TOP_SLIDE_END = 330;
-    private static final int TERRALITH_SLIDE_START = 250;
-    private static final int TERRALITH_SLIDE_END = 292;
-    private static final Set<String> COLUMN_CACHED = Set.of("terralith/overworld/spike/size_spline");
+    private static final double OCEAN_OFFSET = -0.1;
+    private static final double VERTICAL_SCALE = 1.125;
+    private static final boolean JUNGLE_PILLARS = false;
+    private static final boolean UNDERGROUND_RIVERS = false;
+    private static final boolean LAVA_TUNNELS = false;
+    private static final Set<String> COLUMN_CACHED = Set.of("terrain/minecraft/overworld/temperature",
+            "terrain/minecraft/overworld/vegetation", "terrain/tectonic/noise/continent/erosion_folded",
+            "terrain/tectonic/noise/continent/ridges_folded", "terrain/tectonic/region/diamond/dune/spline",
+            "terrain/tectonic/terrain_spline/factor/continents", "terrain/tectonic/terrain_spline/factor/islands",
+            "terrain/tectonic/underground_river/spline/continents",
+            "terrain/tectonic/underground_river/spline/erosion", "terrain/terralith/overworld/spike/size_spline");
 
     private Terrain() {}
 
     public static void registerDensityFunctions(BootstrapContext<DensityFunction> context) {
         Ports.registerDensityFunctions(context, Terrain::getPorted);
-        HolderGetter<DensityFunction> functions = context.lookup(Registries.DENSITY_FUNCTION);
-        DensityFunction continents = DensityFunctions.shiftedNoise2d(
-                getFunction(functions, ResourceLocation.withDefaultNamespace("shift_x")),
-                getFunction(functions, ResourceLocation.withDefaultNamespace("shift_z")),
-                CONTINENT_SCALE / CONTINENT_STRETCH,
-                context.lookup(Registries.NOISE).getOrThrow(Noises.CONTINENTALNESS));
-        register(context, "continents", DensityFunctions.flatCache(getRemapped(Holder.direct(continents), INLAND)));
-        Holder<DensityFunction> erosion = functions.getOrThrow(
-                ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id("terralith/overworld/erosion")));
-        register(context, "erosion", DensityFunctions.flatCache(getRemapped(erosion, EROSION_BANDS)));
-        DensityFunction offset = getFunction(functions, GuWorld.id("terralith/overworld/offset"));
-        DensityFunction aboveSea = DensityFunctions.add(offset, DensityFunctions.constant(SEA_LEVEL_OFFSET)).clamp(
-                0.0, 1000.0);
-        register(context, "offset", DensityFunctions.flatCache(DensityFunctions.add(offset,
-                DensityFunctions.mul(DensityFunctions.constant(VERTICAL_SCALE - 1.0), aboveSea))));
-        register(context, "depth", DensityFunctions.add(DensityFunctions.yClampedGradient(-64, 320, 1.5, -1.5),
-                getFunction(functions, GuWorld.id("terralith/hook/offset"))));
-        register(context, "dunes", DensityFunctions.constant(-1.0));
+        register(context, "ocean_offset", DensityFunctions.constant(OCEAN_OFFSET));
+        register(context, "vertical_scale", DensityFunctions.constant(VERTICAL_SCALE));
+        register(context, "min_y", DensityFunctions.constant(SouthernBorder.MIN_Y));
+        register(context, "max_y", DensityFunctions.constant(SouthernBorder.TOP_Y));
+        register(context, "dunes", DensityFunctions.zero());
+        register(context, "jungle_pillars", DensityFunctions.constant(JUNGLE_PILLARS ? 1.0 : 0.0));
+        registerSwitch(context, "underground_rivers", "tectonic/underground_river/total", UNDERGROUND_RIVERS);
+        registerSwitch(context, "underground_river_water", "tectonic/underground_river/parameters",
+                UNDERGROUND_RIVERS);
+        registerSwitch(context, "lava_tunnels", "tectonic/lava_tunnel/total", LAVA_TUNNELS);
     }
 
     private static JsonElement getPorted(String name, JsonElement function) {
-        JsonElement patched = getPatched(function);
-        if (!COLUMN_CACHED.contains(name)) return patched;
-        JsonObject cached = new JsonObject();
-        cached.addProperty("type", "minecraft:flat_cache");
-        cached.add("argument", patched);
-        return cached;
+        if (COLUMN_CACHED.contains(name)) return getColumnCached(function);
+        if (!isOfType(function, "flat_cache")) return function;
+        JsonElement argument = function.getAsJsonObject().get("argument");
+        return isOfType(argument, "cache_2d") ? function : getColumnCached(argument);
     }
 
-    private static JsonElement getPatched(JsonElement function) {
-        JsonTrees.forEachObject(function, object -> {
-            if (!isTerralithSlide(object)) return;
-            object.add("from_y", new JsonPrimitive(TOP_SLIDE_START));
-            object.add("to_y", new JsonPrimitive(TOP_SLIDE_END));
-        });
-        return function;
+    private static JsonObject getColumnCached(JsonElement function) {
+        JsonObject column = new JsonObject();
+        column.addProperty("type", "minecraft:cache_2d");
+        column.add("argument", function);
+        JsonObject grid = new JsonObject();
+        grid.addProperty("type", "minecraft:flat_cache");
+        grid.add("argument", column);
+        return grid;
     }
 
-    private static boolean isTerralithSlide(JsonObject object) {
-        return "minecraft:y_clamped_gradient".equals(getString(object, "type"))
-                && object.has("from_y") && object.get("from_y").getAsInt() == TERRALITH_SLIDE_START
-                && object.has("to_y") && object.get("to_y").getAsInt() == TERRALITH_SLIDE_END;
+    private static boolean isOfType(JsonElement function, String type) {
+        if (!function.isJsonObject() || !function.getAsJsonObject().has("type")) return false;
+        String name = function.getAsJsonObject().get("type").getAsString();
+        return name.equals(type) || name.equals("minecraft:" + type);
     }
 
-    private static String getString(JsonObject object, String member) {
-        return object.has(member) && object.get(member).isJsonPrimitive() ? object.get(member).getAsString() : null;
-    }
-
-    private static DensityFunction getRemapped(Holder<DensityFunction> input, float[][] points) {
-        CubicSpline.Builder<DensityFunctions.Spline.Point, DensityFunctions.Spline.Coordinate> builder =
-                CubicSpline.builder(new DensityFunctions.Spline.Coordinate(input));
-        float[] from = points[0];
-        float[] to = points[1];
-        for (int i = 0; i < from.length; i++) {
-            float before = i > 0 ? (to[i] - to[i - 1]) / (from[i] - from[i - 1]) : Float.NaN;
-            float after = i < from.length - 1 ? (to[i + 1] - to[i]) / (from[i + 1] - from[i]) : Float.NaN;
-            float slope = Float.isNaN(before) ? after : Float.isNaN(after) ? before : (before + after) / 2.0F;
-            builder.addPoint(from[i], to[i], slope);
+    private static void registerSwitch(BootstrapContext<DensityFunction> context, String hook, String ported,
+            boolean on) {
+        if (!on) {
+            register(context, hook, DensityFunctions.zero());
+            return;
         }
-        return DensityFunctions.spline(builder.build());
-    }
-
-    private static DensityFunction getFunction(HolderGetter<DensityFunction> functions, ResourceLocation id) {
-        return new DensityFunctions.HolderHolder(functions.getOrThrow(
-                ResourceKey.create(Registries.DENSITY_FUNCTION, id)));
+        Holder<DensityFunction> function = context.lookup(Registries.DENSITY_FUNCTION).getOrThrow(key(ported));
+        register(context, hook, new DensityFunctions.HolderHolder(function));
     }
 
     private static void register(BootstrapContext<DensityFunction> context, String hook, DensityFunction function) {
-        context.register(ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id("terralith/hook/" + hook)),
-                function);
+        context.register(key("hook/" + hook), function);
+    }
+
+    private static ResourceKey<DensityFunction> key(String name) {
+        return ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id("terrain/" + name));
     }
 }

@@ -1,0 +1,151 @@
+{
+  "argument": {
+    "argument1": {
+      "argument1": 4,
+      "argument2": {
+        "argument": {
+          "argument1": {
+            "argument1": {
+              "argument1": "guworld:terrain/tectonic/depth",
+              "argument2": "guworld:terrain/tectonic/terrain_spline/offset/depth_additive",
+              "type": "minecraft:add"
+            },
+            "argument2": {
+              "argument1": {
+                "argument1": "guworld:terrain/tectonic/terrain_spline/jaggedness/islands",
+                "argument2": {
+                  "argument": {
+                    "noise": "minecraft:jagged",
+                    "type": "minecraft:noise",
+                    "xz_scale": 1500,
+                    "y_scale": 0
+                  },
+                  "type": "minecraft:half_negative"
+                },
+                "type": "minecraft:mul"
+              },
+              "argument2": {
+                "argument1": "guworld:terrain/tectonic/terrain_spline/jaggedness/continents",
+                "argument2": {
+                  "argument1": {
+                    "argument1": -0.1,
+                    "argument2": "guworld:terrain/tectonic/mountain_ridges/weathering",
+                    "type": "minecraft:mul"
+                  },
+                  "argument2": {
+                    "argument1": {
+                      "argument": {
+                        "argument1": "guworld:terrain/tectonic/mountain_ridges/ridges",
+                        "argument2": -1,
+                        "type": "minecraft:mul"
+                      },
+                      "type": "minecraft:flat_cache"
+                    },
+                    "argument2": 0.6,
+                    "type": "minecraft:add"
+                  },
+                  "type": "minecraft:add"
+                },
+                "type": "minecraft:mul"
+              },
+              "type": "minecraft:add"
+            },
+            "type": "minecraft:add"
+          },
+          "argument2": {
+            "input": "guworld:terrain/tectonic/continent_selector",
+            "max_exclusive": 1.1,
+            "min_inclusive": 0.9,
+            "type": "minecraft:range_choice",
+            "when_in_range": "guworld:terrain/tectonic/terrain_spline/factor/continents",
+            "when_out_of_range": "guworld:terrain/tectonic/terrain_spline/factor/islands"
+          },
+          "type": "minecraft:mul"
+        },
+        "type": "minecraft:quarter_negative"
+      },
+      "type": "minecraft:mul"
+    },
+    "argument2": {
+      "argument1": {
+        "argument1": 0,
+        "argument2": {
+          "argument1": "guworld:terrain/tectonic/region/diamond/dune/spline",
+          "argument2": "guworld:terrain/hook/dunes",
+          "type": "minecraft:mul"
+        },
+        "type": "minecraft:max"
+      },
+      "argument2": {
+        "argument1": {
+          "argument1": {
+            "spline": {
+              "coordinate": "guworld:terrain/tectonic/noise/full_continents",
+              "points": [
+                {
+                  "derivative": 0,
+                  "location": -1.05,
+                  "value": 1
+                },
+                {
+                  "derivative": 0,
+                  "location": -1,
+                  "value": 0
+                },
+                {
+                  "derivative": 0,
+                  "location": -0.35,
+                  "value": 0
+                },
+                {
+                  "derivative": 0,
+                  "location": -0.25,
+                  "value": 1
+                }
+              ]
+            },
+            "type": "minecraft:spline"
+          },
+          "argument2": "guworld:terrain/tectonic/terrain_spline/roughness",
+          "type": "minecraft:mul"
+        },
+        "argument2": {
+          "argument1": {
+            "spline": {
+              "coordinate": "guworld:terrain/tectonic/noise/full_continents",
+              "points": [
+                {
+                  "derivative": 0,
+                  "location": -1.05,
+                  "value": 0
+                },
+                {
+                  "derivative": 0,
+                  "location": -1,
+                  "value": 1
+                },
+                {
+                  "derivative": 0,
+                  "location": -0.35,
+                  "value": 1
+                },
+                {
+                  "derivative": 0,
+                  "location": -0.25,
+                  "value": 0
+                }
+              ]
+            },
+            "type": "minecraft:spline"
+          },
+          "argument2": "guworld:terrain/tectonic/terrain_spline/ocean",
+          "type": "minecraft:mul"
+        },
+        "type": "minecraft:add"
+      },
+      "type": "minecraft:add"
+    },
+    "type": "minecraft:add"
+  },
+  "type": "minecraft:cache_once"
+}

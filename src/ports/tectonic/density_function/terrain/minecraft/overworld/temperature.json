@@ -1,0 +1,5 @@
+{
+  "argument1": 0,
+  "argument2": "guworld:terrain/tectonic/__constants/noise/temperature",
+  "type": "minecraft:add"
+}

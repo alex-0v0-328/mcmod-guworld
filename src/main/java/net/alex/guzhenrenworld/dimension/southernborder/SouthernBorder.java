@@ -12,7 +12,6 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Climate;
@@ -32,14 +31,12 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
  *
  * <p>Every key shares the one location {@code guworld:southern_border}. {@link #registerDimensionType}, {@link
  * #registerNoiseSettings} and {@link #registerLevelStem} are the bootstraps {@code datagen.DatapackProvider} runs. The
- * dimension type is the overworld's (sky, effects, beds, raids, monster light) with a taller column, y {@link #MIN_Y}
- * up to {@link #MAX_Y}: peaks reach about y 272 ({@link Terrain}), and a dimension's floor and height must both be
- * multiples of 16, so the build limit is 367 rather than any value in between. The noise column runs Terralith's
- * 4-block cells, {@code size_vertical} 1, {@link #NOISE_HEIGHT} blocks up from the floor, through y 335: the noise
- * height steps by 16, and that is the first step past {@link Terrain}'s top slide. Every cell above the slide is
- * air, so the 32 blocks up to the build limit are never sampled and the terrain is the same.
+ * dimension type is the overworld's (sky, effects, beds, raids, monster light, and its {@link #HEIGHT} blocks from y
+ * {@link #MIN_Y} up to {@link #TOP_Y}), kept under its own key so a pack that reshapes the overworld leaves the region
+ * alone. Peaks reach about y 300 ({@link Terrain}), about 20 blocks under the build limit. The noise column runs the
+ * 4-block cells Tectonic takes beside Terralith, {@code size_vertical} 1, over the whole height.
  *
- * <p>The noise settings run Terralith's overworld router ({@link Ports#getNoiseRouter}) over {@link Terrain}'s hooks,
+ * <p>The noise settings run Tectonic's overworld router ({@link Ports#getNoiseRouter}) over {@link Terrain}'s hooks,
  * with the ported surface rules ahead of vanilla's, both cut to {@link BiomeLayout#ROSTER} ({@link SurfacePruning}),
  * sea level 63, aquifers and ore veins; the level stem pairs them with {@link BiomeLayout}'s multi-noise source. The
  * settings name no spawn target: the overworld stays the spawn dimension. Every structure checks its biome tags and
@@ -70,9 +67,8 @@ public final class SouthernBorder {
     public static final ResourceKey<Level> LEVEL = ResourceKey.create(Registries.DIMENSION, ID);
     public static final double BORDER_SIZE = 8192.0;
     public static final int MIN_Y = -64;
-    public static final int MAX_Y = 367;
-    private static final int HEIGHT = MAX_Y + 1 - MIN_Y;
-    private static final int NOISE_HEIGHT = Mth.roundToward(Terrain.TOP_SLIDE_END + 1 - MIN_Y, 16);
+    public static final int HEIGHT = 384;
+    public static final int TOP_Y = MIN_Y + HEIGHT;
     private static final int SEA_LEVEL = 63;
 
     private SouthernBorder() {}
@@ -99,7 +95,7 @@ public final class SouthernBorder {
 
     public static void registerNoiseSettings(BootstrapContext<NoiseGeneratorSettings> context) {
         context.register(NOISE_SETTINGS, new NoiseGeneratorSettings(
-                NoiseSettings.create(MIN_Y, NOISE_HEIGHT, 1, 1),
+                NoiseSettings.create(MIN_Y, HEIGHT, 1, 1),
                 Blocks.STONE.defaultBlockState(),
                 Blocks.WATER.defaultBlockState(),
                 Ports.getNoiseRouter(context),

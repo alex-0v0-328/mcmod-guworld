@@ -1,0 +1,32 @@
+{
+  "argument": {
+    "input": "minecraft:y",
+    "max_exclusive": 72,
+    "min_inclusive": 32,
+    "type": "minecraft:range_choice",
+    "when_in_range": {
+      "input": "guworld:terrain/tectonic/noise/continent/ridges_folded",
+      "max_exclusive": 0.2,
+      "min_inclusive": 0,
+      "type": "minecraft:range_choice",
+      "when_in_range": {
+        "input": "guworld:terrain/tectonic/noise/raw_continents",
+        "max_exclusive": 64,
+        "min_inclusive": -0.17,
+        "type": "minecraft:range_choice",
+        "when_in_range": {
+          "input": "guworld:terrain/tectonic/noise/continent/erosion_folded",
+          "max_exclusive": 0.37,
+          "min_inclusive": 0,
+          "type": "minecraft:range_choice",
+          "when_in_range": 1,
+          "when_out_of_range": 0
+        },
+        "when_out_of_range": 0
+      },
+      "when_out_of_range": 0
+    },
+    "when_out_of_range": 0
+  },
+  "type": "minecraft:cache_once"
+}

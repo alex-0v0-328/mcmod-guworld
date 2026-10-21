@@ -1,0 +1,14 @@
+{
+  "argument": {
+    "argument1": {
+      "from_value": 17,
+      "from_y": -2048,
+      "to_value": -15,
+      "to_y": 2048,
+      "type": "minecraft:y_clamped_gradient"
+    },
+    "argument2": "guworld:terrain/tectonic/terrain_spline/offset/final",
+    "type": "minecraft:add"
+  },
+  "type": "minecraft:cache_once"
+}

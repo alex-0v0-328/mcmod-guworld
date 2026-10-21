@@ -1,0 +1,5 @@
+{
+  "argument1": "guworld:terrain/tectonic/biome_parameter/erosion",
+  "argument2": 0,
+  "type": "minecraft:add"
+}

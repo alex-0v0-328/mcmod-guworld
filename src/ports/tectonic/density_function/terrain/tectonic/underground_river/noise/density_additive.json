@@ -1,0 +1,19 @@
+{
+  "input": {
+    "argument1": 0.1,
+    "argument2": {
+      "argument1": 0.2,
+      "argument2": {
+        "noise": "guworld:terrain/tectonic/underground_river/density_additive",
+        "type": "minecraft:noise",
+        "xz_scale": 0.7,
+        "y_scale": 0.05
+      },
+      "type": "minecraft:mul"
+    },
+    "type": "minecraft:add"
+  },
+  "max": 0.2,
+  "min": 0.0,
+  "type": "minecraft:clamp"
+}

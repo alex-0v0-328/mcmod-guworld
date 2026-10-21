@@ -1,0 +1,22 @@
+{
+  "argument": {
+    "input": {
+      "argument1": -65,
+      "argument2": {
+        "argument1": 4.5,
+        "argument2": {
+          "noise": "guworld:terrain/tectonic/underground_river/y_offset",
+          "type": "minecraft:noise",
+          "xz_scale": 0.6,
+          "y_scale": 0
+        },
+        "type": "minecraft:mul"
+      },
+      "type": "minecraft:add"
+    },
+    "max": -60,
+    "min": -68.5,
+    "type": "minecraft:clamp"
+  },
+  "type": "minecraft:flat_cache"
+}

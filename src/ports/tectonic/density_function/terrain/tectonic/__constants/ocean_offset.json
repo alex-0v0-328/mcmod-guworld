@@ -1,0 +1,5 @@
+{
+  "argument1": "guworld:terrain/hook/ocean_offset",
+  "argument2": 0.0,
+  "type": "minecraft:add"
+}

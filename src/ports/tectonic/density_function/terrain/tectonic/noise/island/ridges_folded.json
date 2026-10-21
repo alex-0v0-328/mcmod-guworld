@@ -1,0 +1,30 @@
+{
+  "argument1": -3,
+  "argument2": {
+    "argument1": -0.333,
+    "argument2": {
+      "argument": {
+        "argument1": -0.666,
+        "argument2": {
+          "argument": {
+            "argument1": "guworld:terrain/tectonic/noise/island/ridges",
+            "argument2": {
+              "argument1": 0.3,
+              "argument2": {
+                "argument": "guworld:terrain/tectonic/noise/island/ridges",
+                "type": "minecraft:cube"
+              },
+              "type": "minecraft:mul"
+            },
+            "type": "minecraft:add"
+          },
+          "type": "minecraft:abs"
+        },
+        "type": "minecraft:add"
+      },
+      "type": "minecraft:abs"
+    },
+    "type": "minecraft:add"
+  },
+  "type": "minecraft:mul"
+}

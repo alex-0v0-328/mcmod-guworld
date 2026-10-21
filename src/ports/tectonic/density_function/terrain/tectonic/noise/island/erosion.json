@@ -1,0 +1,14 @@
+{
+  "argument": {
+    "argument": {
+      "input": "guworld:terrain/tectonic/noise/raw_islands",
+      "max_exclusive": -0.4,
+      "min_inclusive": -64,
+      "type": "minecraft:range_choice",
+      "when_in_range": "guworld:terrain/tectonic/noise/continent/erosion",
+      "when_out_of_range": -0.55
+    },
+    "type": "minecraft:cache_2d"
+  },
+  "type": "minecraft:flat_cache"
+}

@@ -1,0 +1,98 @@
+{
+  "argument1": {
+    "argument1": -0.3,
+    "argument2": {
+      "argument1": 0.5,
+      "argument2": {
+        "noise": "guworld:terrain/tectonic/lava_tunnel/offset",
+        "type": "minecraft:noise",
+        "xz_scale": 1,
+        "y_scale": 0
+      },
+      "type": "minecraft:mul"
+    },
+    "type": "minecraft:add"
+  },
+  "argument2": {
+    "argument1": {
+      "argument1": {
+        "spline": {
+          "coordinate": "guworld:terrain/tectonic/__constants/above_bottom_y",
+          "points": [
+            {
+              "derivative": 0,
+              "location": 4,
+              "value": 0.5
+            },
+            {
+              "derivative": -0.044,
+              "location": 4,
+              "value": 0.5
+            },
+            {
+              "derivative": -0.044,
+              "location": 16,
+              "value": 0
+            },
+            {
+              "derivative": 0,
+              "location": 16,
+              "value": 0
+            }
+          ]
+        },
+        "type": "minecraft:spline"
+      },
+      "argument2": {
+        "argument1": 0.8,
+        "argument2": {
+          "noise": "guworld:terrain/tectonic/lava_tunnel/offset",
+          "type": "minecraft:noise",
+          "xz_scale": 4,
+          "y_scale": 0
+        },
+        "type": "minecraft:add"
+      },
+      "type": "minecraft:mul"
+    },
+    "argument2": {
+      "argument1": 8,
+      "argument2": {
+        "argument": {
+          "argument": {
+            "noise": "guworld:terrain/tectonic/lava_tunnel/ridges",
+            "shift_x": {
+              "argument1": 24,
+              "argument2": {
+                "noise": "guworld:terrain/tectonic/lava_tunnel/shift_x",
+                "type": "minecraft:noise",
+                "xz_scale": 1,
+                "y_scale": 0
+              },
+              "type": "minecraft:mul"
+            },
+            "shift_y": 0,
+            "shift_z": {
+              "argument1": 24,
+              "argument2": {
+                "noise": "guworld:terrain/tectonic/lava_tunnel/shift_z",
+                "type": "minecraft:noise",
+                "xz_scale": 1,
+                "y_scale": 0
+              },
+              "type": "minecraft:mul"
+            },
+            "type": "minecraft:shifted_noise",
+            "xz_scale": 1,
+            "y_scale": 0
+          },
+          "type": "minecraft:cache_2d"
+        },
+        "type": "minecraft:abs"
+      },
+      "type": "minecraft:mul"
+    },
+    "type": "minecraft:add"
+  },
+  "type": "minecraft:add"
+}

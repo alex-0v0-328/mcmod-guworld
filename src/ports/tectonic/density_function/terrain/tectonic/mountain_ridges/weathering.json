@@ -1,0 +1,39 @@
+{
+  "argument1": 1,
+  "argument2": {
+    "argument1": -1,
+    "argument2": {
+      "input": {
+        "spline": {
+          "coordinate": {
+            "argument": {
+              "noise": "guworld:terrain/tectonic/mountain_ridges/weathering",
+              "type": "minecraft:noise",
+              "xz_scale": 2.5,
+              "y_scale": 2
+            },
+            "type": "minecraft:abs"
+          },
+          "points": [
+            {
+              "derivative": 20,
+              "location": 0.025,
+              "value": 0
+            },
+            {
+              "derivative": 0,
+              "location": 1,
+              "value": 1
+            }
+          ]
+        },
+        "type": "minecraft:spline"
+      },
+      "max": 1,
+      "min": 0,
+      "type": "minecraft:clamp"
+    },
+    "type": "minecraft:mul"
+  },
+  "type": "minecraft:add"
+}

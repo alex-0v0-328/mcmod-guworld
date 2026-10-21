@@ -1,0 +1,14 @@
+{
+  "input": {
+    "argument1": 20,
+    "argument2": {
+      "argument1": 0.2,
+      "argument2": "guworld:terrain/tectonic/noise/raw_continents",
+      "type": "minecraft:add"
+    },
+    "type": "minecraft:mul"
+  },
+  "max": 1,
+  "min": 0,
+  "type": "minecraft:clamp"
+}

@@ -1,0 +1,35 @@
+{
+  "input": {
+    "argument": {
+      "argument1": {
+        "argument1": 2.0,
+        "argument2": {
+          "argument1": {
+            "noise": "guworld:terrain/terralith/math/cheese/megacave",
+            "type": "minecraft:noise",
+            "xz_scale": 1.5,
+            "y_scale": 1.725
+          },
+          "argument2": 0.47,
+          "type": "minecraft:add"
+        },
+        "type": "minecraft:mul"
+      },
+      "argument2": {
+        "argument1": {
+          "noise": "guworld:terrain/minecraft/cave_cheese",
+          "type": "minecraft:noise",
+          "xz_scale": 1.0,
+          "y_scale": 0.6666666666666666
+        },
+        "argument2": "guworld:terrain/tectonic/__constants/cave/cheese_additive",
+        "type": "minecraft:add"
+      },
+      "type": "minecraft:min"
+    },
+    "type": "minecraft:cache_once"
+  },
+  "max": 1,
+  "min": -1,
+  "type": "minecraft:clamp"
+}

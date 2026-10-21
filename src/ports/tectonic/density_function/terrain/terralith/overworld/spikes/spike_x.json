@@ -1,0 +1,19 @@
+{
+  "argument1": {
+    "from_value": 1.5,
+    "from_y": -64,
+    "to_value": -3,
+    "to_y": 320,
+    "type": "minecraft:y_clamped_gradient"
+  },
+  "argument2": {
+    "argument": {
+      "noise": "guworld:terrain/terralith/math/spikes/shift1",
+      "type": "minecraft:noise",
+      "xz_scale": 1.0,
+      "y_scale": 0
+    },
+    "type": "minecraft:flat_cache"
+  },
+  "type": "minecraft:mul"
+}

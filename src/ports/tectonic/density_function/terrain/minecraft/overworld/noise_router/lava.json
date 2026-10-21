@@ -1,0 +1,6 @@
+{
+  "noise": "guworld:terrain/minecraft/aquifer_lava",
+  "type": "minecraft:noise",
+  "xz_scale": 1.0,
+  "y_scale": 1.0
+}

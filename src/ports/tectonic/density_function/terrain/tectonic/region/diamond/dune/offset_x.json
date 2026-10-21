@@ -1,0 +1,26 @@
+{
+  "argument": {
+    "spline": {
+      "coordinate": {
+        "noise": "guworld:terrain/tectonic/region/diamond/dune_offset",
+        "type": "minecraft:noise",
+        "xz_scale": 1,
+        "y_scale": 0
+      },
+      "points": [
+        {
+          "derivative": 5.196152422706632,
+          "location": -1,
+          "value": 0
+        },
+        {
+          "derivative": 5.196152422706632,
+          "location": 1,
+          "value": 0
+        }
+      ]
+    },
+    "type": "minecraft:spline"
+  },
+  "type": "minecraft:cache_2d"
+}

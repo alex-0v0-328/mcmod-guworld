@@ -1,0 +1,16 @@
+{
+  "argument": {
+    "argument1": "guworld:terrain/tectonic/__constants/flat_terrain_skew",
+    "argument2": {
+      "noise": "guworld:terrain/tectonic/region/selector",
+      "shift_x": "minecraft:shift_x",
+      "shift_y": 0,
+      "shift_z": "minecraft:shift_z",
+      "type": "minecraft:shifted_noise",
+      "xz_scale": 1.1,
+      "y_scale": 0
+    },
+    "type": "minecraft:add"
+  },
+  "type": "minecraft:flat_cache"
+}

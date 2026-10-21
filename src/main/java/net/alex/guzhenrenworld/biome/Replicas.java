@@ -125,7 +125,7 @@ public final class Replicas {
     public static SurfaceRules.RuleSource getSurfaceRules() {
         JsonElement vanilla = SurfaceRules.RuleSource.CODEC.encodeStart(JsonOps.INSTANCE, SurfaceRuleData.overworld())
                 .getOrThrow();
-        JsonTrees.forEachObject(vanilla, Replicas::addReplicas);
+        addReplicas(vanilla);
         return SurfaceRules.RuleSource.CODEC.parse(JsonOps.INSTANCE, vanilla).getOrThrow();
     }
 
@@ -133,9 +133,17 @@ public final class Replicas {
         context.register(key, getUncarved(template));
     }
 
-    private static void addReplicas(JsonObject rule) {
-        if (!rule.has("biome_is")) return;
-        JsonArray biomes = rule.getAsJsonArray("biome_is");
+    private static void addReplicas(JsonElement rule) {
+        if (rule.isJsonArray()) {
+            rule.getAsJsonArray().forEach(Replicas::addReplicas);
+        } else if (rule.isJsonObject()) {
+            JsonObject object = rule.getAsJsonObject();
+            if (object.has("biome_is")) addTemplated(object.getAsJsonArray("biome_is"));
+            object.entrySet().forEach(entry -> addReplicas(entry.getValue()));
+        }
+    }
+
+    private static void addTemplated(JsonArray biomes) {
         for (Map.Entry<ResourceKey<Biome>, ResourceKey<Biome>> template : TEMPLATES) {
             if (biomes.contains(new JsonPrimitive(template.getValue().location().toString()))) {
                 biomes.add(template.getKey().location().toString());

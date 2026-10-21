@@ -1,0 +1,23 @@
+{
+  "spline": {
+    "coordinate": "guworld:terrain/tectonic/noise/continent/erosion_folded",
+    "points": [
+      {
+        "derivative": 0,
+        "location": 0.25,
+        "value": 1
+      },
+      {
+        "derivative": 0,
+        "location": 0.32,
+        "value": 2.2
+      },
+      {
+        "derivative": 0,
+        "location": 0.4,
+        "value": 0
+      }
+    ]
+  },
+  "type": "minecraft:spline"
+}

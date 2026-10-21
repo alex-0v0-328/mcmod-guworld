@@ -1,0 +1,54 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "guworld:terrain/minecraft/overworld/temperature",
+        "points": [
+          {
+            "derivative": 0.0,
+            "location": -0.48,
+            "value": 1.0
+          },
+          {
+            "derivative": 0.0,
+            "location": -0.42,
+            "value": 2.0
+          },
+          {
+            "derivative": 0.0,
+            "location": -0.18,
+            "value": 2.0
+          },
+          {
+            "derivative": 0.0,
+            "location": -0.12,
+            "value": 3.0
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.17,
+            "value": 3.0
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.23,
+            "value": 4.0
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.52,
+            "value": 4.0
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.58,
+            "value": 5.0
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "argument1": "minecraft:y",
+  "argument2": {
+    "argument1": -1,
+    "argument2": "guworld:terrain/hook/min_y",
+    "type": "minecraft:mul"
+  },
+  "type": "minecraft:add"
+}

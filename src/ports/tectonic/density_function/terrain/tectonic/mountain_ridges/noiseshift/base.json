@@ -1,0 +1,6 @@
+{
+  "noise": "guworld:terrain/tectonic/mountain_ridges/base",
+  "type": "minecraft:noise",
+  "xz_scale": 1.7,
+  "y_scale": 1
+}
