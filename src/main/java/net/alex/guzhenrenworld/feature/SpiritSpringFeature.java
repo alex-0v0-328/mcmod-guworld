@@ -41,9 +41,9 @@ import org.jetbrains.annotations.Nullable;
  * because this mod never compiles against Guzhenren; the first flow tick goes to the fluid the
  * block's default state carries, its source. Guzhenren keeps the block, fluid, item and rendering.
  *
- * <p>Clusters: a spot that passes the rarity roll grows 1..5 springs -- 50%,
+ * <p>Clusters: a spot that passes the rarity roll grows 1 to 5 springs -- 50%,
  * 20%, 15%, 10%, 5% ({@link #CLUSTER_SIZE_WEIGHTS}; {@link #getClusterSize} maps a [0,100)
- * roll through the cumulative weights). The members ring the cluster's first spring, 8..10 blocks
+ * roll through the cumulative weights). The members ring the cluster's first spring, 8 to 10 blocks
  * (horizontal) from it ({@link #isWithinReach}) and at least 8 from every other ({@link #isSeparationAcceptable}),
  * so the 7x7 basins never overlap; a whole cluster spans about 25x25 blocks. Every spring stays within the
  * Chebyshev bound {@link #MAX_ORIGIN_OFFSET} of the feature origin: the origin sits inside the generating chunk and
