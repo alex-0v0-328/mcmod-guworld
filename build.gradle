@@ -36,6 +36,8 @@ sourceSets {
     }
 }
 
+def gameTestDir = providers.gradleProperty('gameTestDir').getOrElse('run-gametest')
+
 minecraft {
     mappings channel: mapping_channel, version: mapping_version
     copyIdeResources = true
@@ -70,12 +72,13 @@ minecraft {
 
         // Its own game directory keeps the GameTest world apart from the run/ dev world.
         gameTestServer {
-            workingDirectory project.file(providers.gradleProperty('gameTestDir').getOrElse('run-gametest'))
+            workingDirectory project.file(gameTestDir)
         }
 
         data {
             workingDirectory project.file('run-data')
-            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'),
+                    '--existing', file('src/main/resources/')
             // Biomes, features and terrain ported from Terralith and Tectonic are datagen input, read through this
             // property (biome.Ports).
             property 'guworld.ports', file('src/ports').absolutePath
@@ -168,7 +171,7 @@ tasks.matching { it.name == 'runServer' }.configureEach { standardInput = System
 // GameTest server does.
 tasks.matching { it.name == 'runGameTestServer' }.configureEach {
     doFirst {
-        def properties = file("${providers.gradleProperty('gameTestDir').getOrElse('run-gametest')}/server.properties")
+        def properties = file("${gameTestDir}/server.properties")
         if (!properties.exists()) {
             properties.parentFile.mkdirs()
             properties.text = 'level-type=minecraft\\:flat\n'

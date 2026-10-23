@@ -48,37 +48,43 @@ public final class PortFormat {
     private PortFormat() {}
 
     public static JsonElement adapt(JsonElement json) {
-        if (json.isJsonArray()) {
-            JsonArray kept = new JsonArray();
-            for (JsonElement element : json.getAsJsonArray()) {
-                if (isAbsent(element)) continue;
-                JsonElement adapted = adapt(element);
-                if (adapted.isJsonArray() && element.isJsonPrimitive()) {
-                    kept.addAll(adapted.getAsJsonArray());
-                } else {
-                    kept.add(adapted);
-                }
-            }
-            return kept;
-        }
-        if (json.isJsonObject()) {
-            JsonObject adapted = new JsonObject();
-            json.getAsJsonObject().entrySet().forEach(entry -> {
-                if (!ABSENT.contains(entry.getKey())) adapted.add(entry.getKey(), adapt(entry.getValue()));
-            });
-            return isNestedProvider(adapted) ? getNested(adapted) : adapted;
-        }
-        if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
-            String renamed = RENAMED.get(json.getAsString());
-            if (renamed != null) return new JsonPrimitive(renamed);
-            List<String> expanded = EXPANDED.get(json.getAsString());
-            if (expanded != null) {
-                JsonArray blocks = new JsonArray();
-                expanded.forEach(blocks::add);
-                return blocks;
-            }
-        }
+        if (json.isJsonArray()) return adaptArray(json.getAsJsonArray());
+        if (json.isJsonObject()) return adaptObject(json.getAsJsonObject());
+        if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) return adaptString(json);
         return json;
+    }
+
+    private static JsonArray adaptArray(JsonArray array) {
+        JsonArray kept = new JsonArray();
+        for (JsonElement element : array) {
+            if (isAbsent(element)) continue;
+            JsonElement adapted = adapt(element);
+            boolean expandedTag = adapted.isJsonArray() && element.isJsonPrimitive();
+            if (expandedTag) {
+                kept.addAll(adapted.getAsJsonArray());
+            } else {
+                kept.add(adapted);
+            }
+        }
+        return kept;
+    }
+
+    private static JsonObject adaptObject(JsonObject object) {
+        JsonObject adapted = new JsonObject();
+        object.entrySet().forEach(entry -> {
+            if (!ABSENT.contains(entry.getKey())) adapted.add(entry.getKey(), adapt(entry.getValue()));
+        });
+        return isNestedProvider(adapted) ? nest(adapted) : adapted;
+    }
+
+    private static JsonElement adaptString(JsonElement json) {
+        String renamed = RENAMED.get(json.getAsString());
+        if (renamed != null) return new JsonPrimitive(renamed);
+        List<String> expanded = EXPANDED.get(json.getAsString());
+        if (expanded == null) return json;
+        JsonArray blocks = new JsonArray();
+        expanded.forEach(blocks::add);
+        return blocks;
     }
 
     private static boolean isAbsent(JsonElement element) {
@@ -100,7 +106,7 @@ public final class PortFormat {
         return true;
     }
 
-    private static JsonObject getNested(JsonObject provider) {
+    private static JsonObject nest(JsonObject provider) {
         JsonObject value = new JsonObject();
         provider.entrySet().stream().filter(entry -> !entry.getKey().equals("type"))
                 .forEach(entry -> value.add(entry.getKey(), entry.getValue()));
@@ -111,7 +117,6 @@ public final class PortFormat {
     }
 
     private static String getPath(String id) {
-        List<String> parts = List.of(id.split(":", 2));
-        return parts.get(parts.size() - 1);
+        return id.substring(id.indexOf(':') + 1);
     }
 }
