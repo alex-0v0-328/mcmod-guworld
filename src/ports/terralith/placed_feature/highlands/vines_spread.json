@@ -1,0 +1,99 @@
+{
+  "feature": "guworld:highlands/vines_spread",
+  "placement": [
+    {
+      "count": 200,
+      "type": "minecraft:count"
+    },
+    {
+      "count": 40,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "height": {
+        "max_inclusive": {
+          "absolute": 255
+        },
+        "min_inclusive": {
+          "absolute": 63
+        },
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:height_range"
+    },
+    {
+      "predicate": {
+        "predicates": [
+          {
+            "blocks": [
+              "minecraft:vine"
+            ],
+            "offset": [
+              0,
+              1,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "predicates": [
+              {
+                "blocks": [
+                  "minecraft:stone"
+                ],
+                "offset": [
+                  1,
+                  0,
+                  0
+                ],
+                "type": "minecraft:matching_blocks"
+              },
+              {
+                "blocks": [
+                  "minecraft:stone"
+                ],
+                "offset": [
+                  0,
+                  0,
+                  1
+                ],
+                "type": "minecraft:matching_blocks"
+              },
+              {
+                "blocks": [
+                  "minecraft:stone"
+                ],
+                "offset": [
+                  -1,
+                  0,
+                  0
+                ],
+                "type": "minecraft:matching_blocks"
+              },
+              {
+                "blocks": [
+                  "minecraft:stone"
+                ],
+                "offset": [
+                  0,
+                  0,
+                  -1
+                ],
+                "type": "minecraft:matching_blocks"
+              }
+            ],
+            "type": "minecraft:any_of"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

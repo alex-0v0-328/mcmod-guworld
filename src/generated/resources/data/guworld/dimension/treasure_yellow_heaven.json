@@ -1,0 +1,13 @@
+{
+  "type": "guworld:treasure_yellow_heaven",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "guworld:treasure_yellow_heaven",
+      "features": false,
+      "lakes": false,
+      "layers": [],
+      "structure_overrides": []
+    }
+  }
+}

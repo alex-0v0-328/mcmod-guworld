@@ -1,0 +1,15 @@
+{
+  "argument": {
+    "argument": {
+      "argument1": 0.0078,
+      "argument2": {
+        "argument1": -80,
+        "argument2": "guworld:terrain/hook/max_y",
+        "type": "minecraft:add"
+      },
+      "type": "minecraft:mul"
+    },
+    "type": "minecraft:cache_2d"
+  },
+  "type": "minecraft:flat_cache"
+}

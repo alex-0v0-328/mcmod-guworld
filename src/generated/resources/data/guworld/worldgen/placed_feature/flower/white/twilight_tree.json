@@ -1,0 +1,9 @@
+{
+  "feature": "guworld:flower/white/twilight_tree",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 2
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "spline": {
+    "coordinate": "guworld:terrain/tectonic/__constants/above_bottom_y",
+    "points": [
+      {
+        "derivative": 0,
+        "location": 0,
+        "value": 0
+      },
+      {
+        "derivative": 0,
+        "location": 16,
+        "value": 1
+      }
+    ]
+  },
+  "type": "minecraft:spline"
+}

@@ -1,0 +1,110 @@
+{
+  "spline": {
+    "coordinate": {
+      "argument1": {
+        "argument1": {
+          "argument1": 1,
+          "argument2": "guworld:terrain/tectonic/region/diamond/dune/noise",
+          "type": "minecraft:add"
+        },
+        "argument2": {
+          "spline": {
+            "coordinate": {
+              "argument1": "guworld:terrain/tectonic/region/diamond/dune/noise",
+              "argument2": {
+                "argument": {
+                  "noise": "guworld:terrain/tectonic/region/diamond/dune_base",
+                  "shift_x": {
+                    "argument1": 16,
+                    "argument2": "guworld:terrain/tectonic/region/diamond/dune/offset_z",
+                    "type": "minecraft:mul"
+                  },
+                  "shift_y": 0,
+                  "shift_z": {
+                    "argument1": -16,
+                    "argument2": "guworld:terrain/tectonic/region/diamond/dune/offset_x",
+                    "type": "minecraft:mul"
+                  },
+                  "type": "minecraft:shifted_noise",
+                  "xz_scale": 1,
+                  "y_scale": 0
+                },
+                "type": "minecraft:abs"
+              },
+              "type": "minecraft:add"
+            },
+            "points": [
+              {
+                "derivative": 0,
+                "location": 0,
+                "value": 0.8
+              },
+              {
+                "derivative": 0,
+                "location": 0.1,
+                "value": 1
+              }
+            ]
+          },
+          "type": "minecraft:spline"
+        },
+        "type": "minecraft:mul"
+      },
+      "argument2": {
+        "spline": {
+          "coordinate": {
+            "argument1": "guworld:terrain/tectonic/region/diamond/dune/noise",
+            "argument2": {
+              "argument": {
+                "noise": "guworld:terrain/tectonic/region/diamond/dune_base",
+                "shift_x": {
+                  "argument1": 16,
+                  "argument2": "guworld:terrain/tectonic/region/diamond/dune/offset_x",
+                  "type": "minecraft:mul"
+                },
+                "shift_y": 0,
+                "shift_z": {
+                  "argument1": 16,
+                  "argument2": "guworld:terrain/tectonic/region/diamond/dune/offset_z",
+                  "type": "minecraft:mul"
+                },
+                "type": "minecraft:shifted_noise",
+                "xz_scale": 1,
+                "y_scale": 0
+              },
+              "type": "minecraft:abs"
+            },
+            "type": "minecraft:add"
+          },
+          "points": [
+            {
+              "derivative": 0,
+              "location": 0,
+              "value": 1
+            },
+            {
+              "derivative": 0,
+              "location": 0.3,
+              "value": 0.8
+            }
+          ]
+        },
+        "type": "minecraft:spline"
+      },
+      "type": "minecraft:mul"
+    },
+    "points": [
+      {
+        "derivative": 0,
+        "location": 0,
+        "value": -0.2
+      },
+      {
+        "derivative": 0.7,
+        "location": 1,
+        "value": 0.2
+      }
+    ]
+  },
+  "type": "minecraft:spline"
+}

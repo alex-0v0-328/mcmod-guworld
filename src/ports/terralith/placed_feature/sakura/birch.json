@@ -1,0 +1,48 @@
+{
+  "feature": "guworld:birch/cloud_tree_tall",
+  "placement": [
+    {
+      "noise_factor": 95,
+      "noise_offset": -0.4,
+      "noise_to_count_ratio": 8,
+      "type": "minecraft:noise_based_count"
+    },
+    {
+      "chance": 4,
+      "type": "minecraft:rarity_filter"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "OCEAN_FLOOR",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "predicate": {
+        "predicates": [
+          {
+            "blocks": [
+              "minecraft:grass_block",
+              "minecraft:podzol"
+            ],
+            "offset": [
+              0,
+              -1,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:air"
+            ],
+            "type": "minecraft:matching_blocks"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:block_predicate_filter"
+    }
+  ]
+}

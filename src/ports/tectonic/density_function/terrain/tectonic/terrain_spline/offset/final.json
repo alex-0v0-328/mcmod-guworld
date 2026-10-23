@@ -1,0 +1,64 @@
+{
+  "argument": {
+    "argument": {
+      "argument1": {
+        "argument1": {
+          "type": "minecraft:blend_offset"
+        },
+        "argument2": {
+          "argument1": 1,
+          "argument2": {
+            "argument1": -1,
+            "argument2": "guworld:terrain/tectonic/blend_alpha",
+            "type": "minecraft:mul"
+          },
+          "type": "minecraft:add"
+        },
+        "type": "minecraft:mul"
+      },
+      "argument2": {
+        "argument1": {
+          "argument1": -0.5037500262260437,
+          "argument2": {
+            "argument1": {
+              "argument1": {
+                "argument1": {
+                  "argument1": "guworld:terrain/tectonic/island_selector",
+                  "argument2": "guworld:terrain/tectonic/terrain_spline/offset/islands",
+                  "type": "minecraft:mul"
+                },
+                "argument2": {
+                  "argument1": "guworld:terrain/tectonic/continent_selector",
+                  "argument2": {
+                    "argument1": {
+                      "input": "guworld:terrain/tectonic/terrain_spline/offset/continents",
+                      "max_exclusive": 64,
+                      "min_inclusive": 0,
+                      "type": "minecraft:range_choice",
+                      "when_in_range": "guworld:terrain/tectonic/__constants/vertical_scale",
+                      "when_out_of_range": 1
+                    },
+                    "argument2": "guworld:terrain/tectonic/terrain_spline/offset/continents",
+                    "type": "minecraft:mul"
+                  },
+                  "type": "minecraft:mul"
+                },
+                "type": "minecraft:add"
+              },
+              "argument2": "guworld:terrain/tectonic/__constants/min_offset",
+              "type": "minecraft:max"
+            },
+            "argument2": "guworld:terrain/tectonic/__constants/max_offset",
+            "type": "minecraft:min"
+          },
+          "type": "minecraft:add"
+        },
+        "argument2": "guworld:terrain/tectonic/blend_alpha",
+        "type": "minecraft:mul"
+      },
+      "type": "minecraft:add"
+    },
+    "type": "minecraft:cache_2d"
+  },
+  "type": "minecraft:flat_cache"
+}

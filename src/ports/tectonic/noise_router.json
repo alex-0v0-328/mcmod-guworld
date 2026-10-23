@@ -1,0 +1,17 @@
+{
+  "barrier": "guworld:terrain/minecraft/overworld/noise_router/barrier",
+  "continents": "guworld:terrain/minecraft/overworld/noise_router/continents",
+  "depth": "guworld:terrain/minecraft/overworld/noise_router/depth",
+  "erosion": "guworld:terrain/minecraft/overworld/noise_router/erosion",
+  "final_density": "guworld:terrain/minecraft/overworld/noise_router/final_density",
+  "fluid_level_floodedness": "guworld:terrain/minecraft/overworld/noise_router/fluid_level_floodedness",
+  "fluid_level_spread": "guworld:terrain/minecraft/overworld/noise_router/fluid_level_spread",
+  "initial_density_without_jaggedness": "guworld:terrain/minecraft/overworld/noise_router/initial_density_without_jaggedness",
+  "lava": "guworld:terrain/minecraft/overworld/noise_router/lava",
+  "ridges": "guworld:terrain/minecraft/overworld/noise_router/ridges",
+  "temperature": "guworld:terrain/minecraft/overworld/noise_router/temperature",
+  "vegetation": "guworld:terrain/minecraft/overworld/noise_router/vegetation",
+  "vein_gap": "guworld:terrain/minecraft/overworld/noise_router/vein_gap",
+  "vein_ridged": "guworld:terrain/minecraft/overworld/noise_router/vein_ridged",
+  "vein_toggle": "guworld:terrain/minecraft/overworld/noise_router/vein_toggle"
+}

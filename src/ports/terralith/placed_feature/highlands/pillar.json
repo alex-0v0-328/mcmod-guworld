@@ -1,0 +1,29 @@
+{
+  "feature": "guworld:highlands/pillar",
+  "placement": [
+    {
+      "chance": 35,
+      "type": "minecraft:rarity_filter"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "count": {
+        "deviation": 4,
+        "max_inclusive": 15,
+        "mean": 7,
+        "min_inclusive": 5,
+        "type": "minecraft:clamped_normal"
+      },
+      "type": "minecraft:count"
+    },
+    {
+      "heightmap": "WORLD_SURFACE",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "config": {
+    "half_height": 3,
+    "radius": {
+      "max_inclusive": 6,
+      "min_inclusive": 4,
+      "type": "minecraft:uniform"
+    },
+    "state_provider": {
+      "fallback": {
+        "state": {
+          "Name": "minecraft:smooth_basalt"
+        },
+        "type": "minecraft:simple_state_provider"
+      },
+      "rules": []
+    },
+    "target": {
+      "blocks": [
+        "minecraft:gravel",
+        "minecraft:coarse_dirt",
+        "minecraft:sand",
+        "minecraft:dirt",
+        "minecraft:grass_block",
+        "minecraft:calcite"
+      ],
+      "type": "minecraft:matching_blocks"
+    }
+  },
+  "type": "minecraft:disk"
+}

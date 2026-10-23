@@ -1,0 +1,59 @@
+{
+  "input": {
+    "argument1": -0.7,
+    "argument2": {
+      "argument1": 4,
+      "argument2": {
+        "argument": {
+          "argument1": {
+            "argument1": {
+              "spline": {
+                "coordinate": "guworld:terrain/tectonic/noise/full_continents",
+                "points": [
+                  {
+                    "derivative": 0,
+                    "location": -1,
+                    "value": 0
+                  },
+                  {
+                    "derivative": 0,
+                    "location": -0.9,
+                    "value": -0.2
+                  },
+                  {
+                    "derivative": 0,
+                    "location": -0.4,
+                    "value": -0.2
+                  },
+                  {
+                    "derivative": 0,
+                    "location": -0.3,
+                    "value": 0
+                  }
+                ]
+              },
+              "type": "minecraft:spline"
+            },
+            "argument2": "guworld:terrain/tectonic/depth",
+            "type": "minecraft:add"
+          },
+          "argument2": {
+            "input": "guworld:terrain/tectonic/continent_selector",
+            "max_exclusive": 1.1,
+            "min_inclusive": 0.9,
+            "type": "minecraft:range_choice",
+            "when_in_range": "guworld:terrain/tectonic/terrain_spline/factor/continents",
+            "when_out_of_range": "guworld:terrain/tectonic/terrain_spline/factor/islands"
+          },
+          "type": "minecraft:mul"
+        },
+        "type": "minecraft:quarter_negative"
+      },
+      "type": "minecraft:mul"
+    },
+    "type": "minecraft:add"
+  },
+  "max": 64,
+  "min": -64,
+  "type": "minecraft:clamp"
+}

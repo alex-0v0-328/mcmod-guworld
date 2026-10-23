@@ -1,0 +1,13 @@
+{
+  "input": "guworld:terrain/hook/underground_river_water",
+  "max_exclusive": 1.1,
+  "min_inclusive": 0.9,
+  "type": "minecraft:range_choice",
+  "when_in_range": 1,
+  "when_out_of_range": {
+    "noise": "guworld:terrain/minecraft/aquifer_fluid_level_floodedness",
+    "type": "minecraft:noise",
+    "xz_scale": 1.0,
+    "y_scale": 0.67
+  }
+}

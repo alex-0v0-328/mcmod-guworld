@@ -1,0 +1,38 @@
+{
+  "argument": {
+    "input": {
+      "argument1": "guworld:terrain/tectonic/__constants/ocean_offset",
+      "argument2": {
+        "spline": {
+          "coordinate": {
+            "argument": "guworld:terrain/tectonic/__constants/noise/continents",
+            "type": "minecraft:abs"
+          },
+          "points": [
+            {
+              "derivative": 0,
+              "location": 0,
+              "value": 0
+            },
+            {
+              "derivative": 1,
+              "location": 0.4,
+              "value": 0.575
+            },
+            {
+              "derivative": 1,
+              "location": 0.48,
+              "value": 0.68
+            }
+          ]
+        },
+        "type": "minecraft:spline"
+      },
+      "type": "minecraft:add"
+    },
+    "max": 0.4,
+    "min": -64,
+    "type": "minecraft:clamp"
+  },
+  "type": "minecraft:flat_cache"
+}

@@ -1,0 +1,16 @@
+{
+  "argument": {
+    "argument1": -1,
+    "argument2": {
+      "argument": {
+        "noise": "guworld:terrain/tectonic/region/diamond/dune_base",
+        "type": "minecraft:noise",
+        "xz_scale": 0.76,
+        "y_scale": 0
+      },
+      "type": "minecraft:abs"
+    },
+    "type": "minecraft:mul"
+  },
+  "type": "minecraft:cache_2d"
+}

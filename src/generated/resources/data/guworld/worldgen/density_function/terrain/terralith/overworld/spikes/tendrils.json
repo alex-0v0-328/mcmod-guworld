@@ -1,0 +1,48 @@
+{
+  "type": "minecraft:range_choice",
+  "input": "guworld:terrain/terralith/overworld/spike/size_spline",
+  "max_exclusive": 1000000.0,
+  "min_inclusive": -2.0,
+  "when_in_range": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:square",
+        "argument": {
+          "type": "minecraft:abs",
+          "argument": {
+            "type": "minecraft:shifted_noise",
+            "noise": "guworld:terrain/terralith/math/spikes/noise",
+            "shift_x": {
+              "type": "minecraft:mul",
+              "argument1": 110.0,
+              "argument2": "guworld:terrain/terralith/overworld/spikes/spike_x"
+            },
+            "shift_y": 8.0,
+            "shift_z": {
+              "type": "minecraft:mul",
+              "argument1": 110.0,
+              "argument2": "guworld:terrain/terralith/overworld/spikes/spike_z"
+            },
+            "xz_scale": 1.0,
+            "y_scale": 0.0
+          }
+        }
+      },
+      "argument2": {
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "minecraft:y_clamped_gradient",
+          "from_value": -0.2675,
+          "from_y": 0,
+          "to_value": -3.0,
+          "to_y": 320
+        },
+        "argument2": "guworld:terrain/terralith/overworld/spikes/base_height"
+      }
+    },
+    "argument2": "guworld:terrain/terralith/overworld/spike/size_spline"
+  },
+  "when_out_of_range": -64.0
+}

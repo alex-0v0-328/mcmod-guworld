@@ -1,0 +1,36 @@
+{
+  "feature": "guworld:mountains/misty/trees_top",
+  "placement": [
+    {
+      "count": 2,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "WORLD_SURFACE",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "count": {
+        "max_inclusive": 16,
+        "min_inclusive": 5,
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:count"
+    },
+    {
+      "predicate": {
+        "state": {
+          "Name": "minecraft:fern"
+        },
+        "type": "minecraft:would_survive"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

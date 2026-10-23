@@ -1,0 +1,331 @@
+{
+  "config": {
+    "features": [
+      {
+        "feature": {
+          "config": {
+            "allowed_placement": {
+              "type": "minecraft:replaceable"
+            },
+            "direction": "up",
+            "layers": [
+              {
+                "height": 1,
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "north",
+                      "half": "lower",
+                      "waterlogged": "true"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              },
+              {
+                "height": {
+                  "deviation": 1.5,
+                  "max_inclusive": 6,
+                  "mean": 0,
+                  "min_inclusive": 0,
+                  "type": "minecraft:clamped_normal"
+                },
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "north",
+                      "half": "lower",
+                      "waterlogged": "false"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              },
+              {
+                "height": 1,
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "north",
+                      "half": "upper",
+                      "waterlogged": "false"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              }
+            ],
+            "prioritize_tip": false
+          },
+          "type": "minecraft:block_column"
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "config": {
+            "allowed_placement": {
+              "type": "minecraft:replaceable"
+            },
+            "direction": "up",
+            "layers": [
+              {
+                "height": 1,
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "south",
+                      "half": "lower",
+                      "waterlogged": "true"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              },
+              {
+                "height": {
+                  "deviation": 1.5,
+                  "max_inclusive": 6,
+                  "mean": 0,
+                  "min_inclusive": 0,
+                  "type": "minecraft:clamped_normal"
+                },
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "south",
+                      "half": "lower",
+                      "waterlogged": "false"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              },
+              {
+                "height": 1,
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "south",
+                      "half": "upper",
+                      "waterlogged": "false"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              }
+            ],
+            "prioritize_tip": false
+          },
+          "type": "minecraft:block_column"
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "config": {
+            "allowed_placement": {
+              "type": "minecraft:replaceable"
+            },
+            "direction": "up",
+            "layers": [
+              {
+                "height": 1,
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "east",
+                      "half": "lower",
+                      "waterlogged": "true"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              },
+              {
+                "height": {
+                  "deviation": 1.5,
+                  "max_inclusive": 6,
+                  "mean": 0,
+                  "min_inclusive": 0,
+                  "type": "minecraft:clamped_normal"
+                },
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "east",
+                      "half": "lower",
+                      "waterlogged": "false"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              },
+              {
+                "height": 1,
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "east",
+                      "half": "upper",
+                      "waterlogged": "false"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              }
+            ],
+            "prioritize_tip": false
+          },
+          "type": "minecraft:block_column"
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "config": {
+            "allowed_placement": {
+              "type": "minecraft:replaceable"
+            },
+            "direction": "up",
+            "layers": [
+              {
+                "height": 1,
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "west",
+                      "half": "lower",
+                      "waterlogged": "true"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              },
+              {
+                "height": {
+                  "deviation": 1.5,
+                  "max_inclusive": 6,
+                  "mean": 0,
+                  "min_inclusive": 0,
+                  "type": "minecraft:clamped_normal"
+                },
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "west",
+                      "half": "lower",
+                      "waterlogged": "false"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              },
+              {
+                "height": 1,
+                "provider": {
+                  "state": {
+                    "Name": "minecraft:small_dripleaf",
+                    "Properties": {
+                      "facing": "west",
+                      "half": "upper",
+                      "waterlogged": "false"
+                    }
+                  },
+                  "type": "minecraft:simple_state_provider"
+                }
+              }
+            ],
+            "prioritize_tip": false
+          },
+          "type": "minecraft:block_column"
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "config": {
+            "allowed_placement": {
+              "type": "minecraft:true"
+            },
+            "direction": "up",
+            "layers": [
+              {
+                "height": 1,
+                "provider": {
+                  "property": "pickles",
+                  "source": {
+                    "state": {
+                      "Name": "minecraft:sea_pickle",
+                      "Properties": {
+                        "waterlogged": "true"
+                      }
+                    },
+                    "type": "minecraft:simple_state_provider"
+                  },
+                  "type": "minecraft:randomized_int_state_provider",
+                  "values": {
+                    "max_inclusive": 1,
+                    "min_inclusive": 1,
+                    "type": "minecraft:biased_to_bottom"
+                  }
+                }
+              }
+            ],
+            "prioritize_tip": false
+          },
+          "type": "minecraft:block_column"
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "config": {
+            "allowed_placement": {
+              "type": "minecraft:true"
+            },
+            "direction": "up",
+            "layers": [
+              {
+                "height": 1,
+                "provider": {
+                  "property": "pickles",
+                  "source": {
+                    "state": {
+                      "Name": "minecraft:sea_pickle",
+                      "Properties": {
+                        "waterlogged": "true"
+                      }
+                    },
+                    "type": "minecraft:simple_state_provider"
+                  },
+                  "type": "minecraft:randomized_int_state_provider",
+                  "values": {
+                    "max_inclusive": 1,
+                    "min_inclusive": 1,
+                    "type": "minecraft:biased_to_bottom"
+                  }
+                }
+              }
+            ],
+            "prioritize_tip": false
+          },
+          "type": "minecraft:block_column"
+        },
+        "placement": []
+      }
+    ]
+  },
+  "type": "minecraft:simple_random_selector"
+}

@@ -1,0 +1,40 @@
+{
+  "feature": "guworld:shrubland/bushes",
+  "placement": [
+    {
+      "count": {
+        "max_inclusive": 3,
+        "min_inclusive": 2,
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "WORLD_SURFACE_WG",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "predicate": {
+        "predicates": [
+          {
+            "type": "minecraft:replaceable"
+          },
+          {
+            "state": {
+              "Name": "minecraft:fern"
+            },
+            "type": "minecraft:would_survive"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

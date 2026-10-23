@@ -1,0 +1,128 @@
+{
+  "feature": {
+    "type": "minecraft:random_patch",
+    "config": {
+      "feature": {
+        "feature": {
+          "type": "minecraft:block_column",
+          "config": {
+            "allowed_placement": {
+              "type": "minecraft:true"
+            },
+            "direction": "up",
+            "layers": [
+              {
+                "height": 1,
+                "provider": {
+                  "type": "minecraft:dual_noise_provider",
+                  "noise": {
+                    "amplitudes": [
+                      0.25,
+                      1.25
+                    ],
+                    "firstOctave": -3
+                  },
+                  "scale": 1.0,
+                  "seed": 0,
+                  "slow_noise": {
+                    "amplitudes": [
+                      1.0,
+                      1.0
+                    ],
+                    "firstOctave": -5
+                  },
+                  "slow_scale": 1.0,
+                  "states": [
+                    {
+                      "Name": "minecraft:flowering_azalea"
+                    }
+                  ],
+                  "variety": [
+                    1,
+                    8
+                  ]
+                }
+              }
+            ],
+            "prioritize_tip": false
+          }
+        },
+        "placement": [
+          {
+            "type": "minecraft:block_predicate_filter",
+            "predicate": {
+              "type": "minecraft:all_of",
+              "predicates": [
+                {
+                  "type": "minecraft:not",
+                  "predicate": {
+                    "type": "minecraft:matching_blocks",
+                    "blocks": [
+                      "minecraft:stone",
+                      "minecraft:deepslate",
+                      "minecraft:granite",
+                      "minecraft:andesite",
+                      "minecraft:diorite"
+                    ],
+                    "offset": [
+                      0,
+                      -1,
+                      0
+                    ]
+                  }
+                },
+                {
+                  "type": "minecraft:matching_blocks",
+                  "blocks": [
+                    "minecraft:air",
+                    "minecraft:void_air",
+                    "minecraft:cave_air"
+                  ]
+                },
+                {
+                  "type": "minecraft:any_of",
+                  "predicates": [
+                    {
+                      "type": "minecraft:would_survive",
+                      "state": {
+                        "Name": "minecraft:flowering_azalea"
+                      }
+                    },
+                    {
+                      "type": "minecraft:matching_blocks",
+                      "blocks": "minecraft:moss_block",
+                      "offset": [
+                        0,
+                        -1,
+                        0
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "tries": 10,
+      "xz_spread": 4,
+      "y_spread": 3
+    }
+  },
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 1
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "WORLD_SURFACE_WG"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

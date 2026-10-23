@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:add",
+  "argument1": "guworld:terrain/tectonic/mountain_ridges/noiseshift/base",
+  "argument2": {
+    "type": "minecraft:mul",
+    "argument1": -1.0,
+    "argument2": "guworld:terrain/tectonic/mountain_ridges/noiseshift/shiftx"
+  }
+}

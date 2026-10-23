@@ -1,0 +1,9 @@
+{
+  "argument": {
+    "noise": "guworld:terrain/tectonic/region/spade/upper_tier",
+    "type": "minecraft:noise",
+    "xz_scale": 0.35,
+    "y_scale": 0
+  },
+  "type": "minecraft:abs"
+}

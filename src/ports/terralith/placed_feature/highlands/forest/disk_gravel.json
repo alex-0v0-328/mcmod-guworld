@@ -1,0 +1,26 @@
+{
+  "feature": "guworld:highlands/forest/disk_gravel",
+  "placement": [
+    {
+      "count": 64,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "OCEAN_FLOOR",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "predicate": {
+        "fluids": "minecraft:water",
+        "type": "minecraft:matching_fluids"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

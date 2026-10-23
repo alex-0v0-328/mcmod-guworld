@@ -1,0 +1,27 @@
+{
+  "config": {
+    "allowed_placement": {
+      "blocks": "#minecraft:dirt",
+      "offset": [
+        0,
+        1,
+        0
+      ],
+      "type": "minecraft:matching_blocks"
+    },
+    "direction": "down",
+    "layers": [
+      {
+        "height": 6,
+        "provider": {
+          "state": {
+            "Name": "minecraft:stone"
+          },
+          "type": "minecraft:simple_state_provider"
+        }
+      }
+    ],
+    "prioritize_tip": false
+  },
+  "type": "minecraft:block_column"
+}

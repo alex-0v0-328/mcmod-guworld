@@ -1,0 +1,120 @@
+{
+  "argument": {
+    "argument": {
+      "argument": {
+        "argument": {
+          "spline": {
+            "coordinate": "guworld:terrain/tectonic/noise/temperature_index",
+            "points": [
+              {
+                "derivative": 0,
+                "location": 4,
+                "value": {
+                  "coordinate": "guworld:terrain/tectonic/noise/vegetation_index",
+                  "points": [
+                    {
+                      "derivative": 0,
+                      "location": 2,
+                      "value": {
+                        "coordinate": "guworld:terrain/tectonic/noise/continent/ridges_folded",
+                        "points": [
+                          {
+                            "derivative": 0.5,
+                            "location": 0.03,
+                            "value": -0.06
+                          },
+                          {
+                            "derivative": 0.1,
+                            "location": 0.1,
+                            "value": 0.01
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "derivative": 0,
+                      "location": 3,
+                      "value": {
+                        "coordinate": "guworld:terrain/tectonic/noise/continent/ridges_folded",
+                        "points": [
+                          {
+                            "derivative": 0.5,
+                            "location": 0.03,
+                            "value": -0.06
+                          },
+                          {
+                            "derivative": 0,
+                            "location": 0.1,
+                            "value": 0.01
+                          },
+                          {
+                            "derivative": 0,
+                            "location": 0.15,
+                            "value": {
+                              "coordinate": {
+                                "noise": "guworld:terrain/tectonic/region/diamond/wetland",
+                                "type": "minecraft:noise",
+                                "xz_scale": 0.8,
+                                "y_scale": 0
+                              },
+                              "points": [
+                                {
+                                  "derivative": 0.03,
+                                  "location": -0.45,
+                                  "value": -0.03
+                                },
+                                {
+                                  "derivative": 0,
+                                  "location": -0.3,
+                                  "value": 0.005
+                                },
+                                {
+                                  "derivative": 0,
+                                  "location": 0.3,
+                                  "value": 0.005
+                                },
+                                {
+                                  "derivative": -0.03,
+                                  "location": 0.45,
+                                  "value": -0.03
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "derivative": 0,
+                "location": 5,
+                "value": {
+                  "coordinate": "guworld:terrain/tectonic/noise/continent/ridges_folded",
+                  "points": [
+                    {
+                      "derivative": 0.5,
+                      "location": 0.03,
+                      "value": -0.06
+                    },
+                    {
+                      "derivative": 0.15,
+                      "location": 0.1,
+                      "value": 0.01
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "type": "minecraft:spline"
+        },
+        "type": "minecraft:cache_2d"
+      },
+      "type": "minecraft:flat_cache"
+    },
+    "type": "minecraft:cache_2d"
+  },
+  "type": "minecraft:flat_cache"
+}

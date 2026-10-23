@@ -1,0 +1,16 @@
+{
+  "config": {
+    "default": "guworld:taiga/small/spruce_small",
+    "features": [
+      {
+        "chance": 0.55,
+        "feature": "guworld:taiga/small/pine_small"
+      },
+      {
+        "chance": 0.1,
+        "feature": "guworld:taiga/small/spruce_small_m"
+      }
+    ]
+  },
+  "type": "minecraft:random_selector"
+}

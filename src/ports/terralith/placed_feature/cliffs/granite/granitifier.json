@@ -1,0 +1,96 @@
+{
+  "feature": "guworld:cliffs/granite/granitifier",
+  "placement": [
+    {
+      "count": 70,
+      "type": "minecraft:count"
+    },
+    {
+      "count": 10,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "height": {
+        "max_inclusive": {
+          "absolute": 164
+        },
+        "min_inclusive": {
+          "absolute": 62
+        },
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:height_range"
+    },
+    {
+      "direction_of_search": "down",
+      "max_steps": 4,
+      "target_condition": {
+        "predicates": [
+          {
+            "blocks": [
+              "minecraft:stone"
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "predicates": [
+              {
+                "blocks": [
+                  "minecraft:air"
+                ],
+                "offset": [
+                  5,
+                  0,
+                  0
+                ],
+                "type": "minecraft:matching_blocks"
+              },
+              {
+                "blocks": [
+                  "minecraft:air"
+                ],
+                "offset": [
+                  0,
+                  0,
+                  5
+                ],
+                "type": "minecraft:matching_blocks"
+              },
+              {
+                "blocks": [
+                  "minecraft:air"
+                ],
+                "offset": [
+                  -5,
+                  0,
+                  0
+                ],
+                "type": "minecraft:matching_blocks"
+              },
+              {
+                "blocks": [
+                  "minecraft:air"
+                ],
+                "offset": [
+                  0,
+                  0,
+                  -5
+                ],
+                "type": "minecraft:matching_blocks"
+              }
+            ],
+            "type": "minecraft:any_of"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:environment_scan"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

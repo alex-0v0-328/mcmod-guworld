@@ -1,0 +1,120 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:flat_cache",
+      "argument": {
+        "type": "minecraft:cache_2d",
+        "argument": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "guworld:terrain/tectonic/noise/temperature_index",
+            "points": [
+              {
+                "derivative": 0.0,
+                "location": 4.0,
+                "value": {
+                  "coordinate": "guworld:terrain/tectonic/noise/vegetation_index",
+                  "points": [
+                    {
+                      "derivative": 0.0,
+                      "location": 2.0,
+                      "value": {
+                        "coordinate": "guworld:terrain/tectonic/noise/continent/ridges_folded",
+                        "points": [
+                          {
+                            "derivative": 0.5,
+                            "location": 0.03,
+                            "value": -0.06
+                          },
+                          {
+                            "derivative": 0.1,
+                            "location": 0.1,
+                            "value": 0.01
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "derivative": 0.0,
+                      "location": 3.0,
+                      "value": {
+                        "coordinate": "guworld:terrain/tectonic/noise/continent/ridges_folded",
+                        "points": [
+                          {
+                            "derivative": 0.5,
+                            "location": 0.03,
+                            "value": -0.06
+                          },
+                          {
+                            "derivative": 0.0,
+                            "location": 0.1,
+                            "value": 0.01
+                          },
+                          {
+                            "derivative": 0.0,
+                            "location": 0.15,
+                            "value": {
+                              "coordinate": {
+                                "type": "minecraft:noise",
+                                "noise": "guworld:terrain/tectonic/region/diamond/wetland",
+                                "xz_scale": 0.8,
+                                "y_scale": 0.0
+                              },
+                              "points": [
+                                {
+                                  "derivative": 0.03,
+                                  "location": -0.45,
+                                  "value": -0.03
+                                },
+                                {
+                                  "derivative": 0.0,
+                                  "location": -0.3,
+                                  "value": 0.005
+                                },
+                                {
+                                  "derivative": 0.0,
+                                  "location": 0.3,
+                                  "value": 0.005
+                                },
+                                {
+                                  "derivative": -0.03,
+                                  "location": 0.45,
+                                  "value": -0.03
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "derivative": 0.0,
+                "location": 5.0,
+                "value": {
+                  "coordinate": "guworld:terrain/tectonic/noise/continent/ridges_folded",
+                  "points": [
+                    {
+                      "derivative": 0.5,
+                      "location": 0.03,
+                      "value": -0.06
+                    },
+                    {
+                      "derivative": 0.15,
+                      "location": 0.1,
+                      "value": 0.01
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

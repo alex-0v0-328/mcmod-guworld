@@ -1,0 +1,15 @@
+{
+  "feature": "guworld:coastal/big_hawaii",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": {
+        "type": "minecraft:uniform",
+        "value": {
+          "max_inclusive": 6,
+          "min_inclusive": 2
+        }
+      }
+    }
+  ]
+}

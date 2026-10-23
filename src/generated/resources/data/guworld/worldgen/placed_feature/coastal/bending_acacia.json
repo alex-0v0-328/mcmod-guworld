@@ -1,0 +1,15 @@
+{
+  "feature": "guworld:coastal/bending_acacia",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": {
+        "type": "minecraft:uniform",
+        "value": {
+          "max_inclusive": 1,
+          "min_inclusive": 1
+        }
+      }
+    }
+  ]
+}

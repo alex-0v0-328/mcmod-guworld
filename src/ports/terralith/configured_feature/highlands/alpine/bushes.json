@@ -1,0 +1,20 @@
+{
+  "config": {
+    "default": "guworld:highlands/steppe/bush_small",
+    "features": [
+      {
+        "chance": 0.08,
+        "feature": "guworld:highlands/alpine/spruce_pine"
+      },
+      {
+        "chance": 0.12,
+        "feature": "guworld:highlands/alpine/pine"
+      },
+      {
+        "chance": 0.7,
+        "feature": "guworld:highlands/steppe/bush_medium"
+      }
+    ]
+  },
+  "type": "minecraft:random_selector"
+}

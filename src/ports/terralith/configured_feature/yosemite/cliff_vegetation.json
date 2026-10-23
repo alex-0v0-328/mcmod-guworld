@@ -1,0 +1,28 @@
+{
+  "config": {
+    "place_in": [],
+    "place_on": [],
+    "place_under": [],
+    "to_place": {
+      "entries": [
+        {
+          "data": {
+            "Name": "minecraft:short_grass"
+          },
+          "weight": 50
+        },
+        {
+          "data": {
+            "Name": "minecraft:tall_grass",
+            "Properties": {
+              "half": "lower"
+            }
+          },
+          "weight": 10
+        }
+      ],
+      "type": "minecraft:weighted_state_provider"
+    }
+  },
+  "type": "minecraft:simple_block"
+}

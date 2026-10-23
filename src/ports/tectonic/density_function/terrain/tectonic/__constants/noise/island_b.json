@@ -1,0 +1,9 @@
+{
+  "noise": "guworld:terrain/tectonic/island/continents_b",
+  "shift_x": 0,
+  "shift_y": 0.0,
+  "shift_z": 0,
+  "type": "minecraft:shifted_noise",
+  "xz_scale": 0.11,
+  "y_scale": 0.0
+}

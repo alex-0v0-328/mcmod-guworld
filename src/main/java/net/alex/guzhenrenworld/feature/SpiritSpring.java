@@ -1,0 +1,148 @@
+package net.alex.guzhenrenworld.feature;
+
+import java.util.List;
+import net.alex.guzhenrenworld.DatapackBootstrap;
+import net.alex.guzhenrenworld.GuWorld;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.placement.BiomeFilter;
+import net.minecraft.world.level.levelgen.placement.InSquarePlacement;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.level.levelgen.placement.RarityFilter;
+import net.minecraftforge.common.world.BiomeModifier;
+import net.minecraftforge.common.world.ForgeBiomeModifiers;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryObject;
+
+/**
+ * The Spirit Spring [元泉] worldgen: its feature registration, keys, generation biomes and datapack entries.
+ *
+ * <p>Annotated {@code @Mod.EventBusSubscriber} on the mod bus: {@link #onRegister} registers {@link SpiritSpringFeature} under
+ * {@code guworld:spirit_spring}, which {@link #FEATURE} names and every key here shares.
+ * {@link #registerConfiguredFeature}, {@link #registerPlacedFeature} and {@link #registerBiomeModifier} are
+ * the bootstraps {@code datagen.DatapackProvider} runs: the configured and placed feature, and the biome
+ * modifier adding it to {@link #BIOMES} at {@code TOP_LAYER_MODIFICATION} (after vegetation);
+ * {@code datagen.BiomeTagsProvider} fills that tag from {@link #LAND_BIOMES} and the Southern Border's land biomes
+ * ({@code BiomeLayout.LAND}). Guzhenren keeps the spring's
+ * block, fluid, item and client rendering; every worldgen id here is in the {@code guworld} namespace.
+ *
+ * <p>{@link #LAND_BIOMES} is 39 overworld land biomes, moved here with the spring's worldgen as a copy of
+ * Guzhenren's wild Gu land list; the two now belong to different mods and may diverge.
+ *
+ * <p>⚠ The spring is a land structure, so {@link #LAND_BIOMES} must NOT collapse to
+ * {@code #minecraft:is_overworld}, which also carries the oceans and rivers.
+ *
+ * <p>⚠ {@link #RARITY} is Alex's pick, one roll per 300 chunks. The roll is not the rate: a roll grows a
+ * cluster only where {@code SpiritSpringFeature} finds level ground. In three 256-block overworld samples 1.2% of
+ * columns pass its 15x15 rule, none in woods, so roughly 2% of rolls grow a cluster, about one per 15,000 overworld
+ * chunks (an estimate from heightmaps, not a count of springs). There is no underground variant: a cave spot almost never passes
+ * the level-ground check.
+ *
+ * @author Alex
+ * @version 1.0.0
+ * @see SpiritSpringFeature
+ * @since 1.0.0
+ */
+
+@Mod.EventBusSubscriber(modid = GuWorld.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public final class SpiritSpring {
+
+    private static final ResourceLocation ID = GuWorld.id("spirit_spring");
+    public static final RegistryObject<SpiritSpringFeature> FEATURE = RegistryObject.create(ID, ForgeRegistries.FEATURES);
+    public static final TagKey<Biome> BIOMES = TagKey.create(Registries.BIOME, GuWorld.id("spirit_spring_generates"));
+    public static final List<ResourceKey<Biome>> LAND_BIOMES = List.of(
+            Biomes.PLAINS,
+            Biomes.SUNFLOWER_PLAINS,
+            Biomes.MEADOW,
+            Biomes.CHERRY_GROVE,
+            Biomes.FLOWER_FOREST,
+
+            Biomes.FOREST,
+            Biomes.BIRCH_FOREST,
+            Biomes.DARK_FOREST,
+            Biomes.OLD_GROWTH_BIRCH_FOREST,
+            Biomes.WINDSWEPT_FOREST,
+
+            Biomes.TAIGA,
+            Biomes.SNOWY_TAIGA,
+            Biomes.OLD_GROWTH_PINE_TAIGA,
+            Biomes.OLD_GROWTH_SPRUCE_TAIGA,
+            Biomes.GROVE,
+
+            Biomes.SAVANNA,
+            Biomes.SAVANNA_PLATEAU,
+            Biomes.WINDSWEPT_SAVANNA,
+
+            Biomes.JUNGLE,
+            Biomes.SPARSE_JUNGLE,
+            Biomes.BAMBOO_JUNGLE,
+
+            Biomes.DESERT,
+            Biomes.BADLANDS,
+            Biomes.WOODED_BADLANDS,
+            Biomes.ERODED_BADLANDS,
+
+            Biomes.SNOWY_PLAINS,
+            Biomes.ICE_SPIKES,
+            Biomes.SNOWY_SLOPES,
+            Biomes.FROZEN_PEAKS,
+            Biomes.JAGGED_PEAKS,
+            Biomes.STONY_PEAKS,
+
+            Biomes.WINDSWEPT_HILLS,
+            Biomes.WINDSWEPT_GRAVELLY_HILLS,
+
+            Biomes.SWAMP,
+            Biomes.MANGROVE_SWAMP,
+
+            Biomes.BEACH,
+            Biomes.SNOWY_BEACH,
+            Biomes.STONY_SHORE,
+
+            Biomes.MUSHROOM_FIELDS);
+    private static final ResourceKey<ConfiguredFeature<?, ?>> CONFIGURED_FEATURE =
+            ResourceKey.create(Registries.CONFIGURED_FEATURE, ID);
+    private static final ResourceKey<PlacedFeature> PLACED_FEATURE = ResourceKey.create(Registries.PLACED_FEATURE, ID);
+    private static final ResourceKey<BiomeModifier> BIOME_MODIFIER =
+            ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, ID);
+    private static final int RARITY = 300;
+
+    private SpiritSpring() {}
+
+    @SubscribeEvent
+    public static void onRegister(RegisterEvent event) {
+        event.register(Registries.FEATURE, ID, SpiritSpringFeature::new);
+    }
+
+    public static void registerConfiguredFeature(DatapackBootstrap<ConfiguredFeature<?, ?>> context) {
+        context.register(CONFIGURED_FEATURE,
+                new ConfiguredFeature<>(FEATURE.get(), NoneFeatureConfiguration.INSTANCE));
+    }
+
+    public static void registerPlacedFeature(DatapackBootstrap<PlacedFeature> context) {
+        HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
+        context.register(PLACED_FEATURE, new PlacedFeature(
+                configuredFeatures.getOrThrow(CONFIGURED_FEATURE),
+                List.of(RarityFilter.onAverageOnceEvery(RARITY), InSquarePlacement.spread(), BiomeFilter.biome())));
+    }
+
+    public static void registerBiomeModifier(DatapackBootstrap<BiomeModifier> context) {
+        HolderSet<Biome> biomes = context.lookup(Registries.BIOME).getOrThrow(BIOMES);
+        HolderGetter<PlacedFeature> placedFeatures = context.lookup(Registries.PLACED_FEATURE);
+        context.register(BIOME_MODIFIER, new ForgeBiomeModifiers.AddFeaturesBiomeModifier(biomes,
+                HolderSet.direct(placedFeatures.getOrThrow(PLACED_FEATURE)),
+                GenerationStep.Decoration.TOP_LAYER_MODIFICATION));
+    }
+}

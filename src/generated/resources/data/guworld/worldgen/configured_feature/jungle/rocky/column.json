@@ -1,0 +1,50 @@
+{
+  "type": "minecraft:block_column",
+  "config": {
+    "allowed_placement": {
+      "type": "minecraft:matching_blocks",
+      "blocks": "#minecraft:dirt",
+      "offset": [
+        0,
+        1,
+        0
+      ]
+    },
+    "direction": "down",
+    "layers": [
+      {
+        "height": 6,
+        "provider": {
+          "type": "minecraft:noise_provider",
+          "noise": {
+            "amplitudes": [
+              1.0,
+              1.0,
+              2.0,
+              3.0,
+              0.0,
+              0.0,
+              2.0,
+              4.0
+            ],
+            "firstOctave": -8
+          },
+          "scale": 1.0,
+          "seed": 0,
+          "states": [
+            {
+              "Name": "minecraft:stone"
+            },
+            {
+              "Name": "minecraft:stone"
+            },
+            {
+              "Name": "minecraft:andesite"
+            }
+          ]
+        }
+      }
+    ],
+    "prioritize_tip": false
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "argument": {
+    "argument1": {
+      "input": "guworld:terrain/tectonic/underground_river/pillars",
+      "max_exclusive": 0.03,
+      "min_inclusive": -64,
+      "type": "minecraft:range_choice",
+      "when_in_range": -64,
+      "when_out_of_range": "guworld:terrain/tectonic/underground_river/pillars"
+    },
+    "argument2": {
+      "argument1": "guworld:terrain/tectonic/underground_river/noise/density_additive",
+      "argument2": {
+        "argument1": "guworld:terrain/tectonic/__constants/underground_rivers",
+        "argument2": {
+          "argument1": {
+            "argument1": "guworld:terrain/tectonic/underground_river/spline/continents",
+            "argument2": "guworld:terrain/tectonic/underground_river/spline/erosion",
+            "type": "minecraft:mul"
+          },
+          "argument2": {
+            "argument1": "guworld:terrain/tectonic/underground_river/spline/elevation",
+            "argument2": "guworld:terrain/tectonic/underground_river/spline/ridge",
+            "type": "minecraft:mul"
+          },
+          "type": "minecraft:mul"
+        },
+        "type": "minecraft:mul"
+      },
+      "type": "minecraft:add"
+    },
+    "type": "minecraft:max"
+  },
+  "type": "minecraft:interpolated"
+}

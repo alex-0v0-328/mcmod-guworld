@@ -1,0 +1,7 @@
+{
+  "argument": {
+    "argument": -0.05,
+    "type": "minecraft:cache_2d"
+  },
+  "type": "minecraft:flat_cache"
+}

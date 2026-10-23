@@ -1,0 +1,12 @@
+{
+  "argument1": "guworld:terrain/tectonic/depth",
+  "argument2": {
+    "input": "minecraft:y",
+    "max_exclusive": 2048,
+    "min_inclusive": 32,
+    "type": "minecraft:range_choice",
+    "when_in_range": 0.8,
+    "when_out_of_range": 1.3
+  },
+  "type": "minecraft:min"
+}

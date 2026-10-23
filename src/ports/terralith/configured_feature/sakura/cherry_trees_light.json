@@ -1,0 +1,12 @@
+{
+  "config": {
+    "default": "guworld:sakura/bush",
+    "features": [
+      {
+        "chance": 0.8,
+        "feature": "guworld:sakura/tree_roof"
+      }
+    ]
+  },
+  "type": "minecraft:random_selector"
+}
