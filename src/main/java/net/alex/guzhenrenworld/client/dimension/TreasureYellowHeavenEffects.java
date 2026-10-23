@@ -31,8 +31,13 @@ import org.jetbrains.annotations.NotNull;
 @Mod.EventBusSubscriber(modid = GuWorld.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class TreasureYellowHeavenEffects extends DimensionSpecialEffects {
 
+    private static final float CLOUD_HEIGHT = 192.0F;
+    private static final boolean HAS_GROUND = false;
+    private static final boolean FORCE_BRIGHT_LIGHTMAP = false;
+    private static final boolean CONSTANT_AMBIENT_LIGHT = false;
+
     public TreasureYellowHeavenEffects() {
-        super(192.0F, false, SkyType.NORMAL, false, false);
+        super(CLOUD_HEIGHT, HAS_GROUND, SkyType.NORMAL, FORCE_BRIGHT_LIGHTMAP, CONSTANT_AMBIENT_LIGHT);
     }
 
     @SubscribeEvent

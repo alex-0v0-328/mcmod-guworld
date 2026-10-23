@@ -1,9 +1,9 @@
 package net.alex.guzhenrenworld.dimension.southernborder;
 
 import java.util.List;
-import java.util.OptionalLong;
 import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.SurfaceDimensionTypes;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.biome.SurfacePruning;
@@ -11,7 +11,6 @@ import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Climate;
@@ -69,33 +68,26 @@ public final class SouthernBorder {
     public static final int MIN_Y = -64;
     public static final int HEIGHT = 384;
     public static final int TOP_Y = MIN_Y + HEIGHT;
+    private static final boolean RESPAWN_ANCHORS_WORK = false;
+    private static final int NOISE_SIZE_HORIZONTAL = 1;
+    private static final int NOISE_SIZE_VERTICAL = 1;
     private static final int SEA_LEVEL = 63;
+    private static final boolean MOB_GENERATION_DISABLED = false;
+    private static final boolean AQUIFERS = true;
+    private static final boolean ORE_VEINS = true;
+    private static final boolean LEGACY_RANDOM_SOURCE = false;
 
     private SouthernBorder() {}
 
     public static void registerDimensionType(DatapackBootstrap<DimensionType> context) {
-        context.register(DIMENSION_TYPE, new DimensionType(
-                OptionalLong.empty(),
-                true,
-                false,
-                false,
-                true,
-                1.0,
-                true,
-                false,
-                MIN_Y,
-                HEIGHT,
-                HEIGHT,
-                BlockTags.INFINIBURN_OVERWORLD,
+        context.register(DIMENSION_TYPE, SurfaceDimensionTypes.create(MIN_Y, HEIGHT, RESPAWN_ANCHORS_WORK,
                 BuiltinDimensionTypes.OVERWORLD_EFFECTS,
-                0.0F,
-                new DimensionType.MonsterSettings(false, true, UniformInt.of(0, 7), 0)
-        ));
+                new DimensionType.MonsterSettings(false, true, UniformInt.of(0, 7), 0)));
     }
 
     public static void registerNoiseSettings(DatapackBootstrap<NoiseGeneratorSettings> context) {
         context.register(NOISE_SETTINGS, new NoiseGeneratorSettings(
-                NoiseSettings.create(MIN_Y, HEIGHT, 1, 1),
+                NoiseSettings.create(MIN_Y, HEIGHT, NOISE_SIZE_HORIZONTAL, NOISE_SIZE_VERTICAL),
                 Blocks.STONE.defaultBlockState(),
                 Blocks.WATER.defaultBlockState(),
                 Ports.getNoiseRouter(context),
@@ -103,10 +95,10 @@ public final class SouthernBorder {
                         BiomeLayout.ROSTER),
                 List.of(),
                 SEA_LEVEL,
-                false,
-                true,
-                true,
-                false
+                MOB_GENERATION_DISABLED,
+                AQUIFERS,
+                ORE_VEINS,
+                LEGACY_RANDOM_SOURCE
         ));
     }
 

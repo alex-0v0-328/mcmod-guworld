@@ -20,7 +20,7 @@ import net.minecraftforge.registries.RegistryObject;
  * places it, everything here that names the mod loader, so {@link SpiritSpring} stays the same on every loader.
  *
  * <p>Annotated {@code @Mod.EventBusSubscriber} on the mod bus: {@link #onRegister} registers
- * {@link SpiritSpringFeature} under {@code SpiritSpring.ID}, which {@link #FEATURE} names.
+ * {@link SpiritSpringCluster} under {@code SpiritSpring.ID}, which {@link #FEATURE} names.
  * {@link #registerBiomeModifier} is the bootstrap {@code datagen.DatapackProvider} runs for the biome modifier adding
  * the placed feature to {@link SpiritSpring#BIOMES} at {@code TOP_LAYER_MODIFICATION} (after vegetation).
  *
@@ -33,7 +33,7 @@ import net.minecraftforge.registries.RegistryObject;
 @Mod.EventBusSubscriber(modid = GuWorld.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class SpiritSpringRegistration {
 
-    public static final RegistryObject<SpiritSpringFeature> FEATURE =
+    public static final RegistryObject<SpiritSpringCluster> FEATURE =
             RegistryObject.create(SpiritSpring.ID, ForgeRegistries.FEATURES);
     private static final ResourceKey<BiomeModifier> BIOME_MODIFIER =
             ResourceKey.create(ForgeRegistries.Keys.BIOME_MODIFIERS, SpiritSpring.ID);
@@ -42,7 +42,7 @@ public final class SpiritSpringRegistration {
 
     @SubscribeEvent
     public static void onRegister(RegisterEvent event) {
-        event.register(Registries.FEATURE, SpiritSpring.ID, SpiritSpringFeature::new);
+        event.register(Registries.FEATURE, SpiritSpring.ID, SpiritSpringCluster::new);
     }
 
     public static void registerBiomeModifier(DatapackBootstrap<BiomeModifier> context) {

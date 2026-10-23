@@ -3,11 +3,9 @@ package net.alex.guzhenrenworld.biome;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.serialization.JsonOps;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.alex.guzhenrenworld.DataResults;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.SurfaceRules;
@@ -40,17 +38,15 @@ public final class SurfacePruning {
     public static SurfaceRules.RuleSource getPruned(SurfaceRules.RuleSource rule,
             Collection<ResourceKey<Biome>> roster) {
         Set<String> names = roster.stream().map(key -> key.location().toString()).collect(Collectors.toSet());
-        JsonElement live = getLive(DataResults.getOrThrow(SurfaceRules.RuleSource.CODEC.encodeStart(JsonOps.INSTANCE,
-                rule), "surface rule"), names);
+        JsonElement live = getLive(SurfaceRuleJson.encode(rule, "surface rule"), names);
         if (live == null) throw new IllegalStateException("no surface rule applies to " + names);
-        return DataResults.getOrThrow(SurfaceRules.RuleSource.CODEC.parse(JsonOps.INSTANCE, live),
-                "pruned surface rule");
+        return SurfaceRuleJson.decode(live, "pruned surface rule");
     }
 
     private static @Nullable JsonElement getLive(JsonElement rule, Set<String> roster) {
         if (!rule.isJsonObject()) return rule;
         JsonObject object = rule.getAsJsonObject();
-        String type = object.has("type") ? object.get("type").getAsString() : "";
+        String type = getType(object);
         if (type.equals("minecraft:sequence")) {
             JsonArray live = new JsonArray();
             for (JsonElement child : object.getAsJsonArray("sequence")) {
@@ -69,7 +65,7 @@ public final class SurfacePruning {
     }
 
     private static boolean isLive(JsonObject condition, Set<String> roster) {
-        if (!condition.has("type") || !condition.get("type").getAsString().equals("minecraft:biome")) return true;
+        if (!getType(condition).equals("minecraft:biome")) return true;
         JsonArray kept = new JsonArray();
         condition.getAsJsonArray("biome_is").forEach(biome -> {
             if (roster.contains(biome.getAsString())) kept.add(biome);
@@ -78,4 +74,6 @@ public final class SurfacePruning {
         condition.add("biome_is", kept);
         return true;
     }
+
+    private static String getType(JsonObject rule) { return rule.has("type") ? rule.get("type").getAsString() : ""; }
 }

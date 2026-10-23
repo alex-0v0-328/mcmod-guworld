@@ -39,9 +39,9 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 public final class BiomeSettings {
 
-    public static final ResourceKey<Biome> BAMBOO_SEA = ResourceKey.create(Registries.BIOME, GuWorld.id("bamboo_sea"));
+    public static final ResourceKey<Biome> BAMBOO_SEA = GuWorld.key(Registries.BIOME, "bamboo_sea");
     private static final ResourceKey<PlacedFeature> BAMBOO =
-            ResourceKey.create(Registries.PLACED_FEATURE, GuWorld.id("bamboo_sea/bamboo"));
+            GuWorld.key(Registries.PLACED_FEATURE, "bamboo_sea/bamboo");
     private static final int BAMBOO_COUNT = 60;
     private static final double BAMBOO_NOISE_SCALE = 80.0;
     private static final double BAMBOO_NOISE_OFFSET = 0.3;

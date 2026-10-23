@@ -2,16 +2,15 @@ package net.alex.guzhenrenworld.dimension;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.OptionalLong;
 import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.SurfaceDimensionTypes;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
@@ -56,27 +55,15 @@ public final class TreasureYellowHeaven {
     public static final ResourceKey<LevelStem> LEVEL_STEM = ResourceKey.create(Registries.LEVEL_STEM, ID);
     public static final ResourceLocation EFFECTS = ID;
     public static final int COLOR = 0xF4D35E;
+    private static final int MIN_Y = 0;
+    private static final int HEIGHT = 256;
+    private static final boolean RESPAWN_ANCHORS_WORK = true;
 
     private TreasureYellowHeaven() {}
 
     public static void registerDimensionType(DatapackBootstrap<DimensionType> context) {
-        context.register(DIMENSION_TYPE, new DimensionType(
-                OptionalLong.empty(),
-                true,
-                false,
-                false,
-                true,
-                1.0,
-                true,
-                true,
-                0,
-                256,
-                256,
-                BlockTags.INFINIBURN_OVERWORLD,
-                EFFECTS,
-                0.0F,
-                new DimensionType.MonsterSettings(false, false, ConstantInt.of(0), 0)
-        ));
+        context.register(DIMENSION_TYPE, SurfaceDimensionTypes.create(MIN_Y, HEIGHT, RESPAWN_ANCHORS_WORK, EFFECTS,
+                new DimensionType.MonsterSettings(false, false, ConstantInt.of(0), 0)));
     }
 
     public static void registerBiome(DatapackBootstrap<Biome> context) {
