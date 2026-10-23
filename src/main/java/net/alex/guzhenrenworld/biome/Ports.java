@@ -1,5 +1,6 @@
 package net.alex.guzhenrenworld.biome;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.Codec;
@@ -95,31 +96,29 @@ public final class Ports {
             JUNGLE_MOUNTAINS, PAINTED_MOUNTAINS, GRANITE_CLIFFS, ALPINE_MEADOW, ZHANGSHIYAN_CLIFFS, KARST_PEAK_FOREST);
     private static final String TERRALITH = "terralith";
     private static final String TECTONIC = "tectonic";
+    private static final BiFunction<String, JsonElement, JsonElement> UNPATCHED = (name, json) -> json;
 
     private Ports() {}
 
     public static void registerNoises(DatapackBootstrap<NormalNoise.NoiseParameters> context) {
-        register(context, Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC, TERRALITH, "noise");
-        register(context, Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC, TECTONIC, "noise");
+        register(context, Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC, TERRALITH, "noise", UNPATCHED);
+        register(context, Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC, TECTONIC, "noise", UNPATCHED);
     }
 
     public static void registerConfiguredFeatures(DatapackBootstrap<ConfiguredFeature<?, ?>> context) {
         register(context, Registries.CONFIGURED_FEATURE, ConfiguredFeature.DIRECT_CODEC, TERRALITH,
-                "configured_feature");
+                "configured_feature", UNPATCHED);
     }
 
     public static void registerPlacedFeatures(DatapackBootstrap<PlacedFeature> context) {
-        register(context, Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC, TERRALITH, "placed_feature");
+        register(context, Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC, TERRALITH, "placed_feature",
+                UNPATCHED);
     }
 
     public static void registerDensityFunctions(DatapackBootstrap<DensityFunction> context,
             BiFunction<String, JsonElement, JsonElement> patch) {
-        RegistryOps<JsonElement> registryOps = getOps(context);
-        for (String name : getIndex(TECTONIC, "density_function")) {
-            DensityFunction function = DataResults.getOrThrow(DensityFunction.DIRECT_CODEC.parse(registryOps,
-                    patch.apply(name, read(TECTONIC, "density_function/" + name))), "ported density_function " + name);
-            context.register(ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id(name)), function);
-        }
+        register(context, Registries.DENSITY_FUNCTION, DensityFunction.DIRECT_CODEC, TECTONIC, "density_function",
+                patch);
     }
 
     public static NoiseRouter getNoiseRouter(DatapackBootstrap<?> context) {
@@ -145,40 +144,37 @@ public final class Ports {
             throw new IllegalStateException("ported biomes " + names + " differ from the keys " + keys);
         }
         for (String name : names) {
-            Biome ported = decode(Biome.DIRECT_CODEC, registryOps, TERRALITH, "biome", name);
+            Biome ported = decode(Biome.DIRECT_CODEC, registryOps, "biome", name, read(TERRALITH, "biome/" + name));
             context.register(key(name), Replicas.getUncarved(ported));
         }
     }
 
     public static SurfaceRules.RuleSource getSurfaceRules() {
-        return DataResults.getOrThrow(SurfaceRules.RuleSource.CODEC.parse(JsonOps.INSTANCE,
-                read(TERRALITH, "surface_rule")), "ported surface rule");
+        return SurfaceRuleJson.decode(read(TERRALITH, "surface_rule"), "ported surface rule");
     }
 
     public static Map<ResourceLocation, List<String>> getBlockTags() {
         Map<ResourceLocation, List<String>> tags = new LinkedHashMap<>();
         for (String name : getIndex(TERRALITH, "block_tag")) {
-            List<String> values = new ArrayList<>();
-            read(TERRALITH, "block_tag/" + name).getAsJsonObject().getAsJsonArray("values")
-                    .forEach(value -> values.add(value.getAsString()));
-            tags.put(GuWorld.id(name), values);
+            JsonArray values = read(TERRALITH, "block_tag/" + name).getAsJsonObject().getAsJsonArray("values");
+            tags.put(GuWorld.id(name), getStrings(values));
         }
         return tags;
     }
 
     private static <T> void register(DatapackBootstrap<T> context, ResourceKey<? extends Registry<T>> registry,
-            Codec<T> codec, String port, String kind) {
+            Codec<T> codec, String port, String kind, BiFunction<String, JsonElement, JsonElement> patch) {
         RegistryOps<JsonElement> registryOps = getOps(context);
         for (String name : getIndex(port, kind)) {
+            JsonElement json = patch.apply(name, read(port, kind + "/" + name));
             context.register(ResourceKey.create(registry, GuWorld.id(name)),
-                    decode(codec, registryOps, port, kind, name));
+                    decode(codec, registryOps, kind, name, json));
         }
     }
 
-    private static <T> T decode(Codec<T> codec, RegistryOps<JsonElement> registryOps, String port, String kind,
-            String name) {
-        return DataResults.getOrThrow(codec.parse(registryOps, read(port, kind + "/" + name)),
-                "ported " + kind + " " + name);
+    private static <T> T decode(Codec<T> codec, RegistryOps<JsonElement> registryOps, String kind, String name,
+            JsonElement json) {
+        return DataResults.getOrThrow(codec.parse(registryOps, json), "ported " + kind + " " + name);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -199,9 +195,13 @@ public final class Ports {
     }
 
     private static List<String> getIndex(String port, String kind) {
-        List<String> names = new ArrayList<>();
-        read(port, "index").getAsJsonObject().getAsJsonArray(kind).forEach(name -> names.add(name.getAsString()));
-        return names;
+        return getStrings(read(port, "index").getAsJsonObject().getAsJsonArray(kind));
+    }
+
+    private static List<String> getStrings(JsonArray array) {
+        List<String> strings = new ArrayList<>();
+        array.forEach(element -> strings.add(element.getAsString()));
+        return strings;
     }
 
     private static JsonElement read(String port, String name) {

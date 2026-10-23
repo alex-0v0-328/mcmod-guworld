@@ -4,10 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.mojang.serialization.JsonOps;
 import java.util.List;
 import java.util.Map;
-import net.alex.guzhenrenworld.DataResults;
 import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.Holder;
@@ -133,11 +131,9 @@ public final class Replicas {
     }
 
     public static SurfaceRules.RuleSource getSurfaceRules() {
-        JsonElement vanilla = DataResults.getOrThrow(SurfaceRules.RuleSource.CODEC.encodeStart(JsonOps.INSTANCE,
-                SurfaceRuleData.overworld()), "vanilla overworld surface rule");
+        JsonElement vanilla = SurfaceRuleJson.encode(SurfaceRuleData.overworld(), "vanilla overworld surface rule");
         addReplicas(vanilla);
-        return DataResults.getOrThrow(SurfaceRules.RuleSource.CODEC.parse(JsonOps.INSTANCE, vanilla),
-                "replica surface rule");
+        return SurfaceRuleJson.decode(vanilla, "replica surface rule");
     }
 
     private static void register(DatapackBootstrap<Biome> context, ResourceKey<Biome> key, Biome template) {
