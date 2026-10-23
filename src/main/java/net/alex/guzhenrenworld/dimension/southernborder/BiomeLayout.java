@@ -125,11 +125,12 @@ public final class BiomeLayout {
     public static final Set<ResourceKey<Biome>> ROSTER = GROUPS.keySet();
     public static final Map<ResourceLocation, ResourceKey<Biome>> SOURCES = getSources();
     private static final float SPIRE_EROSION = 0.565F;
+    private static final Set<ResourceKey<Biome>> WATER_AND_CAVES = Set.of(Replicas.RIVER, Replicas.LUSH_CAVES,
+            Replicas.DRIPSTONE_CAVES);
     private static final Set<ResourceKey<Biome>> KEPT_ON_SPIRES = Set.of(Replicas.RIVER, Replicas.LUSH_CAVES,
             Replicas.DRIPSTONE_CAVES, Ports.ORCHID_SWAMP, Ports.HOT_SPRINGS, Ports.ZHANGSHIYAN_CLIFFS);
     public static final List<ResourceKey<Biome>> LAND = ROSTER.stream()
-            .filter(biome -> biome != Replicas.RIVER && biome != Replicas.LUSH_CAVES
-                    && biome != Replicas.DRIPSTONE_CAVES)
+            .filter(biome -> !WATER_AND_CAVES.contains(biome))
             .sorted(Comparator.comparing(ResourceKey::location)).toList();
 
     private BiomeLayout() {}
