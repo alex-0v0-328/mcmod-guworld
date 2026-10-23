@@ -37,6 +37,8 @@ public class BiomeTagsProvider extends TagsProvider<Biome> {
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider registries) {
-        tag(SpiritSpring.BIOMES).addAll(SpiritSpring.LAND_BIOMES).addAll(BiomeLayout.LAND);
+        TagAppender<Biome> spiritSpring = tag(SpiritSpring.BIOMES);
+        SpiritSpring.LAND_BIOMES.forEach(spiritSpring::add);
+        BiomeLayout.LAND.forEach(spiritSpring::add);
     }
 }

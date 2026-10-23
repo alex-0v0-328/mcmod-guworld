@@ -7,6 +7,7 @@ import com.mojang.serialization.JsonOps;
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
+import net.alex.guzhenrenworld.DataResults;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.SurfaceRules;
@@ -39,10 +40,11 @@ public final class SurfacePruning {
     public static SurfaceRules.RuleSource getPruned(SurfaceRules.RuleSource rule,
             Collection<ResourceKey<Biome>> roster) {
         Set<String> names = roster.stream().map(key -> key.location().toString()).collect(Collectors.toSet());
-        JsonElement live = getLive(SurfaceRules.RuleSource.CODEC.encodeStart(JsonOps.INSTANCE, rule).getOrThrow(),
-                names);
+        JsonElement live = getLive(DataResults.getOrThrow(SurfaceRules.RuleSource.CODEC.encodeStart(JsonOps.INSTANCE,
+                rule), "surface rule"), names);
         if (live == null) throw new IllegalStateException("no surface rule applies to " + names);
-        return SurfaceRules.RuleSource.CODEC.parse(JsonOps.INSTANCE, live).getOrThrow();
+        return DataResults.getOrThrow(SurfaceRules.RuleSource.CODEC.parse(JsonOps.INSTANCE, live),
+                "pruned surface rule");
     }
 
     private static @Nullable JsonElement getLive(JsonElement rule, Set<String> roster) {

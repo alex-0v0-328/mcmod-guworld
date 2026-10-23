@@ -7,11 +7,13 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.JsonOps;
 import java.util.List;
 import java.util.Map;
+import net.alex.guzhenrenworld.DataResults;
+import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.SurfaceRuleData;
 import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.resources.ResourceKey;
@@ -38,7 +40,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  *   stony peaks their stone and calcite, the windswept hills their bare stone. {@link #getSurfaceRules} returns
  *   vanilla's rules with every replica added beside the biome it copies.</li>
  *   <li>Every spawn sits under its own entity type's category ({@link #getSpawnsByCategory}). Vanilla's bamboo jungle
- *   lists the ocelot under monsters, which spends the monster cap on it and makes NeoForge warn for a modded biome;
+ *   lists the ocelot under monsters, which spends the monster cap on it and makes the loader warn for a modded biome;
  *   the rebuild moves such a spawn, with its spawn cost, to its type's category.</li>
  * </ul>
  *
@@ -75,7 +77,7 @@ public final class Replicas {
 
     private Replicas() {}
 
-    public static void registerBiomes(BootstrapContext<Biome> context) {
+    public static void registerBiomes(DatapackBootstrap<Biome> context) {
         HolderGetter<PlacedFeature> placed = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
         register(context, PLAINS, OverworldBiomes.plains(placed, carvers, false, false, false));
@@ -105,8 +107,16 @@ public final class Replicas {
                 .downfall(climate.downfall())
                 .specialEffects(template.getModifiedSpecialEffects())
                 .mobSpawnSettings(getSpawnsByCategory(template.getMobSettings()))
-                .generationSettings(new BiomeGenerationSettings(Map.of(), features))
+                .generationSettings(getUncarvedGeneration(features))
                 .build();
+    }
+
+    private static BiomeGenerationSettings getUncarvedGeneration(List<HolderSet<PlacedFeature>> features) {
+        BiomeGenerationSettings.PlainBuilder builder = new BiomeGenerationSettings.PlainBuilder();
+        for (int step = 0; step < features.size(); step++) {
+            for (Holder<PlacedFeature> feature : features.get(step)) builder.addFeature(step, feature);
+        }
+        return builder.build();
     }
 
     private static MobSpawnSettings getSpawnsByCategory(MobSpawnSettings template) {
@@ -123,13 +133,14 @@ public final class Replicas {
     }
 
     public static SurfaceRules.RuleSource getSurfaceRules() {
-        JsonElement vanilla = SurfaceRules.RuleSource.CODEC.encodeStart(JsonOps.INSTANCE, SurfaceRuleData.overworld())
-                .getOrThrow();
+        JsonElement vanilla = DataResults.getOrThrow(SurfaceRules.RuleSource.CODEC.encodeStart(JsonOps.INSTANCE,
+                SurfaceRuleData.overworld()), "vanilla overworld surface rule");
         addReplicas(vanilla);
-        return SurfaceRules.RuleSource.CODEC.parse(JsonOps.INSTANCE, vanilla).getOrThrow();
+        return DataResults.getOrThrow(SurfaceRules.RuleSource.CODEC.parse(JsonOps.INSTANCE, vanilla),
+                "replica surface rule");
     }
 
-    private static void register(BootstrapContext<Biome> context, ResourceKey<Biome> key, Biome template) {
+    private static void register(DatapackBootstrap<Biome> context, ResourceKey<Biome> key, Biome template) {
         context.register(key, getUncarved(template));
     }
 

@@ -2,13 +2,13 @@ package net.alex.guzhenrenworld.dimension.southernborder;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.data.worldgen.features.VegetationFeatures;
 import net.minecraft.data.worldgen.placement.PlacementUtils;
@@ -48,14 +48,14 @@ public final class BiomeSettings {
 
     private BiomeSettings() {}
 
-    public static void registerPlacedFeatures(BootstrapContext<PlacedFeature> context) {
+    public static void registerPlacedFeatures(DatapackBootstrap<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configured = context.lookup(Registries.CONFIGURED_FEATURE);
-        PlacementUtils.register(context, BAMBOO, configured.getOrThrow(VegetationFeatures.BAMBOO_SOME_PODZOL),
-                NoiseBasedCountPlacement.of(BAMBOO_COUNT, BAMBOO_NOISE_SCALE, BAMBOO_NOISE_OFFSET),
-                InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome());
+        context.register(BAMBOO, new PlacedFeature(configured.getOrThrow(VegetationFeatures.BAMBOO_SOME_PODZOL),
+                List.of(NoiseBasedCountPlacement.of(BAMBOO_COUNT, BAMBOO_NOISE_SCALE, BAMBOO_NOISE_OFFSET),
+                        InSquarePlacement.spread(), PlacementUtils.HEIGHTMAP_WORLD_SURFACE, BiomeFilter.biome())));
     }
 
-    public static void registerBiomes(BootstrapContext<Biome> context) {
+    public static void registerBiomes(DatapackBootstrap<Biome> context) {
         HolderGetter<PlacedFeature> placed = context.lookup(Registries.PLACED_FEATURE);
         Biome template = OverworldBiomes.bambooJungle(placed, context.lookup(Registries.CONFIGURED_CARVER));
         Holder<PlacedFeature> thinned = placed.getOrThrow(BAMBOO);

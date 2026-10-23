@@ -3,11 +3,11 @@ package net.alex.guzhenrenworld.dimension.southernborder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.Set;
+import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
@@ -73,7 +73,7 @@ public final class Terrain {
 
     private Terrain() {}
 
-    public static void registerDensityFunctions(BootstrapContext<DensityFunction> context) {
+    public static void registerDensityFunctions(DatapackBootstrap<DensityFunction> context) {
         Ports.registerDensityFunctions(context, Terrain::getPorted);
         register(context, "ocean_offset", DensityFunctions.constant(OCEAN_OFFSET));
         register(context, "vertical_scale", DensityFunctions.constant(VERTICAL_SCALE));
@@ -110,7 +110,7 @@ public final class Terrain {
         return name.equals(type) || name.equals("minecraft:" + type);
     }
 
-    private static void registerSwitch(BootstrapContext<DensityFunction> context, String hook, String ported,
+    private static void registerSwitch(DatapackBootstrap<DensityFunction> context, String hook, String ported,
             boolean on) {
         if (!on) {
             register(context, hook, DensityFunctions.zero());
@@ -120,7 +120,7 @@ public final class Terrain {
         register(context, hook, new DensityFunctions.HolderHolder(function));
     }
 
-    private static void register(BootstrapContext<DensityFunction> context, String hook, DensityFunction function) {
+    private static void register(DatapackBootstrap<DensityFunction> context, String hook, DensityFunction function) {
         context.register(key("hook/" + hook), function);
     }
 
