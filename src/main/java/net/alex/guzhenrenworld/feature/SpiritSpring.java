@@ -21,7 +21,7 @@ import net.minecraft.world.level.levelgen.placement.RarityFilter;
  * The Spirit Spring [元泉] worldgen: its keys, generation biomes and datapack entries.
  *
  * <p>Every key here shares {@link #ID}, {@code guworld:spirit_spring}, under which {@link SpiritSpringRegistration}
- * registers {@link SpiritSpringFeature}. {@link #registerConfiguredFeature} and {@link #registerPlacedFeature} are
+ * registers {@link SpiritSpringCluster}. {@link #registerConfiguredFeature} and {@link #registerPlacedFeature} are
  * the bootstraps {@code datagen.DatapackProvider} runs: the configured and placed feature, which
  * {@link SpiritSpringRegistration}'s biome modifier adds to {@link #BIOMES} at {@code TOP_LAYER_MODIFICATION} (after
  * vegetation); {@code datagen.BiomeTagsProvider} fills that tag from {@link #LAND_BIOMES} and the Southern Border's
@@ -35,14 +35,14 @@ import net.minecraft.world.level.levelgen.placement.RarityFilter;
  * {@code #minecraft:is_overworld}, which also carries the oceans and rivers.
  *
  * <p>⚠ {@link #RARITY} is Alex's pick, one roll per 300 chunks. The roll is not the rate: a roll grows a
- * cluster only where {@code SpiritSpringFeature} finds level ground. In three 256-block overworld samples 1.2% of
+ * cluster only where {@link SpiritSpringGround} finds level ground. In three 256-block overworld samples 1.2% of
  * columns pass its 15x15 rule, none in woods, so roughly 2% of rolls grow a cluster, about one per 15,000 overworld
  * chunks (an estimate from heightmaps, not a count of springs). There is no underground variant: a cave spot almost
  * never passes the level-ground check.
  *
  * @author Alex
  * @version 1.0.0
- * @see SpiritSpringFeature
+ * @see SpiritSpringCluster
  * @since 1.0.0
  */
 

@@ -20,7 +20,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
  * The loader's side of the Spirit Spring [元泉] worldgen: the feature's registration and the biome modifier that
  * places it, everything here that names the mod loader, so {@link SpiritSpring} stays the same on every loader.
  *
- * <p>Annotated {@code @EventBusSubscriber}: {@link #onRegister} registers {@link SpiritSpringFeature} under
+ * <p>Annotated {@code @EventBusSubscriber}: {@link #onRegister} registers {@link SpiritSpringCluster} under
  * {@code SpiritSpring.ID}, which {@link #FEATURE} names. {@link #registerBiomeModifier} is the bootstrap
  * {@code datagen.DatapackProvider} runs for the biome modifier adding the placed feature to {@link SpiritSpring#BIOMES}
  * at {@code TOP_LAYER_MODIFICATION} (after vegetation).
@@ -34,7 +34,7 @@ import net.neoforged.neoforge.registries.RegisterEvent;
 @EventBusSubscriber(modid = GuWorld.MOD_ID)
 public final class SpiritSpringRegistration {
 
-    public static final DeferredHolder<Feature<?>, SpiritSpringFeature> FEATURE =
+    public static final DeferredHolder<Feature<?>, SpiritSpringCluster> FEATURE =
             DeferredHolder.create(Registries.FEATURE, SpiritSpring.ID);
     private static final ResourceKey<BiomeModifier> BIOME_MODIFIER =
             ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, SpiritSpring.ID);
@@ -43,7 +43,7 @@ public final class SpiritSpringRegistration {
 
     @SubscribeEvent
     public static void onRegister(RegisterEvent event) {
-        event.register(Registries.FEATURE, SpiritSpring.ID, SpiritSpringFeature::new);
+        event.register(Registries.FEATURE, SpiritSpring.ID, SpiritSpringCluster::new);
     }
 
     public static void registerBiomeModifier(DatapackBootstrap<BiomeModifier> context) {
