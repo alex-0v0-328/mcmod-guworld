@@ -62,6 +62,5 @@ repo/
 ### Local-only tests: every test under src/test stays out of GitHub, as in Guzhenren ###
 src/test/
 
-### Forge port: module specs and local tools stay local ###
-/port/
+### Forge 1.20.1: local tools stay local ###
 /tools/
