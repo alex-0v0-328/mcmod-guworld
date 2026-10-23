@@ -83,12 +83,12 @@ minecraft {
     }
 }
 
-// Guzhenren's Forge port, the sibling project at ../mcmod-guzhenren-forge (or -PguzhenrenDir), is a required mod,
-// so every run here, runData and the GameTests included, loads its built jar plus what it needs: Epic Fight and
+// Guzhenren's mc1.20.1 worktree, the sibling project at ../mcmod-guzhenren-mc1.20.1 (or -PguzhenrenDir), is a required
+// mod, so every run here, runData and the GameTests included, loads its built jar plus what it needs: Epic Fight and
 // GeckoLib from its pack/mods, and Curios. All of them are SRG-named release jars, so each loads remapped through
 // fg.deobf. This mod compiles against none of them. A jar that is not there stops the run on the missing
 // dependency; build Guzhenren first.
-def guzhenrenDir = file(providers.gradleProperty('guzhenrenDir').getOrElse('../mcmod-guzhenren-forge'))
+def guzhenrenDir = file(providers.gradleProperty('guzhenrenDir').getOrElse('../mcmod-guzhenren-mc1.20.1'))
 def guzhenrenJar = fileTree(dir: new File(guzhenrenDir, 'build/libs'), include: 'guzhenren-*.jar',
         excludes: ['*-sources.jar', '*-slim.jar']).files.find()
 
