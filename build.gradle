@@ -1,0 +1,164 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+// Every test lives under src/test, local-only and gitignored as in the mainline, one folder per layer,
+// and none of them ships in the jar:
+//   modded  L2 'test': JUnit on vanilla's bootstrapped registries, no world. ForgeGradle has no MDG
+//           unit-test runtime, so the layer runs as plain JUnit with vanilla booted by a session listener.
+//   game    L3 'gametest': @GameTest classes plus their scene templates, run by runGameTestServer.
+sourceSets {
+    main.resources {
+        srcDir 'src/generated/resources'
+        exclude '.cache/**'
+    }
+    test {
+        java.srcDirs = ['src/test/modded/java']
+        resources.srcDirs = ['src/test/modded/resources']
+    }
+    gametest {
+        java.srcDirs = ['src/test/game/java']
+        resources.srcDirs = ['src/test/game/resources']
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            property 'forge.enabledGameTestNamespaces', mod_id
+            // Guzhenren and its dependencies ship SRG-named mixin refmaps; remap them to the dev names.
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                    // src/test is local-only (gitignored), so a fresh checkout has no GameTests to join.
+                    if (file('src/test/game/java').isDirectory()) {
+                        source sourceSets.gametest
+                    }
+                }
+            }
+        }
+
+        client {}
+
+        server {
+            workingDirectory project.file(providers.gradleProperty('serverGameDir').getOrElse('run'))
+            args '--nogui'
+        }
+
+        // Its own game directory keeps the GameTest world apart from the run/ dev world.
+        gameTestServer {
+            workingDirectory project.file(providers.gradleProperty('gameTestDir').getOrElse('run-gametest'))
+        }
+
+        data {
+            workingDirectory project.file('run-data')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+            // Biomes, features and terrain ported from Terralith and Tectonic are datagen input, read through this
+            // property (biome.Ports).
+            property 'guworld.ports', file('src/ports').absolutePath
+        }
+    }
+}
+
+// Guzhenren's Forge port, the sibling project at ../mcmod-guzhenren-forge (or -PguzhenrenDir), is a required mod,
+// so every run here, runData and the GameTests included, loads its built jar plus what it needs: Epic Fight and
+// GeckoLib from its pack/mods, and Curios. All of them are SRG-named release jars, so each loads remapped through
+// fg.deobf. This mod compiles against none of them. A jar that is not there stops the run on the missing
+// dependency; build Guzhenren first.
+def guzhenrenDir = file(providers.gradleProperty('guzhenrenDir').getOrElse('../mcmod-guzhenren-forge'))
+def guzhenrenJar = fileTree(dir: new File(guzhenrenDir, 'build/libs'), include: 'guzhenren-*.jar',
+        excludes: ['*-sources.jar', '*-slim.jar']).files.find()
+
+repositories {
+    maven {
+        name = 'Illusive Soulworks maven'
+        url = 'https://maven.theillusivec4.top/'
+    }
+    flatDir {
+        dirs new File(guzhenrenDir, 'build/libs'), new File(guzhenrenDir, 'pack/mods')
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    if (guzhenrenJar != null) {
+        runtimeOnly fg.deobf("blank:${guzhenrenJar.name - '.jar'}:0")
+    }
+    runtimeOnly fg.deobf("blank:${epic_fight_jar - '.jar'}:0")
+    runtimeOnly fg.deobf("blank:${geckolib_jar - '.jar'}:0")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+
+    testImplementation platform("org.junit:junit-bom:${junit_version}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test) {
+    workingDir project.file('build/minecraft-junit')
+    useJUnitPlatform()
+    testLogging {
+        events 'failed', 'skipped'
+        exceptionFormat = 'full'
+    }
+    doFirst { workingDir.mkdirs() }
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, guzhenren_version_range: guzhenren_version_range,
+    ]
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+        ])
+    }
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Lets a console 'stop' (or a piped one from a smoke script) reach the dev server.
+tasks.matching { it.name == 'runServer' }.configureEach { standardInput = System.in }
