@@ -4,9 +4,9 @@ name: Build
 # sync merge carries across from running on the wrong line.
 on:
   push:
-    branches: [mc1.20.1]
+    branches: [forge-1.20.1]
   pull_request:
-    branches: [mc1.20.1]
+    branches: [forge-1.20.1]
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: alex-0v0-328/mcmod-guzhenren
-          ref: mc1.20.1
+          ref: forge-1.20.1
           path: guzhenren
 
       - name: Setup JDK 17
