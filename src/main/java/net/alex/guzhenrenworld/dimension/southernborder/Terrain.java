@@ -125,6 +125,6 @@ public final class Terrain {
     }
 
     private static ResourceKey<DensityFunction> key(String name) {
-        return ResourceKey.create(Registries.DENSITY_FUNCTION, GuWorld.id("terrain/" + name));
+        return GuWorld.key(Registries.DENSITY_FUNCTION, "terrain/" + name);
     }
 }

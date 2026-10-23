@@ -167,7 +167,7 @@ public final class Ports {
         RegistryOps<JsonElement> registryOps = getOps(context);
         for (String name : getIndex(port, kind)) {
             JsonElement json = patch.apply(name, read(port, kind + "/" + name));
-            context.register(ResourceKey.create(registry, GuWorld.id(name)),
+            context.register(GuWorld.key(registry, name),
                     decode(codec, registryOps, kind, name, json));
         }
     }
@@ -216,6 +216,6 @@ public final class Ports {
     }
 
     private static ResourceKey<Biome> key(String name) {
-        return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
+        return GuWorld.key(Registries.BIOME, name);
     }
 }

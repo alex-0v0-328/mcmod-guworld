@@ -1,5 +1,7 @@
 package net.alex.guzhenrenworld;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.common.Mod;
 
@@ -15,11 +17,10 @@ import net.neoforged.fml.common.Mod;
  * ({@code net.alex.guzhenren.registry.world.ModDimensions#TREASURE_YELLOW_HEAVEN}), and this mod names
  * a Guzhenren block by its id alone ({@link GuzhenrenBlocks}).
  *
- * <p>Holds the {@code MOD_ID} constant and the {@link #id} helper, and nothing else. Each function lives
- * in one package ({@code biome}; {@code dimension}, with one subpackage per region; {@code terrain}, the density
- * tools the regions share; {@code feature}; client-only drawing in {@code client}) and wires itself through
- * {@code @EventBusSubscriber} or the {@code datagen} providers, so this package depends on none of them and the
- * package graph stays acyclic.
+ * <p>Holds the {@code MOD_ID} constant and the {@link #id} and {@link #key} helpers, and nothing else. Each function
+ * lives in one package ({@code biome}; {@code dimension}, with one subpackage per region; {@code feature};
+ * client-only drawing in {@code client}) and wires itself through {@code @EventBusSubscriber} or the {@code datagen}
+ * providers, so this package depends on none of them and the package graph stays acyclic.
  *
  * <p>⚠ The package is {@code net.alex.guzhenrenworld}, never {@code net.alex.guzhenren.world}:
  * Guzhenren already owns the {@code net.alex.guzhenren} packages, and NeoForge loads every mod as its
@@ -36,4 +37,8 @@ public class GuWorld {
     public static final String MOD_ID = "guworld";
 
     public static ResourceLocation id(String path) { return ResourceLocation.fromNamespaceAndPath(MOD_ID, path); }
+
+    public static <T> ResourceKey<T> key(ResourceKey<? extends Registry<T>> registry, String path) {
+        return ResourceKey.create(registry, id(path));
+    }
 }

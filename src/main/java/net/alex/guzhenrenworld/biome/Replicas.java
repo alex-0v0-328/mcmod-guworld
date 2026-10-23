@@ -159,6 +159,6 @@ public final class Replicas {
     }
 
     private static ResourceKey<Biome> key(String name) {
-        return ResourceKey.create(Registries.BIOME, GuWorld.id(name));
+        return GuWorld.key(Registries.BIOME, name);
     }
 }
