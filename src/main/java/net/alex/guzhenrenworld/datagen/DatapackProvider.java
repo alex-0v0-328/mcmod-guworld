@@ -12,6 +12,7 @@ import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.alex.guzhenrenworld.dimension.southernborder.Terrain;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
+import net.alex.guzhenrenworld.feature.SpiritSpringRegistration;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -28,9 +29,9 @@ import net.minecraftforge.registries.ForgeRegistries;
  * ({@link SouthernBorder}), its density functions, Tectonic's router with the region's hooks ({@link Terrain}),
  * and its bamboo sea with that biome's bamboo ({@link BiomeSettings}); Gu World's shared biomes, the vanilla replicas
  * ({@link Replicas}), the biomes ported from Terralith with their features, and the noises both ports read
- * ({@link Ports}); and the Spirit Spring [元泉] configured and placed feature and biome modifier
- * ({@link SpiritSpring}). {@link #of} hands each bootstrap vanilla's context wrapped in {@link DatapackBootstrap}. A
- * registry two dimensions both fill gets one bootstrap that runs both. The tag provider
+ * ({@link Ports}); and the Spirit Spring [元泉] configured and placed feature ({@link SpiritSpring}) and biome
+ * modifier ({@link SpiritSpringRegistration}). {@link #of} hands each bootstrap vanilla's context wrapped in
+ * {@link DatapackBootstrap}. A registry two dimensions both fill gets one bootstrap that runs both. The tag provider
  * takes {@code getRegistryProvider()} from this instance, not the plain lookup, so the tag pass sees the biome this
  * run generates.
  *
@@ -71,7 +72,7 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 Ports.registerPlacedFeatures(context);
                 BiomeSettings.registerPlacedFeatures(context);
             }))
-            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, of(SpiritSpring::registerBiomeModifier));
+            .add(ForgeRegistries.Keys.BIOME_MODIFIERS, of(SpiritSpringRegistration::registerBiomeModifier));
 
     public DatapackProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider, BUILDER, Set.of(GuWorld.MOD_ID));

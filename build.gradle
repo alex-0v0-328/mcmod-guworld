@@ -162,3 +162,16 @@ tasks.withType(JavaCompile).configureEach {
 
 // Lets a console 'stop' (or a piped one from a smoke script) reach the dev server.
 tasks.matching { it.name == 'runServer' }.configureEach { standardInput = System.in }
+
+// Forge 1.20.1's GameTest server builds its world from server.properties, and a missing file means a normal world,
+// whose terrain would stand over the test structures and read as ground; start it on a flat world as the mainline's
+// GameTest server does.
+tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    doFirst {
+        def properties = file("${providers.gradleProperty('gameTestDir').getOrElse('run-gametest')}/server.properties")
+        if (!properties.exists()) {
+            properties.parentFile.mkdirs()
+            properties.text = 'level-type=minecraft\\:flat\n'
+        }
+    }
+}
