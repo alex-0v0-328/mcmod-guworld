@@ -63,9 +63,8 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  * <p>Ported biomes keep Terralith's climate, colors, mob spawns and features; like the replicas they do not carve
  * ({@link Replicas#getUncarved}). The block tags go out through the datagen tag provider ({@link #getBlockTags}).
  *
- * <p>⚠ The files come from the mods through Guzhenren's {@code tools/port_terralith.py} and
- * {@code tools/port_tectonic.py}, never edited by hand: a change goes into a script's lists, then a fresh port, then
- * {@code runData}.
+ * <p>⚠ The files are ported from Terralith and Tectonic, never edited by hand; a port script is written in Guzhenren's
+ * {@code tools/} when an upstream update needs one, then a fresh port, then {@code runData}.
  *
  * @author Alex
  * @version 1.0.0
