@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": 0.0,
+      "argument2": "guworld:terrain/southern_border/tectonic/__constants/noise/vegetation"
+    }
+  }
+}

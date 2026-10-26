@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:range_choice",
+      "input": "guworld:terrain/southern_border/tectonic/noise/raw_islands",
+      "max_exclusive": -0.4,
+      "min_inclusive": -64.0,
+      "when_in_range": "guworld:terrain/southern_border/tectonic/noise/continent/erosion",
+      "when_out_of_range": -0.55
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "feature": {
+    "config": {
+      "decorators": [],
+      "dirt_provider": {
+        "state": {
+          "Name": "minecraft:dirt"
+        },
+        "type": "minecraft:simple_state_provider"
+      },
+      "foliage_placer": {
+        "height": 4,
+        "offset": 1,
+        "radius": {
+          "max_inclusive": 6,
+          "min_inclusive": 4,
+          "type": "minecraft:uniform"
+        },
+        "type": "minecraft:pine_foliage_placer"
+      },
+      "foliage_provider": {
+        "state": {
+          "Name": "minecraft:spruce_leaves",
+          "Properties": {
+            "distance": "7",
+            "persistent": "false",
+            "waterlogged": "false"
+          }
+        },
+        "type": "minecraft:simple_state_provider"
+      },
+      "force_dirt": true,
+      "ignore_vines": true,
+      "minimum_size": {
+        "limit": 0,
+        "lower_size": 2,
+        "min_clipped_height": 2,
+        "type": "minecraft:two_layers_feature_size",
+        "upper_size": 0
+      },
+      "trunk_placer": {
+        "base_height": 10,
+        "height_rand_a": 4,
+        "height_rand_b": 8,
+        "type": "minecraft:straight_trunk_placer"
+      },
+      "trunk_provider": {
+        "state": {
+          "Name": "minecraft:spruce_log",
+          "Properties": {
+            "axis": "y"
+          }
+        },
+        "type": "minecraft:simple_state_provider"
+      }
+    },
+    "type": "minecraft:tree"
+  },
+  "placement": [
+    {
+      "count": {
+        "max_inclusive": 5,
+        "min_inclusive": 4,
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "MOTION_BLOCKING",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "direction_of_search": "down",
+      "max_steps": 1,
+      "target_condition": {
+        "predicates": [
+          {
+            "type": "minecraft:replaceable"
+          },
+          {
+            "predicates": [
+              {
+                "state": {
+                  "Name": "minecraft:fern"
+                },
+                "type": "minecraft:would_survive"
+              },
+              {
+                "blocks": [
+                  "minecraft:snow_block",
+                  "minecraft:powder_snow"
+                ],
+                "offset": [
+                  0,
+                  -1,
+                  0
+                ],
+                "type": "minecraft:matching_blocks"
+              }
+            ],
+            "type": "minecraft:any_of"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:environment_scan"
+    },
+    {
+      "noise_factor": 89,
+      "noise_offset": -0.25,
+      "noise_to_count_ratio": -1,
+      "type": "minecraft:noise_based_count"
+    },
+    {
+      "type": "minecraft:biome"
+    },
+    {
+      "count": {
+        "max_inclusive": 4,
+        "min_inclusive": 1,
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:count"
+    }
+  ]
+}

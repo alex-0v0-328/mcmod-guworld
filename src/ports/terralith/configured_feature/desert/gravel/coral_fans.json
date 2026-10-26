@@ -1,0 +1,130 @@
+{
+  "config": {
+    "feature": {
+      "feature": {
+        "config": {
+          "to_place": {
+            "entries": [
+              {
+                "data": {
+                  "Name": "minecraft:dead_brain_coral_fan",
+                  "Properties": {
+                    "waterlogged": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "minecraft:dead_fire_coral_fan",
+                  "Properties": {
+                    "waterlogged": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "minecraft:dead_horn_coral_fan",
+                  "Properties": {
+                    "waterlogged": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "minecraft:dead_fire_coral_fan",
+                  "Properties": {
+                    "waterlogged": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "minecraft:dead_tube_coral_fan",
+                  "Properties": {
+                    "waterlogged": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "minecraft:dead_brain_coral",
+                  "Properties": {
+                    "waterlogged": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "minecraft:dead_fire_coral",
+                  "Properties": {
+                    "waterlogged": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "minecraft:dead_horn_coral",
+                  "Properties": {
+                    "waterlogged": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "minecraft:dead_fire_coral",
+                  "Properties": {
+                    "waterlogged": "false"
+                  }
+                },
+                "weight": 1
+              },
+              {
+                "data": {
+                  "Name": "minecraft:dead_tube_coral",
+                  "Properties": {
+                    "waterlogged": "false"
+                  }
+                },
+                "weight": 1
+              }
+            ],
+            "type": "minecraft:weighted_state_provider"
+          }
+        },
+        "type": "minecraft:simple_block"
+      },
+      "placement": [
+        {
+          "heightmap": "WORLD_SURFACE_WG",
+          "type": "minecraft:heightmap"
+        },
+        {
+          "predicate": {
+            "blocks": [
+              "minecraft:gravel"
+            ],
+            "offset": [
+              0,
+              -1,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          "type": "minecraft:block_predicate_filter"
+        }
+      ]
+    },
+    "tries": 1,
+    "xz_spread": 4,
+    "y_spread": 1
+  },
+  "type": "minecraft:random_patch"
+}

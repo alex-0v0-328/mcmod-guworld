@@ -1,0 +1,16 @@
+{
+  "config": {
+    "default": "guworld:highlands/arid/bush_small",
+    "features": [
+      {
+        "chance": 0.1,
+        "feature": "guworld:highlands/arid/tree"
+      },
+      {
+        "chance": 0.5,
+        "feature": "guworld:highlands/arid/bush_medium"
+      }
+    ]
+  },
+  "type": "minecraft:random_selector"
+}

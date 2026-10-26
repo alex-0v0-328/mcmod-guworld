@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:abs",
+      "argument": "guworld:terrain/northern_plains/tectonic/noise/continent/ridges"
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "feature": "guworld:snowy/spruce_tiny",
+  "placement": [
+    {
+      "heightmap": "OCEAN_FLOOR",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "max_water_depth": 0,
+      "type": "minecraft:surface_water_depth_filter"
+    }
+  ]
+}

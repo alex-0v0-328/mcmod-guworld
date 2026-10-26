@@ -1,0 +1,53 @@
+{
+  "feature": "guworld:cliffs/basalt/basalt_column_upper",
+  "placement": [
+    {
+      "count": 100,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:random_offset",
+      "xz_spread": {
+        "deviation": 0,
+        "max_inclusive": 0,
+        "mean": 0,
+        "min_inclusive": 0,
+        "type": "minecraft:clamped_normal"
+      },
+      "y_spread": 0
+    },
+    {
+      "height": {
+        "max_inclusive": {
+          "absolute": 180
+        },
+        "min_inclusive": {
+          "absolute": 180
+        },
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:height_range"
+    },
+    {
+      "allowed_search_condition": {
+        "blocks": [
+          "minecraft:air",
+          "minecraft:water"
+        ],
+        "type": "minecraft:matching_blocks"
+      },
+      "direction_of_search": "down",
+      "max_steps": 32,
+      "target_condition": {
+        "type": "minecraft:solid"
+      },
+      "type": "minecraft:environment_scan"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

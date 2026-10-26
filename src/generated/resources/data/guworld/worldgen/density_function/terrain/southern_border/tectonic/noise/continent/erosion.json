@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "guworld:terrain/southern_border/tectonic/noise/continent/erosion_raw",
+        "points": [
+          {
+            "derivative": 0.6,
+            "location": -0.35,
+            "value": -0.4
+          },
+          {
+            "derivative": 0.4,
+            "location": -0.14,
+            "value": -0.1
+          },
+          {
+            "derivative": 0.4,
+            "location": 0.14,
+            "value": 0.1
+          },
+          {
+            "derivative": 0.6,
+            "location": 0.35,
+            "value": 0.4
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "feature": "guworld:canyon/sandstone/moss_carpet",
+  "placement": [
+    {
+      "count": 120,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "WORLD_SURFACE_WG",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "predicate": {
+        "blocks": [
+          "minecraft:moss_block"
+        ],
+        "offset": [
+          0,
+          -1,
+          0
+        ],
+        "type": "minecraft:matching_blocks"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:random_offset",
+      "xz_spread": {
+        "deviation": 3,
+        "max_inclusive": 6,
+        "mean": 0,
+        "min_inclusive": -6,
+        "type": "minecraft:clamped_normal"
+      },
+      "y_spread": 0
+    },
+    {
+      "heightmap": "WORLD_SURFACE_WG",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "predicate": {
+        "blocks": [
+          "minecraft:sand",
+          "minecraft:clay",
+          "minecraft:sandstone",
+          "minecraft:smooth_sandstone"
+        ],
+        "offset": [
+          0,
+          -1,
+          0
+        ],
+        "type": "minecraft:matching_blocks"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

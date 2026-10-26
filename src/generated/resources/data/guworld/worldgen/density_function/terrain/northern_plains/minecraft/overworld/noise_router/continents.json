@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:add",
+  "argument1": "guworld:terrain/northern_plains/tectonic/noise/full_continents",
+  "argument2": 0.0
+}

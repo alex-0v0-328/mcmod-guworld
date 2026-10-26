@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:shifted_noise",
+  "noise": "guworld:terrain/tectonic/mountain_ridges/detailed",
+  "shift_x": {
+    "type": "minecraft:mul",
+    "argument1": {
+      "type": "minecraft:abs",
+      "argument": "guworld:terrain/eastern_sea/tectonic/mountain_ridges/noiseshift/slopex"
+    },
+    "argument2": 3000.0
+  },
+  "shift_y": 0.0,
+  "shift_z": {
+    "type": "minecraft:mul",
+    "argument1": {
+      "type": "minecraft:abs",
+      "argument": "guworld:terrain/eastern_sea/tectonic/mountain_ridges/noiseshift/slopez"
+    },
+    "argument2": 3000.0
+  },
+  "xz_scale": 2.0,
+  "y_scale": 0.0
+}

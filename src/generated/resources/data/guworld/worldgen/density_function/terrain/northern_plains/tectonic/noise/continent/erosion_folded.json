@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:min",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": 0.01,
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": 1.2,
+          "argument2": {
+            "type": "minecraft:abs",
+            "argument": "guworld:terrain/northern_plains/tectonic/noise/continent/erosion"
+          }
+        }
+      },
+      "argument2": 0.8
+    }
+  }
+}

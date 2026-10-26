@@ -1,0 +1,13 @@
+{
+  "feature": "guworld:swamp/ice/small/swamp_small",
+  "placement": [
+    {
+      "heightmap": "OCEAN_FLOOR_WG",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "max_water_depth": 5,
+      "type": "minecraft:surface_water_depth_filter"
+    }
+  ]
+}

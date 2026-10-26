@@ -1,0 +1,88 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "guworld:terrain/western_desert/tectonic/noise/continent/erosion",
+        "points": [
+          {
+            "derivative": 0.0,
+            "location": -0.02,
+            "value": {
+              "coordinate": "guworld:terrain/western_desert/tectonic/noise/region_selector",
+              "points": [
+                {
+                  "derivative": 0.0,
+                  "location": -0.04,
+                  "value": {
+                    "coordinate": "guworld:terrain/western_desert/tectonic/region/club",
+                    "points": [
+                      {
+                        "derivative": 1.0,
+                        "location": 0.0,
+                        "value": 0.0
+                      }
+                    ]
+                  }
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 0.04,
+                  "value": {
+                    "coordinate": "guworld:terrain/western_desert/tectonic/region/heart",
+                    "points": [
+                      {
+                        "derivative": 1.0,
+                        "location": 0.0,
+                        "value": 0.0
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "derivative": 0.0,
+            "location": 0.04,
+            "value": {
+              "coordinate": "guworld:terrain/western_desert/tectonic/noise/region_selector",
+              "points": [
+                {
+                  "derivative": 0.0,
+                  "location": -0.02,
+                  "value": {
+                    "coordinate": "guworld:terrain/western_desert/tectonic/region/spade",
+                    "points": [
+                      {
+                        "derivative": 1.0,
+                        "location": 0.0,
+                        "value": 0.0
+                      }
+                    ]
+                  }
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 0.04,
+                  "value": {
+                    "coordinate": "guworld:terrain/western_desert/tectonic/region/diamond",
+                    "points": [
+                      {
+                        "derivative": 1.0,
+                        "location": 0.0,
+                        "value": 0.0
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

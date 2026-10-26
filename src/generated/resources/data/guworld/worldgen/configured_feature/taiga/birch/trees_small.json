@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "default": "guworld:taiga/birch/birch",
+    "features": [
+      {
+        "chance": 0.01,
+        "feature": "guworld:yellowstone/birch"
+      },
+      {
+        "chance": 0.11,
+        "feature": "guworld:taiga/birch/oak"
+      },
+      {
+        "chance": 0.05,
+        "feature": "guworld:taiga/birch/birch_small"
+      },
+      {
+        "chance": 0.2,
+        "feature": "guworld:yellowstone/birch_alt"
+      },
+      {
+        "chance": 0.25,
+        "feature": "guworld:taiga/birch/cloud_tree"
+      }
+    ]
+  }
+}

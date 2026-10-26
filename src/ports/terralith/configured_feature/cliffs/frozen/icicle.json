@@ -1,0 +1,27 @@
+{
+  "config": {
+    "allowed_placement": {
+      "type": "minecraft:true"
+    },
+    "direction": "down",
+    "layers": [
+      {
+        "height": {
+          "deviation": 3.75,
+          "max_inclusive": 16,
+          "mean": 2,
+          "min_inclusive": 1,
+          "type": "minecraft:clamped_normal"
+        },
+        "provider": {
+          "state": {
+            "Name": "minecraft:ice"
+          },
+          "type": "minecraft:simple_state_provider"
+        }
+      }
+    ],
+    "prioritize_tip": false
+  },
+  "type": "minecraft:block_column"
+}

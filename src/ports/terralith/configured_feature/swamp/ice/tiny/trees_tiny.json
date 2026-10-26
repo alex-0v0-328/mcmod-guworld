@@ -1,0 +1,12 @@
+{
+  "config": {
+    "default": "guworld:swamp/ice/tiny/swamp_tiny",
+    "features": [
+      {
+        "chance": 0.2,
+        "feature": "guworld:swamp/ice/tiny/swamp_special_tiny"
+      }
+    ]
+  },
+  "type": "minecraft:random_selector"
+}

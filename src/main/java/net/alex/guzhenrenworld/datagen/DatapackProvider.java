@@ -1,5 +1,7 @@
 package net.alex.guzhenrenworld.datagen;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -8,9 +10,18 @@ import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
+import net.alex.guzhenrenworld.dimension.easternsea.EasternSea;
+import net.alex.guzhenrenworld.dimension.easternsea.EasternSeaRoster;
+import net.alex.guzhenrenworld.dimension.easternsea.EasternSeaTerrain;
+import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlains;
+import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlainsRoster;
+import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlainsTerrain;
 import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.alex.guzhenrenworld.dimension.southernborder.Terrain;
+import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesert;
+import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesertRoster;
+import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesertTerrain;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
 import net.alex.guzhenrenworld.feature.SpiritSpringRegistration;
 import net.minecraft.core.HolderLookup;
@@ -27,10 +38,14 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * the function packages bootstrap: the Treasure Yellow Heaven dimension's type, biome and level stem
  * ({@link TreasureYellowHeaven}); the Southern Border [南疆] dimension's type, noise settings and level stem
  * ({@link SouthernBorder}), its density functions, Tectonic's router with the region's hooks ({@link Terrain}),
- * and its bamboo sea with that biome's bamboo ({@link BiomeSettings}); Gu World's shared biomes, the vanilla replicas
- * ({@link Replicas}), the biomes ported from Terralith with their features, and the noises both ports read
- * ({@link Ports}); and the Spirit Spring [元泉] configured and placed feature ({@link SpiritSpring}) and biome
- * modifier ({@link SpiritSpringRegistration}). {@link #of} hands each bootstrap vanilla's context wrapped in
+ * and its bamboo sea with that biome's bamboo ({@link BiomeSettings}); the same three entries and density functions
+ * of the Western Desert [西漠] ({@link WesternDesert}), the Eastern Sea [东海] ({@link EasternSea}) and the Northern
+ * Plains [北原] ({@link NorthernPlains}), each region's copy of the ported terrain under its own prefix; Gu World's
+ * shared biomes, the vanilla replicas ({@link Replicas#SHARED}) and each region's own ({@code Roster.REPLICAS}), the
+ * biomes ported from Terralith with their features, {@link Ports#BIOMES} and each region's {@code Roster.PORTED},
+ * and the noises both ports read ({@link Ports}); and the Spirit Spring [元泉] configured and placed feature
+ * ({@link SpiritSpring}) and biome modifier ({@link SpiritSpringRegistration}). {@link #of} hands each bootstrap
+ * vanilla's context wrapped in
  * {@link DatapackBootstrap}. A registry two dimensions both fill gets one bootstrap that runs both. The tag provider
  * takes {@code getRegistryProvider()} from this instance, not the plain lookup, so the tag pass sees the biome this
  * run generates.
@@ -49,19 +64,41 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
             .add(Registries.DIMENSION_TYPE, of(context -> {
                 TreasureYellowHeaven.registerDimensionType(context);
                 SouthernBorder.registerDimensionType(context);
+                WesternDesert.registerDimensionType(context);
+                EasternSea.registerDimensionType(context);
+                NorthernPlains.registerDimensionType(context);
             }))
             .add(Registries.BIOME, of(context -> {
                 TreasureYellowHeaven.registerBiome(context);
-                Replicas.registerBiomes(context);
-                Ports.registerBiomes(context);
+                Replicas.registerBiomes(context, getJoined(Replicas.SHARED,
+                        WesternDesertRoster.REPLICAS,
+                        EasternSeaRoster.REPLICAS,
+                        NorthernPlainsRoster.REPLICAS));
+                Ports.registerBiomes(context, getJoined(Ports.BIOMES,
+                        WesternDesertRoster.PORTED,
+                        EasternSeaRoster.PORTED,
+                        NorthernPlainsRoster.PORTED));
                 BiomeSettings.registerBiomes(context);
             }))
             .add(Registries.NOISE, of(Ports::registerNoises))
-            .add(Registries.DENSITY_FUNCTION, of(Terrain::registerDensityFunctions))
-            .add(Registries.NOISE_SETTINGS, of(SouthernBorder::registerNoiseSettings))
+            .add(Registries.DENSITY_FUNCTION, of(context -> {
+                Terrain.registerDensityFunctions(context);
+                WesternDesertTerrain.registerDensityFunctions(context);
+                EasternSeaTerrain.registerDensityFunctions(context);
+                NorthernPlainsTerrain.registerDensityFunctions(context);
+            }))
+            .add(Registries.NOISE_SETTINGS, of(context -> {
+                SouthernBorder.registerNoiseSettings(context);
+                WesternDesert.registerNoiseSettings(context);
+                EasternSea.registerNoiseSettings(context);
+                NorthernPlains.registerNoiseSettings(context);
+            }))
             .add(Registries.LEVEL_STEM, of(context -> {
                 TreasureYellowHeaven.registerLevelStem(context);
                 SouthernBorder.registerLevelStem(context);
+                WesternDesert.registerLevelStem(context);
+                EasternSea.registerLevelStem(context);
+                NorthernPlains.registerLevelStem(context);
             }))
             .add(Registries.CONFIGURED_FEATURE, of(context -> {
                 SpiritSpring.registerConfiguredFeature(context);
@@ -80,5 +117,12 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
 
     private static <T> RegistrySetBuilder.RegistryBootstrap<T> of(Consumer<DatapackBootstrap<T>> bootstrap) {
         return context -> bootstrap.accept(DatapackBootstrap.of(context));
+    }
+
+    @SafeVarargs
+    private static <T> List<T> getJoined(List<T>... parts) {
+        List<T> joined = new ArrayList<>();
+        for (List<T> part : parts) joined.addAll(part);
+        return List.copyOf(joined);
     }
 }

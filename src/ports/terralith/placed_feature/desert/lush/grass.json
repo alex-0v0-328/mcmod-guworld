@@ -1,0 +1,174 @@
+{
+  "feature": {
+    "config": {
+      "feature": {
+        "feature": {
+          "config": {
+            "allowed_placement": {
+              "type": "minecraft:true"
+            },
+            "direction": "up",
+            "layers": [
+              {
+                "height": 1,
+                "provider": {
+                  "noise": {
+                    "amplitudes": [
+                      1,
+                      1.75,
+                      2.75
+                    ],
+                    "firstOctave": -3
+                  },
+                  "scale": 1,
+                  "seed": 62353,
+                  "slow_noise": {
+                    "amplitudes": [
+                      1,
+                      0.25,
+                      0.25,
+                      1.875,
+                      6.75,
+                      14.5
+                    ],
+                    "firstOctave": -5
+                  },
+                  "slow_scale": 1,
+                  "states": [
+                    {
+                      "Name": "minecraft:short_grass"
+                    },
+                    {
+                      "Name": "minecraft:short_grass"
+                    },
+                    {
+                      "Name": "minecraft:short_grass"
+                    },
+                    {
+                      "Name": "minecraft:fern"
+                    },
+                    {
+                      "Name": "minecraft:short_grass"
+                    },
+                    {
+                      "Name": "minecraft:short_grass"
+                    },
+                    {
+                      "Name": "minecraft:short_grass"
+                    },
+                    {
+                      "Name": "minecraft:short_grass"
+                    },
+                    {
+                      "Name": "minecraft:air"
+                    },
+                    {
+                      "Name": "minecraft:air"
+                    },
+                    {
+                      "Name": "minecraft:air"
+                    },
+                    {
+                      "Name": "minecraft:air"
+                    },
+                    {
+                      "Name": "minecraft:air"
+                    },
+                    {
+                      "Name": "minecraft:air"
+                    },
+                    {
+                      "Name": "minecraft:air"
+                    },
+                    {
+                      "Name": "minecraft:air"
+                    },
+                    {
+                      "Name": "minecraft:short_grass"
+                    },
+                    {
+                      "Name": "minecraft:fern"
+                    },
+                    {
+                      "Name": "minecraft:short_grass"
+                    }
+                  ],
+                  "type": "minecraft:dual_noise_provider",
+                  "variety": {
+                    "max_inclusive": 19,
+                    "min_inclusive": 1
+                  }
+                }
+              }
+            ],
+            "prioritize_tip": false
+          },
+          "type": "minecraft:block_column"
+        },
+        "placement": [
+          {
+            "predicate": {
+              "predicates": [
+                {
+                  "blocks": [
+                    "minecraft:air"
+                  ],
+                  "offset": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "type": "minecraft:matching_blocks"
+                },
+                {
+                  "blocks": [
+                    "minecraft:packed_mud",
+                    "minecraft:coarse_dirt",
+                    "minecraft:grass_block"
+                  ],
+                  "offset": [
+                    0,
+                    -1,
+                    0
+                  ],
+                  "type": "minecraft:matching_blocks"
+                },
+                {
+                  "state": {
+                    "Name": "minecraft:short_grass",
+                    "Properties": {
+                      "age": "0"
+                    }
+                  },
+                  "type": "minecraft:would_survive"
+                }
+              ],
+              "type": "minecraft:all_of"
+            },
+            "type": "minecraft:block_predicate_filter"
+          }
+        ]
+      },
+      "tries": 13,
+      "xz_spread": 6,
+      "y_spread": 2
+    },
+    "type": "minecraft:random_patch"
+  },
+  "placement": [
+    {
+      "count": 25,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "WORLD_SURFACE_WG",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

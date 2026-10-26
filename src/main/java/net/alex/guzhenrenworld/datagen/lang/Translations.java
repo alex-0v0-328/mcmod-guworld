@@ -3,11 +3,18 @@ package net.alex.guzhenrenworld.datagen.lang;
 import java.util.List;
 import java.util.Locale;
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.biome.BiomeName;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
+import net.alex.guzhenrenworld.dimension.easternsea.EasternSea;
+import net.alex.guzhenrenworld.dimension.easternsea.EasternSeaRoster;
+import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlains;
+import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlainsRoster;
 import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
+import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesert;
+import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesertRoster;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
@@ -25,7 +32,8 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  * {@link #addDimension} writes a dimension's name and its Traveler's Titles title; {@link #addTitleColor} adds the
  * title's color, the {@code travelerstitles.*} convention's lowercase hex without {@code #}, the same in every
  * language. {@link #addBiomes} names a registry list of biomes, one English and Simplified pair per biome in the
- * list's order. The Treasure Yellow Heaven's one biome carries the dimension's name.
+ * list's order, or a region's {@link BiomeName} list. The Treasure Yellow Heaven's one biome carries the dimension's
+ * name.
  *
  * <p>⚠ Both renderings are the authority, not a translation of each other. ⚠ {@link #addBiomes} throws when the
  * pairs and the biomes differ in number, and {@link TraditionalGlyphs} throws on an unseen glyph, so a biome added
@@ -85,6 +93,18 @@ public class Translations extends LanguageProvider {
                 "Zhangshiyan Cliffs", "嶂石岩",
                 "Karst Peak Forest", "喀斯特峰林");
         addBiomes(List.of(BiomeSettings.BAMBOO_SEA), "Bamboo Sea", "竹海");
+        addDimension(WesternDesert.LEVEL_STEM, "Western Desert", "西漠");
+        addBiomes(WesternDesertRoster.NAMES);
+        addDimension(EasternSea.LEVEL_STEM, "Eastern Sea", "东海");
+        addBiomes(EasternSeaRoster.NAMES);
+        addDimension(NorthernPlains.LEVEL_STEM, "Northern Plains", "北原");
+        addBiomes(NorthernPlainsRoster.NAMES);
+    }
+
+    private void addBiomes(List<BiomeName> names) {
+        for (BiomeName name : names) {
+            add(getLanguageKey("biome", name.biome()), getRendering(name.english(), name.simplified()));
+        }
     }
 
     private void addDimension(ResourceKey<LevelStem> dimension, String english, String simplified) {

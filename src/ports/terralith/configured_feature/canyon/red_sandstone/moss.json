@@ -1,0 +1,29 @@
+{
+  "config": {
+    "half_height": 2,
+    "radius": {
+      "max_inclusive": 5,
+      "min_inclusive": 3,
+      "type": "minecraft:biased_to_bottom"
+    },
+    "state_provider": {
+      "fallback": {
+        "state": {
+          "Name": "minecraft:moss_block"
+        },
+        "type": "minecraft:simple_state_provider"
+      },
+      "rules": []
+    },
+    "target": {
+      "blocks": [
+        "minecraft:red_sand",
+        "minecraft:red_sandstone",
+        "minecraft:smooth_red_sandstone",
+        "minecraft:terracotta"
+      ],
+      "type": "minecraft:matching_blocks"
+    }
+  },
+  "type": "minecraft:disk"
+}

@@ -1,0 +1,68 @@
+{
+  "feature": "guworld:brushland/boulder",
+  "placement": [
+    {
+      "chance": 16,
+      "type": "minecraft:rarity_filter"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "WORLD_SURFACE_WG",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "noise_factor": 180,
+      "noise_offset": 0,
+      "noise_to_count_ratio": 1,
+      "type": "minecraft:noise_based_count"
+    },
+    {
+      "direction_of_search": "down",
+      "max_steps": 6,
+      "target_condition": {
+        "predicates": [
+          {
+            "blocks": [
+              "minecraft:grass_block"
+            ],
+            "offset": [
+              0,
+              3,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:dirt"
+            ],
+            "offset": [
+              0,
+              2,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:dirt"
+            ],
+            "offset": [
+              0,
+              1,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:environment_scan"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

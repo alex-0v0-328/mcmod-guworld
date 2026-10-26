@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:add",
+  "argument1": "guworld:terrain/eastern_sea/hook/jungle_pillars",
+  "argument2": 0.0
+}

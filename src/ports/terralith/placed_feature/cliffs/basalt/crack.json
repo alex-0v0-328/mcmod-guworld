@@ -1,0 +1,68 @@
+{
+  "feature": "guworld:cliffs/basalt/crack",
+  "placement": [
+    {
+      "count": 50,
+      "type": "minecraft:count"
+    },
+    {
+      "count": 40,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "height": {
+        "max_inclusive": {
+          "absolute": 164
+        },
+        "min_inclusive": {
+          "absolute": 64
+        },
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:height_range"
+    },
+    {
+      "heightmap": "WORLD_SURFACE",
+      "max_inclusive": 2,
+      "min_inclusive": -128,
+      "type": "minecraft:surface_relative_threshold_filter"
+    },
+    {
+      "direction_of_search": "down",
+      "max_steps": 32,
+      "target_condition": {
+        "predicates": [
+          {
+            "predicates": [
+              {
+                "predicates": [
+                  {
+                    "blocks": [
+                      "minecraft:smooth_basalt"
+                    ],
+                    "offset": [
+                      0,
+                      1,
+                      0
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  }
+                ],
+                "type": "minecraft:all_of"
+              }
+            ],
+            "type": "minecraft:any_of"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:environment_scan"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

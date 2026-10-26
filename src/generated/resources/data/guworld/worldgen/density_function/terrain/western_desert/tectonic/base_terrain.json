@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:max",
+  "argument1": "guworld:terrain/western_desert/tectonic/sloped_cheese",
+  "argument2": "guworld:terrain/western_desert/terralith/overworld/extra_terrain_sum"
+}

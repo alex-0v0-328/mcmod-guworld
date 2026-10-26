@@ -1,0 +1,12 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ],
+  "type": "neoforge:add_features",
+  "biomes": "#guworld:farmersdelight/beach",
+  "features": "farmersdelight:patch_wild_cabbages",
+  "step": "vegetal_decoration"
+}

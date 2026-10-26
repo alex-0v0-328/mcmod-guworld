@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:clamp",
+  "input": {
+    "type": "minecraft:add",
+    "argument1": 1.0,
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": "guworld:terrain/northern_plains/tectonic/underground_river/noise/roof_sharpness",
+      "argument2": "guworld:terrain/northern_plains/tectonic/noise/continent/ridges_folded"
+    }
+  },
+  "max": 1.0,
+  "min": 0.0
+}

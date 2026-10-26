@@ -1,0 +1,59 @@
+{
+  "type": "minecraft:clamp",
+  "input": {
+    "type": "minecraft:add",
+    "argument1": -0.7,
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": 4.0,
+      "argument2": {
+        "type": "minecraft:quarter_negative",
+        "argument": {
+          "type": "minecraft:mul",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": {
+              "type": "minecraft:spline",
+              "spline": {
+                "coordinate": "guworld:terrain/southern_border/tectonic/noise/full_continents",
+                "points": [
+                  {
+                    "derivative": 0.0,
+                    "location": -1.0,
+                    "value": 0.0
+                  },
+                  {
+                    "derivative": 0.0,
+                    "location": -0.9,
+                    "value": -0.2
+                  },
+                  {
+                    "derivative": 0.0,
+                    "location": -0.4,
+                    "value": -0.2
+                  },
+                  {
+                    "derivative": 0.0,
+                    "location": -0.3,
+                    "value": 0.0
+                  }
+                ]
+              }
+            },
+            "argument2": "guworld:terrain/southern_border/tectonic/depth"
+          },
+          "argument2": {
+            "type": "minecraft:range_choice",
+            "input": "guworld:terrain/southern_border/tectonic/continent_selector",
+            "max_exclusive": 1.1,
+            "min_inclusive": 0.9,
+            "when_in_range": "guworld:terrain/southern_border/tectonic/terrain_spline/factor/continents",
+            "when_out_of_range": "guworld:terrain/southern_border/tectonic/terrain_spline/factor/islands"
+          }
+        }
+      }
+    }
+  },
+  "max": 64.0,
+  "min": -64.0
+}

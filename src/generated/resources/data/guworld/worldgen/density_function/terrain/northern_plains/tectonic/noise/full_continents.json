@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "minecraft:mul",
+        "argument1": "guworld:terrain/northern_plains/tectonic/island_selector",
+        "argument2": "guworld:terrain/northern_plains/tectonic/noise/raw_islands"
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": "guworld:terrain/northern_plains/tectonic/continent_selector",
+        "argument2": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": "guworld:terrain/northern_plains/tectonic/noise/raw_continents",
+            "points": [
+              {
+                "derivative": 1.0,
+                "location": 0.05,
+                "value": 0.05
+              },
+              {
+                "derivative": 1.0,
+                "location": 0.175,
+                "value": 0.3
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

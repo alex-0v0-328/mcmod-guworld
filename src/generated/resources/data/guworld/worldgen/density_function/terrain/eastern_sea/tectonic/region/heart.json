@@ -1,0 +1,195 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "guworld:terrain/eastern_sea/tectonic/noise/temperature_index",
+        "points": [
+          {
+            "derivative": 0.0,
+            "location": 3.0,
+            "value": {
+              "coordinate": "guworld:terrain/eastern_sea/tectonic/noise/vegetation_index",
+              "points": [
+                {
+                  "derivative": 0.0,
+                  "location": 2.0,
+                  "value": {
+                    "coordinate": "guworld:terrain/eastern_sea/tectonic/noise/continent/ridges_folded",
+                    "points": [
+                      {
+                        "derivative": 0.5,
+                        "location": 0.03,
+                        "value": -0.06
+                      },
+                      {
+                        "derivative": 0.1,
+                        "location": 0.1,
+                        "value": 0.01
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.2,
+                        "value": {
+                          "coordinate": "guworld:terrain/eastern_sea/tectonic/region/heart/rolling_hills",
+                          "points": [
+                            {
+                              "derivative": 0.225,
+                              "location": 0.0,
+                              "value": 0.01
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 3.0,
+                  "value": {
+                    "coordinate": "guworld:terrain/eastern_sea/tectonic/noise/continent/ridges_folded",
+                    "points": [
+                      {
+                        "derivative": 0.5,
+                        "location": 0.03,
+                        "value": -0.06
+                      },
+                      {
+                        "derivative": 0.1,
+                        "location": 0.1,
+                        "value": 0.01
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "derivative": 0.0,
+            "location": 4.0,
+            "value": {
+              "coordinate": "guworld:terrain/eastern_sea/tectonic/noise/vegetation_index",
+              "points": [
+                {
+                  "derivative": 0.0,
+                  "location": 3.0,
+                  "value": {
+                    "coordinate": "guworld:terrain/eastern_sea/tectonic/noise/continent/ridges_folded",
+                    "points": [
+                      {
+                        "derivative": 0.5,
+                        "location": 0.03,
+                        "value": -0.06
+                      },
+                      {
+                        "derivative": 0.1,
+                        "location": 0.1,
+                        "value": 0.01
+                      }
+                    ]
+                  }
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 4.0,
+                  "value": {
+                    "coordinate": "guworld:terrain/eastern_sea/tectonic/noise/continent/ridges",
+                    "points": [
+                      {
+                        "derivative": 0.0,
+                        "location": -0.75,
+                        "value": 0.05
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": -0.175,
+                        "value": 0.015
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": -0.125,
+                        "value": 0.01
+                      },
+                      {
+                        "derivative": -0.7,
+                        "location": -0.04,
+                        "value": -0.06
+                      },
+                      {
+                        "derivative": 0.7,
+                        "location": 0.04,
+                        "value": -0.06
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.125,
+                        "value": 0.01
+                      }
+                    ]
+                  }
+                },
+                {
+                  "derivative": 0.0,
+                  "location": 5.0,
+                  "value": {
+                    "coordinate": "guworld:terrain/eastern_sea/tectonic/noise/continent/ridges_folded",
+                    "points": [
+                      {
+                        "derivative": 0.7,
+                        "location": 0.04,
+                        "value": -0.06
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.125,
+                        "value": 0.01
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.175,
+                        "value": 0.015
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.75,
+                        "value": 0.05
+                      },
+                      {
+                        "derivative": 0.0,
+                        "location": 0.8,
+                        "value": 0.6
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "derivative": 0.0,
+            "location": 5.0,
+            "value": {
+              "coordinate": "guworld:terrain/eastern_sea/tectonic/noise/continent/ridges_folded",
+              "points": [
+                {
+                  "derivative": 0.5,
+                  "location": 0.03,
+                  "value": -0.06
+                },
+                {
+                  "derivative": 0.15,
+                  "location": 0.1,
+                  "value": 0.01
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,303 @@
+{
+  "feature": {
+    "config": {
+      "depth": {
+        "max_inclusive": 8,
+        "min_inclusive": 7,
+        "type": "minecraft:uniform"
+      },
+      "extra_bottom_block_chance": 0,
+      "extra_edge_column_chance": 0.65,
+      "ground_state": {
+        "state": {
+          "Name": "minecraft:blackstone"
+        },
+        "type": "minecraft:simple_state_provider"
+      },
+      "replaceable": "#guworld:volcano_barrier",
+      "surface": "floor",
+      "vegetation_chance": 0.03,
+      "vegetation_feature": {
+        "feature": {
+          "config": {
+            "discard_chance_on_air_exposure": 0,
+            "size": 24,
+            "targets": [
+              {
+                "state": {
+                  "Name": "minecraft:blackstone"
+                },
+                "target": {
+                  "block": "stone",
+                  "predicate_type": "minecraft:block_match"
+                }
+              }
+            ]
+          },
+          "type": "minecraft:ore"
+        },
+        "placement": [
+          {
+            "type": "minecraft:random_offset",
+            "xz_spread": 0,
+            "y_spread": {
+              "max_inclusive": 0,
+              "min_inclusive": -7,
+              "type": "minecraft:uniform"
+            }
+          }
+        ]
+      },
+      "vertical_range": 5,
+      "xz_radius": {
+        "max_inclusive": 1,
+        "min_inclusive": 0,
+        "type": "minecraft:uniform"
+      }
+    },
+    "type": "minecraft:vegetation_patch"
+  },
+  "placement": [
+    {
+      "count": 8,
+      "type": "minecraft:count"
+    },
+    {
+      "count": 256,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "WORLD_SURFACE",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "predicate": {
+        "predicate": {
+          "predicates": [
+            {
+              "blocks": [
+                "minecraft:lava",
+                "minecraft:water"
+              ],
+              "offset": [
+                0,
+                -1,
+                0
+              ],
+              "type": "minecraft:matching_blocks"
+            }
+          ],
+          "type": "minecraft:any_of"
+        },
+        "type": "minecraft:not"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "predicate": {
+        "predicates": [
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              1,
+              -1,
+              0
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              0,
+              -1,
+              1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              -1,
+              -1,
+              0
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              0,
+              -1,
+              -1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              1,
+              -1,
+              1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              1,
+              -1,
+              -1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              -1,
+              -1,
+              1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              -1,
+              -1,
+              -1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              1,
+              -2,
+              0
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              0,
+              -2,
+              1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              -1,
+              -2,
+              0
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              0,
+              -2,
+              -1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              1,
+              -2,
+              1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              1,
+              -2,
+              -1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              -1,
+              -2,
+              1
+            ],
+            "type": "minecraft:matching_fluids"
+          },
+          {
+            "fluids": [
+              "minecraft:lava",
+              "minecraft:water"
+            ],
+            "offset": [
+              -1,
+              -2,
+              -1
+            ],
+            "type": "minecraft:matching_fluids"
+          }
+        ],
+        "type": "minecraft:any_of"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

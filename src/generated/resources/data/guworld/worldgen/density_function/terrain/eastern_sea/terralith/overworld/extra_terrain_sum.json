@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:cache_once",
+  "argument": {
+    "type": "minecraft:range_choice",
+    "input": "guworld:terrain/eastern_sea/terralith/overworld/extra_terrain_base",
+    "max_exclusive": 1000000.0,
+    "min_inclusive": -1.0,
+    "when_in_range": "guworld:terrain/eastern_sea/terralith/overworld/extra_terrain_base",
+    "when_out_of_range": -64.0
+  }
+}

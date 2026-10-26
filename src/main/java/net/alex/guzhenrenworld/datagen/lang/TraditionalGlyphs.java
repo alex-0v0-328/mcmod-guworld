@@ -32,8 +32,10 @@ import java.util.Map;
 
 public final class TraditionalGlyphs {
 
-    private static final String PAIRS = "丛叢 云雲 兰蘭 叶葉 宝寶 岗崗 桦樺 泽澤 热熱 袭襲 针針 间間 雾霧 风風 黄黃";
-    private static final String UNCHANGED = "丘丹南原喀天山岩峰崖嶂平彩斯木林桃森河沼洞流海溶特甸疆石砂穴竹繁翠花茂草裸陵雨霞高黑";
+    private static final String PAIRS = "丛叢 东東 云雲 亚亞 兰蘭 冻凍 台地臺地 叶葉 宝寶 屿嶼 岗崗 岛島 岩谷岩谷 峡峽 峡谷峽谷 干草乾草 恶惡"
+            + " 桦樺 泽澤 温溫 滩灘 热熱 砾礫 积積 红紅 绿綠 荆荊 蚀蝕 袭襲 裂谷裂谷 针針 间間 雾霧 风風 黄黃";
+    private static final String UNCHANGED = "丘丹之伯低冰利刺北南原口古喀地壁天寒封山岩岸峰崖嶂川平彩戈斯旱暖木林柱桃森武水沙"
+            + "河沼洋洞洲流海深溶漠灌火特玄甸疆疏白盾石砂穴竹繁翠花茂草蜃裸西陵雨雪霞高黑";
     private static final Map<String, String> TOKENS = parseTokens();
     private static final int LONGEST = TOKENS.keySet().stream().mapToInt(String::length).max().orElse(1);
 

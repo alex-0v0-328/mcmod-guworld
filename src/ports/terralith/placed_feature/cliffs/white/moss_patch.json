@@ -1,0 +1,166 @@
+{
+  "feature": "guworld:cliffs/white/patch_base",
+  "placement": [
+    {
+      "count": 27,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "WORLD_SURFACE_WG",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "predicate": {
+        "predicates": [
+          {
+            "blocks": [
+              "minecraft:tall_grass",
+              "minecraft:short_grass",
+              "minecraft:flowering_azalea",
+              "minecraft:azalea",
+              "minecraft:moss_carpet",
+              "minecraft:air"
+            ],
+            "offset": [
+              1,
+              0,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:tall_grass",
+              "minecraft:short_grass",
+              "minecraft:flowering_azalea",
+              "minecraft:azalea",
+              "minecraft:moss_carpet",
+              "minecraft:air"
+            ],
+            "offset": [
+              2,
+              0,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:tall_grass",
+              "minecraft:short_grass",
+              "minecraft:flowering_azalea",
+              "minecraft:azalea",
+              "minecraft:moss_carpet",
+              "minecraft:air"
+            ],
+            "offset": [
+              -1,
+              0,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:tall_grass",
+              "minecraft:short_grass",
+              "minecraft:flowering_azalea",
+              "minecraft:azalea",
+              "minecraft:moss_carpet",
+              "minecraft:air"
+            ],
+            "offset": [
+              -2,
+              0,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:tall_grass",
+              "minecraft:short_grass",
+              "minecraft:flowering_azalea",
+              "minecraft:azalea",
+              "minecraft:moss_carpet",
+              "minecraft:air"
+            ],
+            "offset": [
+              0,
+              0,
+              1
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:tall_grass",
+              "minecraft:short_grass",
+              "minecraft:flowering_azalea",
+              "minecraft:azalea",
+              "minecraft:moss_carpet",
+              "minecraft:air"
+            ],
+            "offset": [
+              0,
+              0,
+              2
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:tall_grass",
+              "minecraft:short_grass",
+              "minecraft:flowering_azalea",
+              "minecraft:azalea",
+              "minecraft:moss_carpet",
+              "minecraft:air"
+            ],
+            "offset": [
+              0,
+              0,
+              -1
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:tall_grass",
+              "minecraft:short_grass",
+              "minecraft:flowering_azalea",
+              "minecraft:azalea",
+              "minecraft:moss_carpet",
+              "minecraft:air"
+            ],
+            "offset": [
+              0,
+              0,
+              -2
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:tall_grass",
+              "minecraft:short_grass",
+              "minecraft:flowering_azalea",
+              "minecraft:azalea",
+              "minecraft:moss_carpet",
+              "minecraft:air"
+            ],
+            "type": "minecraft:matching_blocks"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:mul",
+  "argument1": "guworld:terrain/northern_plains/tectonic/__constants/jungle_pillars",
+  "argument2": {
+    "type": "minecraft:mul",
+    "argument1": 1.7,
+    "argument2": {
+      "type": "minecraft:add",
+      "argument1": -0.35,
+      "argument2": {
+        "type": "minecraft:noise",
+        "noise": "guworld:terrain/tectonic/region/heart/jungle_pillar",
+        "xz_scale": 8.0,
+        "y_scale": 0.0
+      }
+    }
+  }
+}

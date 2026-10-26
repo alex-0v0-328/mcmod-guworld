@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:add",
+      "argument1": {
+        "type": "guworld:z_gradient",
+        "from_value": -0.75,
+        "from_z": -2048,
+        "to_value": -0.05,
+        "to_z": 2048
+      },
+      "argument2": {
+        "type": "minecraft:mul",
+        "argument1": 0.55,
+        "argument2": "guworld:terrain/northern_plains/tectonic/__constants/noise/temperature"
+      }
+    }
+  }
+}

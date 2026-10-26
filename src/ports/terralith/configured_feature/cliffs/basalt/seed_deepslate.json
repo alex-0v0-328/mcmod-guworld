@@ -1,0 +1,12 @@
+{
+  "config": {
+    "radius": 0,
+    "state": {
+      "Name": "minecraft:cobbled_deepslate"
+    },
+    "target": {
+      "Name": "minecraft:smooth_basalt"
+    }
+  },
+  "type": "minecraft:netherrack_replace_blobs"
+}

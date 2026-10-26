@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:add",
+  "argument1": "guworld:terrain/western_desert/hook/jungle_pillars",
+  "argument2": 0.0
+}

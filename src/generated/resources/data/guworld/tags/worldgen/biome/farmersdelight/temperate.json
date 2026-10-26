@@ -1,0 +1,21 @@
+{
+  "values": [
+    "guworld:plains",
+    "guworld:plateau",
+    "guworld:orchid_swamp",
+    "guworld:peach_grove",
+    "guworld:granite_cliffs",
+    "guworld:alpine_meadow",
+    "guworld:karst_peak_forest",
+    "guworld:hot_shrubland",
+    "guworld:beach",
+    "guworld:gravel_beach",
+    "guworld:isles",
+    "guworld:mirage_isles",
+    "guworld:basalt_cliffs",
+    "guworld:white_cliffs",
+    "guworld:steppe",
+    "guworld:shield",
+    "guworld:alpine_highlands"
+  ]
+}

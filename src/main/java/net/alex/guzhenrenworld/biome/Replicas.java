@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import java.util.List;
-import java.util.Map;
 import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.Holder;
@@ -42,8 +41,14 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  *   the rebuild moves such a spawn, with its spawn cost, to its type's category.</li>
  * </ul>
  *
- * <p>{@link #TEMPLATES} pairs each replica with its vanilla biome; {@link #BIOMES} lists the replicas in that order,
- * the order the language providers name them in.
+ * <p>A {@link Template} pairs a replica's key with its vanilla biome and the vanilla factory that builds it
+ * ({@link #of} names the key after the vanilla biome). {@link #SHARED} is the templates every region may place:
+ * the Southern Border [南疆] places its plains, river and two caves, and the other eight forests, meadow, taiga and
+ * peaks stand registered for a later tuning by Alex's decision; {@link #BIOMES} lists their keys in that order, the
+ * order the language provider names them in. A region that places a vanilla biome no other region does keeps that
+ * template in its
+ * own package and hands it to {@link #registerBiomes} and {@link #getSurfaceRules} beside the shared ones; a template
+ * two regions both want moves here, since a biome registers once.
  *
  * @author Alex
  * @version 1.0.0
@@ -64,32 +69,44 @@ public final class Replicas {
     public static final ResourceKey<Biome> RIVER = key("river");
     public static final ResourceKey<Biome> LUSH_CAVES = key("lush_caves");
     public static final ResourceKey<Biome> DRIPSTONE_CAVES = key("dripstone_caves");
-    public static final List<Map.Entry<ResourceKey<Biome>, ResourceKey<Biome>>> TEMPLATES = List.of(
-            Map.entry(PLAINS, Biomes.PLAINS), Map.entry(FOREST, Biomes.FOREST),
-            Map.entry(BIRCH_FOREST, Biomes.BIRCH_FOREST), Map.entry(DARK_FOREST, Biomes.DARK_FOREST),
-            Map.entry(BAMBOO_JUNGLE, Biomes.BAMBOO_JUNGLE), Map.entry(MEADOW, Biomes.MEADOW),
-            Map.entry(TAIGA, Biomes.TAIGA), Map.entry(WINDSWEPT_HILLS, Biomes.WINDSWEPT_HILLS),
-            Map.entry(STONY_PEAKS, Biomes.STONY_PEAKS), Map.entry(RIVER, Biomes.RIVER),
-            Map.entry(LUSH_CAVES, Biomes.LUSH_CAVES), Map.entry(DRIPSTONE_CAVES, Biomes.DRIPSTONE_CAVES));
-    public static final List<ResourceKey<Biome>> BIOMES = TEMPLATES.stream().map(Map.Entry::getKey).toList();
+    public static final List<Template> SHARED = List.of(
+            of(Biomes.PLAINS, (placed, carvers) -> OverworldBiomes.plains(placed, carvers, false, false, false)),
+            of(Biomes.FOREST, (placed, carvers) -> OverworldBiomes.forest(placed, carvers, false, false, false)),
+            of(Biomes.BIRCH_FOREST, (placed, carvers) -> OverworldBiomes.forest(placed, carvers, true, false, false)),
+            of(Biomes.DARK_FOREST, OverworldBiomes::darkForest),
+            of(Biomes.BAMBOO_JUNGLE, OverworldBiomes::bambooJungle),
+            of(Biomes.MEADOW, (placed, carvers) -> OverworldBiomes.meadowOrCherryGrove(placed, carvers, false)),
+            of(Biomes.TAIGA, (placed, carvers) -> OverworldBiomes.taiga(placed, carvers, false)),
+            of(Biomes.WINDSWEPT_HILLS, (placed, carvers) -> OverworldBiomes.windsweptHills(placed, carvers, false)),
+            of(Biomes.STONY_PEAKS, OverworldBiomes::stonyPeaks),
+            of(Biomes.RIVER, (placed, carvers) -> OverworldBiomes.river(placed, carvers, false)),
+            of(Biomes.LUSH_CAVES, OverworldBiomes::lushCaves),
+            of(Biomes.DRIPSTONE_CAVES, OverworldBiomes::dripstoneCaves));
+    public static final List<ResourceKey<Biome>> BIOMES = SHARED.stream().map(Template::replica).toList();
+
+    /** Builds a vanilla biome from the registries a bootstrap offers, the signature of vanilla's biome factories. */
+    public interface Factory {
+        Biome create(HolderGetter<PlacedFeature> placed, HolderGetter<ConfiguredWorldCarver<?>> carvers);
+    }
+
+    public record Template(ResourceKey<Biome> replica, ResourceKey<Biome> vanilla, Factory factory) {}
 
     private Replicas() {}
 
-    public static void registerBiomes(DatapackBootstrap<Biome> context) {
+    public static Template of(ResourceKey<Biome> vanilla, Factory factory) {
+        return new Template(keyOf(vanilla), vanilla, factory);
+    }
+
+    public static ResourceKey<Biome> keyOf(ResourceKey<Biome> vanilla) {
+        return key(vanilla.location().getPath());
+    }
+
+    public static void registerBiomes(DatapackBootstrap<Biome> context, List<Template> templates) {
         HolderGetter<PlacedFeature> placed = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
-        register(context, PLAINS, OverworldBiomes.plains(placed, carvers, false, false, false));
-        register(context, FOREST, OverworldBiomes.forest(placed, carvers, false, false, false));
-        register(context, BIRCH_FOREST, OverworldBiomes.forest(placed, carvers, true, false, false));
-        register(context, DARK_FOREST, OverworldBiomes.darkForest(placed, carvers));
-        register(context, BAMBOO_JUNGLE, OverworldBiomes.bambooJungle(placed, carvers));
-        register(context, MEADOW, OverworldBiomes.meadowOrCherryGrove(placed, carvers, false));
-        register(context, TAIGA, OverworldBiomes.taiga(placed, carvers, false));
-        register(context, WINDSWEPT_HILLS, OverworldBiomes.windsweptHills(placed, carvers, false));
-        register(context, STONY_PEAKS, OverworldBiomes.stonyPeaks(placed, carvers));
-        register(context, RIVER, OverworldBiomes.river(placed, carvers, false));
-        register(context, LUSH_CAVES, OverworldBiomes.lushCaves(placed, carvers));
-        register(context, DRIPSTONE_CAVES, OverworldBiomes.dripstoneCaves(placed, carvers));
+        for (Template template : templates) {
+            register(context, template.replica(), template.factory().create(placed, carvers));
+        }
     }
 
     public static Biome getUncarved(Biome template) {
@@ -130,9 +147,9 @@ public final class Replicas {
         return builder.build();
     }
 
-    public static SurfaceRules.RuleSource getSurfaceRules() {
+    public static SurfaceRules.RuleSource getSurfaceRules(List<Template> templates) {
         JsonElement vanilla = SurfaceRuleJson.encode(SurfaceRuleData.overworld(), "vanilla overworld surface rule");
-        addReplicas(vanilla);
+        addReplicas(vanilla, templates);
         return SurfaceRuleJson.decode(vanilla, "replica surface rule");
     }
 
@@ -140,20 +157,20 @@ public final class Replicas {
         context.register(key, getUncarved(template));
     }
 
-    private static void addReplicas(JsonElement rule) {
+    private static void addReplicas(JsonElement rule, List<Template> templates) {
         if (rule.isJsonArray()) {
-            rule.getAsJsonArray().forEach(Replicas::addReplicas);
+            rule.getAsJsonArray().forEach(element -> addReplicas(element, templates));
         } else if (rule.isJsonObject()) {
             JsonObject object = rule.getAsJsonObject();
-            if (object.has("biome_is")) addTemplated(object.getAsJsonArray("biome_is"));
-            object.entrySet().forEach(entry -> addReplicas(entry.getValue()));
+            if (object.has("biome_is")) addTemplated(object.getAsJsonArray("biome_is"), templates);
+            object.entrySet().forEach(entry -> addReplicas(entry.getValue(), templates));
         }
     }
 
-    private static void addTemplated(JsonArray biomes) {
-        for (Map.Entry<ResourceKey<Biome>, ResourceKey<Biome>> template : TEMPLATES) {
-            if (biomes.contains(new JsonPrimitive(template.getValue().location().toString()))) {
-                biomes.add(template.getKey().location().toString());
+    private static void addTemplated(JsonArray biomes, List<Template> templates) {
+        for (Template template : templates) {
+            if (biomes.contains(new JsonPrimitive(template.vanilla().location().toString()))) {
+                biomes.add(template.replica().location().toString());
             }
         }
     }

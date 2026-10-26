@@ -1,0 +1,37 @@
+{
+  "feature": "guworld:alpha/sand_beaches",
+  "placement": [
+    {
+      "count": 30,
+      "type": "minecraft:count"
+    },
+    {
+      "count": 50,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "noise_factor": 275,
+      "noise_offset": 0.2,
+      "noise_to_count_ratio": 1,
+      "type": "minecraft:noise_based_count"
+    },
+    {
+      "height": {
+        "max_inclusive": {
+          "absolute": 61
+        },
+        "min_inclusive": {
+          "absolute": 50
+        },
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:height_range"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

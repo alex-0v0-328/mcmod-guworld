@@ -1,0 +1,13 @@
+{
+  "feature": "guworld:snowy/max_spruce",
+  "placement": [
+    {
+      "heightmap": "MOTION_BLOCKING_NO_LEAVES",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "max_water_depth": 0,
+      "type": "minecraft:surface_water_depth_filter"
+    }
+  ]
+}

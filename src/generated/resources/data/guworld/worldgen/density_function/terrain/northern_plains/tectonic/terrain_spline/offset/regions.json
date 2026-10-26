@@ -1,0 +1,138 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:mul",
+      "argument1": {
+        "type": "minecraft:clamp",
+        "input": {
+          "type": "minecraft:add",
+          "argument1": 1.2,
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": 0.4,
+            "argument2": {
+              "type": "minecraft:noise",
+              "noise": "guworld:terrain/tectonic/region/height_multiplier",
+              "xz_scale": 0.25,
+              "y_scale": 0.0
+            }
+          }
+        },
+        "max": 1.6,
+        "min": 0.8
+      },
+      "argument2": {
+        "type": "minecraft:spline",
+        "spline": {
+          "coordinate": "guworld:terrain/northern_plains/tectonic/noise/continent/erosion",
+          "points": [
+            {
+              "derivative": 0.0,
+              "location": -0.02,
+              "value": {
+                "coordinate": "guworld:terrain/northern_plains/tectonic/noise/region_selector",
+                "points": [
+                  {
+                    "derivative": 0.0,
+                    "location": -0.1,
+                    "value": {
+                      "coordinate": "guworld:terrain/northern_plains/tectonic/region/club",
+                      "points": [
+                        {
+                          "derivative": 1.0,
+                          "location": 0.0,
+                          "value": 0.0
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "derivative": 0.0,
+                    "location": 0.0,
+                    "value": {
+                      "coordinate": "guworld:terrain/northern_plains/tectonic/region/club_weak",
+                      "points": [
+                        {
+                          "derivative": 1.0,
+                          "location": 0.0,
+                          "value": 0.0
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "derivative": 0.0,
+                    "location": 0.1,
+                    "value": {
+                      "coordinate": "guworld:terrain/northern_plains/tectonic/region/heart",
+                      "points": [
+                        {
+                          "derivative": 1.0,
+                          "location": 0.0,
+                          "value": 0.0
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "derivative": 0.0,
+              "location": 0.04,
+              "value": {
+                "coordinate": "guworld:terrain/northern_plains/tectonic/noise/region_selector",
+                "points": [
+                  {
+                    "derivative": 0.0,
+                    "location": -0.1,
+                    "value": {
+                      "coordinate": "guworld:terrain/northern_plains/tectonic/region/spade",
+                      "points": [
+                        {
+                          "derivative": 1.0,
+                          "location": 0.0,
+                          "value": 0.0
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "derivative": 0.0,
+                    "location": 0.0,
+                    "value": {
+                      "coordinate": "guworld:terrain/northern_plains/tectonic/region/spade_weak",
+                      "points": [
+                        {
+                          "derivative": 1.0,
+                          "location": 0.0,
+                          "value": 0.0
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "derivative": 0.0,
+                    "location": 0.1,
+                    "value": {
+                      "coordinate": "guworld:terrain/northern_plains/tectonic/region/diamond",
+                      "points": [
+                        {
+                          "derivative": 1.0,
+                          "location": 0.0,
+                          "value": 0.0
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}

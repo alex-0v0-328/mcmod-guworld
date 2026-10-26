@@ -1,0 +1,96 @@
+{
+  "feature": "guworld:cliffs/frozen/blue_ice",
+  "placement": [
+    {
+      "count": 40,
+      "type": "minecraft:count"
+    },
+    {
+      "count": 20,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "height": {
+        "max_inclusive": {
+          "absolute": 270
+        },
+        "min_inclusive": {
+          "absolute": 62
+        },
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:height_range"
+    },
+    {
+      "type": "minecraft:biome"
+    },
+    {
+      "direction_of_search": "down",
+      "max_steps": 16,
+      "target_condition": {
+        "predicates": [
+          {
+            "blocks": [
+              "minecraft:stone"
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "predicates": [
+              {
+                "blocks": [
+                  "minecraft:air"
+                ],
+                "offset": [
+                  5,
+                  0,
+                  0
+                ],
+                "type": "minecraft:matching_blocks"
+              },
+              {
+                "blocks": [
+                  "minecraft:air"
+                ],
+                "offset": [
+                  0,
+                  0,
+                  5
+                ],
+                "type": "minecraft:matching_blocks"
+              },
+              {
+                "blocks": [
+                  "minecraft:air"
+                ],
+                "offset": [
+                  -5,
+                  0,
+                  0
+                ],
+                "type": "minecraft:matching_blocks"
+              },
+              {
+                "blocks": [
+                  "minecraft:air"
+                ],
+                "offset": [
+                  0,
+                  0,
+                  -5
+                ],
+                "type": "minecraft:matching_blocks"
+              }
+            ],
+            "type": "minecraft:any_of"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:environment_scan"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:clamp",
+      "input": {
+        "type": "minecraft:mul",
+        "argument1": 20.0,
+        "argument2": {
+          "type": "minecraft:add",
+          "argument1": 0.2,
+          "argument2": "guworld:terrain/eastern_sea/tectonic/noise/raw_continents"
+        }
+      },
+      "max": 1.0,
+      "min": 0.0
+    }
+  }
+}

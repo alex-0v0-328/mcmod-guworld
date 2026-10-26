@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "default": "guworld:enchanted/jungle_tree",
+    "features": [
+      {
+        "chance": 0.1,
+        "feature": "guworld:enchanted/enchanted_oak"
+      },
+      {
+        "chance": 0.25,
+        "feature": "guworld:enchanted/big_tree"
+      }
+    ]
+  }
+}

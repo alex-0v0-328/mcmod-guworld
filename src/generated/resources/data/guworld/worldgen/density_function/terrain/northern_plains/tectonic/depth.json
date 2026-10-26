@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:cache_once",
+  "argument": {
+    "type": "minecraft:add",
+    "argument1": {
+      "type": "minecraft:y_clamped_gradient",
+      "from_value": 17.0,
+      "from_y": -2048,
+      "to_value": -15.0,
+      "to_y": 2048
+    },
+    "argument2": "guworld:terrain/northern_plains/tectonic/terrain_spline/offset/final"
+  }
+}

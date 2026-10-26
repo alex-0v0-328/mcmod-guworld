@@ -1,0 +1,41 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:clamp",
+      "input": {
+        "type": "minecraft:add",
+        "argument1": "guworld:terrain/western_desert/tectonic/__constants/ocean_offset",
+        "argument2": {
+          "type": "minecraft:spline",
+          "spline": {
+            "coordinate": {
+              "type": "minecraft:abs",
+              "argument": "guworld:terrain/western_desert/tectonic/__constants/noise/continents"
+            },
+            "points": [
+              {
+                "derivative": 0.0,
+                "location": 0.0,
+                "value": 0.0
+              },
+              {
+                "derivative": 1.0,
+                "location": 0.4,
+                "value": 0.575
+              },
+              {
+                "derivative": 1.0,
+                "location": 0.48,
+                "value": 0.68
+              }
+            ]
+          }
+        }
+      },
+      "max": 0.4,
+      "min": -64.0
+    }
+  }
+}

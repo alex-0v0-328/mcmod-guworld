@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:range_choice",
+      "input": {
+        "type": "minecraft:abs",
+        "argument": "guworld:terrain/western_desert/tectonic/noise/continent/erosion"
+      },
+      "max_exclusive": 1000000.0,
+      "min_inclusive": 1.0,
+      "when_in_range": {
+        "type": "minecraft:abs",
+        "argument": "guworld:terrain/western_desert/tectonic/noise/continent/erosion"
+      },
+      "when_out_of_range": {
+        "type": "minecraft:min",
+        "argument1": {
+          "type": "minecraft:add",
+          "argument1": 0.04,
+          "argument2": {
+            "type": "minecraft:mul",
+            "argument1": 1.45,
+            "argument2": {
+              "type": "minecraft:abs",
+              "argument": "guworld:terrain/western_desert/tectonic/noise/continent/erosion"
+            }
+          }
+        },
+        "argument2": 0.98
+      }
+    }
+  }
+}

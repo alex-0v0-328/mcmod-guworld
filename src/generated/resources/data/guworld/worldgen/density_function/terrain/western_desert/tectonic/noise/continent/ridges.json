@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": "guworld:terrain/western_desert/tectonic/__constants/noise/ridge"
+  }
+}

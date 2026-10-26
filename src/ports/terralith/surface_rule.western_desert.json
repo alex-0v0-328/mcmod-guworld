@@ -1,0 +1,1562 @@
+{
+  "sequence": [
+    {
+      "if_true": {
+        "type": "minecraft:above_preliminary_surface"
+      },
+      "then_run": {
+        "sequence": [
+          {
+            "if_true": {
+              "add_surface_depth": false,
+              "offset": 0,
+              "secondary_depth_range": 0,
+              "surface_type": "floor",
+              "type": "minecraft:stone_depth"
+            },
+            "then_run": {
+              "if_true": {
+                "add_stone_depth": false,
+                "anchor": {
+                  "absolute": 61
+                },
+                "surface_depth_multiplier": 0,
+                "type": "minecraft:y_above"
+              },
+              "then_run": {
+                "sequence": [
+                  {
+                    "if_true": {
+                      "biome_is": [
+                        "guworld:arid_highlands"
+                      ],
+                      "type": "minecraft:biome"
+                    },
+                    "then_run": {
+                      "sequence": [
+                        {
+                          "if_true": {
+                            "biome_is": [
+                              "guworld:arid_highlands"
+                            ],
+                            "type": "minecraft:biome"
+                          },
+                          "then_run": {
+                            "sequence": [
+                              {
+                                "if_true": {
+                                  "max_threshold": 1e+40,
+                                  "min_threshold": 0.375,
+                                  "noise": "guworld:highlands/red_sand",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:packed_mud"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              }
+                            ],
+                            "type": "minecraft:sequence"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 0.07,
+                            "min_threshold": -0.07,
+                            "noise": "guworld:sparse_jungle/surface",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "sequence": [
+                              {
+                                "if_true": {
+                                  "max_threshold": 1e+308,
+                                  "min_threshold": -0.2,
+                                  "noise": "guworld:sparse_jungle/noise",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:coarse_dirt"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "result_state": {
+                                  "Name": "minecraft:rooted_dirt"
+                                },
+                                "type": "minecraft:block"
+                              }
+                            ],
+                            "type": "minecraft:sequence"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 0.13,
+                            "min_threshold": -0.13,
+                            "noise": "guworld:sparse_jungle/surface",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "if_true": {
+                              "max_threshold": 1e+308,
+                              "min_threshold": -0.2,
+                              "noise": "guworld:sparse_jungle/noise_big",
+                              "type": "minecraft:noise_threshold"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:moss_block"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          "type": "minecraft:condition"
+                        }
+                      ],
+                      "type": "minecraft:sequence"
+                    },
+                    "type": "minecraft:condition"
+                  }
+                ],
+                "type": "minecraft:sequence"
+              },
+              "type": "minecraft:condition"
+            },
+            "type": "minecraft:condition"
+          },
+          {
+            "if_true": {
+              "add_surface_depth": true,
+              "offset": 0,
+              "secondary_depth_range": 0,
+              "surface_type": "floor",
+              "type": "minecraft:stone_depth"
+            },
+            "then_run": {
+              "if_true": {
+                "add_stone_depth": true,
+                "anchor": {
+                  "absolute": 61
+                },
+                "surface_depth_multiplier": 0,
+                "type": "minecraft:y_above"
+              },
+              "then_run": {
+                "sequence": [
+                  {
+                    "if_true": {
+                      "biome_is": [
+                        "guworld:hot_shrubland"
+                      ],
+                      "type": "minecraft:biome"
+                    },
+                    "then_run": {
+                      "sequence": [
+                        {
+                          "if_true": {
+                            "max_threshold": 0.4,
+                            "min_threshold": 0.2,
+                            "noise": "guworld:shrubland/surface",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "result_state": {
+                              "Name": "minecraft:coarse_dirt"
+                            },
+                            "type": "minecraft:block"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 1e+308,
+                            "min_threshold": 0.4,
+                            "noise": "guworld:shrubland/surface",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "result_state": {
+                              "Name": "minecraft:granite"
+                            },
+                            "type": "minecraft:block"
+                          },
+                          "type": "minecraft:condition"
+                        }
+                      ],
+                      "type": "minecraft:sequence"
+                    },
+                    "type": "minecraft:condition"
+                  },
+                  {
+                    "if_true": {
+                      "biome_is": [
+                        "guworld:bryce_canyon"
+                      ],
+                      "type": "minecraft:biome"
+                    },
+                    "then_run": {
+                      "sequence": [
+                        {
+                          "if_true": {
+                            "max_threshold": 0.04,
+                            "min_threshold": -0.04,
+                            "noise": "guworld:bryce/strip",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "if_true": {
+                              "invert": {
+                                "type": "minecraft:steep"
+                              },
+                              "type": "minecraft:not"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:coarse_dirt"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 0.04,
+                            "min_threshold": -0.04,
+                            "noise": "guworld:bryce/strip",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "if_true": {
+                              "invert": {
+                                "type": "minecraft:steep"
+                              },
+                              "type": "minecraft:not"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:coarse_dirt"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 100,
+                            "min_threshold": 0.2,
+                            "noise": "guworld:bryce/dirt",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "if_true": {
+                              "invert": {
+                                "type": "minecraft:steep"
+                              },
+                              "type": "minecraft:not"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:coarse_dirt"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": -0.04,
+                            "min_threshold": -0.1,
+                            "noise": "guworld:bryce/strip",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "if_true": {
+                              "invert": {
+                                "type": "minecraft:steep"
+                              },
+                              "type": "minecraft:not"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:orange_terracotta"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 0.1,
+                            "min_threshold": 0.04,
+                            "noise": "guworld:bryce/strip",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "if_true": {
+                              "invert": {
+                                "type": "minecraft:steep"
+                              },
+                              "type": "minecraft:not"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:orange_terracotta"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 0.2,
+                            "min_threshold": -0.1,
+                            "noise": "guworld:bryce/dirt",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "if_true": {
+                              "invert": {
+                                "type": "minecraft:steep"
+                              },
+                              "type": "minecraft:not"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:orange_terracotta"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": -0.1,
+                            "min_threshold": -0.16,
+                            "noise": "guworld:bryce/strip",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "if_true": {
+                              "invert": {
+                                "type": "minecraft:steep"
+                              },
+                              "type": "minecraft:not"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:red_sand"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 0.16,
+                            "min_threshold": 0.1,
+                            "noise": "guworld:bryce/strip",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "if_true": {
+                              "invert": {
+                                "type": "minecraft:steep"
+                              },
+                              "type": "minecraft:not"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:red_sand"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": -0.1,
+                            "min_threshold": -0.3,
+                            "noise": "guworld:bryce/dirt",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "if_true": {
+                              "invert": {
+                                "type": "minecraft:steep"
+                              },
+                              "type": "minecraft:not"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:red_sand"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          "type": "minecraft:condition"
+                        }
+                      ],
+                      "type": "minecraft:sequence"
+                    },
+                    "type": "minecraft:condition"
+                  },
+                  {
+                    "if_true": {
+                      "biome_is": [
+                        "guworld:gravel_desert"
+                      ],
+                      "type": "minecraft:biome"
+                    },
+                    "then_run": {
+                      "sequence": [
+                        {
+                          "if_true": {
+                            "max_threshold": -0.275,
+                            "min_threshold": -1e+308,
+                            "noise": "guworld:desert/gravel_surface",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "result_state": {
+                              "Name": "minecraft:granite"
+                            },
+                            "type": "minecraft:block"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": -0.15,
+                            "min_threshold": -0.5,
+                            "noise": "guworld:desert/gravel_surface",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "result_state": {
+                              "Name": "minecraft:dripstone_block"
+                            },
+                            "type": "minecraft:block"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 1e+308,
+                            "min_threshold": -0.35,
+                            "noise": "guworld:desert/gravel_surface",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "result_state": {
+                              "Name": "minecraft:gravel"
+                            },
+                            "type": "minecraft:block"
+                          },
+                          "type": "minecraft:condition"
+                        }
+                      ],
+                      "type": "minecraft:sequence"
+                    },
+                    "type": "minecraft:condition"
+                  },
+                  {
+                    "if_true": {
+                      "biome_is": [
+                        "guworld:sandstone_valley",
+                        "guworld:desert_spires"
+                      ],
+                      "type": "minecraft:biome"
+                    },
+                    "then_run": {
+                      "result_state": {
+                        "Name": "minecraft:sand"
+                      },
+                      "type": "minecraft:block"
+                    },
+                    "type": "minecraft:condition"
+                  },
+                  {
+                    "if_true": {
+                      "biome_is": [
+                        "guworld:ancient_sands"
+                      ],
+                      "type": "minecraft:biome"
+                    },
+                    "then_run": {
+                      "sequence": [
+                        {
+                          "if_true": {
+                            "max_threshold": 0,
+                            "min_threshold": -1e+308,
+                            "noise": "guworld:desert/sands_surface",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "sequence": [
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.03,
+                                  "min_threshold": -0.03,
+                                  "noise": "guworld:desert/sands_line1",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:red_sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.008,
+                                  "min_threshold": -0.008,
+                                  "noise": "guworld:desert/sands_line2",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:red_sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.03,
+                                  "min_threshold": -0.03,
+                                  "noise": "guworld:desert/sands_line3",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:red_sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": -0.05,
+                                  "min_threshold": -0.07,
+                                  "noise": "guworld:desert/sands_line4",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:red_sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.007,
+                                  "min_threshold": -0.007,
+                                  "noise": "guworld:desert/sands_line4",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:red_sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.07,
+                                  "min_threshold": 0.05,
+                                  "noise": "guworld:desert/sands_line4",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:red_sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.025,
+                                  "min_threshold": -0.025,
+                                  "noise": "guworld:desert/sands_line5",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:red_sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.0125,
+                                  "min_threshold": -0.0125,
+                                  "noise": "guworld:desert/sands_line6",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:red_sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.02,
+                                  "min_threshold": -0.02,
+                                  "noise": "guworld:desert/sands_line7",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:red_sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "result_state": {
+                                  "Name": "minecraft:sand"
+                                },
+                                "type": "minecraft:block"
+                              }
+                            ],
+                            "type": "minecraft:sequence"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 1e+308,
+                            "min_threshold": 0,
+                            "noise": "guworld:desert/sands_surface",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "sequence": [
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.03,
+                                  "min_threshold": -0.03,
+                                  "noise": "guworld:desert/sands_line1",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.008,
+                                  "min_threshold": -0.008,
+                                  "noise": "guworld:desert/sands_line2",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.03,
+                                  "min_threshold": -0.03,
+                                  "noise": "guworld:desert/sands_line3",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": -0.05,
+                                  "min_threshold": -0.07,
+                                  "noise": "guworld:desert/sands_line4",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.007,
+                                  "min_threshold": -0.007,
+                                  "noise": "guworld:desert/sands_line4",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.07,
+                                  "min_threshold": 0.05,
+                                  "noise": "guworld:desert/sands_line4",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.025,
+                                  "min_threshold": -0.025,
+                                  "noise": "guworld:desert/sands_line5",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.0125,
+                                  "min_threshold": -0.0125,
+                                  "noise": "guworld:desert/sands_line6",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.02,
+                                  "min_threshold": -0.02,
+                                  "noise": "guworld:desert/sands_line7",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:sand"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "result_state": {
+                                  "Name": "minecraft:red_sand"
+                                },
+                                "type": "minecraft:block"
+                              }
+                            ],
+                            "type": "minecraft:sequence"
+                          },
+                          "type": "minecraft:condition"
+                        }
+                      ],
+                      "type": "minecraft:sequence"
+                    },
+                    "type": "minecraft:condition"
+                  },
+                  {
+                    "if_true": {
+                      "biome_is": [
+                        "guworld:lush_desert"
+                      ],
+                      "type": "minecraft:biome"
+                    },
+                    "then_run": {
+                      "sequence": [
+                        {
+                          "if_true": {
+                            "add_surface_depth": false,
+                            "offset": 0,
+                            "secondary_depth_range": 0,
+                            "surface_type": "floor",
+                            "type": "minecraft:stone_depth"
+                          },
+                          "then_run": {
+                            "sequence": [
+                              {
+                                "if_true": {
+                                  "max_threshold": 1e+308,
+                                  "min_threshold": 0.4,
+                                  "noise": "guworld:desert/grass",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:grass_block"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 1e+308,
+                                  "min_threshold": 0.3,
+                                  "noise": "guworld:desert/grass",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:coarse_dirt"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 1e+308,
+                                  "min_threshold": 0.85,
+                                  "noise": "guworld:desert/detail_grass",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:grass_block"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 1e+308,
+                                  "min_threshold": 0.575,
+                                  "noise": "guworld:desert/detail_grass",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:coarse_dirt"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              }
+                            ],
+                            "type": "minecraft:sequence"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "add_surface_depth": true,
+                            "offset": 0,
+                            "secondary_depth_range": 0,
+                            "surface_type": "floor",
+                            "type": "minecraft:stone_depth"
+                          },
+                          "then_run": {
+                            "sequence": [
+                              {
+                                "if_true": {
+                                  "max_threshold": 1e+308,
+                                  "min_threshold": 0.45,
+                                  "noise": "guworld:desert/mud",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:packed_mud"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              },
+                              {
+                                "if_true": {
+                                  "max_threshold": 1e+308,
+                                  "min_threshold": 0.45,
+                                  "noise": "guworld:desert/mud2",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:packed_mud"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              }
+                            ],
+                            "type": "minecraft:sequence"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "result_state": {
+                            "Name": "minecraft:sand"
+                          },
+                          "type": "minecraft:block"
+                        }
+                      ],
+                      "type": "minecraft:sequence"
+                    },
+                    "type": "minecraft:condition"
+                  },
+                  {
+                    "if_true": {
+                      "biome_is": [
+                        "guworld:brushland"
+                      ],
+                      "type": "minecraft:biome"
+                    },
+                    "then_run": {
+                      "sequence": [
+                        {
+                          "if_true": {
+                            "add_surface_depth": false,
+                            "offset": 0,
+                            "secondary_depth_range": 0,
+                            "surface_type": "floor",
+                            "type": "minecraft:stone_depth"
+                          },
+                          "then_run": {
+                            "sequence": [
+                              {
+                                "if_true": {
+                                  "max_threshold": 0.4,
+                                  "min_threshold": 0.32,
+                                  "noise": "guworld:brushland/sand",
+                                  "type": "minecraft:noise_threshold"
+                                },
+                                "then_run": {
+                                  "result_state": {
+                                    "Name": "minecraft:moss_block"
+                                  },
+                                  "type": "minecraft:block"
+                                },
+                                "type": "minecraft:condition"
+                              }
+                            ],
+                            "type": "minecraft:sequence"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        {
+                          "if_true": {
+                            "max_threshold": 1e+308,
+                            "min_threshold": 0.4,
+                            "noise": "guworld:brushland/sand",
+                            "type": "minecraft:noise_threshold"
+                          },
+                          "then_run": {
+                            "sequence": [
+                              {
+                                "result_state": {
+                                  "Name": "minecraft:sand"
+                                },
+                                "type": "minecraft:block"
+                              }
+                            ],
+                            "type": "minecraft:sequence"
+                          },
+                          "type": "minecraft:condition"
+                        }
+                      ],
+                      "type": "minecraft:sequence"
+                    },
+                    "type": "minecraft:condition"
+                  }
+                ],
+                "type": "minecraft:sequence"
+              },
+              "type": "minecraft:condition"
+            },
+            "type": "minecraft:condition"
+          },
+          {
+            "if_true": {
+              "invert": {
+                "false_at_and_above": {
+                  "absolute": 61
+                },
+                "random_name": "surface_replace",
+                "true_at_and_below": {
+                  "absolute": 57
+                },
+                "type": "minecraft:vertical_gradient"
+              },
+              "type": "minecraft:not"
+            },
+            "then_run": {
+              "sequence": [
+                {
+                  "if_true": {
+                    "biome_is": [
+                      "guworld:white_mesa"
+                    ],
+                    "type": "minecraft:biome"
+                  },
+                  "then_run": {
+                    "type": "minecraft:bandlands"
+                  },
+                  "type": "minecraft:condition"
+                }
+              ],
+              "type": "minecraft:sequence"
+            },
+            "type": "minecraft:condition"
+          },
+          {
+            "if_true": {
+              "biome_is": [
+                "guworld:bryce_canyon",
+                "guworld:red_oasis"
+              ],
+              "type": "minecraft:biome"
+            },
+            "then_run": {
+              "sequence": [
+                {
+                  "if_true": {
+                    "add_surface_depth": false,
+                    "offset": 0,
+                    "secondary_depth_range": 0,
+                    "surface_type": "floor",
+                    "type": "minecraft:stone_depth"
+                  },
+                  "then_run": {
+                    "sequence": [
+                      {
+                        "if_true": {
+                          "add_stone_depth": true,
+                          "anchor": {
+                            "absolute": 74
+                          },
+                          "surface_depth_multiplier": 1,
+                          "type": "minecraft:y_above"
+                        },
+                        "then_run": {
+                          "sequence": [
+                            {
+                              "type": "minecraft:bandlands"
+                            }
+                          ],
+                          "type": "minecraft:sequence"
+                        },
+                        "type": "minecraft:condition"
+                      },
+                      {
+                        "if_true": {
+                          "add_stone_depth": false,
+                          "offset": -1,
+                          "surface_depth_multiplier": 0,
+                          "type": "minecraft:water"
+                        },
+                        "then_run": {
+                          "sequence": [
+                            {
+                              "if_true": {
+                                "add_surface_depth": false,
+                                "offset": 0,
+                                "secondary_depth_range": 0,
+                                "surface_type": "ceiling",
+                                "type": "minecraft:stone_depth"
+                              },
+                              "then_run": {
+                                "result_state": {
+                                  "Name": "minecraft:red_sandstone"
+                                },
+                                "type": "minecraft:block"
+                              },
+                              "type": "minecraft:condition"
+                            },
+                            {
+                              "result_state": {
+                                "Name": "minecraft:red_sand"
+                              },
+                              "type": "minecraft:block"
+                            }
+                          ],
+                          "type": "minecraft:sequence"
+                        },
+                        "type": "minecraft:condition"
+                      },
+                      {
+                        "if_true": {
+                          "invert": {
+                            "type": "minecraft:hole"
+                          },
+                          "type": "minecraft:not"
+                        },
+                        "then_run": {
+                          "result_state": {
+                            "Name": "minecraft:orange_terracotta"
+                          },
+                          "type": "minecraft:block"
+                        },
+                        "type": "minecraft:condition"
+                      },
+                      {
+                        "if_true": {
+                          "add_stone_depth": true,
+                          "offset": -6,
+                          "surface_depth_multiplier": -1,
+                          "type": "minecraft:water"
+                        },
+                        "then_run": {
+                          "result_state": {
+                            "Name": "minecraft:white_terracotta"
+                          },
+                          "type": "minecraft:block"
+                        },
+                        "type": "minecraft:condition"
+                      },
+                      {
+                        "sequence": [
+                          {
+                            "if_true": {
+                              "add_surface_depth": false,
+                              "offset": 0,
+                              "secondary_depth_range": 0,
+                              "surface_type": "ceiling",
+                              "type": "minecraft:stone_depth"
+                            },
+                            "then_run": {
+                              "result_state": {
+                                "Name": "minecraft:stone"
+                              },
+                              "type": "minecraft:block"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          {
+                            "result_state": {
+                              "Name": "minecraft:gravel"
+                            },
+                            "type": "minecraft:block"
+                          }
+                        ],
+                        "type": "minecraft:sequence"
+                      }
+                    ],
+                    "type": "minecraft:sequence"
+                  },
+                  "type": "minecraft:condition"
+                },
+                {
+                  "if_true": {
+                    "add_stone_depth": true,
+                    "anchor": {
+                      "absolute": 63
+                    },
+                    "surface_depth_multiplier": -1,
+                    "type": "minecraft:y_above"
+                  },
+                  "then_run": {
+                    "sequence": [
+                      {
+                        "if_true": {
+                          "add_stone_depth": false,
+                          "anchor": {
+                            "absolute": 63
+                          },
+                          "surface_depth_multiplier": 0,
+                          "type": "minecraft:y_above"
+                        },
+                        "then_run": {
+                          "if_true": {
+                            "invert": {
+                              "add_stone_depth": true,
+                              "anchor": {
+                                "absolute": 74
+                              },
+                              "surface_depth_multiplier": 1,
+                              "type": "minecraft:y_above"
+                            },
+                            "type": "minecraft:not"
+                          },
+                          "then_run": {
+                            "result_state": {
+                              "Name": "minecraft:orange_terracotta"
+                            },
+                            "type": "minecraft:block"
+                          },
+                          "type": "minecraft:condition"
+                        },
+                        "type": "minecraft:condition"
+                      },
+                      {
+                        "type": "minecraft:bandlands"
+                      }
+                    ],
+                    "type": "minecraft:sequence"
+                  },
+                  "type": "minecraft:condition"
+                },
+                {
+                  "if_true": {
+                    "add_surface_depth": true,
+                    "offset": 0,
+                    "secondary_depth_range": 0,
+                    "surface_type": "floor",
+                    "type": "minecraft:stone_depth"
+                  },
+                  "then_run": {
+                    "if_true": {
+                      "add_stone_depth": true,
+                      "offset": -6,
+                      "surface_depth_multiplier": -1,
+                      "type": "minecraft:water"
+                    },
+                    "then_run": {
+                      "result_state": {
+                        "Name": "minecraft:white_terracotta"
+                      },
+                      "type": "minecraft:block"
+                    },
+                    "type": "minecraft:condition"
+                  },
+                  "type": "minecraft:condition"
+                }
+              ],
+              "type": "minecraft:sequence"
+            },
+            "type": "minecraft:condition"
+          },
+          {
+            "if_true": {
+              "add_surface_depth": false,
+              "offset": 0,
+              "secondary_depth_range": 0,
+              "surface_type": "floor",
+              "type": "minecraft:stone_depth"
+            },
+            "then_run": {
+              "if_true": {
+                "add_stone_depth": false,
+                "offset": -1,
+                "surface_depth_multiplier": 0,
+                "type": "minecraft:water"
+              },
+              "then_run": {
+                "sequence": [
+                  {
+                    "sequence": [
+                      {
+                        "sequence": [
+                          {
+                            "if_true": {
+                              "biome_is": [
+                                "guworld:desert_canyon",
+                                "guworld:desert_oasis",
+                                "guworld:lush_desert"
+                              ],
+                              "type": "minecraft:biome"
+                            },
+                            "then_run": {
+                              "sequence": [
+                                {
+                                  "if_true": {
+                                    "add_surface_depth": false,
+                                    "offset": 0,
+                                    "secondary_depth_range": 0,
+                                    "surface_type": "ceiling",
+                                    "type": "minecraft:stone_depth"
+                                  },
+                                  "then_run": {
+                                    "result_state": {
+                                      "Name": "minecraft:sandstone"
+                                    },
+                                    "type": "minecraft:block"
+                                  },
+                                  "type": "minecraft:condition"
+                                },
+                                {
+                                  "result_state": {
+                                    "Name": "minecraft:sand"
+                                  },
+                                  "type": "minecraft:block"
+                                }
+                              ],
+                              "type": "minecraft:sequence"
+                            },
+                            "type": "minecraft:condition"
+                          },
+                          {
+                            "if_true": {
+                              "biome_is": [
+                                "guworld:red_oasis"
+                              ],
+                              "type": "minecraft:biome"
+                            },
+                            "then_run": {
+                              "sequence": [
+                                {
+                                  "if_true": {
+                                    "add_surface_depth": false,
+                                    "offset": 0,
+                                    "secondary_depth_range": 0,
+                                    "surface_type": "ceiling",
+                                    "type": "minecraft:stone_depth"
+                                  },
+                                  "then_run": {
+                                    "result_state": {
+                                      "Name": "minecraft:red_sandstone"
+                                    },
+                                    "type": "minecraft:block"
+                                  },
+                                  "type": "minecraft:condition"
+                                },
+                                {
+                                  "result_state": {
+                                    "Name": "minecraft:red_sand"
+                                  },
+                                  "type": "minecraft:block"
+                                }
+                              ],
+                              "type": "minecraft:sequence"
+                            },
+                            "type": "minecraft:condition"
+                          }
+                        ],
+                        "type": "minecraft:sequence"
+                      }
+                    ],
+                    "type": "minecraft:sequence"
+                  }
+                ],
+                "type": "minecraft:sequence"
+              },
+              "type": "minecraft:condition"
+            },
+            "type": "minecraft:condition"
+          },
+          {
+            "if_true": {
+              "add_surface_depth": true,
+              "offset": 0,
+              "secondary_depth_range": 0,
+              "surface_type": "floor",
+              "type": "minecraft:stone_depth"
+            },
+            "then_run": {
+              "if_true": {
+                "add_stone_depth": true,
+                "offset": -6,
+                "surface_depth_multiplier": -1,
+                "type": "minecraft:water"
+              },
+              "then_run": {
+                "sequence": [
+                  {
+                    "sequence": [
+                      {
+                        "if_true": {
+                          "biome_is": [
+                            "guworld:lush_desert",
+                            "guworld:desert_canyon",
+                            "guworld:desert_oasis"
+                          ],
+                          "type": "minecraft:biome"
+                        },
+                        "then_run": {
+                          "sequence": [
+                            {
+                              "if_true": {
+                                "add_surface_depth": false,
+                                "offset": 0,
+                                "secondary_depth_range": 0,
+                                "surface_type": "ceiling",
+                                "type": "minecraft:stone_depth"
+                              },
+                              "then_run": {
+                                "result_state": {
+                                  "Name": "minecraft:sandstone"
+                                },
+                                "type": "minecraft:block"
+                              },
+                              "type": "minecraft:condition"
+                            },
+                            {
+                              "result_state": {
+                                "Name": "minecraft:sand"
+                              },
+                              "type": "minecraft:block"
+                            }
+                          ],
+                          "type": "minecraft:sequence"
+                        },
+                        "type": "minecraft:condition"
+                      },
+                      {
+                        "if_true": {
+                          "biome_is": [
+                            "guworld:red_oasis"
+                          ],
+                          "type": "minecraft:biome"
+                        },
+                        "then_run": {
+                          "sequence": [
+                            {
+                              "if_true": {
+                                "add_surface_depth": false,
+                                "offset": 0,
+                                "secondary_depth_range": 0,
+                                "surface_type": "ceiling",
+                                "type": "minecraft:stone_depth"
+                              },
+                              "then_run": {
+                                "result_state": {
+                                  "Name": "minecraft:red_sandstone"
+                                },
+                                "type": "minecraft:block"
+                              },
+                              "type": "minecraft:condition"
+                            },
+                            {
+                              "result_state": {
+                                "Name": "minecraft:red_sand"
+                              },
+                              "type": "minecraft:block"
+                            }
+                          ],
+                          "type": "minecraft:sequence"
+                        },
+                        "type": "minecraft:condition"
+                      }
+                    ],
+                    "type": "minecraft:sequence"
+                  }
+                ],
+                "type": "minecraft:sequence"
+              },
+              "type": "minecraft:condition"
+            },
+            "type": "minecraft:condition"
+          },
+          {
+            "if_true": {
+              "biome_is": [
+                "guworld:lush_desert",
+                "guworld:desert_canyon",
+                "guworld:sandstone_valley",
+                "guworld:desert_oasis",
+                "guworld:ancient_sands"
+              ],
+              "type": "minecraft:biome"
+            },
+            "then_run": {
+              "if_true": {
+                "add_surface_depth": true,
+                "offset": 0,
+                "secondary_depth_range": 15,
+                "surface_type": "floor",
+                "type": "minecraft:stone_depth"
+              },
+              "then_run": {
+                "result_state": {
+                  "Name": "minecraft:sandstone"
+                },
+                "type": "minecraft:block"
+              },
+              "type": "minecraft:condition"
+            },
+            "type": "minecraft:condition"
+          },
+          {
+            "if_true": {
+              "biome_is": [
+                "guworld:red_oasis"
+              ],
+              "type": "minecraft:biome"
+            },
+            "then_run": {
+              "if_true": {
+                "add_surface_depth": true,
+                "offset": 0,
+                "secondary_depth_range": 15,
+                "surface_type": "floor",
+                "type": "minecraft:stone_depth"
+              },
+              "then_run": {
+                "result_state": {
+                  "Name": "minecraft:red_sandstone"
+                },
+                "type": "minecraft:block"
+              },
+              "type": "minecraft:condition"
+            },
+            "type": "minecraft:condition"
+          }
+        ],
+        "type": "minecraft:sequence"
+      },
+      "type": "minecraft:condition"
+    }
+  ],
+  "type": "minecraft:sequence"
+}

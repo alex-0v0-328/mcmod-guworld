@@ -1,0 +1,71 @@
+{
+  "feature": "guworld:cliffs/frozen/icicle",
+  "placement": [
+    {
+      "count": 40,
+      "type": "minecraft:count"
+    },
+    {
+      "count": 20,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:random_offset",
+      "xz_spread": {
+        "deviation": 0,
+        "max_inclusive": 2,
+        "mean": 0,
+        "min_inclusive": -2,
+        "type": "minecraft:clamped_normal"
+      },
+      "y_spread": 0
+    },
+    {
+      "height": {
+        "max_inclusive": {
+          "absolute": 180
+        },
+        "min_inclusive": {
+          "absolute": 62
+        },
+        "type": "minecraft:uniform"
+      },
+      "type": "minecraft:height_range"
+    },
+    {
+      "allowed_search_condition": {
+        "blocks": [
+          "minecraft:air"
+        ],
+        "type": "minecraft:matching_blocks"
+      },
+      "direction_of_search": "up",
+      "max_steps": 32,
+      "target_condition": {
+        "type": "minecraft:solid"
+      },
+      "type": "minecraft:environment_scan"
+    },
+    {
+      "predicate": {
+        "blocks": [
+          "minecraft:blue_ice",
+          "minecraft:packed_ice"
+        ],
+        "offset": [
+          0,
+          1,
+          0
+        ],
+        "type": "minecraft:matching_blocks"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

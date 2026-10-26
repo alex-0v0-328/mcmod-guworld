@@ -1,0 +1,29 @@
+{
+  "config": {
+    "to_place": {
+      "noise": {
+        "amplitudes": [
+          1,
+          1,
+          0,
+          0,
+          1.5,
+          3.25
+        ],
+        "firstOctave": -6
+      },
+      "scale": 1,
+      "seed": 3,
+      "states": [
+        {
+          "Name": "minecraft:sandstone"
+        },
+        {
+          "Name": "minecraft:smooth_sandstone"
+        }
+      ],
+      "type": "minecraft:noise_provider"
+    }
+  },
+  "type": "minecraft:simple_block"
+}

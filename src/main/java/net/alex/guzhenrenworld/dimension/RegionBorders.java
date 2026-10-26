@@ -4,7 +4,10 @@ import com.mojang.logging.LogUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import net.alex.guzhenrenworld.dimension.easternsea.EasternSea;
+import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlains;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
+import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesert;
 import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -46,8 +49,11 @@ import org.slf4j.Logger;
 public final class RegionBorders {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Map<ResourceKey<Level>, Double> SIZES =
-            Map.of(SouthernBorder.LEVEL, SouthernBorder.BORDER_SIZE);
+    private static final Map<ResourceKey<Level>, Double> SIZES = Map.of(
+            SouthernBorder.LEVEL, SouthernBorder.BORDER_SIZE,
+            WesternDesert.LEVEL, WesternDesert.BORDER_SIZE,
+            EasternSea.LEVEL, EasternSea.BORDER_SIZE,
+            NorthernPlains.LEVEL, NorthernPlains.BORDER_SIZE);
 
     private RegionBorders() {}
 

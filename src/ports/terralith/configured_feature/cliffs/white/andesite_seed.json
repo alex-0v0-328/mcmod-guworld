@@ -1,0 +1,12 @@
+{
+  "config": {
+    "radius": 0,
+    "state": {
+      "Name": "minecraft:andesite"
+    },
+    "target": {
+      "Name": "minecraft:diorite"
+    }
+  },
+  "type": "minecraft:netherrack_replace_blobs"
+}

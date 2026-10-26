@@ -1,0 +1,205 @@
+{
+  "feature": "guworld:canyon/sandstone/slab",
+  "placement": [
+    {
+      "count": 20,
+      "type": "minecraft:count"
+    },
+    {
+      "count": 30,
+      "type": "minecraft:count"
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "heightmap": "WORLD_SURFACE",
+      "type": "minecraft:heightmap"
+    },
+    {
+      "predicate": {
+        "predicates": [
+          {
+            "blocks": [
+              "minecraft:air"
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "blocks": [
+              "minecraft:sandstone"
+            ],
+            "offset": [
+              0,
+              -1,
+              0
+            ],
+            "type": "minecraft:matching_blocks"
+          },
+          {
+            "predicates": [
+              {
+                "predicates": [
+                  {
+                    "blocks": [
+                      "minecraft:sandstone"
+                    ],
+                    "offset": [
+                      -1,
+                      0,
+                      0
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  },
+                  {
+                    "blocks": [
+                      "minecraft:air"
+                    ],
+                    "offset": [
+                      -1,
+                      1,
+                      0
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  },
+                  {
+                    "blocks": [
+                      "minecraft:sandstone"
+                    ],
+                    "offset": [
+                      1,
+                      -1,
+                      0
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  }
+                ],
+                "type": "minecraft:all_of"
+              },
+              {
+                "predicates": [
+                  {
+                    "blocks": [
+                      "minecraft:sandstone"
+                    ],
+                    "offset": [
+                      1,
+                      0,
+                      0
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  },
+                  {
+                    "blocks": [
+                      "minecraft:air"
+                    ],
+                    "offset": [
+                      1,
+                      1,
+                      0
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  },
+                  {
+                    "blocks": [
+                      "minecraft:sandstone"
+                    ],
+                    "offset": [
+                      -1,
+                      -1,
+                      0
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  }
+                ],
+                "type": "minecraft:all_of"
+              },
+              {
+                "predicates": [
+                  {
+                    "blocks": [
+                      "minecraft:sandstone"
+                    ],
+                    "offset": [
+                      0,
+                      0,
+                      -1
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  },
+                  {
+                    "blocks": [
+                      "minecraft:air"
+                    ],
+                    "offset": [
+                      0,
+                      1,
+                      -1
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  },
+                  {
+                    "blocks": [
+                      "minecraft:sandstone"
+                    ],
+                    "offset": [
+                      0,
+                      -1,
+                      1
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  }
+                ],
+                "type": "minecraft:all_of"
+              },
+              {
+                "predicates": [
+                  {
+                    "blocks": [
+                      "minecraft:sandstone"
+                    ],
+                    "offset": [
+                      0,
+                      0,
+                      1
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  },
+                  {
+                    "blocks": [
+                      "minecraft:air"
+                    ],
+                    "offset": [
+                      0,
+                      1,
+                      1
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  },
+                  {
+                    "blocks": [
+                      "minecraft:sandstone"
+                    ],
+                    "offset": [
+                      0,
+                      -1,
+                      -1
+                    ],
+                    "type": "minecraft:matching_blocks"
+                  }
+                ],
+                "type": "minecraft:all_of"
+              }
+            ],
+            "type": "minecraft:any_of"
+          }
+        ],
+        "type": "minecraft:all_of"
+      },
+      "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

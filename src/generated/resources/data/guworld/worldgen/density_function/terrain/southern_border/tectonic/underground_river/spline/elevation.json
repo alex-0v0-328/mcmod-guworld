@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:clamp",
+  "input": {
+    "type": "minecraft:add",
+    "argument1": 1.0,
+    "argument2": {
+      "type": "minecraft:mul",
+      "argument1": "guworld:terrain/southern_border/tectonic/underground_river/noise/height",
+      "argument2": {
+        "type": "minecraft:abs",
+        "argument": {
+          "type": "minecraft:add",
+          "argument1": "guworld:terrain/southern_border/tectonic/underground_river/noise/y_offset",
+          "argument2": {
+            "type": "minecraft:spline",
+            "spline": {
+              "coordinate": "minecraft:y",
+              "points": [
+                {
+                  "derivative": 1.0,
+                  "location": 48.0,
+                  "value": 40.0
+                },
+                {
+                  "derivative": 1.0,
+                  "location": 60.0,
+                  "value": 60.0
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "max": 1.0,
+  "min": 0.0
+}

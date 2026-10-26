@@ -1,0 +1,83 @@
+{
+  "config": {
+    "features": [
+      {
+        "feature": {
+          "config": {
+            "radius": {
+              "max_inclusive": 12,
+              "min_inclusive": 7,
+              "type": "minecraft:uniform"
+            },
+            "state": {
+              "Name": "minecraft:white_terracotta"
+            },
+            "target": {
+              "Name": "minecraft:terracotta"
+            }
+          },
+          "type": "minecraft:netherrack_replace_blobs"
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "config": {
+            "radius": {
+              "max_inclusive": 12,
+              "min_inclusive": 7,
+              "type": "minecraft:uniform"
+            },
+            "state": {
+              "Name": "minecraft:brown_terracotta"
+            },
+            "target": {
+              "Name": "minecraft:yellow_terracotta"
+            }
+          },
+          "type": "minecraft:netherrack_replace_blobs"
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "config": {
+            "radius": {
+              "max_inclusive": 12,
+              "min_inclusive": 7,
+              "type": "minecraft:uniform"
+            },
+            "state": {
+              "Name": "minecraft:light_gray_terracotta"
+            },
+            "target": {
+              "Name": "minecraft:orange_terracotta"
+            }
+          },
+          "type": "minecraft:netherrack_replace_blobs"
+        },
+        "placement": []
+      },
+      {
+        "feature": {
+          "config": {
+            "radius": {
+              "max_inclusive": 12,
+              "min_inclusive": 7,
+              "type": "minecraft:uniform"
+            },
+            "state": {
+              "Name": "minecraft:black_terracotta"
+            },
+            "target": {
+              "Name": "minecraft:red_terracotta"
+            }
+          },
+          "type": "minecraft:netherrack_replace_blobs"
+        },
+        "placement": []
+      }
+    ]
+  },
+  "type": "minecraft:simple_random_selector"
+}

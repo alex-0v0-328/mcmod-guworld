@@ -1,0 +1,12 @@
+{
+  "config": {
+    "default": "guworld:highlands/steppe/bush_small",
+    "features": [
+      {
+        "chance": 0.2,
+        "feature": "guworld:highlands/steppe/bush_small"
+      }
+    ]
+  },
+  "type": "minecraft:random_selector"
+}

@@ -1,0 +1,54 @@
+{
+  "type": "minecraft:mul",
+  "argument1": "guworld:terrain/western_desert/tectonic/__constants/lava_tunnels",
+  "argument2": {
+    "type": "minecraft:min",
+    "argument1": 0.0,
+    "argument2": {
+      "type": "minecraft:spline",
+      "spline": {
+        "coordinate": "guworld:terrain/western_desert/tectonic/__constants/above_bottom_y",
+        "points": [
+          {
+            "derivative": 0.0,
+            "location": 6.0,
+            "value": 0.0
+          },
+          {
+            "derivative": 0.0,
+            "location": 12.0,
+            "value": {
+              "coordinate": "guworld:terrain/western_desert/tectonic/lava_tunnel/ridges",
+              "points": [
+                {
+                  "derivative": 1.0,
+                  "location": 0.0,
+                  "value": 0.0
+                }
+              ]
+            }
+          },
+          {
+            "derivative": 0.0,
+            "location": 18.0,
+            "value": {
+              "coordinate": "guworld:terrain/western_desert/tectonic/lava_tunnel/ridges",
+              "points": [
+                {
+                  "derivative": 0.2,
+                  "location": 0.0,
+                  "value": 0.0
+                }
+              ]
+            }
+          },
+          {
+            "derivative": 0.0,
+            "location": 24.0,
+            "value": 0.0
+          }
+        ]
+      }
+    }
+  }
+}

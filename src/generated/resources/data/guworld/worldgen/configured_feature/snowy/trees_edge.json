@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "default": "guworld:snowy/spruce",
+    "features": [
+      {
+        "chance": 0.1,
+        "feature": "guworld:snowy/mega_spruce"
+      }
+    ]
+  }
+}

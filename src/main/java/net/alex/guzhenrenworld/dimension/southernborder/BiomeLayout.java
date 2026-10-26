@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
+import net.alex.guzhenrenworld.biome.WildCropClimate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.ResourceKey;
@@ -40,7 +41,9 @@ import net.minecraft.world.level.biome.Climate;
  * jungle. Ocean,
  * beach and island sources are mapped for completeness only: {@link Terrain}'s continentalness never reaches their
  * cells. {@link #ROSTER} is every biome the region can place, the spire cells' karst peak forest included, and
- * {@link #LAND} every surface biome of it but the river, where the spirit spring [元泉] may stand.
+ * {@link #LAND} every surface biome of it but the river, where the spirit spring [元泉] may stand. {@link #CROPS}
+ * sorts the land into the wild crop climates of Farmer's Delight by the temperature and downfall rule of
+ * {@link WildCropClimate}.
  *
  * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link #SPIRE_EROSION} and
  * up, which Tectonic reaches only where its own erosion runs past 1, grows Tectonic's low-factor spire terrain
@@ -132,6 +135,15 @@ public final class BiomeLayout {
     public static final List<ResourceKey<Biome>> LAND = ROSTER.stream()
             .filter(biome -> !WATER_AND_CAVES.contains(biome))
             .sorted(Comparator.comparing(ResourceKey::location)).toList();
+    public static final Map<WildCropClimate, List<ResourceKey<Biome>>> CROPS = Map.of(
+            WildCropClimate.HOT, List.of(Ports.PAINTED_MOUNTAINS),
+            WildCropClimate.WET, List.of(Ports.CLOUD_FOREST, Ports.HOT_SPRINGS, Ports.ORCHID_SWAMP, Ports.PEACH_GROVE,
+                    Ports.RAINFOREST, Ports.JUNGLE_MOUNTAINS, Ports.ZHANGSHIYAN_CLIFFS, BiomeSettings.BAMBOO_SEA),
+            WildCropClimate.BEACH, List.of(),
+            WildCropClimate.TEMPERATE, List.of(Replicas.PLAINS, Ports.PLATEAU, Ports.ORCHID_SWAMP, Ports.PEACH_GROVE,
+                    Ports.GRANITE_CLIFFS, Ports.ALPINE_MEADOW, Ports.KARST_PEAK_FOREST),
+            WildCropClimate.COLD, List.of(Ports.CLOUD_FOREST, Ports.MISTY_MOUNTAINS, Ports.HOT_SPRINGS,
+                    Ports.ROCKY_PEAKS, Ports.EMERALD_PEAKS));
 
     private BiomeLayout() {}
 

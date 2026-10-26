@@ -1,0 +1,12 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "farmersdelight"
+    }
+  ],
+  "type": "neoforge:add_features",
+  "biomes": "#guworld:farmersdelight/hot",
+  "features": "farmersdelight:patch_wild_tomatoes",
+  "step": "vegetal_decoration"
+}

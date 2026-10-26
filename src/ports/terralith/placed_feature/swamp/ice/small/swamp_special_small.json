@@ -1,0 +1,9 @@
+{
+  "feature": "guworld:swamp/ice/small/swamp_special_small",
+  "placement": [
+    {
+      "count": 8,
+      "type": "minecraft:count"
+    }
+  ]
+}

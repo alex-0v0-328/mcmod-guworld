@@ -28,7 +28,8 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
  * The Southern Border [南疆] dimension, one of the four regions beyond the Central Continent [中州], which is
  * the overworld: its keys, and the datapack entries behind them.
  *
- * <p>Every key shares the one location {@code guworld:southern_border}. {@link #registerDimensionType}, {@link
+ * <p>Every key shares the one location {@code guworld:southern_border} ({@link #NAME} is its path, the prefix of the
+ * region's copy of the ported terrain). {@link #registerDimensionType}, {@link
  * #registerNoiseSettings} and {@link #registerLevelStem} are the bootstraps {@code datagen.DatapackProvider} runs. The
  * dimension type is the overworld's (sky, effects, beds, raids, monster light, and its {@link #HEIGHT} blocks from y
  * {@link #MIN_Y} up to {@link #TOP_Y}), kept under its own key so a pack that reshapes the overworld leaves the region
@@ -58,7 +59,8 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
 
 public final class SouthernBorder {
 
-    private static final ResourceLocation ID = GuWorld.id("southern_border");
+    public static final String NAME = "southern_border";
+    private static final ResourceLocation ID = GuWorld.id(NAME);
     public static final ResourceKey<DimensionType> DIMENSION_TYPE = ResourceKey.create(Registries.DIMENSION_TYPE, ID);
     public static final ResourceKey<NoiseGeneratorSettings> NOISE_SETTINGS =
             ResourceKey.create(Registries.NOISE_SETTINGS, ID);
@@ -90,8 +92,9 @@ public final class SouthernBorder {
                 NoiseSettings.create(MIN_Y, HEIGHT, NOISE_SIZE_HORIZONTAL, NOISE_SIZE_VERTICAL),
                 Blocks.STONE.defaultBlockState(),
                 Blocks.WATER.defaultBlockState(),
-                Ports.getNoiseRouter(context),
-                SurfacePruning.getPruned(SurfaceRules.sequence(Ports.getSurfaceRules(), Replicas.getSurfaceRules()),
+                Ports.getNoiseRouter(context, NAME),
+                SurfacePruning.getPruned(SurfaceRules.sequence(Ports.getSurfaceRules(),
+                        Replicas.getSurfaceRules(Replicas.SHARED)),
                         BiomeLayout.ROSTER),
                 List.of(),
                 SEA_LEVEL,

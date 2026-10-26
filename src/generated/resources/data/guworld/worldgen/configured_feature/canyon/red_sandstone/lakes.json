@@ -1,0 +1,34 @@
+{
+  "type": "minecraft:simple_block",
+  "config": {
+    "to_place": {
+      "type": "minecraft:noise_provider",
+      "noise": {
+        "amplitudes": [
+          1.25,
+          1.0,
+          2.0,
+          3.0,
+          1.5
+        ],
+        "firstOctave": -6
+      },
+      "scale": 1.0,
+      "seed": 0,
+      "states": [
+        {
+          "Name": "minecraft:water",
+          "Properties": {
+            "level": "0"
+          }
+        },
+        {
+          "Name": "minecraft:red_sand"
+        },
+        {
+          "Name": "minecraft:red_sand"
+        }
+      ]
+    }
+  }
+}
