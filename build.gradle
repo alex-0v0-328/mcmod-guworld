@@ -70,13 +70,15 @@ neoForge {
         gameTestServer {
             type = "gameTestServer"
             sourceSet = sourceSets.gametest
-            gameDirectory = project.file(providers.gradleProperty('gameTestDir').getOrElse('run-gametest'))
+            // Under build/: every IDE sync creates this directory, and Guzhenren's local_checks.py passes its own.
+            gameDirectory = project.file(providers.gradleProperty('gameTestDir').getOrElse('build/run-gametest'))
             systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         }
 
         data {
             data()
-            gameDirectory = project.file(providers.gradleProperty('dataGameDir').getOrElse('run-data'))
+            // Under build/ for the same reason as the GameTest directory.
+            gameDirectory = project.file(providers.gradleProperty('dataGameDir').getOrElse('build/run-data'))
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
             // Biomes and features ported from Terralith are datagen input, read through this property (biome.Ports).
             systemProperty 'guworld.ports', file('src/ports').getAbsolutePath()
