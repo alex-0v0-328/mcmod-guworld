@@ -11,4 +11,3 @@
 - Epic Fight: https://www.curseforge.com/minecraft/mc-mods/epic-fight-mod
 - Geckolib: https://www.curseforge.com/minecraft/mc-mods/geckolib
 - JEI: https://www.curseforge.com/minecraft/mc-mods/jei
-- Curios API: https://modrinth.com/mod/curios

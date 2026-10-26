@@ -18,14 +18,6 @@ sourceSets.main.resources {
     exclude('.cache/**')
 }
 
-repositories {
-    // Curios, which Guzhenren needs at run time (see dependencies).
-    maven {
-        name = "Illusive Soulworks maven"
-        url = "https://maven.theillusivec4.top/"
-    }
-}
-
 base {
     archivesName = mod_id
 }
@@ -113,15 +105,13 @@ configurations {
 
 // Guzhenren, the sibling project at ../mcmod-guzhenren (or -PguzhenrenDir), is a required mod, so every run
 // here, runData and the GameTests included, loads its built jar plus what it needs: Epic Fight and GeckoLib from its
-// run/mods, and Curios, whose classes its datagen touches. This mod compiles against none of them. A
-// jar that is not there adds nothing, and the run then stops on the missing dependency; build
-// Guzhenren first.
+// run/mods. This mod compiles against none of them. A jar that is not there adds nothing, and the run
+// then stops on the missing dependency; build Guzhenren first.
 def guzhenrenDir = file(providers.gradleProperty('guzhenrenDir').getOrElse('../mcmod-guzhenren'))
 
 dependencies {
     localRuntime fileTree(dir: new File(guzhenrenDir, 'build/libs'), include: 'guzhenren-*.jar', exclude: '*-sources.jar')
     localRuntime fileTree(dir: new File(guzhenrenDir, 'run/mods'), include: ['epic-fight-*.jar', 'geckolib-*.jar'])
-    localRuntime "top.theillusivec4.curios:curios-neoforge:${curios_version}"
 }
 
 // GameTests run with the same Guzhenren set as the runs and compile against everything the mod compiles against.
