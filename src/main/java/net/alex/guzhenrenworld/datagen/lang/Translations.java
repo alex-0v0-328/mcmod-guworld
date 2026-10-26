@@ -64,14 +64,6 @@ public class Translations extends LanguageProvider {
         addDimension(SouthernBorder.LEVEL_STEM, "Southern Border", "南疆");
         addBiomes(Replicas.BIOMES,
                 "Plains", "平原",
-                "Forest", "森林",
-                "Birch Forest", "桦木森林",
-                "Dark Forest", "黑森林",
-                "Bamboo Jungle", "竹林",
-                "Meadow", "草甸",
-                "Taiga", "针叶林",
-                "Windswept Hills", "风袭丘陵",
-                "Stony Peaks", "裸岩山峰",
                 "River", "河流",
                 "Lush Caves", "繁茂洞穴",
                 "Dripstone Caves", "溶洞");

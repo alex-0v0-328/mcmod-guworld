@@ -42,12 +42,10 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  * </ul>
  *
  * <p>A {@link Template} pairs a replica's key with its vanilla biome and the vanilla factory that builds it
- * ({@link #of} names the key after the vanilla biome). {@link #SHARED} is the templates every region may place:
- * the Southern Border [南疆] places its plains, river and two caves, and the other eight forests, meadow, taiga and
- * peaks stand registered for a later tuning by Alex's decision; {@link #BIOMES} lists their keys in that order, the
- * order the language provider names them in. A region that places a vanilla biome no other region does keeps that
- * template in its
- * own package and hands it to {@link #registerBiomes} and {@link #getSurfaceRules} beside the shared ones; a template
+ * ({@link #of} names the key after the vanilla biome). {@link #SHARED} is the templates every region may place, the
+ * plains, the river and the two caves; {@link #BIOMES} lists their keys in that order, the order the language
+ * provider names them in. A region that places a vanilla biome no other region does keeps that template in its own
+ * package and hands it to {@link #registerBiomes} and {@link #getSurfaceRules} beside the shared ones; a template
  * two regions both want moves here, since a biome registers once.
  *
  * @author Alex
@@ -58,27 +56,11 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 public final class Replicas {
 
     public static final ResourceKey<Biome> PLAINS = key("plains");
-    public static final ResourceKey<Biome> FOREST = key("forest");
-    public static final ResourceKey<Biome> BIRCH_FOREST = key("birch_forest");
-    public static final ResourceKey<Biome> DARK_FOREST = key("dark_forest");
-    public static final ResourceKey<Biome> BAMBOO_JUNGLE = key("bamboo_jungle");
-    public static final ResourceKey<Biome> MEADOW = key("meadow");
-    public static final ResourceKey<Biome> TAIGA = key("taiga");
-    public static final ResourceKey<Biome> WINDSWEPT_HILLS = key("windswept_hills");
-    public static final ResourceKey<Biome> STONY_PEAKS = key("stony_peaks");
     public static final ResourceKey<Biome> RIVER = key("river");
     public static final ResourceKey<Biome> LUSH_CAVES = key("lush_caves");
     public static final ResourceKey<Biome> DRIPSTONE_CAVES = key("dripstone_caves");
     public static final List<Template> SHARED = List.of(
             of(Biomes.PLAINS, (placed, carvers) -> OverworldBiomes.plains(placed, carvers, false, false, false)),
-            of(Biomes.FOREST, (placed, carvers) -> OverworldBiomes.forest(placed, carvers, false, false, false)),
-            of(Biomes.BIRCH_FOREST, (placed, carvers) -> OverworldBiomes.forest(placed, carvers, true, false, false)),
-            of(Biomes.DARK_FOREST, OverworldBiomes::darkForest),
-            of(Biomes.BAMBOO_JUNGLE, OverworldBiomes::bambooJungle),
-            of(Biomes.MEADOW, (placed, carvers) -> OverworldBiomes.meadowOrCherryGrove(placed, carvers, false)),
-            of(Biomes.TAIGA, (placed, carvers) -> OverworldBiomes.taiga(placed, carvers, false)),
-            of(Biomes.WINDSWEPT_HILLS, (placed, carvers) -> OverworldBiomes.windsweptHills(placed, carvers, false)),
-            of(Biomes.STONY_PEAKS, OverworldBiomes::stonyPeaks),
             of(Biomes.RIVER, (placed, carvers) -> OverworldBiomes.river(placed, carvers, false)),
             of(Biomes.LUSH_CAVES, OverworldBiomes::lushCaves),
             of(Biomes.DRIPSTONE_CAVES, OverworldBiomes::dripstoneCaves));
