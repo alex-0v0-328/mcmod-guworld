@@ -4,12 +4,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import java.util.function.BiFunction;
-import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.ColumnCaches;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.TerrainHooks;
 import net.alex.guzhenrenworld.biome.ZGradient;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 /**
@@ -75,7 +75,7 @@ public final class NorthernPlainsTerrain {
 
     private NorthernPlainsTerrain() {}
 
-    public static void registerDensityFunctions(DatapackBootstrap<DensityFunction> context) {
+    public static void registerDensityFunctions(BootstrapContext<DensityFunction> context) {
         String region = NorthernPlains.NAME;
         BiFunction<String, JsonElement, JsonElement> columnCaches = ColumnCaches.ofPorted();
         Ports.registerDensityFunctions(context, region,

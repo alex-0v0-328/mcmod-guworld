@@ -1,9 +1,9 @@
 package net.alex.guzhenrenworld.feature;
 
-import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
@@ -17,8 +17,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 /**
- * The loader's side of the Spirit Spring [元泉] worldgen: the feature's registration and the biome modifier that
- * places it, everything here that names the mod loader, so {@link SpiritSpring} stays the same on every loader.
+ * The registrations of the Spirit Spring [元泉] worldgen: the feature itself and the biome modifier that places it,
+ * so {@link SpiritSpring} keeps only keys, biomes and the feature bootstraps.
  *
  * <p>Annotated {@code @EventBusSubscriber}: {@link #onRegister} registers {@link SpiritSpringCluster} under
  * {@code SpiritSpring.ID}, which {@link #FEATURE} names. {@link #registerBiomeModifier} is the bootstrap
@@ -46,7 +46,7 @@ public final class SpiritSpringRegistration {
         event.register(Registries.FEATURE, SpiritSpring.ID, SpiritSpringCluster::new);
     }
 
-    public static void registerBiomeModifier(DatapackBootstrap<BiomeModifier> context) {
+    public static void registerBiomeModifier(BootstrapContext<BiomeModifier> context) {
         HolderSet<Biome> biomes = context.lookup(Registries.BIOME).getOrThrow(SpiritSpring.BIOMES);
         context.register(BIOME_MODIFIER, new BiomeModifiers.AddFeaturesBiomeModifier(biomes,
                 HolderSet.direct(context.lookup(Registries.PLACED_FEATURE).getOrThrow(SpiritSpring.PLACED_FEATURE)),

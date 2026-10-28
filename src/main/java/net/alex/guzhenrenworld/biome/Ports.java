@@ -21,14 +21,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
-import net.alex.guzhenrenworld.DataResults;
-import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -115,22 +113,22 @@ public final class Ports {
 
     private Ports() {}
 
-    public static void registerNoises(DatapackBootstrap<NormalNoise.NoiseParameters> context) {
+    public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context) {
         register(context, Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC, TERRALITH, "noise", UNPATCHED);
         register(context, Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC, TECTONIC, "noise", UNPATCHED);
     }
 
-    public static void registerConfiguredFeatures(DatapackBootstrap<ConfiguredFeature<?, ?>> context) {
+    public static void registerConfiguredFeatures(BootstrapContext<ConfiguredFeature<?, ?>> context) {
         register(context, Registries.CONFIGURED_FEATURE, ConfiguredFeature.DIRECT_CODEC, TERRALITH,
                 "configured_feature", UNPATCHED);
     }
 
-    public static void registerPlacedFeatures(DatapackBootstrap<PlacedFeature> context) {
+    public static void registerPlacedFeatures(BootstrapContext<PlacedFeature> context) {
         register(context, Registries.PLACED_FEATURE, PlacedFeature.DIRECT_CODEC, TERRALITH, "placed_feature",
                 UNPATCHED);
     }
 
-    public static void registerDensityFunctions(DatapackBootstrap<DensityFunction> context, String region,
+    public static void registerDensityFunctions(BootstrapContext<DensityFunction> context, String region,
             BiFunction<String, JsonElement, JsonElement> patch) {
         RegistryOps<JsonElement> registryOps = getOps(context);
         for (String name : getIndex(TECTONIC, "density_function")) {
@@ -140,9 +138,10 @@ public final class Ports {
         }
     }
 
-    public static NoiseRouter getNoiseRouter(DatapackBootstrap<?> context, String region) {
+    public static NoiseRouter getNoiseRouter(BootstrapContext<?> context, String region) {
         JsonElement router = getRegional(region, read(TECTONIC, "noise_router"));
-        return DataResults.getOrThrow(NoiseRouter.CODEC.parse(getOps(context), router), "ported noise router");
+        return NoiseRouter.CODEC.parse(getOps(context), router)
+                .getOrThrow(message -> new IllegalStateException("ported noise router: " + message));
     }
 
     public static ResourceKey<DensityFunction> getRegionalKey(String region, String name) {
@@ -180,14 +179,15 @@ public final class Ports {
     public static List<Map.Entry<Climate.ParameterPoint, ResourceLocation>> getBiomeParameters() {
         List<Map.Entry<Climate.ParameterPoint, ResourceLocation>> entries = new ArrayList<>();
         for (JsonElement entry : read(TERRALITH, "biome_parameters").getAsJsonArray()) {
-            Climate.ParameterPoint point = DataResults.getOrThrow(Climate.ParameterPoint.CODEC.parse(JsonOps.INSTANCE,
-                    entry.getAsJsonObject().get("parameters")), "ported biome parameters");
+            Climate.ParameterPoint point = Climate.ParameterPoint.CODEC
+                    .parse(JsonOps.INSTANCE, entry.getAsJsonObject().get("parameters"))
+                    .getOrThrow(message -> new IllegalStateException("ported biome parameters: " + message));
             entries.add(Map.entry(point, ResourceLocation.parse(entry.getAsJsonObject().get("biome").getAsString())));
         }
         return entries;
     }
 
-    public static void registerBiomes(DatapackBootstrap<Biome> context, List<ResourceKey<Biome>> expected) {
+    public static void registerBiomes(BootstrapContext<Biome> context, List<ResourceKey<Biome>> expected) {
         RegistryOps<JsonElement> registryOps = getOps(context);
         List<String> names = getIndex(TERRALITH, "biome");
         List<String> keys = expected.stream().map(key -> key.location().getPath()).toList();
@@ -221,7 +221,7 @@ public final class Ports {
         return tags;
     }
 
-    private static <T> void register(DatapackBootstrap<T> context, ResourceKey<? extends Registry<T>> registry,
+    private static <T> void register(BootstrapContext<T> context, ResourceKey<? extends Registry<T>> registry,
             Codec<T> codec, String port, String kind, BiFunction<String, JsonElement, JsonElement> patch) {
         RegistryOps<JsonElement> registryOps = getOps(context);
         for (String name : getIndex(port, kind)) {
@@ -233,19 +233,19 @@ public final class Ports {
 
     private static <T> T decode(Codec<T> codec, RegistryOps<JsonElement> registryOps, String kind, String name,
             JsonElement json) {
-        return DataResults.getOrThrow(codec.parse(registryOps, json), "ported " + kind + " " + name);
+        return codec.parse(registryOps, json)
+                .getOrThrow(message -> new IllegalStateException("ported " + kind + " " + name + ": " + message));
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static RegistryOps<JsonElement> getOps(DatapackBootstrap<?> context) {
+    private static RegistryOps<JsonElement> getOps(BootstrapContext<?> context) {
         return RegistryOps.create(JsonOps.INSTANCE, new RegistryOps.RegistryInfoLookup() {
             @Override
             public <T> Optional<RegistryOps.RegistryInfo<T>> lookup(
                     ResourceKey<? extends Registry<? extends T>> registryKey) {
                 Registry<T> builtIn = (Registry<T>) BuiltInRegistries.REGISTRY.get(registryKey.location());
                 if (builtIn != null) {
-                    HolderLookup.RegistryLookup<T> lookup = builtIn.asTagAddingLookup();
-                    return Optional.of(new RegistryOps.RegistryInfo<>(lookup, lookup, lookup.registryLifecycle()));
+                    return Optional.of(RegistryOps.RegistryInfo.fromRegistryLookup(builtIn.asTagAddingLookup()));
                 }
                 return Optional.of(new RegistryOps.RegistryInfo<T>(new HolderOwner<T>() {},
                         context.lookup((ResourceKey) registryKey), Lifecycle.stable()));
@@ -284,7 +284,7 @@ public final class Ports {
 
     private static JsonElement readFile(Path file) {
         try {
-            return PortFormat.adapt(JsonParser.parseString(Files.readString(file)));
+            return JsonParser.parseString(Files.readString(file));
         } catch (IOException exception) {
             throw new IllegalStateException("cannot read " + file, exception);
         }

@@ -1,9 +1,9 @@
 package net.alex.guzhenrenworld.dimension.easternsea;
 
-import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.biome.ColumnCaches;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.TerrainHooks;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.level.levelgen.DensityFunction;
 
 /**
@@ -45,7 +45,7 @@ public final class EasternSeaTerrain {
 
     private EasternSeaTerrain() {}
 
-    public static void registerDensityFunctions(DatapackBootstrap<DensityFunction> context) {
+    public static void registerDensityFunctions(BootstrapContext<DensityFunction> context) {
         String region = EasternSea.NAME;
         Ports.registerDensityFunctions(context, region, ColumnCaches.ofPorted());
         TerrainHooks.constant(context, region, "ocean_offset", OCEAN_OFFSET);

@@ -1,8 +1,8 @@
 package net.alex.guzhenrenworld.biome;
 
-import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
@@ -20,17 +20,17 @@ public final class TerrainHooks {
 
     private TerrainHooks() {}
 
-    public static void constant(DatapackBootstrap<DensityFunction> context, String region, String hook,
+    public static void constant(BootstrapContext<DensityFunction> context, String region, String hook,
             double value) {
         context.register(Ports.getHookKey(region, hook), DensityFunctions.constant(value));
     }
 
-    public static void function(DatapackBootstrap<DensityFunction> context, String region, String hook,
+    public static void function(BootstrapContext<DensityFunction> context, String region, String hook,
             DensityFunction function) {
         context.register(Ports.getHookKey(region, hook), function);
     }
 
-    public static void switched(DatapackBootstrap<DensityFunction> context, String region, String hook,
+    public static void switched(BootstrapContext<DensityFunction> context, String region, String hook,
             String ported, boolean on) {
         if (!on) {
             context.register(Ports.getHookKey(region, hook), DensityFunctions.zero());

@@ -14,8 +14,8 @@ import net.minecraft.world.level.levelgen.DensityFunction;
  * [北原] with its temperature, needs one; a region names it in the JSON of its terrain copy
  * ({@link Ports#registerDensityFunctions}'s patch).
  *
- * <p>{@link #MAP_CODEC} is the type's data codec, which {@link ZGradientRegistration} registers under {@link #ID}, or
- * the codec of {@link #CODEC} where the registry holds codecs: a registry finds the type by that very instance.
+ * <p>{@link #MAP_CODEC} is the type's data codec, which {@link ZGradientRegistration} registers under {@link #ID}, and
+ * {@link #CODEC} wraps that very instance: the registry finds the type by it.
  * The function reads only z, so it may sit inside a {@code cache_2d} ({@link ColumnCaches}).
  *
  * @author Alex

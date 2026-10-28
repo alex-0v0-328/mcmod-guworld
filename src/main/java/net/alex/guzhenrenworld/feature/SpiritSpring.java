@@ -1,10 +1,10 @@
 package net.alex.guzhenrenworld.feature;
 
 import java.util.List;
-import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -107,12 +107,12 @@ public final class SpiritSpring {
 
     private SpiritSpring() {}
 
-    public static void registerConfiguredFeature(DatapackBootstrap<ConfiguredFeature<?, ?>> context) {
+    public static void registerConfiguredFeature(BootstrapContext<ConfiguredFeature<?, ?>> context) {
         context.register(CONFIGURED_FEATURE,
                 new ConfiguredFeature<>(SpiritSpringRegistration.FEATURE.get(), NoneFeatureConfiguration.INSTANCE));
     }
 
-    public static void registerPlacedFeature(DatapackBootstrap<PlacedFeature> context) {
+    public static void registerPlacedFeature(BootstrapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configuredFeatures = context.lookup(Registries.CONFIGURED_FEATURE);
         context.register(PLACED_FEATURE, new PlacedFeature(
                 configuredFeatures.getOrThrow(CONFIGURED_FEATURE),

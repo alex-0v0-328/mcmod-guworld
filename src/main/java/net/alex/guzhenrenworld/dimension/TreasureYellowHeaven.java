@@ -2,13 +2,13 @@ package net.alex.guzhenrenworld.dimension;
 
 import java.util.List;
 import java.util.Optional;
-import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.SurfaceDimensionTypes;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.ConstantInt;
@@ -61,12 +61,12 @@ public final class TreasureYellowHeaven {
 
     private TreasureYellowHeaven() {}
 
-    public static void registerDimensionType(DatapackBootstrap<DimensionType> context) {
+    public static void registerDimensionType(BootstrapContext<DimensionType> context) {
         context.register(DIMENSION_TYPE, SurfaceDimensionTypes.create(MIN_Y, HEIGHT, RESPAWN_ANCHORS_WORK, EFFECTS,
                 new DimensionType.MonsterSettings(false, false, ConstantInt.of(0), 0)));
     }
 
-    public static void registerBiome(DatapackBootstrap<Biome> context) {
+    public static void registerBiome(BootstrapContext<Biome> context) {
         context.register(BIOME, new Biome.BiomeBuilder()
                 .hasPrecipitation(false)
                 .temperature(0.8F)
@@ -82,11 +82,11 @@ public final class TreasureYellowHeaven {
                 .build());
     }
 
-    public static void registerLevelStem(DatapackBootstrap<LevelStem> context) {
+    public static void registerLevelStem(BootstrapContext<LevelStem> context) {
         HolderGetter<DimensionType> dimensionTypes = context.lookup(Registries.DIMENSION_TYPE);
         Holder<Biome> biome = context.lookup(Registries.BIOME).getOrThrow(BIOME);
         FlatLevelGeneratorSettings settings =
-                new FlatLevelGeneratorSettings(Optional.of(HolderSet.direct()), biome, List.of());
+                new FlatLevelGeneratorSettings(Optional.of(HolderSet.empty()), biome, List.of());
         context.register(LEVEL_STEM, new LevelStem(
                 dimensionTypes.getOrThrow(DIMENSION_TYPE),
                 new FlatLevelSource(settings)

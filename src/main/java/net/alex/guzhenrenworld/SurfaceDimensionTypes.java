@@ -13,7 +13,7 @@ import net.minecraft.world.level.dimension.DimensionType;
  * logical height the whole height, the overworld's infiniburn tag and no ambient light. The caller names the rest:
  * the height range, whether respawn anchors work, the special-effects id and the monster settings.
  *
- * <p>Lives in the root package, beside {@link DatapackBootstrap}, so the regions under {@code dimension} share it
+ * <p>Lives in the root package, beside {@link GuWorld}, so the regions under {@code dimension} share it
  * without one depending on another; it names nothing from the function packages.
  *
  * @author Alex

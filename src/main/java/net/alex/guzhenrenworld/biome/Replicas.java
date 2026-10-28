@@ -5,12 +5,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import java.util.List;
-import net.alex.guzhenrenworld.DatapackBootstrap;
+import java.util.Map;
 import net.alex.guzhenrenworld.GuWorld;
-import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.data.worldgen.SurfaceRuleData;
 import net.minecraft.data.worldgen.biome.OverworldBiomes;
 import net.minecraft.resources.ResourceKey;
@@ -83,7 +83,7 @@ public final class Replicas {
         return key(vanilla.location().getPath());
     }
 
-    public static void registerBiomes(DatapackBootstrap<Biome> context, List<Template> templates) {
+    public static void registerBiomes(BootstrapContext<Biome> context, List<Template> templates) {
         HolderGetter<PlacedFeature> placed = context.lookup(Registries.PLACED_FEATURE);
         HolderGetter<ConfiguredWorldCarver<?>> carvers = context.lookup(Registries.CONFIGURED_CARVER);
         for (Template template : templates) {
@@ -104,16 +104,8 @@ public final class Replicas {
                 .downfall(climate.downfall())
                 .specialEffects(template.getModifiedSpecialEffects())
                 .mobSpawnSettings(getSpawnsByCategory(template.getMobSettings()))
-                .generationSettings(getUncarvedGeneration(features))
+                .generationSettings(new BiomeGenerationSettings(Map.of(), List.copyOf(features)))
                 .build();
-    }
-
-    private static BiomeGenerationSettings getUncarvedGeneration(List<HolderSet<PlacedFeature>> features) {
-        BiomeGenerationSettings.PlainBuilder builder = new BiomeGenerationSettings.PlainBuilder();
-        for (int step = 0; step < features.size(); step++) {
-            for (Holder<PlacedFeature> feature : features.get(step)) builder.addFeature(step, feature);
-        }
-        return builder.build();
     }
 
     private static MobSpawnSettings getSpawnsByCategory(MobSpawnSettings template) {
@@ -135,7 +127,7 @@ public final class Replicas {
         return SurfaceRuleJson.decode(vanilla, "replica surface rule");
     }
 
-    private static void register(DatapackBootstrap<Biome> context, ResourceKey<Biome> key, Biome template) {
+    private static void register(BootstrapContext<Biome> context, ResourceKey<Biome> key, Biome template) {
         context.register(key, getUncarved(template));
     }
 

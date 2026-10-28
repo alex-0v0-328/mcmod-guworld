@@ -1,7 +1,6 @@
 package net.alex.guzhenrenworld.dimension.southernborder;
 
 import java.util.List;
-import net.alex.guzhenrenworld.DatapackBootstrap;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.SurfaceDimensionTypes;
 import net.alex.guzhenrenworld.biome.Ports;
@@ -9,6 +8,7 @@ import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.biome.SurfacePruning;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.valueproviders.UniformInt;
@@ -81,13 +81,13 @@ public final class SouthernBorder {
 
     private SouthernBorder() {}
 
-    public static void registerDimensionType(DatapackBootstrap<DimensionType> context) {
+    public static void registerDimensionType(BootstrapContext<DimensionType> context) {
         context.register(DIMENSION_TYPE, SurfaceDimensionTypes.create(MIN_Y, HEIGHT, RESPAWN_ANCHORS_WORK,
                 BuiltinDimensionTypes.OVERWORLD_EFFECTS,
                 new DimensionType.MonsterSettings(false, true, UniformInt.of(0, 7), 0)));
     }
 
-    public static void registerNoiseSettings(DatapackBootstrap<NoiseGeneratorSettings> context) {
+    public static void registerNoiseSettings(BootstrapContext<NoiseGeneratorSettings> context) {
         context.register(NOISE_SETTINGS, new NoiseGeneratorSettings(
                 NoiseSettings.create(MIN_Y, HEIGHT, NOISE_SIZE_HORIZONTAL, NOISE_SIZE_VERTICAL),
                 Blocks.STONE.defaultBlockState(),
@@ -105,7 +105,7 @@ public final class SouthernBorder {
         ));
     }
 
-    public static void registerLevelStem(DatapackBootstrap<LevelStem> context) {
+    public static void registerLevelStem(BootstrapContext<LevelStem> context) {
         HolderGetter<DimensionType> dimensionTypes = context.lookup(Registries.DIMENSION_TYPE);
         HolderGetter<NoiseGeneratorSettings> noiseSettings = context.lookup(Registries.NOISE_SETTINGS);
         MultiNoiseBiomeSource biomeSource = MultiNoiseBiomeSource.createFromList(
