@@ -205,6 +205,9 @@
         "type": "minecraft:all_of"
       },
       "type": "minecraft:block_predicate_filter"
+    },
+    {
+      "type": "minecraft:biome"
     }
   ]
 }
