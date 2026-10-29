@@ -42,11 +42,12 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  * </ul>
  *
  * <p>A {@link Template} pairs a replica's key with its vanilla biome and the vanilla factory that builds it
- * ({@link #of} names the key after the vanilla biome). {@link #SHARED} is the templates every region may place, the
- * plains, the river and the two caves; {@link #BIOMES} lists their keys in that order, the order the language
- * provider names them in. A region that places a vanilla biome no other region does keeps that template in its own
- * package and hands it to {@link #registerBiomes} and {@link #getSurfaceRules} beside the shared ones; a template
- * two regions both want moves here, since a biome registers once.
+ * ({@link Factory}, the signature of vanilla's biome factories; {@link #of} names the key after the vanilla biome).
+ * {@link #SHARED} is the templates every region may place, the plains, the river and the two caves;
+ * {@link #BIOMES} lists their keys in that order, the order the language provider names them in. A region that
+ * places a vanilla biome no other region does keeps that template in its own package and hands it to
+ * {@link #registerBiomes} and {@link #getSurfaceRules} beside the shared ones; a template two regions both want
+ * moves here, since a biome registers once.
  *
  * @author Alex
  * @version 1.0.0
@@ -66,7 +67,6 @@ public final class Replicas {
             of(Biomes.DRIPSTONE_CAVES, OverworldBiomes::dripstoneCaves));
     public static final List<ResourceKey<Biome>> BIOMES = SHARED.stream().map(Template::replica).toList();
 
-    /** Builds a vanilla biome from the registries a bootstrap offers, the signature of vanilla's biome factories. */
     public interface Factory {
         Biome create(HolderGetter<PlacedFeature> placed, HolderGetter<ConfiguredWorldCarver<?>> carvers);
     }
