@@ -25,11 +25,6 @@ public final class TerrainHooks {
         context.register(Ports.getHookKey(region, hook), DensityFunctions.constant(value));
     }
 
-    public static void function(BootstrapContext<DensityFunction> context, String region, String hook,
-            DensityFunction function) {
-        context.register(Ports.getHookKey(region, hook), function);
-    }
-
     public static void switched(BootstrapContext<DensityFunction> context, String region, String hook,
             String ported, boolean on) {
         if (!on) {

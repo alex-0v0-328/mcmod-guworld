@@ -205,7 +205,8 @@ public final class Ports {
         for (Path file : getFiles(TERRALITH, "surface_rule")) {
             rules.add(SurfaceRuleJson.decode(readFile(file), "ported surface rule " + file.getFileName()));
         }
-        return rules.size() == 1 ? rules.get(0) : SurfaceRules.sequence(rules.toArray(SurfaceRules.RuleSource[]::new));
+        return rules.size() == 1 ? rules.getFirst()
+                : SurfaceRules.sequence(rules.toArray(SurfaceRules.RuleSource[]::new));
     }
 
     public static ResourceKey<Biome> biome(String name) {
@@ -247,7 +248,7 @@ public final class Ports {
                 if (builtIn != null) {
                     return Optional.of(RegistryOps.RegistryInfo.fromRegistryLookup(builtIn.asTagAddingLookup()));
                 }
-                return Optional.of(new RegistryOps.RegistryInfo<T>(new HolderOwner<T>() {},
+                return Optional.of(new RegistryOps.RegistryInfo<>(new HolderOwner<T>() {},
                         context.lookup((ResourceKey) registryKey), Lifecycle.stable()));
             }
         });

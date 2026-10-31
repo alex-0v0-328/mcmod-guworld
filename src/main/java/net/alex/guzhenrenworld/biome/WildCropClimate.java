@@ -11,7 +11,7 @@ import net.minecraft.world.level.biome.Biome;
  * own biome modifiers, which pick biomes by vanilla's and the convention tags ({@code #minecraft:is_overworld} with a
  * temperature window, {@code #minecraft:is_beach}, {@code #c:is_wet/overworld}, {@code #c:is_hot/overworld}). Gu
  * World's biomes join none of those: {@code is_overworld} is the biome list of vanilla's stronghold and
- * {@code is_beach} that of its buried treasure, and no vanilla structure generates in a region. Instead each region
+ * {@code is_beach} that of its buried treasure, and no vanilla structure generates in a region. Instead, each region
  * sorts its biomes into these five climates, the tag provider writes one tag per climate,
  * {@code guworld:farmersdelight/<climate>}, and the hand-written modifiers under
  * {@code data/guworld/neoforge/biome_modifier/farmersdelight/}, loaded only while Farmer's Delight is present
