@@ -38,6 +38,10 @@ sourceSets {
     }
 }
 
+// Inside the run closures a bare `project` resolves to Gradle's deprecated Dependencies.getProject() and a bare
+// `mod_id` to a run of that name, so they read the id from here.
+def modId = providers.gradleProperty('mod_id').get()
+
 neoForge {
     version = project.neo_version
 
@@ -49,13 +53,13 @@ neoForge {
     runs {
         client {
             client()
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', modId
         }
 
         server {
             server()
             programArgument '--nogui'
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            systemProperty 'neoforge.enabledGameTestNamespaces', modId
         }
 
         // Its own game directory keeps the GameTest world apart from the run/ dev world.
@@ -63,15 +67,15 @@ neoForge {
             type = "gameTestServer"
             sourceSet = sourceSets.gametest
             // Under build/: every IDE sync creates this directory, and Guzhenren's local_checks.py passes its own.
-            gameDirectory = project.file(providers.gradleProperty('gameTestDir').getOrElse('build/run-gametest'))
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            gameDirectory = file(providers.gradleProperty('gameTestDir').getOrElse('build/run-gametest'))
+            systemProperty 'neoforge.enabledGameTestNamespaces', modId
         }
 
         data {
             data()
             // Under build/ for the same reason as the GameTest directory.
-            gameDirectory = project.file(providers.gradleProperty('dataGameDir').getOrElse('build/run-data'))
-            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+            gameDirectory = file(providers.gradleProperty('dataGameDir').getOrElse('build/run-data'))
+            programArguments.addAll '--mod', modId, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
             // Biomes and features ported from Terralith are datagen input, read through this property (biome.Ports).
             systemProperty 'guworld.ports', file('src/ports').getAbsolutePath()
         }
