@@ -38,6 +38,7 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Worldgen ported from Terralith 2.5.8 (Stardust Labs) and Tectonic 3.0.28 (Apollo; Alex holds both authors'
@@ -242,8 +243,8 @@ public final class Ports {
     private static RegistryOps<JsonElement> getOps(BootstrapContext<?> context) {
         return RegistryOps.create(JsonOps.INSTANCE, new RegistryOps.RegistryInfoLookup() {
             @Override
-            public <T> Optional<RegistryOps.RegistryInfo<T>> lookup(
-                    ResourceKey<? extends Registry<? extends T>> registryKey) {
+            public <T> @NotNull Optional<RegistryOps.RegistryInfo<T>> lookup(
+                    @NotNull ResourceKey<? extends Registry<? extends T>> registryKey) {
                 Registry<T> builtIn = (Registry<T>) BuiltInRegistries.REGISTRY.get(registryKey.location());
                 if (builtIn != null) {
                     return Optional.of(RegistryOps.RegistryInfo.fromRegistryLookup(builtIn.asTagAddingLookup()));

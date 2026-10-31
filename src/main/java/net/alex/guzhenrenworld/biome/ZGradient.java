@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The density function type {@code guworld:z_gradient}, vanilla's {@code y_clamped_gradient} along z: from
@@ -54,7 +55,7 @@ public record ZGradient(int fromZ, int toZ, double fromValue, double toValue)
     }
 
     @Override
-    public KeyDispatchDataCodec<? extends DensityFunction> codec() {
+    public @NotNull KeyDispatchDataCodec<? extends DensityFunction> codec() {
         return CODEC;
     }
 }

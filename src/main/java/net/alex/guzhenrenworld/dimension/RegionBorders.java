@@ -17,6 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.border.BorderChangeListener;
 import net.minecraft.world.level.border.WorldBorder;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 /**
@@ -92,26 +93,26 @@ public final class RegionBorders {
     private record Reapplier(MinecraftServer server) implements BorderChangeListener {
 
         @Override
-        public void onBorderSizeSet(WorldBorder border, double size) { reapply(server); }
+        public void onBorderSizeSet(@NotNull WorldBorder border, double size) { reapply(server); }
 
         @Override
-        public void onBorderSizeLerping(WorldBorder border, double oldSize, double newSize, long time) {
+        public void onBorderSizeLerping(@NotNull WorldBorder border, double oldSize, double newSize, long time) {
             reapply(server);
         }
 
         @Override
-        public void onBorderCenterSet(WorldBorder border, double x, double z) { reapply(server); }
+        public void onBorderCenterSet(@NotNull WorldBorder border, double x, double z) { reapply(server); }
 
         @Override
-        public void onBorderSetWarningTime(WorldBorder border, int warningTime) {}
+        public void onBorderSetWarningTime(@NotNull WorldBorder border, int warningTime) {}
 
         @Override
-        public void onBorderSetWarningBlocks(WorldBorder border, int warningBlocks) {}
+        public void onBorderSetWarningBlocks(@NotNull WorldBorder border, int warningBlocks) {}
 
         @Override
-        public void onBorderSetDamagePerBlock(WorldBorder border, double damagePerBlock) {}
+        public void onBorderSetDamagePerBlock(@NotNull WorldBorder border, double damagePerBlock) {}
 
         @Override
-        public void onBorderSetDamageSafeZOne(WorldBorder border, double damageSafeZone) {}
+        public void onBorderSetDamageSafeZOne(@NotNull WorldBorder border, double damageSafeZone) {}
     }
 }
