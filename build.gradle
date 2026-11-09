@@ -24,15 +24,24 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-// Every test lives under src/test/game, local-only and gitignored as in Guzhenren, and none of them ships in the
-// jar: the L3 'gametest' source set holds the @GameTest classes plus their scene templates, run by
-// runGameTestServer on a real dedicated server. The source set joins the mod below, so dev runs still find the tests
-// (and the /test command), while the jar task packs only 'main'. It loads Guzhenren like every other run here (see
-// dependencies).
+// Every test lives under src/test, one folder per layer, local-only and gitignored as in Guzhenren, and none of them
+// ships in the jar:
+//   pure    L1 'pureTest': plain JVM JUnit, nothing booted -- the architecture rules and the logic that needs no
+//           registry. Anything touching a registered object or whose class loads a registry is L2.
+//   game    L2 'gametest': the @GameTest classes plus their scene templates, run by runGameTestServer on a real
+//           dedicated server. The source set joins the mod below, so dev runs still find the tests (and the /test
+//           command), while the jar task packs only 'main'. It loads Guzhenren like every other run here (see
+//           dependencies).
 sourceSets {
     gametest {
         java.srcDirs = ['src/test/game/java']
         resources.srcDirs = ['src/test/game/resources']
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+    pureTest {
+        java.srcDirs = ['src/test/pure/java']
+        resources.srcDirs = ['src/test/pure/resources']
         compileClasspath += sourceSets.main.output
         runtimeClasspath += sourceSets.main.output
     }
@@ -125,6 +134,38 @@ configurations {
     gametestImplementation.extendsFrom implementation
     gametestRuntimeOnly.extendsFrom localRuntime, runtimeOnly
 }
+
+neoForge.addModdingDependenciesTo sourceSets.pureTest
+
+dependencies {
+    pureTestImplementation platform("org.junit:junit-bom:${junit_version}")
+    pureTestImplementation "org.junit.jupiter:junit-jupiter"
+    pureTestRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    // Minecraft pins slf4j strictly; ArchUnit runs on Minecraft's older slf4j-api.
+    pureTestImplementation("com.tngtech.archunit:archunit-junit5:${archunit_version}") {
+        exclude group: 'org.slf4j', module: 'slf4j-api'
+    }
+}
+
+def junitGameDir = project.file('build/minecraft-junit')
+
+tasks.register('pureTest', Test) {
+    description = 'Runs the pure JVM test source set without loading the mod.'
+    group = 'verification'
+    workingDir junitGameDir
+    // The test process cannot start in a missing directory: after a clean nothing else has created it.
+    doFirst { junitGameDir.mkdirs() }
+    testClassesDirs = sourceSets.pureTest.output.classesDirs
+    classpath = sourceSets.pureTest.runtimeClasspath
+    useJUnitPlatform()
+    // The JVM lives for seconds and spends them loading classes: C1-only JIT starts it faster.
+    jvmArgs '-XX:TieredStopAtLevel=1'
+    testLogging {
+        events 'failed', 'skipped'
+        exceptionFormat = 'full'
+    }
+}
+check.dependsOn pureTest
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
