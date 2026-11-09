@@ -1,20 +1,14 @@
 package net.alex.guzhenrenworld.dimension.easternsea;
 
-import com.mojang.datafixers.util.Pair;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.alex.guzhenrenworld.biome.BiomeTable;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Climate;
 
 /**
  * Where the Eastern Sea [东海] places its biomes: Terralith's overworld multi-noise table as shipped
@@ -45,7 +39,7 @@ import net.minecraft.world.level.biome.Climate;
  * <p>{@link #ROSTER} is every biome the region can place, {@link #LAND} every surface biome of it but the water
  * ({@link #WATER_AND_CAVES}), where the spirit spring [元泉] may stand.
  *
- * <p>⚠ {@link #getParameters} throws on a source biome {@link #GROUPS} does not map, so a re-port that adds one
+ * <p>⚠ {@link BiomeTable#getBiome} throws on a source biome {@link #GROUPS} does not map, so a re-port that adds one
  * fails {@code runData} instead of dropping cells.
  *
  * @author Alex
@@ -117,7 +111,6 @@ public final class EasternSeaLayout {
                     "terralith:cave/frostfire_caves", "terralith:cave/granite_caves", "terralith:cave/infested_caves",
                     "terralith:cave/mantle_caves", "terralith:cave/thermal_caves", "terralith:cave/tuff_caves")));
     public static final Set<ResourceKey<Biome>> ROSTER = GROUPS.keySet();
-    private static final Map<ResourceLocation, ResourceKey<Biome>> SOURCES = getSources();
     private static final Set<ResourceKey<Biome>> WATER_AND_CAVES = Set.of(Replicas.RIVER,
             EasternSeaRoster.WARM_OCEAN, EasternSeaRoster.LUKEWARM_OCEAN, EasternSeaRoster.OCEAN,
             EasternSeaRoster.DEEP_WARM_OCEAN, EasternSeaRoster.DEEP_OCEAN, Replicas.LUSH_CAVES,
@@ -126,25 +119,7 @@ public final class EasternSeaLayout {
             .filter(biome -> !WATER_AND_CAVES.contains(biome))
             .sorted(Comparator.comparing(ResourceKey::location)).toList();
 
+    public static final BiomeTable TABLE = BiomeTable.of("Eastern Sea", GROUPS);
+
     private EasternSeaLayout() {}
-
-    public static List<Pair<Climate.ParameterPoint, Holder<Biome>>> getParameters(HolderGetter<Biome> biomes) {
-        List<Pair<Climate.ParameterPoint, Holder<Biome>>> parameters = new ArrayList<>();
-        for (Map.Entry<Climate.ParameterPoint, ResourceLocation> entry : Ports.getBiomeParameters()) {
-            ResourceKey<Biome> biome = SOURCES.get(entry.getValue());
-            if (biome == null) throw new IllegalStateException("no Eastern Sea biome for " + entry.getValue());
-            parameters.add(Pair.of(entry.getKey(), biomes.getOrThrow(biome)));
-        }
-        return parameters;
-    }
-
-    private static Map<ResourceLocation, ResourceKey<Biome>> getSources() {
-        Map<ResourceLocation, ResourceKey<Biome>> sources = new HashMap<>();
-        GROUPS.forEach((biome, names) -> names.forEach(name -> {
-            if (sources.put(ResourceLocation.parse(name), biome) != null) {
-                throw new IllegalStateException(name + " is mapped twice");
-            }
-        }));
-        return Map.copyOf(sources);
-    }
 }

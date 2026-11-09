@@ -2,16 +2,15 @@ package net.alex.guzhenrenworld.dimension.easternsea;
 
 import net.alex.guzhenrenworld.biome.ColumnCaches;
 import net.alex.guzhenrenworld.biome.Ports;
-import net.alex.guzhenrenworld.biome.TerrainHooks;
 import net.alex.guzhenrenworld.biome.XGradient;
-import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.world.level.levelgen.DensityFunction;
+import net.alex.guzhenrenworld.dimension.region.Region;
+import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
 /**
  * The Eastern Sea [东海] terrain: the region's copy of Tectonic's overworld router as Tectonic runs it beside
- * Terralith ({@link Ports#registerDensityFunctions}), reshaped through the hooks the port leaves in it, which
- * {@link #registerDensityFunctions} fills ({@link TerrainHooks}):
+ * Terralith ({@link Ports#registerDensityFunctions}), reshaped through the hooks the port leaves in it
+ * ({@link #HOOKS}, {@link RegionBootstraps}):
  * <ul>
  *   <li>{@code ocean_offset}: Tectonic's continentalness is its folded continent noise plus this offset. Where that
  *   sum falls under -0.5, Tectonic leaves its continents for its island noise: islands rise where that noise peaks,
@@ -24,12 +23,9 @@ import net.minecraft.world.level.levelgen.DensityFunctions;
  *   {@link #OPEN_SEA_X}, so east of it, under the island range, lies open sea.</li>
  *   <li>{@code vertical_scale}: the stretch of the height above sea level, {@link #VERTICAL_SCALE}, a fifth under
  *   Tectonic's 1.125, so the highest island peaks stay under y 260.</li>
- *   <li>{@code min_y} and {@code max_y}: Tectonic's height limits, the dimension's floor and top.</li>
  *   <li>{@code dunes}: none ({@link #DUNES}); the region maps Tectonic's hot, dry cells to sand islands.</li>
- *   <li>{@code jungle_pillars}, {@code underground_rivers} with {@code underground_river_water}, and
- *   {@code lava_tunnels}: three Tectonic features, each switched by one constant here and off, as in the Southern
- *   Border [南疆]: the pillars are the regular extruded columns turned down there, the rivers and tunnels cost
- *   about a quarter of the noise fill.</li>
+ *   <li>{@code min_y}, {@code max_y}, {@code jungle_pillars}, {@code underground_rivers} with
+ *   {@code underground_river_water}, and {@code lava_tunnels}: as in every region.</li>
  * </ul>
  * {@link ColumnCaches} wraps the ported column functions so a noise chunk computes each once per column.
  *
@@ -41,7 +37,7 @@ import net.minecraft.world.level.levelgen.DensityFunctions;
 
 public final class EasternSeaTerrain {
 
-    private static final int WEST_X = (int) (-EasternSea.BORDER_SIZE / 2);
+    private static final int WEST_X = (int) (-Region.BORDER_SIZE / 2);
     private static final int ISLAND_EDGE_X = 1365;
     private static final int OPEN_SEA_X = 2048;
     private static final double WEST_OCEAN_OFFSET = -0.8;
@@ -49,27 +45,11 @@ public final class EasternSeaTerrain {
     private static final double OPEN_SEA_DROP = -0.9;
     private static final double VERTICAL_SCALE = 0.9;
     private static final double DUNES = 0.0;
-    private static final boolean JUNGLE_PILLARS = false;
-    private static final boolean UNDERGROUND_RIVERS = false;
-    private static final boolean LAVA_TUNNELS = false;
+    public static final Region.Hooks HOOKS = new Region.Hooks(
+            DensityFunctions.add(
+                    new XGradient(WEST_X, ISLAND_EDGE_X, WEST_OCEAN_OFFSET, ISLAND_OCEAN_OFFSET),
+                    new XGradient(ISLAND_EDGE_X, OPEN_SEA_X, 0.0, OPEN_SEA_DROP)),
+            VERTICAL_SCALE, DUNES, Region.Hooks.AS_PORTED);
 
     private EasternSeaTerrain() {}
-
-    public static void registerDensityFunctions(BootstrapContext<DensityFunction> context) {
-        String region = EasternSea.NAME;
-        Ports.registerDensityFunctions(context, region, ColumnCaches.ofPorted());
-        context.register(Ports.getHookKey(region, "ocean_offset"), DensityFunctions.add(
-                new XGradient(WEST_X, ISLAND_EDGE_X, WEST_OCEAN_OFFSET, ISLAND_OCEAN_OFFSET),
-                new XGradient(ISLAND_EDGE_X, OPEN_SEA_X, 0.0, OPEN_SEA_DROP)));
-        TerrainHooks.constant(context, region, "vertical_scale", VERTICAL_SCALE);
-        TerrainHooks.constant(context, region, "min_y", EasternSea.MIN_Y);
-        TerrainHooks.constant(context, region, "max_y", EasternSea.TOP_Y);
-        TerrainHooks.constant(context, region, "dunes", DUNES);
-        TerrainHooks.constant(context, region, "jungle_pillars", JUNGLE_PILLARS ? 1.0 : 0.0);
-        TerrainHooks.switched(context, region, "underground_rivers", "tectonic/underground_river/total",
-                UNDERGROUND_RIVERS);
-        TerrainHooks.switched(context, region, "underground_river_water", "tectonic/underground_river/parameters",
-                UNDERGROUND_RIVERS);
-        TerrainHooks.switched(context, region, "lava_tunnels", "tectonic/lava_tunnel/total", LAVA_TUNNELS);
-    }
 }

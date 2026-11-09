@@ -3,11 +3,9 @@ package net.alex.guzhenrenworld.dimension;
 import com.mojang.logging.LogUtils;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import net.alex.guzhenrenworld.dimension.easternsea.EasternSea;
-import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlains;
-import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
-import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesert;
+import java.util.Set;
+import java.util.stream.Collectors;
+import net.alex.guzhenrenworld.dimension.region.Region;
 import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -21,7 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 /**
- * Gives each finite region its own square world border around 0, 0, of the side {@link #SIZES} lists.
+ * Gives each finite region ({@link Regions#ALL}) its own square world border around 0, 0, of the side
+ * {@link Region#BORDER_SIZE}.
  *
  * <p>Vanilla treats the border as the overworld's alone: every other level's border follows the overworld's through
  * a delegate listener, the overworld's saved settings are applied to all of them only after every level has loaded,
@@ -43,46 +42,43 @@ import org.slf4j.Logger;
  *
  * @author Alex
  * @version 1.0.0
- * @see SouthernBorder
+ * @see Regions
  * @since 1.0.0
  */
 
 public final class RegionBorders {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final Map<ResourceKey<Level>, Double> SIZES = Map.of(
-            SouthernBorder.LEVEL, SouthernBorder.BORDER_SIZE,
-            WesternDesert.LEVEL, WesternDesert.BORDER_SIZE,
-            EasternSea.LEVEL, EasternSea.BORDER_SIZE,
-            NorthernPlains.LEVEL, NorthernPlains.BORDER_SIZE);
+    private static final Set<ResourceKey<Level>> LEVELS = Regions.ALL.stream().map(Region::level)
+            .collect(Collectors.toUnmodifiableSet());
 
     private RegionBorders() {}
 
     public static void start(MinecraftServer server) {
         for (ServerLevel level : applySizes(server)) {
             ResourceKey<Level> key = level.dimension();
-            LOGGER.info("World border of {} set to {} blocks", key.location(), SIZES.get(key));
+            LOGGER.info("World border of {} set to {} blocks", key.location(), Region.BORDER_SIZE);
         }
         server.overworld().getWorldBorder().addListener(new Reapplier(server));
     }
 
     public static void sendBorder(Player player) {
         if (!(player instanceof ServerPlayer serverPlayer)) return;
-        if (!SIZES.containsKey(serverPlayer.level().dimension())) return;
+        if (!LEVELS.contains(serverPlayer.level().dimension())) return;
         WorldBorder border = serverPlayer.serverLevel().getWorldBorder();
         serverPlayer.connection.send(new ClientboundInitializeBorderPacket(border));
     }
 
     private static List<ServerLevel> applySizes(MinecraftServer server) {
         List<ServerLevel> applied = new ArrayList<>();
-        SIZES.forEach((key, size) -> {
+        for (ResourceKey<Level> key : LEVELS) {
             ServerLevel level = server.getLevel(key);
-            if (level == null) return;
+            if (level == null) continue;
             WorldBorder border = level.getWorldBorder();
             border.setCenter(0.0, 0.0);
-            border.setSize(size);
+            border.setSize(Region.BORDER_SIZE);
             applied.add(level);
-        });
+        }
         return applied;
     }
 

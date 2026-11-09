@@ -1,20 +1,14 @@
 package net.alex.guzhenrenworld.dimension.westerndesert;
 
-import com.mojang.datafixers.util.Pair;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.alex.guzhenrenworld.biome.BiomeTable;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Climate;
 
 /**
  * Where the Western Desert [西漠] places its biomes: Terralith's overworld multi-noise table as shipped
@@ -44,13 +38,13 @@ import net.minecraft.world.level.biome.Climate;
  * can place, the spire cells' desert spires included, and {@link #LAND} every surface biome of it but the river,
  * where the spirit spring [元泉] may stand.
  *
- * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link #SPIRE_EROSION} and
- * up, grows Tectonic's spire terrain whatever biome sits there, so a land cell there becomes desert spires
- * ({@link #isSpireCell}) unless it holds one of {@link #KEPT_ON_SPIRES}: the river, the caves, the oases and the two
- * canyon biomes keep their own.
+ * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link
+ * BiomeTable#SPIRE_EROSION} and up, grows Tectonic's spire terrain whatever biome sits there, so a land cell there
+ * becomes desert spires ({@link BiomeTable#withSpires}) unless it is one of the biomes {@link #TABLE} keeps: the river,
+ * the caves, the oases and the two canyon biomes keep their own.
  *
- * <p>⚠ {@link #getParameters} throws on a source biome {@link #GROUPS} does not map, so a re-port that adds one fails
- * {@code runData} instead of dropping cells.
+ * <p>⚠ {@link BiomeTable#getBiome} throws on a source biome {@link #GROUPS} does not map, so a re-port that adds one
+ * fails {@code runData} instead of dropping cells.
  *
  * @author Alex
  * @version 1.0.0
@@ -124,43 +118,17 @@ public final class WesternDesertLayout {
                     "terralith:cave/frostfire_caves", "terralith:cave/granite_caves", "terralith:cave/infested_caves",
                     "terralith:cave/mantle_caves", "terralith:cave/thermal_caves", "terralith:cave/tuff_caves")));
     public static final Set<ResourceKey<Biome>> ROSTER = GROUPS.keySet();
-    private static final Map<ResourceLocation, ResourceKey<Biome>> SOURCES = getSources();
-    private static final float SPIRE_EROSION = 0.565F;
     private static final Set<ResourceKey<Biome>> WATER_AND_CAVES = Set.of(Replicas.RIVER, Replicas.LUSH_CAVES,
             Replicas.DRIPSTONE_CAVES);
-    private static final Set<ResourceKey<Biome>> KEPT_ON_SPIRES = Set.of(Replicas.RIVER, Replicas.LUSH_CAVES,
-            Replicas.DRIPSTONE_CAVES, WesternDesertRoster.DESERT_OASIS, WesternDesertRoster.RED_OASIS,
-            WesternDesertRoster.SANDSTONE_VALLEY, WesternDesertRoster.DESERT_CANYON);
     public static final List<ResourceKey<Biome>> LAND = ROSTER.stream()
             .filter(biome -> !WATER_AND_CAVES.contains(biome))
             .sorted(Comparator.comparing(ResourceKey::location)).toList();
 
+    public static final BiomeTable TABLE = BiomeTable.withSpires("Western Desert", GROUPS,
+            Set.of(Replicas.RIVER, Replicas.LUSH_CAVES, Replicas.DRIPSTONE_CAVES, WesternDesertRoster.DESERT_OASIS,
+                    WesternDesertRoster.RED_OASIS, WesternDesertRoster.SANDSTONE_VALLEY,
+                    WesternDesertRoster.DESERT_CANYON),
+            WesternDesertRoster.DESERT_SPIRES);
+
     private WesternDesertLayout() {}
-
-    public static List<Pair<Climate.ParameterPoint, Holder<Biome>>> getParameters(HolderGetter<Biome> biomes) {
-        List<Pair<Climate.ParameterPoint, Holder<Biome>>> parameters = new ArrayList<>();
-        for (Map.Entry<Climate.ParameterPoint, ResourceLocation> entry : Ports.getBiomeParameters()) {
-            ResourceKey<Biome> biome = SOURCES.get(entry.getValue());
-            if (biome == null) throw new IllegalStateException("no Western Desert biome for " + entry.getValue());
-            if (isSpireCell(entry.getKey()) && !KEPT_ON_SPIRES.contains(biome)) {
-                biome = WesternDesertRoster.DESERT_SPIRES;
-            }
-            parameters.add(Pair.of(entry.getKey(), biomes.getOrThrow(biome)));
-        }
-        return parameters;
-    }
-
-    private static boolean isSpireCell(Climate.ParameterPoint point) {
-        return point.erosion().min() >= Climate.quantizeCoord(SPIRE_EROSION);
-    }
-
-    private static Map<ResourceLocation, ResourceKey<Biome>> getSources() {
-        Map<ResourceLocation, ResourceKey<Biome>> sources = new HashMap<>();
-        GROUPS.forEach((biome, names) -> names.forEach(name -> {
-            if (sources.put(ResourceLocation.parse(name), biome) != null) {
-                throw new IllegalStateException(name + " is mapped twice");
-            }
-        }));
-        return Map.copyOf(sources);
-    }
 }

@@ -1,20 +1,14 @@
 package net.alex.guzhenrenworld.dimension.northernplains;
 
-import com.mojang.datafixers.util.Pair;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.alex.guzhenrenworld.biome.BiomeTable;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Climate;
 
 /**
  * Where the Northern Plains [北原] places its biomes: Terralith's overworld multi-noise table as shipped
@@ -44,8 +38,8 @@ import net.minecraft.world.level.biome.Climate;
  * <p>{@link #ROSTER} is every biome the region can place, {@link #LAND} every surface biome of it but the water and
  * the caves ({@link #WATER_AND_CAVES}), where the spirit spring [元泉] may stand.
  *
- * <p>⚠ {@link #getParameters} throws on a source biome {@link #GROUPS} does not map, so a re-port that adds one fails
- * {@code runData} instead of dropping cells.
+ * <p>⚠ {@link BiomeTable#getBiome} throws on a source biome {@link #GROUPS} does not map, so a re-port that adds one
+ * fails {@code runData} instead of dropping cells.
  *
  * @author Alex
  * @version 1.0.0
@@ -131,32 +125,13 @@ public final class NorthernPlainsLayout {
             NorthernPlainsRoster.SNOWY_TAIGA, NorthernPlainsRoster.SIBERIAN_TAIGA, NorthernPlainsRoster.WINTRY_FOREST,
             NorthernPlainsRoster.GROVE, NorthernPlainsRoster.FROZEN_PEAKS, NorthernPlainsRoster.FROZEN_CLIFFS,
             NorthernPlainsRoster.GLACIAL_CHASM);
-    private static final Map<ResourceLocation, ResourceKey<Biome>> SOURCES = getSources();
     private static final Set<ResourceKey<Biome>> WATER_AND_CAVES = Set.of(Replicas.RIVER,
             NorthernPlainsRoster.FROZEN_RIVER, Replicas.DRIPSTONE_CAVES);
     public static final List<ResourceKey<Biome>> LAND = ROSTER.stream()
             .filter(biome -> !WATER_AND_CAVES.contains(biome))
             .sorted(Comparator.comparing(ResourceKey::location)).toList();
 
+    public static final BiomeTable TABLE = BiomeTable.of("Northern Plains", GROUPS);
+
     private NorthernPlainsLayout() {}
-
-    public static List<Pair<Climate.ParameterPoint, Holder<Biome>>> getParameters(HolderGetter<Biome> biomes) {
-        List<Pair<Climate.ParameterPoint, Holder<Biome>>> parameters = new ArrayList<>();
-        for (Map.Entry<Climate.ParameterPoint, ResourceLocation> entry : Ports.getBiomeParameters()) {
-            ResourceKey<Biome> biome = SOURCES.get(entry.getValue());
-            if (biome == null) throw new IllegalStateException("no Northern Plains biome for " + entry.getValue());
-            parameters.add(Pair.of(entry.getKey(), biomes.getOrThrow(biome)));
-        }
-        return parameters;
-    }
-
-    private static Map<ResourceLocation, ResourceKey<Biome>> getSources() {
-        Map<ResourceLocation, ResourceKey<Biome>> sources = new HashMap<>();
-        GROUPS.forEach((biome, names) -> names.forEach(name -> {
-            if (sources.put(ResourceLocation.parse(name), biome) != null) {
-                throw new IllegalStateException(name + " is mapped twice");
-            }
-        }));
-        return Map.copyOf(sources);
-    }
 }

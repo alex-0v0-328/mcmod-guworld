@@ -1,28 +1,22 @@
 package net.alex.guzhenrenworld.dimension.southernborder;
 
-import com.mojang.datafixers.util.Pair;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import net.alex.guzhenrenworld.biome.BiomeTable;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.biome.WildCropClimate;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderGetter;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.Climate;
 
 /**
- * Where the Southern Border [南疆] places its biomes: Terralith's overworld multi-noise table as shipped
- * ({@link Ports#getBiomeParameters}), with every source biome mapped onto the region's own ({@link #SOURCES}). The
- * terrain under it is Tectonic's ({@link Terrain}), which remaps its own erosion and ridges into the bands Terralith's
- * table expects, so each parameter cell keeps the terrain archetype Terralith gave it and gets the Southern Border
- * biome of its kind.
+ * Where the Southern Border [南疆] places its biomes: Terralith's overworld multi-noise table as shipped ({@link
+ * Ports#getBiomeParameters}), with every source biome mapped onto the region's own ({@link #GROUPS}, a roster biome to
+ * the source biomes it stands in for). The terrain under it is Tectonic's ({@link Terrain}), which remaps its own
+ * erosion and ridges into the bands Terralith's table expects, so each parameter cell keeps the terrain archetype
+ * Terralith gave it and gets the Southern Border biome of its kind.
  *
  * <p>The roster, by terrain band:
  * <ul>
@@ -45,14 +39,14 @@ import net.minecraft.world.level.biome.Climate;
  * sorts the land into the wild crop climates of Farmer's Delight by the temperature and downfall rule of
  * {@link WildCropClimate}.
  *
- * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link #SPIRE_EROSION} and
- * up, which Tectonic reaches only where its own erosion runs past 1, grows Tectonic's low-factor spire terrain
- * whatever biome sits there. So a land cell there becomes karst peak forest ({@link #isSpireCell}) unless it holds
- * one of {@link #KEPT_ON_SPIRES}: the river, the caves, the swamp, the hot springs and the Zhangshiyan cliffs keep
- * their own.
+ * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link
+ * BiomeTable#SPIRE_EROSION} and up, which Tectonic reaches only where its own erosion runs past 1, grows Tectonic's
+ * low-factor spire terrain whatever biome sits there. So a land cell there becomes karst peak forest ({@link
+ * BiomeTable#withSpires}) unless it is one of the biomes {@link #TABLE} keeps: the river, the caves, the swamp, the hot
+ * springs and the Zhangshiyan cliffs keep their own.
  *
- * <p>⚠ {@link #getParameters} throws on a source biome {@link #SOURCES} does not map, so a re-port that adds one fails
- * {@code runData} instead of dropping cells.
+ * <p>⚠ {@link BiomeTable#getBiome} throws on a source biome {@link #GROUPS} does not map, so a re-port that adds one
+ * fails {@code runData} instead of dropping cells.
  *
  * @author Alex
  * @version 1.0.0
@@ -126,12 +120,8 @@ public final class BiomeLayout {
                     "terralith:cave/frostfire_caves", "terralith:cave/granite_caves", "terralith:cave/infested_caves",
                     "terralith:cave/mantle_caves", "terralith:cave/thermal_caves", "terralith:cave/tuff_caves")));
     public static final Set<ResourceKey<Biome>> ROSTER = GROUPS.keySet();
-    public static final Map<ResourceLocation, ResourceKey<Biome>> SOURCES = getSources();
-    private static final float SPIRE_EROSION = 0.565F;
     private static final Set<ResourceKey<Biome>> WATER_AND_CAVES = Set.of(Replicas.RIVER, Replicas.LUSH_CAVES,
             Replicas.DRIPSTONE_CAVES);
-    private static final Set<ResourceKey<Biome>> KEPT_ON_SPIRES = Set.of(Replicas.RIVER, Replicas.LUSH_CAVES,
-            Replicas.DRIPSTONE_CAVES, Ports.ORCHID_SWAMP, Ports.HOT_SPRINGS, Ports.ZHANGSHIYAN_CLIFFS);
     public static final List<ResourceKey<Biome>> LAND = ROSTER.stream()
             .filter(biome -> !WATER_AND_CAVES.contains(biome))
             .sorted(Comparator.comparing(ResourceKey::location)).toList();
@@ -145,30 +135,10 @@ public final class BiomeLayout {
             WildCropClimate.COLD, List.of(Ports.CLOUD_FOREST, Ports.MISTY_MOUNTAINS, Ports.HOT_SPRINGS,
                     Ports.ROCKY_PEAKS, Ports.EMERALD_PEAKS));
 
+    public static final BiomeTable TABLE = BiomeTable.withSpires("Southern Border", GROUPS,
+            Set.of(Replicas.RIVER, Replicas.LUSH_CAVES, Replicas.DRIPSTONE_CAVES, Ports.ORCHID_SWAMP, Ports.HOT_SPRINGS,
+                    Ports.ZHANGSHIYAN_CLIFFS),
+            Ports.KARST_PEAK_FOREST);
+
     private BiomeLayout() {}
-
-    public static List<Pair<Climate.ParameterPoint, Holder<Biome>>> getParameters(HolderGetter<Biome> biomes) {
-        List<Pair<Climate.ParameterPoint, Holder<Biome>>> parameters = new ArrayList<>();
-        for (Map.Entry<Climate.ParameterPoint, ResourceLocation> entry : Ports.getBiomeParameters()) {
-            ResourceKey<Biome> biome = SOURCES.get(entry.getValue());
-            if (biome == null) throw new IllegalStateException("no Southern Border biome for " + entry.getValue());
-            if (isSpireCell(entry.getKey()) && !KEPT_ON_SPIRES.contains(biome)) biome = Ports.KARST_PEAK_FOREST;
-            parameters.add(Pair.of(entry.getKey(), biomes.getOrThrow(biome)));
-        }
-        return parameters;
-    }
-
-    private static boolean isSpireCell(Climate.ParameterPoint point) {
-        return point.erosion().min() >= Climate.quantizeCoord(SPIRE_EROSION);
-    }
-
-    private static Map<ResourceLocation, ResourceKey<Biome>> getSources() {
-        Map<ResourceLocation, ResourceKey<Biome>> sources = new HashMap<>();
-        GROUPS.forEach((biome, names) -> names.forEach(name -> {
-            if (sources.put(ResourceLocation.parse(name), biome) != null) {
-                throw new IllegalStateException(name + " is mapped twice");
-            }
-        }));
-        return Map.copyOf(sources);
-    }
 }

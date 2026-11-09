@@ -6,15 +6,10 @@ import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.BiomeName;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
+import net.alex.guzhenrenworld.dimension.Regions;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
-import net.alex.guzhenrenworld.dimension.easternsea.EasternSea;
-import net.alex.guzhenrenworld.dimension.easternsea.EasternSeaRoster;
-import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlains;
-import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlainsRoster;
+import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
-import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
-import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesert;
-import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesertRoster;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
@@ -61,7 +56,6 @@ public class Translations extends LanguageProvider {
         addDimension(TreasureYellowHeaven.LEVEL_STEM, "Treasure Yellow Heaven", "宝黄天");
         addTitleColor(TreasureYellowHeaven.LEVEL_STEM, TreasureYellowHeaven.COLOR);
         addBiomes(List.of(TreasureYellowHeaven.BIOME), "Treasure Yellow Heaven", "宝黄天");
-        addDimension(SouthernBorder.LEVEL_STEM, "Southern Border", "南疆");
         addBiomes(Replicas.BIOMES,
                 "Plains", "平原",
                 "River", "河流",
@@ -85,12 +79,10 @@ public class Translations extends LanguageProvider {
                 "Zhangshiyan Cliffs", "嶂石岩",
                 "Karst Peak Forest", "喀斯特峰林");
         addBiomes(List.of(BiomeSettings.BAMBOO_SEA), "Bamboo Sea", "竹海");
-        addDimension(WesternDesert.LEVEL_STEM, "Western Desert", "西漠");
-        addBiomes(WesternDesertRoster.NAMES);
-        addDimension(EasternSea.LEVEL_STEM, "Eastern Sea", "东海");
-        addBiomes(EasternSeaRoster.NAMES);
-        addDimension(NorthernPlains.LEVEL_STEM, "Northern Plains", "北原");
-        addBiomes(NorthernPlainsRoster.NAMES);
+        for (Region region : Regions.ALL) {
+            addDimension(region.levelStem(), region.title().english(), region.title().simplified());
+            addBiomes(region.biomes().names());
+        }
     }
 
     private void addBiomes(List<BiomeName> names) {

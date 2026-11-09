@@ -2,18 +2,12 @@ package net.alex.guzhenrenworld.datagen;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.WildCropClimate;
-import net.alex.guzhenrenworld.dimension.easternsea.EasternSeaLayout;
-import net.alex.guzhenrenworld.dimension.easternsea.EasternSeaRoster;
-import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlainsLayout;
-import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlainsRoster;
-import net.alex.guzhenrenworld.dimension.southernborder.BiomeLayout;
-import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesertLayout;
-import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesertRoster;
+import net.alex.guzhenrenworld.dimension.Regions;
+import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -30,8 +24,8 @@ import org.jetbrains.annotations.Nullable;
  *
  * <p>Extends {@link TagsProvider} for {@link Biome}. Fills the Spirit Spring [元泉] generation tag
  * {@link SpiritSpring#BIOMES} from {@link SpiritSpring#LAND_BIOMES}, the overworld list the spring's package owns,
- * and each region's land biomes ({@link BiomeLayout#LAND} and the other regions' layouts), and the wild crop climate
- * tags of {@link WildCropClimate} from each region's crop map; a biome two regions both place, the rainforest, enters
+ * and each region's land biomes, and the wild crop climate tags of {@link WildCropClimate} from each region's crop
+ * map (all of {@link Regions#ALL}); a biome two regions both place, the rainforest, enters
  * each tag once.
  *
  * <p>⚠ There can only be one per data run: a tags provider is named after its registry and mod, so a
@@ -53,17 +47,11 @@ public class BiomeTagsProvider extends TagsProvider<Biome> {
     protected void addTags(HolderLookup.@NotNull Provider registries) {
         TagAppender<Biome> spiritSpring = tag(SpiritSpring.BIOMES);
         Set<ResourceKey<Biome>> land = new LinkedHashSet<>(SpiritSpring.LAND_BIOMES);
-        land.addAll(BiomeLayout.LAND);
-        land.addAll(WesternDesertLayout.LAND);
-        land.addAll(EasternSeaLayout.LAND);
-        land.addAll(NorthernPlainsLayout.LAND);
+        Regions.ALL.forEach(region -> land.addAll(region.biomes().land()));
         land.forEach(spiritSpring::add);
         for (WildCropClimate climate : WildCropClimate.values()) {
             Set<ResourceKey<Biome>> biomes = new LinkedHashSet<>();
-            for (Map<WildCropClimate, List<ResourceKey<Biome>>> crops : List.of(BiomeLayout.CROPS,
-                    WesternDesertRoster.CROPS, EasternSeaRoster.CROPS, NorthernPlainsRoster.CROPS)) {
-                biomes.addAll(crops.getOrDefault(climate, List.of()));
-            }
+            for (Region region : Regions.ALL) biomes.addAll(region.biomes().crops().getOrDefault(climate, List.of()));
             TagAppender<Biome> appender = tag(climate.tag());
             biomes.forEach(appender::add);
         }
