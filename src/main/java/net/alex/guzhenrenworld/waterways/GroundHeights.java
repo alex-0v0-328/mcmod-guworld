@@ -8,19 +8,16 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * The ground height the waterways [水系] planner reads: one above the highest block whose final density is above
- * zero, found by scanning a column down from the top {@link #STEP} blocks at a time and then block by block,
- * uninterpolated, through a copy of the region's router in which every {@code flat_cache} and {@code cache_2d} keeps
- * the last column's value, with the waterways carving left out ({@link WaterwaysDensity#getUncarved}): the plan and
- * the banks read the terrain before it. A noise chunk per column costs about 16 ms with Gu World's routers; this
- * costs 0.15 to 0.18 ms and lands within 1 to 2 blocks of it at the 95th percentile, 6 to 10 at worst on land (the P0
- * benchmark, wiki《Gu World 维护说明#地形性能工具》). A {@code flat_cache} computes its input at y 0, as a noise
- * chunk's does.
+ * zero, found by {@link GroundScan}, uninterpolated, through a copy of the region's router in which every
+ * {@code flat_cache} and {@code cache_2d} keeps the last column's value, with the waterways carving left out
+ * ({@link WaterwaysDensity#getUncarved}): the plan and the banks read the terrain before it. A noise chunk per column
+ * costs about 16 ms with Gu World's routers; this costs 0.15 to 0.18 ms and lands within 1 to 2 blocks of it at the
+ * 95th percentile, 6 to 10 at worst on land (the P0 benchmark, wiki《Gu World 维护说明#地形性能工具》). A
+ * {@code flat_cache} computes its input at y 0, as a noise chunk's does.
  *
- * <p>The banks of a stream ask with a guess, the stream's water surface plus the incision: the scan starts there,
- * climbs {@link #CLIMB} blocks at a time while solid and refines, or walks down up to {@link #DESCENT} blocks before
- * falling back to the coarse steps. That takes a handful of samples instead of some forty, and finds the ground
- * nearest the stream: under an overhang, the floor, not the overhang's top. A noise chunk's carving scans through the
- * chunk's own copy of the terrain instead, whose column caches already hold the chunk's columns.
+ * <p>The banks of a stream ask with a guess, the stream's water surface plus the incision ({@link GroundScan}). A noise
+ * chunk's carving scans through the chunk's own copy of the terrain instead, whose column caches already hold the
+ * chunk's columns.
  *
  * <p>⚠ The column memos are mutable, so every thread scans through its own copy of the router.
  *
@@ -31,27 +28,22 @@ import org.jetbrains.annotations.NotNull;
 
 public final class GroundHeights {
 
-    private static final int STEP = 8;
-    private static final int CLIMB = 4;
-    private static final int DESCENT = 8;
     private static final KeyDispatchDataCodec<? extends DensityFunction> FLAT_CACHE =
             DensityFunctions.flatCache(DensityFunctions.zero()).codec();
     private static final KeyDispatchDataCodec<? extends DensityFunction> CACHE_2D =
             DensityFunctions.cache2d(DensityFunctions.zero()).codec();
 
     private final ThreadLocal<DensityFunction> terrain;
-    private final int minY;
-    private final int topY;
+    private final GroundScan scan;
 
     public GroundHeights(NoiseRouter router, int minY, int topY) {
         DensityFunction finalDensity = WaterwaysDensity.getUncarved(router);
         this.terrain = ThreadLocal.withInitial(() -> finalDensity.mapAll(GroundHeights::memoize));
-        this.minY = minY;
-        this.topY = topY;
+        this.scan = new GroundScan(minY, topY);
     }
 
     public int sample(int x, int z) {
-        return scanDown(terrain.get(), x, topY - STEP, z);
+        return scan.sample(GroundHeights::isSolid, terrain.get(), x, z);
     }
 
     public int sample(int x, int z, int guess) {
@@ -59,34 +51,7 @@ public final class GroundHeights {
     }
 
     public int sample(DensityFunction density, int x, int z, int guess) {
-        int y = Math.clamp(guess, minY, topY - 1);
-        if (isSolid(density, x, y, z)) {
-            int air = y + CLIMB;
-            while (air < topY && isSolid(density, x, air, z)) {
-                y = air;
-                air += CLIMB;
-            }
-            for (int fine = Math.min(air, topY) - 1; fine > y; fine--) {
-                if (isSolid(density, x, fine, z)) return fine + 1;
-            }
-            return y + 1;
-        }
-        int floor = Math.max(minY, y - DESCENT);
-        for (int fine = y - 1; fine >= floor; fine--) {
-            if (isSolid(density, x, fine, z)) return fine + 1;
-        }
-        return floor > minY ? scanDown(density, x, floor - STEP, z) : minY;
-    }
-
-    private int scanDown(DensityFunction density, int x, int start, int z) {
-        for (int y = start; y >= minY; y -= STEP) {
-            if (!isSolid(density, x, y, z)) continue;
-            for (int fine = y + STEP - 1; fine > y; fine--) {
-                if (isSolid(density, x, fine, z)) return fine + 1;
-            }
-            return y + 1;
-        }
-        return minY;
+        return scan.sample(GroundHeights::isSolid, density, x, z, guess);
     }
 
     private static boolean isSolid(DensityFunction density, int x, int y, int z) {
