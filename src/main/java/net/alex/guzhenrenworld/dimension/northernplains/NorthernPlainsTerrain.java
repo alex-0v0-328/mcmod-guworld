@@ -20,12 +20,12 @@ import net.minecraft.world.level.levelgen.DensityFunction;
  * <p>The two reshaped functions:
  * <ul>
  *   <li>The folded erosion, {@value #EROSION_FOLDED}, the distance of Tectonic's erosion from zero, which sets both
- *   the terrain splines and the erosion Terralith's table reads: low means mountains. The region stretches it by
- *   {@link #EROSION_SCALE} and lifts it by {@link #EROSION_OFFSET}, so the mountain and hill bands narrow to the
- *   lines where the erosion crosses zero and the lowland bands widen, and caps it at {@link #EROSION_CAP}, the top of
- *   Terralith's lowland band: past it the table's next band holds the glacial chasm in every frozen cell, which took
- *   a fifth of the region uncapped, and past 1 Tectonic grows its spire terrain. Terrain and biomes move together,
- *   flats, hills and mountains from 47, 37 and 15% to 65, 26 and 7%.</li>
+ *   the terrain splines and the erosion Terralith's table reads: low means mountains. The region scales it by
+ *   {@link #EROSION_SCALE} and lifts it by {@link #EROSION_OFFSET}, so the mountain band narrows to the lines where
+ *   the erosion crosses zero and the hill band widens a little, and caps it at
+ *   {@link #EROSION_CAP}, the top of Terralith's lowland band: past it the table's next band holds the glacial chasm
+ *   in every frozen cell, and past 1 Tectonic grows its spire terrain. Terrain and biomes move together: flats, hills
+ *   and mountains take 74, 15 and 10%.</li>
  *   <li>The temperature, {@value #TEMPERATURE}, which Terralith's table, Tectonic's landform regions and Terralith's
  *   cold spikes all read: Tectonic's temperature noise scaled by {@link #TEMPERATURE_SCALE} plus the latitude, a
  *   {@code guworld:z_gradient} from {@link #NORTH_TEMPERATURE} at z {@code -}{@link #GRADIENT_EDGE} and north (minus
@@ -40,8 +40,8 @@ import net.minecraft.world.level.levelgen.DensityFunction;
  *   <li>{@code ocean_offset}: Tectonic's continentalness is its folded continent noise plus this offset
  *   ({@link #OCEAN_OFFSET}), the Southern Border's [南疆] -0.1, which lifts the lowest ground inland of the coast
  *   band so no sea remains.</li>
- *   <li>{@code vertical_scale}: the stretch of the height above sea level, {@link #VERTICAL_SCALE}, two thirds of
- *   Tectonic's 1.125, so the few peaks top out at about y 230 instead of 290.</li>
+ *   <li>{@code vertical_scale}: the stretch of the height above sea level, {@link #VERTICAL_SCALE}, under two
+ *   thirds of Tectonic's 1.125, so the few peaks top out at about y 215.</li>
  *   <li>{@code min_y} and {@code max_y}: Tectonic's height limits, the dimension's floor and top.</li>
  *   <li>{@code dunes}: off; Tectonic raises dunes in hot, dry cells, which the gradient leaves almost unreached.</li>
  *   <li>{@code jungle_pillars}, {@code underground_rivers} with {@code underground_river_water}, and
@@ -64,11 +64,11 @@ public final class NorthernPlainsTerrain {
     private static final double NORTH_TEMPERATURE = -0.75;
     private static final double SOUTH_TEMPERATURE = -0.05;
     private static final double TEMPERATURE_SCALE = 0.55;
-    private static final double EROSION_SCALE = 1.2;
-    private static final double EROSION_OFFSET = 0.01;
+    private static final double EROSION_SCALE = 0.8;
+    private static final double EROSION_OFFSET = 0.038;
     private static final double EROSION_CAP = 0.8;
     private static final double OCEAN_OFFSET = -0.1;
-    private static final double VERTICAL_SCALE = 0.75;
+    private static final double VERTICAL_SCALE = 0.70;
     private static final boolean JUNGLE_PILLARS = false;
     private static final boolean UNDERGROUND_RIVERS = false;
     private static final boolean LAVA_TUNNELS = false;

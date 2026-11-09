@@ -15,13 +15,13 @@ import org.jetbrains.annotations.NotNull;
  * [北原] with its temperature, needs one; a region names it in the JSON of its terrain copy
  * ({@link Ports#registerDensityFunctions}'s patch).
  *
- * <p>{@link #MAP_CODEC} is the type's data codec, which {@link ZGradientRegistration} registers under {@link #ID}, and
- * {@link #CODEC} wraps that very instance: the registry finds the type by it.
+ * <p>{@link #MAP_CODEC} is the type's data codec, which {@link GradientRegistration} registers under {@link #ID},
+ * and {@link #CODEC} wraps that very instance: the registry finds the type by it.
  * The function reads only z, so it may sit inside a {@code cache_2d} ({@link ColumnCaches}).
  *
  * @author Alex
  * @version 1.0.0
- * @see ZGradientRegistration
+ * @see GradientRegistration
  * @since 1.0.0
  */
 

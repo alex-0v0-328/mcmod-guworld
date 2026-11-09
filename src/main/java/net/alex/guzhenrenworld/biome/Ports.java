@@ -22,10 +22,12 @@ import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import net.alex.guzhenrenworld.GuWorld;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.HolderOwner;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.registries.VanillaRegistries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.ResourceKey;
@@ -65,8 +67,19 @@ import org.jetbrains.annotations.NotNull;
  * router, under {@code guworld:terrain/<region>/}: {@link #registerDensityFunctions} takes the region's name and
  * its patch, handed each ported function's name with its JSON, for what it changes in one, then renames every
  * function reference into the region ({@link #getRegional}), the hook references with them, which the region
- * registers at {@link #getHookKey}; {@link #getNoiseRouter} does the same for the router. The noises are shared:
- * a reference under a {@code noise} field, or the argument of a {@code shift} function, stays as ported.
+ * registers at {@link #getHookKey}; {@link #getNoiseRouter} does the same for the router.
+ *
+ * <p>Each region also registers its own copy of every noise its terrain reads, since a random state derives each
+ * noise from the world seed and the noise's id, and every region runs on the world seed: two regions that read one
+ * id read one noise field, the same continents, rivers and ridges. {@link #registerNoises(BootstrapContext, String)}
+ * registers the ported noises under the region's prefix and the vanilla noises the terrain reads under
+ * {@code guworld:terrain/<region>/minecraft/}, with vanilla's parameters, and {@link #registerDensityFunctions} adds
+ * the region's copy of each vanilla density function that reads a noise, such as {@code minecraft:shift_x}, at the
+ * same place; {@link #getRegional} renames a noise reference like any other, and a vanilla reference only when it
+ * names one of those copies. The nested scan finds them once, from vanilla's own registries, and encodes the copied
+ * functions back to JSON. Still shared: {@code minecraft:overworld/base_3d_noise}, whose blended noise seeds itself
+ * from vanilla's {@code minecraft:terrain} whatever its id, the surface rules' noises, and a random state's aquifer
+ * and ore positions.
  *
  * <p>{@link #registerBiomes} fails when the indexes and the expected keys name different biomes, so a biome a port
  * script adds cannot register without a key the tables, translations and tags can name.
@@ -109,6 +122,8 @@ public final class Ports {
     private static final String TERRAIN = "terrain/";
     private static final String TERRAIN_ID_PREFIX = GuWorld.MOD_ID + ":" + TERRAIN;
     private static final String HOOK = "hook/";
+    private static final String VANILLA = "minecraft/";
+    private static final String TYPE = "type";
     private static final Set<String> NOISE_ARGUMENT_TYPES = Set.of("shift", "shift_a", "shift_b");
     private static final BiFunction<String, JsonElement, JsonElement> UNPATCHED = (name, json) -> json;
 
@@ -116,7 +131,21 @@ public final class Ports {
 
     public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context) {
         register(context, Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC, TERRALITH, "noise", UNPATCHED);
-        register(context, Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC, TECTONIC, "noise", UNPATCHED);
+    }
+
+    public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context, String region) {
+        RegistryOps<JsonElement> registryOps = getOps(context);
+        for (String name : getIndex(TECTONIC, "noise")) {
+            JsonElement json = read(TECTONIC, "noise/" + name);
+            context.register(GuWorld.key(Registries.NOISE, getRegionalPath(region, name)),
+                    decode(NormalNoise.NoiseParameters.DIRECT_CODEC, registryOps, "noise", name, json));
+        }
+        HolderLookup.RegistryLookup<NormalNoise.NoiseParameters> vanilla =
+                Vanilla.LOOKUP.lookupOrThrow(Registries.NOISE);
+        for (ResourceLocation noise : Vanilla.NOISES) {
+            context.register(GuWorld.key(Registries.NOISE, getRegionalPath(region, getVanillaName(noise))),
+                    vanilla.getOrThrow(ResourceKey.create(Registries.NOISE, noise)).value());
+        }
     }
 
     public static void registerConfiguredFeatures(BootstrapContext<ConfiguredFeature<?, ?>> context) {
@@ -137,6 +166,11 @@ public final class Ports {
             context.register(getRegionalKey(region, name),
                     decode(DensityFunction.DIRECT_CODEC, registryOps, "density_function", name, json));
         }
+        for (Map.Entry<ResourceLocation, JsonElement> copied : Vanilla.FUNCTIONS.entrySet()) {
+            String name = getVanillaName(copied.getKey());
+            context.register(getRegionalKey(region, name), decode(DensityFunction.DIRECT_CODEC, registryOps,
+                    "density_function", name, getRegional(region, copied.getValue())));
+        }
     }
 
     public static NoiseRouter getNoiseRouter(BootstrapContext<?> context, String region) {
@@ -146,35 +180,69 @@ public final class Ports {
     }
 
     public static ResourceKey<DensityFunction> getRegionalKey(String region, String name) {
-        if (!name.startsWith(TERRAIN)) throw new IllegalArgumentException(name + " is not a ported terrain function");
-        return GuWorld.key(Registries.DENSITY_FUNCTION, TERRAIN + region + "/" + name.substring(TERRAIN.length()));
+        return GuWorld.key(Registries.DENSITY_FUNCTION, getRegionalPath(region, name));
     }
 
     public static ResourceKey<DensityFunction> getHookKey(String region, String hook) {
         return getRegionalKey(region, TERRAIN + HOOK + hook);
     }
 
+    private static String getRegionalPath(String region, String name) {
+        if (!name.startsWith(TERRAIN)) throw new IllegalArgumentException(name + " is not a ported terrain entry");
+        return TERRAIN + region + "/" + name.substring(TERRAIN.length());
+    }
+
+    private static String getVanillaName(ResourceLocation vanilla) {
+        return TERRAIN + VANILLA + vanilla.getPath();
+    }
+
     private static JsonElement getRegional(String region, JsonElement json) {
+        return getRegional(region, json, false);
+    }
+
+    private static JsonElement getRegional(String region, JsonElement json, boolean noise) {
         if (json.isJsonArray()) {
             JsonArray renamed = new JsonArray();
-            json.getAsJsonArray().forEach(element -> renamed.add(getRegional(region, element)));
+            json.getAsJsonArray().forEach(element -> renamed.add(getRegional(region, element, noise)));
             return renamed;
         }
         if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
             String id = json.getAsString();
-            if (!id.startsWith(TERRAIN_ID_PREFIX)) return json;
-            return new JsonPrimitive(TERRAIN_ID_PREFIX + region + "/" + id.substring(TERRAIN_ID_PREFIX.length()));
+            if (id.startsWith(TERRAIN_ID_PREFIX)) {
+                return new JsonPrimitive(GuWorld.MOD_ID + ":" + getRegionalPath(region,
+                        id.substring(GuWorld.MOD_ID.length() + 1)));
+            }
+            ResourceLocation vanilla = getVanilla(id);
+            boolean copied = vanilla != null
+                    && (noise ? Vanilla.NOISES.contains(vanilla) : Vanilla.FUNCTIONS.containsKey(vanilla));
+            if (!copied) return json;
+            return new JsonPrimitive(GuWorld.MOD_ID + ":" + getRegionalPath(region, getVanillaName(vanilla)));
         }
         if (!json.isJsonObject()) return json;
         JsonObject function = json.getAsJsonObject();
-        boolean noiseArgument = function.has("type")
-                && NOISE_ARGUMENT_TYPES.contains(function.get("type").getAsString().replace("minecraft:", ""));
+        boolean noiseArgument = isNoiseArgument(function);
         JsonObject renamed = new JsonObject();
         for (Map.Entry<String, JsonElement> entry : function.entrySet()) {
-            boolean noise = entry.getKey().equals("noise") || noiseArgument && entry.getKey().equals("argument");
-            renamed.add(entry.getKey(), noise ? entry.getValue() : getRegional(region, entry.getValue()));
+            boolean type = entry.getKey().equals(TYPE);
+            renamed.add(entry.getKey(), type ? entry.getValue()
+                    : getRegional(region, entry.getValue(), isNoise(entry.getKey(), noiseArgument)));
         }
         return renamed;
+    }
+
+    private static boolean isNoiseArgument(JsonObject function) {
+        return function.has(TYPE)
+                && NOISE_ARGUMENT_TYPES.contains(function.get(TYPE).getAsString().replace("minecraft:", ""));
+    }
+
+    private static boolean isNoise(String field, boolean noiseArgument) {
+        return field.equals("noise") || noiseArgument && field.equals("argument");
+    }
+
+    private static ResourceLocation getVanilla(String id) {
+        ResourceLocation location = ResourceLocation.tryParse(id);
+        return location != null && location.getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE)
+                ? location : null;
     }
 
     public static List<Map.Entry<Climate.ParameterPoint, ResourceLocation>> getBiomeParameters() {
@@ -300,5 +368,67 @@ public final class Ports {
 
     private static ResourceKey<Biome> key(String name) {
         return biome(name);
+    }
+
+    private static final class Vanilla {
+
+        private static final HolderLookup.Provider LOOKUP = VanillaRegistries.createLookup();
+        private static final Map<ResourceLocation, JsonElement> FUNCTIONS = new LinkedHashMap<>();
+        private static final Set<ResourceLocation> NOISES = new LinkedHashSet<>();
+        private static final Set<ResourceLocation> NOISELESS = new HashSet<>();
+
+        static {
+            for (String name : getIndex(TECTONIC, "density_function")) {
+                scan(read(TECTONIC, "density_function/" + name), false);
+            }
+            scan(read(TECTONIC, "noise_router"), false);
+        }
+
+        private Vanilla() {}
+
+        private static boolean scan(JsonElement json, boolean noise) {
+            boolean reads = false;
+            if (json.isJsonArray()) {
+                for (JsonElement element : json.getAsJsonArray()) reads |= scan(element, noise);
+                return reads;
+            }
+            if (json.isJsonObject()) {
+                JsonObject function = json.getAsJsonObject();
+                boolean noiseArgument = isNoiseArgument(function);
+                for (Map.Entry<String, JsonElement> entry : function.entrySet()) {
+                    if (!entry.getKey().equals(TYPE)) {
+                        reads |= scan(entry.getValue(), isNoise(entry.getKey(), noiseArgument));
+                    }
+                }
+                return reads;
+            }
+            if (!json.isJsonPrimitive() || !json.getAsJsonPrimitive().isString()) return false;
+            ResourceLocation vanilla = getVanilla(json.getAsString());
+            if (vanilla == null) return false;
+            if (!noise) return isCopied(vanilla);
+            NOISES.add(vanilla);
+            return true;
+        }
+
+        private static boolean isCopied(ResourceLocation function) {
+            if (FUNCTIONS.containsKey(function)) return true;
+            if (NOISELESS.contains(function)) return false;
+            Optional<JsonElement> encoded = encode(function);
+            if (encoded.isEmpty() || !scan(encoded.get(), false)) {
+                NOISELESS.add(function);
+                return false;
+            }
+            FUNCTIONS.put(function, encoded.get());
+            return true;
+        }
+
+        private static Optional<JsonElement> encode(ResourceLocation function) {
+            return LOOKUP.lookupOrThrow(Registries.DENSITY_FUNCTION)
+                    .get(ResourceKey.create(Registries.DENSITY_FUNCTION, function))
+                    .map(holder -> DensityFunction.DIRECT_CODEC.encodeStart(
+                            LOOKUP.createSerializationContext(JsonOps.INSTANCE), holder.value())
+                            .getOrThrow(message -> new IllegalStateException("vanilla density function " + function
+                                    + ": " + message)));
+        }
     }
 }

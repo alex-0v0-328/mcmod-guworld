@@ -1,9 +1,9 @@
 {
   "type": "minecraft:shifted_noise",
-  "noise": "guworld:terrain/tectonic/parameter/erosion",
-  "shift_x": "minecraft:shift_x",
+  "noise": "guworld:terrain/eastern_sea/tectonic/parameter/erosion",
+  "shift_x": "guworld:terrain/eastern_sea/minecraft/shift_x",
   "shift_y": 0.0,
-  "shift_z": "minecraft:shift_z",
+  "shift_z": "guworld:terrain/eastern_sea/minecraft/shift_z",
   "xz_scale": 0.25,
   "y_scale": 0.0
 }

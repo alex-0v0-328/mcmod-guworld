@@ -1,1 +1,17 @@
--1.2
+{
+  "type": "minecraft:add",
+  "argument1": {
+    "type": "guworld:x_gradient",
+    "from_value": -0.8,
+    "from_x": -4096,
+    "to_value": -1.0,
+    "to_x": 1365
+  },
+  "argument2": {
+    "type": "guworld:x_gradient",
+    "from_value": 0.0,
+    "from_x": 1365,
+    "to_value": -0.9,
+    "to_x": 2048
+  }
+}

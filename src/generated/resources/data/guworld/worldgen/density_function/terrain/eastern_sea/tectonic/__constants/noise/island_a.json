@@ -1,6 +1,6 @@
 {
   "type": "minecraft:shifted_noise",
-  "noise": "guworld:terrain/tectonic/island/continents_a",
+  "noise": "guworld:terrain/eastern_sea/tectonic/island/continents_a",
   "shift_x": 0.0,
   "shift_y": 0.0,
   "shift_z": 0.0,

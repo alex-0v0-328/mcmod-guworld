@@ -47,7 +47,7 @@
                       "type": "minecraft:square",
                       "argument": {
                         "type": "minecraft:noise",
-                        "noise": "minecraft:cave_layer",
+                        "noise": "guworld:terrain/eastern_sea/minecraft/cave_layer",
                         "xz_scale": 1.0,
                         "y_scale": 8.0
                       }
@@ -83,8 +83,8 @@
               "min_inclusive": 0.9,
               "when_in_range": {
                 "type": "minecraft:add",
-                "argument1": "minecraft:overworld/caves/spaghetti_2d",
-                "argument2": "minecraft:overworld/caves/spaghetti_roughness_function"
+                "argument1": "guworld:terrain/eastern_sea/minecraft/overworld/caves/spaghetti_2d",
+                "argument2": "guworld:terrain/eastern_sea/minecraft/overworld/caves/spaghetti_roughness_function"
               },
               "when_out_of_range": 1.0
             }

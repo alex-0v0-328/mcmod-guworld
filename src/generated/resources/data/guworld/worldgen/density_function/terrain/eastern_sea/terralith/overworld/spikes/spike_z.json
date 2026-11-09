@@ -11,7 +11,7 @@
     "type": "minecraft:flat_cache",
     "argument": {
       "type": "minecraft:noise",
-      "noise": "guworld:terrain/terralith/math/spikes/shift2",
+      "noise": "guworld:terrain/eastern_sea/terralith/math/spikes/shift2",
       "xz_scale": 1.0,
       "y_scale": 0.0
     }

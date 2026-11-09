@@ -1,6 +1,6 @@
 {
   "type": "minecraft:shifted_noise",
-  "noise": "guworld:terrain/tectonic/mountain_ridges/base",
+  "noise": "guworld:terrain/southern_border/tectonic/mountain_ridges/base",
   "shift_x": 10.0,
   "shift_y": 0.0,
   "shift_z": 0.0,

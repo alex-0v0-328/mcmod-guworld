@@ -58,7 +58,7 @@
                             "value": {
                               "coordinate": {
                                 "type": "minecraft:noise",
-                                "noise": "guworld:terrain/tectonic/region/diamond/wetland",
+                                "noise": "guworld:terrain/northern_plains/tectonic/region/diamond/wetland",
                                 "xz_scale": 0.8,
                                 "y_scale": 0.0
                               },

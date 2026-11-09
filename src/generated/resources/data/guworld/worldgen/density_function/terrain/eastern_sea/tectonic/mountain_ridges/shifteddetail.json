@@ -1,6 +1,6 @@
 {
   "type": "minecraft:shifted_noise",
-  "noise": "guworld:terrain/tectonic/mountain_ridges/detailed",
+  "noise": "guworld:terrain/eastern_sea/tectonic/mountain_ridges/detailed",
   "shift_x": {
     "type": "minecraft:mul",
     "argument1": {

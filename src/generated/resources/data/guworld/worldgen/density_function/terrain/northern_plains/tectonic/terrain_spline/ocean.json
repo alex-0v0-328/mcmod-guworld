@@ -19,14 +19,14 @@
           "argument1": 2.0,
           "argument2": {
             "type": "minecraft:noise",
-            "noise": "guworld:terrain/tectonic/ocean1",
+            "noise": "guworld:terrain/northern_plains/tectonic/ocean1",
             "xz_scale": 0.25,
             "y_scale": 0.0
           }
         },
         "argument2": {
           "type": "minecraft:noise",
-          "noise": "guworld:terrain/tectonic/ocean1",
+          "noise": "guworld:terrain/northern_plains/tectonic/ocean1",
           "xz_scale": 1.0,
           "y_scale": 4.0
         }
@@ -46,7 +46,7 @@
                 "type": "minecraft:abs",
                 "argument": {
                   "type": "minecraft:noise",
-                  "noise": "guworld:terrain/tectonic/ocean2",
+                  "noise": "guworld:terrain/northern_plains/tectonic/ocean2",
                   "xz_scale": 0.1,
                   "y_scale": 0.0
                 }
@@ -61,7 +61,7 @@
               "argument1": 1.5,
               "argument2": {
                 "type": "minecraft:noise",
-                "noise": "guworld:terrain/tectonic/ocean2",
+                "noise": "guworld:terrain/northern_plains/tectonic/ocean2",
                 "xz_scale": 4.0,
                 "y_scale": 2.0
               }

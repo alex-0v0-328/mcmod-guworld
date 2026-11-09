@@ -43,7 +43,7 @@
           },
           "argument2": {
             "type": "minecraft:noise",
-            "noise": "guworld:terrain/tectonic/blend_alpha",
+            "noise": "guworld:terrain/southern_border/tectonic/blend_alpha",
             "xz_scale": 0.4,
             "y_scale": 0.0
           }

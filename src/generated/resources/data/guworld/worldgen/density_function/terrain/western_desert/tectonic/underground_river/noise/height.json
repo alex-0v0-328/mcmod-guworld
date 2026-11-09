@@ -8,7 +8,7 @@
       "argument1": 0.03,
       "argument2": {
         "type": "minecraft:noise",
-        "noise": "guworld:terrain/tectonic/underground_river/height",
+        "noise": "guworld:terrain/western_desert/tectonic/underground_river/height",
         "xz_scale": 0.5,
         "y_scale": 1.6
       }

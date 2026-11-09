@@ -25,7 +25,7 @@
                   "type": "minecraft:half_negative",
                   "argument": {
                     "type": "minecraft:noise",
-                    "noise": "minecraft:jagged",
+                    "noise": "guworld:terrain/northern_plains/minecraft/jagged",
                     "xz_scale": 1500.0,
                     "y_scale": 0.0
                   }

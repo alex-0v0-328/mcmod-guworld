@@ -3,20 +3,25 @@ package net.alex.guzhenrenworld.dimension.easternsea;
 import net.alex.guzhenrenworld.biome.ColumnCaches;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.TerrainHooks;
+import net.alex.guzhenrenworld.biome.XGradient;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 
 /**
  * The Eastern Sea [东海] terrain: the region's copy of Tectonic's overworld router as Tectonic runs it beside
  * Terralith ({@link Ports#registerDensityFunctions}), reshaped through the hooks the port leaves in it, which
  * {@link #registerDensityFunctions} fills ({@link TerrainHooks}):
  * <ul>
- *   <li>{@code ocean_offset}: Tectonic's continentalness is its folded continent noise plus this offset
- *   ({@link #OCEAN_OFFSET}). Where that sum falls under -0.5, Tectonic leaves its continents for its island
- *   noise: islands rise where that noise peaks, and on the deepest floor, past -1.07, flat islands stand in three
- *   erosion bands, Terralith's far-sea island cells. Tectonic's own -0.8 leaves continents several kilometers
- *   across in the region; -1.2 keeps continent land only on the continent noise's strongest peaks and hands the rest
- *   of the region to the island noise, about four fifths of it water.</li>
+ *   <li>{@code ocean_offset}: Tectonic's continentalness is its folded continent noise plus this offset. Where that
+ *   sum falls under -0.5, Tectonic leaves its continents for its island noise: islands rise where that noise peaks,
+ *   and where the island noise sinks past -1.07, flat islands stand in three erosion bands, Terralith's far-sea
+ *   island cells; under -1 neither continent nor island remains, only deep sea. Land gives way to sea within a
+ *   narrow band of offsets, about -0.9 to -1, so the offset runs along x in two {@code guworld:x_gradient}s
+ *   ({@link XGradient}) added together: from {@link #WEST_OCEAN_OFFSET} at the west border to
+ *   {@link #ISLAND_OCEAN_OFFSET} at x {@link #ISLAND_EDGE_X}, the archipelago thinning from a coast of continent
+ *   peaks and large islands into scattered islands, then a further {@link #OPEN_SEA_DROP} by x
+ *   {@link #OPEN_SEA_X}, so east of it, under the island range, lies open sea.</li>
  *   <li>{@code vertical_scale}: the stretch of the height above sea level, {@link #VERTICAL_SCALE}, a fifth under
  *   Tectonic's 1.125, so the highest island peaks stay under y 260.</li>
  *   <li>{@code min_y} and {@code max_y}: Tectonic's height limits, the dimension's floor and top.</li>
@@ -36,7 +41,12 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 public final class EasternSeaTerrain {
 
-    private static final double OCEAN_OFFSET = -1.2;
+    private static final int WEST_X = (int) (-EasternSea.BORDER_SIZE / 2);
+    private static final int ISLAND_EDGE_X = 1365;
+    private static final int OPEN_SEA_X = 2048;
+    private static final double WEST_OCEAN_OFFSET = -0.8;
+    private static final double ISLAND_OCEAN_OFFSET = -1.0;
+    private static final double OPEN_SEA_DROP = -0.9;
     private static final double VERTICAL_SCALE = 0.9;
     private static final double DUNES = 0.0;
     private static final boolean JUNGLE_PILLARS = false;
@@ -48,7 +58,9 @@ public final class EasternSeaTerrain {
     public static void registerDensityFunctions(BootstrapContext<DensityFunction> context) {
         String region = EasternSea.NAME;
         Ports.registerDensityFunctions(context, region, ColumnCaches.ofPorted());
-        TerrainHooks.constant(context, region, "ocean_offset", OCEAN_OFFSET);
+        context.register(Ports.getHookKey(region, "ocean_offset"), DensityFunctions.add(
+                new XGradient(WEST_X, ISLAND_EDGE_X, WEST_OCEAN_OFFSET, ISLAND_OCEAN_OFFSET),
+                new XGradient(ISLAND_EDGE_X, OPEN_SEA_X, 0.0, OPEN_SEA_DROP)));
         TerrainHooks.constant(context, region, "vertical_scale", VERTICAL_SCALE);
         TerrainHooks.constant(context, region, "min_y", EasternSea.MIN_Y);
         TerrainHooks.constant(context, region, "max_y", EasternSea.TOP_Y);

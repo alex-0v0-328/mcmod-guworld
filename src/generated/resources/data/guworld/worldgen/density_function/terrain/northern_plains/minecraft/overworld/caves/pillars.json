@@ -9,7 +9,7 @@
         "argument1": 2.0,
         "argument2": {
           "type": "minecraft:noise",
-          "noise": "minecraft:pillar",
+          "noise": "guworld:terrain/northern_plains/minecraft/pillar",
           "xz_scale": 25.0,
           "y_scale": 0.3
         }
@@ -22,7 +22,7 @@
           "argument1": -1.0,
           "argument2": {
             "type": "minecraft:noise",
-            "noise": "minecraft:pillar_rareness",
+            "noise": "guworld:terrain/northern_plains/minecraft/pillar_rareness",
             "xz_scale": 1.0,
             "y_scale": 1.0
           }
@@ -39,7 +39,7 @@
           "argument1": 0.55,
           "argument2": {
             "type": "minecraft:noise",
-            "noise": "minecraft:pillar_thickness",
+            "noise": "guworld:terrain/northern_plains/minecraft/pillar_thickness",
             "xz_scale": 1.0,
             "y_scale": 1.0
           }

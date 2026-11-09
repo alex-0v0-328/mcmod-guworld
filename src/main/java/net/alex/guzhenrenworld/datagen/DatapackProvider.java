@@ -76,7 +76,13 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                         NorthernPlainsRoster.PORTED));
                 BiomeSettings.registerBiomes(context);
             })
-            .add(Registries.NOISE, Ports::registerNoises)
+            .add(Registries.NOISE, context -> {
+                Ports.registerNoises(context);
+                Ports.registerNoises(context, SouthernBorder.NAME);
+                Ports.registerNoises(context, WesternDesert.NAME);
+                Ports.registerNoises(context, EasternSea.NAME);
+                Ports.registerNoises(context, NorthernPlains.NAME);
+            })
             .add(Registries.DENSITY_FUNCTION, context -> {
                 Terrain.registerDensityFunctions(context);
                 WesternDesertTerrain.registerDensityFunctions(context);

@@ -13,7 +13,7 @@
           "type": "minecraft:abs",
           "argument": {
             "type": "minecraft:shifted_noise",
-            "noise": "guworld:terrain/terralith/math/spikes/noise",
+            "noise": "guworld:terrain/eastern_sea/terralith/math/spikes/noise",
             "shift_x": {
               "type": "minecraft:mul",
               "argument1": 110.0,

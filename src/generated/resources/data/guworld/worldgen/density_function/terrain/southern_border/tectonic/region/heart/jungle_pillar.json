@@ -9,7 +9,7 @@
       "argument1": -0.35,
       "argument2": {
         "type": "minecraft:noise",
-        "noise": "guworld:terrain/tectonic/region/heart/jungle_pillar",
+        "noise": "guworld:terrain/southern_border/tectonic/region/heart/jungle_pillar",
         "xz_scale": 8.0,
         "y_scale": 0.0
       }

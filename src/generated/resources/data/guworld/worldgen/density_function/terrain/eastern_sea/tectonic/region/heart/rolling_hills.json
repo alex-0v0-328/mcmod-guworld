@@ -5,7 +5,7 @@
     "type": "minecraft:abs",
     "argument": {
       "type": "minecraft:noise",
-      "noise": "guworld:terrain/tectonic/region/heart/rolling_hills",
+      "noise": "guworld:terrain/eastern_sea/tectonic/region/heart/rolling_hills",
       "xz_scale": 0.2,
       "y_scale": 0.0
     }

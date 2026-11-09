@@ -1,6 +1,6 @@
 {
   "type": "minecraft:noise",
-  "noise": "guworld:terrain/minecraft/aquifer_fluid_level_spread",
+  "noise": "guworld:terrain/northern_plains/minecraft/aquifer_fluid_level_spread",
   "xz_scale": 1.0,
   "y_scale": 0.7142857142857143
 }

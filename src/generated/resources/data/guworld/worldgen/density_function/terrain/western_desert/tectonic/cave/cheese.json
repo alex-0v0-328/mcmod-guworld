@@ -11,7 +11,7 @@
           "type": "minecraft:add",
           "argument1": {
             "type": "minecraft:noise",
-            "noise": "guworld:terrain/terralith/math/cheese/megacave",
+            "noise": "guworld:terrain/western_desert/terralith/math/cheese/megacave",
             "xz_scale": 1.5,
             "y_scale": 1.725
           },
@@ -22,7 +22,7 @@
         "type": "minecraft:add",
         "argument1": {
           "type": "minecraft:noise",
-          "noise": "guworld:terrain/minecraft/cave_cheese",
+          "noise": "guworld:terrain/western_desert/minecraft/cave_cheese",
           "xz_scale": 1.0,
           "y_scale": 0.6666666666666666
         },

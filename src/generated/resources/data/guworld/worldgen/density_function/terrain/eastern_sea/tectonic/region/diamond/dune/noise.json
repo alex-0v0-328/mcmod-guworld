@@ -7,7 +7,7 @@
       "type": "minecraft:abs",
       "argument": {
         "type": "minecraft:noise",
-        "noise": "guworld:terrain/tectonic/region/diamond/dune_base",
+        "noise": "guworld:terrain/eastern_sea/tectonic/region/diamond/dune_base",
         "xz_scale": 0.76,
         "y_scale": 0.0
       }

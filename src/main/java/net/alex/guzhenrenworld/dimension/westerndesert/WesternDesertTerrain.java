@@ -19,9 +19,9 @@ import net.minecraft.world.level.levelgen.DensityFunction;
  * <ul>
  *   <li>The temperature, {@value #TEMPERATURE}, which Terralith's table, Tectonic's landform regions and its dunes
  *   all read: Tectonic's temperature noise plus {@link #TEMPERATURE_OFFSET}. Tectonic's own centers on the temperate
- *   band and leaves the hot band nearly empty; shifted, about half the region is hot and the rest warm, with a
- *   temperate tenth and no cold cell, so the table's deserts and badlands take the hot half and Tectonic's dunes
- *   grow there.</li>
+ *   band and leaves the hot band nearly empty; shifted, about three quarters of the region is hot and the rest
+ *   warm, with no cold cell, so the table's deserts and badlands take the hot cells and Tectonic's dunes grow
+ *   there.</li>
  *   <li>The folded erosion, {@value #EROSION_FOLDED}, the distance of Tectonic's erosion from zero, which sets both
  *   the terrain splines and the erosion Terralith's table reads: low means mountains. Below Tectonic's spire band it
  *   is stretched by {@link #EROSION_SCALE}, lifted by {@link #EROSION_OFFSET} and capped at {@link #EROSION_CAP},
@@ -59,7 +59,7 @@ public final class WesternDesertTerrain {
     private static final String EROSION_FOLDED = "terrain/tectonic/noise/continent/erosion_folded";
     private static final double TEMPERATURE_OFFSET = 0.6;
     private static final double EROSION_SCALE = 1.45;
-    private static final double EROSION_OFFSET = 0.04;
+    private static final double EROSION_OFFSET = 0.16;
     private static final double EROSION_CAP = 0.98;
     private static final double SPIRE_EROSION = 1.0;
     private static final double SPIRE_EROSION_TOP = 1.0E6;

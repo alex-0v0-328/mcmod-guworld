@@ -17,7 +17,7 @@
         "argument1": 0.3,
         "argument2": {
           "type": "minecraft:noise",
-          "noise": "guworld:terrain/tectonic/underground_river/roof_sharpness",
+          "noise": "guworld:terrain/northern_plains/tectonic/underground_river/roof_sharpness",
           "xz_scale": 0.6,
           "y_scale": 0.0
         }

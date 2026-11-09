@@ -2,7 +2,7 @@
   "type": "minecraft:abs",
   "argument": {
     "type": "minecraft:noise",
-    "noise": "guworld:terrain/tectonic/region/spade/lower_tier",
+    "noise": "guworld:terrain/eastern_sea/tectonic/region/spade/lower_tier",
     "xz_scale": 0.35,
     "y_scale": 0.0
   }

@@ -14,7 +14,7 @@
             "argument1": 0.4,
             "argument2": {
               "type": "minecraft:noise",
-              "noise": "guworld:terrain/tectonic/region/height_multiplier",
+              "noise": "guworld:terrain/southern_border/tectonic/region/height_multiplier",
               "xz_scale": 0.25,
               "y_scale": 0.0
             }

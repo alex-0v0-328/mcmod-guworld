@@ -20,7 +20,7 @@
                 "type": "minecraft:abs",
                 "argument": {
                   "type": "minecraft:shifted_noise",
-                  "noise": "guworld:terrain/tectonic/region/diamond/dune_base",
+                  "noise": "guworld:terrain/northern_plains/tectonic/region/diamond/dune_base",
                   "shift_x": {
                     "type": "minecraft:mul",
                     "argument1": 16.0,
@@ -62,7 +62,7 @@
               "type": "minecraft:abs",
               "argument": {
                 "type": "minecraft:shifted_noise",
-                "noise": "guworld:terrain/tectonic/region/diamond/dune_base",
+                "noise": "guworld:terrain/northern_plains/tectonic/region/diamond/dune_base",
                 "shift_x": {
                   "type": "minecraft:mul",
                   "argument1": 16.0,

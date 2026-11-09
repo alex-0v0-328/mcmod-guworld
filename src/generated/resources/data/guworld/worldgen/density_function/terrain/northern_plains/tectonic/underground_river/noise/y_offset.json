@@ -12,7 +12,7 @@
           "argument1": 4.5,
           "argument2": {
             "type": "minecraft:noise",
-            "noise": "guworld:terrain/tectonic/underground_river/y_offset",
+            "noise": "guworld:terrain/northern_plains/tectonic/underground_river/y_offset",
             "xz_scale": 0.6,
             "y_scale": 0.0
           }
