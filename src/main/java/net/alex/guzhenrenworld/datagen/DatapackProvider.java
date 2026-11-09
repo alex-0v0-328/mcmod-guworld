@@ -29,15 +29,16 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  *
  * <p>Extends {@link DatapackBuiltinEntriesProvider}. Builds in one {@code RegistrySetBuilder} the entries the function
  * packages bootstrap: the Treasure Yellow Heaven dimension's type, biome and level stem ({@link TreasureYellowHeaven});
- * for each of the four regions ({@link Regions#ALL}) the dimension's type, density functions (Tectonic's router with
- * the region's hooks), noise settings and level stem ({@link RegionBootstraps}), each region's copy of the ported
- * terrain under its own prefix, and the Southern Border's [南疆] bamboo sea with that biome's bamboo ({@link
- * BiomeSettings}); Gu World's shared biomes, the vanilla replicas ({@link Replicas#SHARED}) and each region's own, the
- * biomes ported from Terralith with their features, {@link Ports#BIOMES} and each region's own, and the noises both
- * ports read ({@link Ports}); and the Spirit Spring [元泉] configured and placed feature ({@link SpiritSpring}) and biome
- * modifier ({@link SpiritSpringRegistration}). A registry two dimensions both fill gets one bootstrap that runs both.
- * The tag provider takes {@code getRegistryProvider()} from this instance, not the plain lookup, so the tag pass sees
- * the biome this run generates.
+ * the one dimension type the four regions share and, for each of them ({@link Regions#ALL}), the density functions
+ * (Tectonic's router with the region's hooks), noise settings and level stem ({@link RegionBootstraps}), each
+ * region's copy of the ported terrain its router reaches under its own prefix, and the Southern Border's [南疆]
+ * bamboo sea with that biome's bamboo ({@link BiomeSettings}); Gu World's shared biomes, the vanilla replicas
+ * ({@link Replicas#SHARED}) and each region's own, the biomes ported from Terralith with their features,
+ * {@link Ports#BIOMES} and each region's own, and the noises both ports read ({@link Ports}); and the Spirit Spring
+ * [元泉] configured and placed feature ({@link SpiritSpring}) and biome modifier ({@link SpiritSpringRegistration}).
+ * A registry two dimensions both fill gets one bootstrap that runs both. The tag provider takes
+ * {@code getRegistryProvider()} from this instance, not the plain lookup, so the tag pass sees the biome this run
+ * generates.
  *
  * <p>⚠ There can only be one per data run. The builtin-entries provider reports a fixed name, so a
  * second instance fails datagen outright; add a registry to this one's builder instead.
@@ -52,7 +53,7 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
     private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
             .add(Registries.DIMENSION_TYPE, context -> {
                 TreasureYellowHeaven.registerDimensionType(context);
-                Regions.ALL.forEach(region -> RegionBootstraps.registerDimensionType(context, region));
+                RegionBootstraps.registerDimensionType(context);
             })
             .add(Registries.BIOME, context -> {
                 TreasureYellowHeaven.registerBiome(context);
@@ -62,7 +63,7 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
             })
             .add(Registries.NOISE, context -> {
                 Ports.registerNoises(context);
-                Regions.ALL.forEach(region -> Ports.registerNoises(context, region.name()));
+                Regions.ALL.forEach(region -> RegionBootstraps.registerNoises(context, region));
                 Waterways.registerNoises(context);
             })
             .add(Registries.DENSITY_FUNCTION, context -> {

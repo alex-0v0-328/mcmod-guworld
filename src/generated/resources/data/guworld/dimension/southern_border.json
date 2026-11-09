@@ -1,5 +1,5 @@
 {
-  "type": "guworld:southern_border",
+  "type": "guworld:region",
   "generator": {
     "type": "minecraft:noise",
     "biome_source": {

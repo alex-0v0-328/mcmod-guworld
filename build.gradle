@@ -157,6 +157,8 @@ tasks.register('pureTest', Test) {
     doFirst { junitGameDir.mkdirs() }
     testClassesDirs = sourceSets.pureTest.output.classesDirs
     classpath = sourceSets.pureTest.runtimeClasspath
+    // The reachability walk over the ported terrain (biome.Ports) reads the same input as the data run.
+    systemProperty 'guworld.ports', file('src/ports').getAbsolutePath()
     useJUnitPlatform()
     // The JVM lives for seconds and spends them loading classes: C1-only JIT starts it faster.
     jvmArgs '-XX:TieredStopAtLevel=1'

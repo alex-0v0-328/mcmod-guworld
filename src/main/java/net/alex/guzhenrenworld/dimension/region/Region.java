@@ -32,9 +32,10 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
  * holds one instance ({@code SouthernBorder#REGION} and its siblings) beside the region's own prose.
  *
  * <p>Every key a region owns shares the one location {@code guworld:<name>} ({@link #name} is its path and the prefix
- * of the region's copy of the ported terrain); {@link #dimensionType}, {@link #noiseSettings}, {@link #levelStem} and
- * {@link #level} build them. All four regions share the height range ({@link #MIN_Y} up to {@link #TOP_Y}, {@link
- * #HEIGHT} blocks) and the square world border around 0, 0 that
+ * of the region's copy of the ported terrain); {@link #noiseSettings}, {@link #levelStem} and {@link #level} build
+ * them. The dimension type is the one all four share, {@link #DIMENSION_TYPE}, {@code guworld:region}, since the
+ * regions differ in nothing a dimension type holds. All four regions share the height range ({@link #MIN_Y} up to
+ * {@link #TOP_Y}, {@link #HEIGHT} blocks) and the square world border around 0, 0 that
  * {@link net.alex.guzhenrenworld.dimension.RegionBorders} applies, {@link #BORDER_SIZE} blocks, eight kilometers
  * (about 262,000 chunks).
  *
@@ -63,10 +64,8 @@ public record Region(String name, Title title, int seaLevel, boolean dry, Waterw
     public static final int MIN_Y = -64;
     public static final int HEIGHT = 384;
     public static final int TOP_Y = MIN_Y + HEIGHT;
-
-    public ResourceKey<DimensionType> dimensionType() {
-        return GuWorld.key(Registries.DIMENSION_TYPE, name);
-    }
+    public static final ResourceKey<DimensionType> DIMENSION_TYPE =
+            GuWorld.key(Registries.DIMENSION_TYPE, "region");
 
     public ResourceKey<NoiseGeneratorSettings> noiseSettings() {
         return GuWorld.key(Registries.NOISE_SETTINGS, name);

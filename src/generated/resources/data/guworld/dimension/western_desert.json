@@ -1,5 +1,5 @@
 {
-  "type": "guworld:western_desert",
+  "type": "guworld:region",
   "generator": {
     "type": "minecraft:noise",
     "biome_source": {

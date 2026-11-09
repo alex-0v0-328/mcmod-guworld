@@ -8,8 +8,9 @@ import net.minecraft.world.level.levelgen.DensityFunctions;
 
 /**
  * How a region fills the hooks of its copy of the ported router ({@link Ports#getHookKey}): a constant, or a switch
- * that points the hook back at one of the region's ported functions when on and at zero when off, so an off feature
- * costs nothing.
+ * that points the hook back at one of the region's ported functions (its full name, {@code terrain/...}) when on and
+ * at zero when off, so an off feature costs nothing; a region registers the function only while a switch reaches it
+ * ({@link Ports#registerDensityFunctions}).
  *
  * @author Alex
  * @version 1.0.0
@@ -32,7 +33,7 @@ public final class TerrainHooks {
             return;
         }
         Holder<DensityFunction> function = context.lookup(Registries.DENSITY_FUNCTION)
-                .getOrThrow(Ports.getRegionalKey(region, "terrain/" + ported));
+                .getOrThrow(Ports.getRegionalKey(region, ported));
         context.register(Ports.getHookKey(region, hook), new DensityFunctions.HolderHolder(function));
     }
 }

@@ -11,7 +11,9 @@ import com.mojang.serialization.Lifecycle;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -19,7 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 import net.alex.guzhenrenworld.GuWorld;
 import net.minecraft.core.HolderLookup;
@@ -63,16 +67,23 @@ import org.jetbrains.annotations.NotNull;
  * <p>The terrain is Tectonic's overworld noise router as Tectonic runs it beside Terralith, with the density
  * functions and noises it reaches from either mod under {@code guworld:terrain/<namespace>/}, and Tectonic's config
  * baked into vanilla density functions. Eleven of the functions read hooks, {@code terrain/hook/*}, nine of them,
- * that each region sets its own way, so each region registers its own copy of every ported function and of the
+ * that each region sets its own way, so each region registers its own copy of the ported functions and of the
  * router, under {@code guworld:terrain/<region>/}: {@link #registerDensityFunctions} takes the region's name and
  * its patch, handed each ported function's name with its JSON, for what it changes in one, then renames every
  * function reference into the region ({@link #getRegional}), the hook references with them, which the region
  * registers at {@link #getHookKey}; {@link #getNoiseRouter} does the same for the router.
  *
+ * <p>A region registers only what its router reaches ({@link Reachable}): the ported functions the router names,
+ * directly or through another, plus the ported functions the region's hooks point back at ({@code hooked}, the
+ * features it switches on), and the ported noises those functions read, all found in the patched JSON. The ported
+ * files behind a hook the region fills with a constant, or a feature it switches off, stay out of its datapack, and
+ * switching a feature on brings its files back without a change here.
+ *
  * <p>Each region also registers its own copy of every noise its terrain reads, since a random state derives each
  * noise from the world seed and the noise's id, and every region runs on the world seed: two regions that read one
- * id read one noise field, the same continents, rivers and ridges. {@link #registerNoises(BootstrapContext, String)}
- * registers the ported noises under the region's prefix and the vanilla noises the terrain reads under
+ * id read one noise field, the same continents, rivers and ridges.
+ * {@link #registerNoises(BootstrapContext, String, BiFunction, Set)} registers the reached ported noises under the
+ * region's prefix and the vanilla noises the terrain reads under
  * {@code guworld:terrain/<region>/minecraft/}, with vanilla's parameters, and {@link #registerDensityFunctions} adds
  * the region's copy of each vanilla density function that reads a noise, such as {@code minecraft:shift_x}, at the
  * same place; {@link #getRegional} renames a noise reference like any other, and a vanilla reference only when it
@@ -133,9 +144,12 @@ public final class Ports {
         register(context, Registries.NOISE, NormalNoise.NoiseParameters.DIRECT_CODEC, TERRALITH, "noise", UNPATCHED);
     }
 
-    public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context, String region) {
+    public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context, String region,
+            BiFunction<String, JsonElement, JsonElement> patch, Set<String> hooked) {
         RegistryOps<JsonElement> registryOps = getOps(context);
+        Reachable reachable = Reachable.of(patch, hooked);
         for (String name : getIndex(TECTONIC, "noise")) {
+            if (!reachable.noises().contains(name)) continue;
             JsonElement json = read(TECTONIC, "noise/" + name);
             context.register(GuWorld.key(Registries.NOISE, getRegionalPath(region, name)),
                     decode(NormalNoise.NoiseParameters.DIRECT_CODEC, registryOps, "noise", name, json));
@@ -159,9 +173,11 @@ public final class Ports {
     }
 
     public static void registerDensityFunctions(BootstrapContext<DensityFunction> context, String region,
-            BiFunction<String, JsonElement, JsonElement> patch) {
+            BiFunction<String, JsonElement, JsonElement> patch, Set<String> hooked) {
         RegistryOps<JsonElement> registryOps = getOps(context);
+        Reachable reachable = Reachable.of(patch, hooked);
         for (String name : getIndex(TECTONIC, "density_function")) {
+            if (!reachable.functions().contains(name)) continue;
             JsonElement json = getRegional(region, patch.apply(name, read(TECTONIC, "density_function/" + name)));
             context.register(getRegionalKey(region, name),
                     decode(DensityFunction.DIRECT_CODEC, registryOps, "density_function", name, json));
@@ -237,6 +253,24 @@ public final class Ports {
 
     private static boolean isNoise(String field, boolean noiseArgument) {
         return field.equals("noise") || noiseArgument && field.equals("argument");
+    }
+
+    private static void forEachId(JsonElement json, boolean noise, BiConsumer<String, Boolean> ids) {
+        if (json.isJsonArray()) {
+            for (JsonElement element : json.getAsJsonArray()) forEachId(element, noise, ids);
+            return;
+        }
+        if (json.isJsonObject()) {
+            JsonObject function = json.getAsJsonObject();
+            boolean noiseArgument = isNoiseArgument(function);
+            for (Map.Entry<String, JsonElement> entry : function.entrySet()) {
+                if (!entry.getKey().equals(TYPE)) {
+                    forEachId(entry.getValue(), isNoise(entry.getKey(), noiseArgument), ids);
+                }
+            }
+            return;
+        }
+        if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) ids.accept(json.getAsString(), noise);
     }
 
     private static ResourceLocation getVanilla(String id) {
@@ -370,6 +404,35 @@ public final class Ports {
         return biome(name);
     }
 
+    record Reachable(Set<String> functions, Set<String> noises) {
+
+        static Reachable of(BiFunction<String, JsonElement, JsonElement> patch, Set<String> hooked) {
+            Set<String> indexed = Set.copyOf(getIndex(TECTONIC, "density_function"));
+            Set<String> functions = new LinkedHashSet<>();
+            Set<String> noises = new LinkedHashSet<>();
+            Deque<String> pending = new ArrayDeque<>();
+            Consumer<String> reach = name -> {
+                if (indexed.contains(name) && functions.add(name)) pending.add(name);
+            };
+            for (String name : hooked) {
+                if (!indexed.contains(name)) throw new IllegalArgumentException(name + " is not a ported function");
+                reach.accept(name);
+            }
+            BiConsumer<String, Boolean> ids = (id, noise) -> {
+                if (!id.startsWith(TERRAIN_ID_PREFIX)) return;
+                String name = id.substring(GuWorld.MOD_ID.length() + 1);
+                if (noise) noises.add(name);
+                else reach.accept(name);
+            };
+            forEachId(read(TECTONIC, "noise_router"), false, ids);
+            while (!pending.isEmpty()) {
+                String name = pending.remove();
+                forEachId(patch.apply(name, read(TECTONIC, "density_function/" + name)), false, ids);
+            }
+            return new Reachable(Set.copyOf(functions), Set.copyOf(noises));
+        }
+    }
+
     private static final class Vanilla {
 
         private static final HolderLookup.Provider LOOKUP = VanillaRegistries.createLookup();
@@ -387,27 +450,14 @@ public final class Ports {
         private Vanilla() {}
 
         private static boolean scan(JsonElement json, boolean noise) {
-            boolean reads = false;
-            if (json.isJsonArray()) {
-                for (JsonElement element : json.getAsJsonArray()) reads |= scan(element, noise);
-                return reads;
-            }
-            if (json.isJsonObject()) {
-                JsonObject function = json.getAsJsonObject();
-                boolean noiseArgument = isNoiseArgument(function);
-                for (Map.Entry<String, JsonElement> entry : function.entrySet()) {
-                    if (!entry.getKey().equals(TYPE)) {
-                        reads |= scan(entry.getValue(), isNoise(entry.getKey(), noiseArgument));
-                    }
-                }
-                return reads;
-            }
-            if (!json.isJsonPrimitive() || !json.getAsJsonPrimitive().isString()) return false;
-            ResourceLocation vanilla = getVanilla(json.getAsString());
-            if (vanilla == null) return false;
-            if (!noise) return isCopied(vanilla);
-            NOISES.add(vanilla);
-            return true;
+            boolean[] reads = { false };
+            forEachId(json, noise, (id, noiseId) -> {
+                ResourceLocation vanilla = getVanilla(id);
+                if (vanilla == null) return;
+                if (noiseId) NOISES.add(vanilla);
+                reads[0] |= noiseId || isCopied(vanilla);
+            });
+            return reads[0];
         }
 
         private static boolean isCopied(ResourceLocation function) {

@@ -1,5 +1,5 @@
 {
-  "type": "guworld:eastern_sea",
+  "type": "guworld:region",
   "generator": {
     "type": "minecraft:noise",
     "biome_source": {

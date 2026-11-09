@@ -16,8 +16,9 @@ import java.util.function.BiFunction;
  * the noise fill. So every column cache, the ported ones included, holds a {@code cache_2d}, which keeps the last
  * column's value: the scan computes each column once.
  *
- * <p>{@link #PORTED_COLUMNS} are the ten ported functions every region's copy caches this way, and
- * {@link #ofPorted} the patch that caches them.
+ * <p>{@link #PORTED_COLUMNS} are the ten ported functions a region's copy caches this way, and {@link #ofPorted}
+ * the patch that caches them; two, the underground rivers' splines, exist only while a region switches that feature
+ * on, and the patch leaves a name it never meets alone.
  *
  * <p>⚠ A function named here must not read y: a {@code cache_2d} returns the first y's value for every y.
  *
