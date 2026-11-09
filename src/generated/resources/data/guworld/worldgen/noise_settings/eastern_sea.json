@@ -22,7 +22,15 @@
     "continents": "guworld:terrain/eastern_sea/minecraft/overworld/noise_router/continents",
     "depth": "guworld:terrain/eastern_sea/minecraft/overworld/noise_router/depth",
     "erosion": "guworld:terrain/eastern_sea/minecraft/overworld/noise_router/erosion",
-    "final_density": "guworld:terrain/eastern_sea/minecraft/overworld/noise_router/final_density",
+    "final_density": {
+      "type": "guworld:waterways",
+      "argument": "guworld:terrain/eastern_sea/minecraft/overworld/noise_router/final_density",
+      "bed": "sand",
+      "dry": false,
+      "meander": "guworld:waterways/meander",
+      "region": "eastern_sea",
+      "size": 8192.0
+    },
     "fluid_level_floodedness": "guworld:terrain/eastern_sea/minecraft/overworld/noise_router/fluid_level_floodedness",
     "fluid_level_spread": "guworld:terrain/eastern_sea/minecraft/overworld/noise_router/fluid_level_spread",
     "initial_density_without_jaggedness": "guworld:terrain/eastern_sea/minecraft/overworld/noise_router/initial_density_without_jaggedness",

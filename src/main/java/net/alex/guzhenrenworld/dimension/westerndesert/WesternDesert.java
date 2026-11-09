@@ -7,6 +7,8 @@ import net.alex.guzhenrenworld.SurfaceDimensionTypes;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.biome.SurfacePruning;
+import net.alex.guzhenrenworld.waterways.Waterways;
+import net.alex.guzhenrenworld.waterways.WaterwaysDensity;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -86,6 +88,7 @@ public final class WesternDesert {
     private static final boolean AQUIFERS = true;
     private static final boolean ORE_VEINS = true;
     private static final boolean LEGACY_RANDOM_SOURCE = false;
+    private static final boolean WATERWAYS = true;
 
     private WesternDesert() {}
 
@@ -102,7 +105,9 @@ public final class WesternDesert {
                 NoiseSettings.create(MIN_Y, HEIGHT, NOISE_SIZE_HORIZONTAL, NOISE_SIZE_VERTICAL),
                 Blocks.STONE.defaultBlockState(),
                 Blocks.WATER.defaultBlockState(),
-                Ports.getNoiseRouter(context, NAME),
+                WATERWAYS ? WaterwaysDensity.getCarved(context, Ports.getNoiseRouter(context, NAME),
+                        new Waterways.Region(NAME, BORDER_SIZE, true, Waterways.Bed.SAND))
+                        : Ports.getNoiseRouter(context, NAME),
                 SurfacePruning.getPruned(SurfaceRules.sequence(Ports.getSurfaceRules(),
                         Replicas.getSurfaceRules(replicas)), WesternDesertLayout.ROSTER),
                 List.of(),

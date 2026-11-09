@@ -22,7 +22,15 @@
     "continents": "guworld:terrain/western_desert/minecraft/overworld/noise_router/continents",
     "depth": "guworld:terrain/western_desert/minecraft/overworld/noise_router/depth",
     "erosion": "guworld:terrain/western_desert/minecraft/overworld/noise_router/erosion",
-    "final_density": "guworld:terrain/western_desert/minecraft/overworld/noise_router/final_density",
+    "final_density": {
+      "type": "guworld:waterways",
+      "argument": "guworld:terrain/western_desert/minecraft/overworld/noise_router/final_density",
+      "bed": "sand",
+      "dry": true,
+      "meander": "guworld:waterways/meander",
+      "region": "western_desert",
+      "size": 8192.0
+    },
     "fluid_level_floodedness": "guworld:terrain/western_desert/minecraft/overworld/noise_router/fluid_level_floodedness",
     "fluid_level_spread": "guworld:terrain/western_desert/minecraft/overworld/noise_router/fluid_level_spread",
     "initial_density_without_jaggedness": "guworld:terrain/western_desert/minecraft/overworld/noise_router/initial_density_without_jaggedness",

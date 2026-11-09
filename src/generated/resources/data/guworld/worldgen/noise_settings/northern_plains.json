@@ -22,7 +22,15 @@
     "continents": "guworld:terrain/northern_plains/minecraft/overworld/noise_router/continents",
     "depth": "guworld:terrain/northern_plains/minecraft/overworld/noise_router/depth",
     "erosion": "guworld:terrain/northern_plains/minecraft/overworld/noise_router/erosion",
-    "final_density": "guworld:terrain/northern_plains/minecraft/overworld/noise_router/final_density",
+    "final_density": {
+      "type": "guworld:waterways",
+      "argument": "guworld:terrain/northern_plains/minecraft/overworld/noise_router/final_density",
+      "bed": "gravel",
+      "dry": false,
+      "meander": "guworld:waterways/meander",
+      "region": "northern_plains",
+      "size": 8192.0
+    },
     "fluid_level_floodedness": "guworld:terrain/northern_plains/minecraft/overworld/noise_router/fluid_level_floodedness",
     "fluid_level_spread": "guworld:terrain/northern_plains/minecraft/overworld/noise_router/fluid_level_spread",
     "initial_density_without_jaggedness": "guworld:terrain/northern_plains/minecraft/overworld/noise_router/initial_density_without_jaggedness",

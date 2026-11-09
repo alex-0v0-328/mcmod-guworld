@@ -4,24 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.alex.guzhenrenworld.dimension.easternsea.EasternSea;
+import net.alex.guzhenrenworld.dimension.easternsea.EasternSeaLayout;
 import net.alex.guzhenrenworld.dimension.easternsea.EasternSeaRoster;
 import net.alex.guzhenrenworld.dimension.easternsea.EasternSeaTerrain;
 import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlains;
+import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlainsLayout;
 import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlainsRoster;
 import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlainsTerrain;
+import net.alex.guzhenrenworld.dimension.southernborder.BiomeLayout;
 import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.alex.guzhenrenworld.dimension.southernborder.Terrain;
 import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesert;
+import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesertLayout;
 import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesertRoster;
 import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesertTerrain;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
 import net.alex.guzhenrenworld.feature.SpiritSpringRegistration;
+import net.alex.guzhenrenworld.waterways.Waterways;
+import net.alex.guzhenrenworld.waterways.WaterwaysRegistration;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -82,6 +89,7 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 Ports.registerNoises(context, WesternDesert.NAME);
                 Ports.registerNoises(context, EasternSea.NAME);
                 Ports.registerNoises(context, NorthernPlains.NAME);
+                Waterways.registerNoises(context);
             })
             .add(Registries.DENSITY_FUNCTION, context -> {
                 Terrain.registerDensityFunctions(context);
@@ -104,14 +112,21 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
             })
             .add(Registries.CONFIGURED_FEATURE, context -> {
                 SpiritSpring.registerConfiguredFeature(context);
+                WaterwaysRegistration.registerConfiguredFeature(context);
                 Ports.registerConfiguredFeatures(context);
             })
             .add(Registries.PLACED_FEATURE, context -> {
                 SpiritSpring.registerPlacedFeature(context);
+                WaterwaysRegistration.registerPlacedFeature(context);
                 Ports.registerPlacedFeatures(context);
                 BiomeSettings.registerPlacedFeatures(context);
             })
-            .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, SpiritSpringRegistration::registerBiomeModifier);
+            .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
+                SpiritSpringRegistration.registerBiomeModifier(context);
+                WaterwaysRegistration.registerBiomeModifier(context, Stream.of(BiomeLayout.ROSTER,
+                        WesternDesertLayout.ROSTER, EasternSeaLayout.ROSTER, NorthernPlainsLayout.ROSTER)
+                        .flatMap(Set::stream).toList());
+            });
 
     public DatapackProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
         super(packOutput, lookupProvider, BUILDER, Set.of(GuWorld.MOD_ID));
