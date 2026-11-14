@@ -4,13 +4,14 @@ import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.waterways.Waterways;
 
 /**
- * The Eastern Sea [东海] dimension, one of the four regions beyond the Central Continent [中州], which is the
- * overworld: its {@link #REGION}. The region is a warm archipelago, about four fifths water, islands from two
- * kilometers across down to a few dozen blocks; its waterways run over a sand bed. {@code /guworld enter
- * guworld:eastern_sea} lands players on the surface above 0, 0, the sea when the origin is water.
+ * 东海维度的入口 {@link #REGION}：中州（主世界）外四域之一。
  *
- * <p>The region is finite and its keys, borders and datapack entries are the shared ones ({@link Region}); the
- * terrain hooks are {@link EasternSeaTerrain}'s and the biome table {@link EasternSeaLayout}'s.
+ * <ul>
+ *   <li>暖海群岛，约 4/5 是水，岛宽两公里到几十格；水系河床铺沙；{@code /guworld enter guworld:eastern_sea} 落在 0, 0
+ *       上方地表，原点是水即落海面。</li>
+ *   <li>有限域，键、边界、数据包条目用共用的一套（{@link Region}）；地形钩子在 {@link EasternSeaTerrain}，群系表在
+ *       {@link EasternSeaLayout}。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

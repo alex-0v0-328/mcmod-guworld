@@ -17,24 +17,18 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 /**
- * The carving of one region in one world (one {@link RandomState}): its {@link WaterwaysIndex}, {@link #getSurface},
- * the carved surface of a column, which {@link WaterwaysDensity} cuts the terrain down to, and {@link #getChannel}
- * with {@link #getBed}, the channel at a column and the block of its bed, which {@link WaterwaysFeature} fills.
+ * 一个区域在一个世界（一个 {@link RandomState}）里的刻河。
  *
- * <p>The index is built once, on a thread of its own ({@link #BUILDER}), from {@link #prefetch} or the first column
- * that asks; every thread that asks meanwhile waits for it, chunk workers through the fork-join pool's managed
- * blocking. A server thread that needs a region chunk before the build ends waits too, so the runtime prefetches as
- * soon as the level loads. A build that fails, or cannot start, logs the error and leaves the region uncarved.
- * {@link #create} builds from the plan every time; {@link WaterwaysRuntime} hands in a builder that tries the world's
- * saved index first.
- *
- * <p>Most columns are far from any stream and cost one bucket read. A column near one warps its point by {@link
- * Waterways#MEANDER} blocks of the meander noise (clamped to one), reads the ground through {@link GroundHeights},
- * starting at the stream's water surface plus the incision, only when a bank reaches it, and keeps its surface in a
- * per-thread direct-mapped table of {@link #COLUMNS} slots, since the terrain asks once for every solid block of the
- * column.
- * Inside a noise chunk the ground is read through the chunk's own copy of the terrain, handed in by {@link
- * WaterwaysDensity}.
+ * <ul>
+ *   <li>持 {@link WaterwaysIndex}；{@link #getSurface} 为一列刻后地表，供 {@link WaterwaysDensity}
+ *       削地形；{@link #getChannel}、{@link #getBed} 为该列河道与河床方块，供 {@link WaterwaysFeature} 放水。</li>
+ *   <li>索引在独立线程只建一次，由 {@link #prefetch} 或首个来问的列触发；其间来问者都等（区块工作线程经 fork-join 托管
+ *       阻塞），服务端线程也等，故运行时在维度加载时即预建。</li>
+ *   <li>建图失败或无法启动：记错误，区域不刻河；{@link #create} 总从规划建，{@link WaterwaysRuntime} 先试存档。</li>
+ *   <li>远离溪流的列只多读一次桶；近处按摆动噪声（截到 ±1）偏移 ≤ {@link Waterways#MEANDER} 格，岸带伸到才经
+ *       {@link GroundHeights} 从水面加下切处读地面（噪声区块内用 {@link WaterwaysDensity} 传入的本区块地形副本）。</li>
+ *   <li>地表存入每线程 {@link #COLUMNS} 槽直接映射表：地形对一列每个实心方块都问一次。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

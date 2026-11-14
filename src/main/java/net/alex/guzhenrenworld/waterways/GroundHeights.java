@@ -7,19 +7,17 @@ import net.minecraft.world.level.levelgen.NoiseRouter;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The ground height the waterways [水系] planner reads: one above the highest block whose final density is above
- * zero, found by {@link GroundScan}, uninterpolated, through a copy of the region's router in which every
- * {@code flat_cache} and {@code cache_2d} keeps the last column's value, with the waterways carving left out
- * ({@link WaterwaysDensity#getUncarved}): the plan and the banks read the terrain before it. A noise chunk per column
- * costs about 16 ms with Gu World's routers; this costs 0.15 to 0.18 ms and lands within 1 to 2 blocks of it at the
- * 95th percentile, 6 to 10 at worst on land (the P0 benchmark, wiki《Gu World 维护说明#地形性能工具》). A
- * {@code flat_cache} computes its input at y 0, as a noise chunk's does.
+ * 水系规划读的地面高度：最终密度大于零的最高方块之上一格。
  *
- * <p>The banks of a stream ask with a guess, the stream's water surface plus the incision ({@link GroundScan}). A noise
- * chunk's carving scans through the chunk's own copy of the terrain instead, whose column caches already hold the
- * chunk's columns.
- *
- * <p>⚠ The column memos are mutable, so every thread scans through its own copy of the router.
+ * <ul>
+ *   <li>{@link GroundScan} 不插值扫出；路由副本里 {@code flat_cache}、{@code cache_2d} 记住上一列的值
+ *       （{@code flat_cache} 同噪声区块在 y 0 算输入），且不含刻河（{@link WaterwaysDensity#getUncarved}）：
+ *       规划与岸带读刻河前地形。</li>
+ *   <li>每列建噪声区块在 Gu World 路由上约 16 ms；本类 0.15–0.18 ms，95 分位误差 1–2 格，陆地最坏 6–10 格（P0 基准，
+ *       wiki《Gu World 维护说明#地形性能工具》）。</li>
+ *   <li>岸带带猜测值（水面加下切）来问；噪声区块刻河时改扫本区块的地形副本，列缓存现成。</li>
+ *   <li>⚠ 列记忆可变：每线程用自己的路由副本。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

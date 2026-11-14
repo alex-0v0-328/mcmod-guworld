@@ -19,26 +19,17 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 /**
- * Gives each finite region ({@link Regions#ALL}) its own square world border around 0, 0, of the side
- * {@link Region#BORDER_SIZE}.
+ * 各有限域（{@link Regions#ALL}）的方形世界边界：中心 0, 0，边长 {@link Region#BORDER_SIZE}。
  *
- * <p>Vanilla treats the border as the overworld's alone: every other level's border follows the overworld's through
- * a delegate listener, the overworld's saved settings are applied to all of them only after every level has loaded,
- * {@code /worldborder} changes the overworld's, and players are sent the overworld's border whatever level they stand
- * in. So {@link RegionBorderEvents} calls in here:
  * <ul>
- *   <li>{@link #start} once the server has started, after vanilla is done: it applies the region sizes, logs each
- *   one, and adds a listener after vanilla's on the overworld border that applies them again and resends them
- *   whenever an overworld change has run through the delegates and reached players.</li>
- *   <li>{@link #sendBorder} after vanilla has sent the overworld's border on login, dimension change and respawn: a
- *   player in a region gets that region's border instead; a player leaving a region gets the overworld's from vanilla
- *   as usual.</li>
+ *   <li>原版边界只属主世界：其余维度经委托监听器跟随主世界，存档设置待全部维度加载后才应用，{@code /worldborder}
+ *       只改主世界，玩家在任何维度收到的都是主世界边界；故 {@link RegionBorderEvents} 在原版之后调进本类。</li>
+ *   <li>{@link #start}：服务器启动、原版完成后应用各域尺寸并记日志，在主世界边界上原版监听器之后加监听器，主世界变动经
+ *       委托传到玩家后重新应用并重发；{@link #sendBorder}：原版在登录、换维度、重生时发出主世界边界后调用；域内玩家改收
+ *       本域边界，离域玩家照收原版的主世界边界。</li>
+ *   <li>伤害、警告距离、警告时间沿用主世界（原版本就委托）；尺寸不存档，每次启动取自代码，改后下次启动生效。</li>
+ *   <li>⚠ 域边界是全服常量：{@code /worldborder} 只改主世界，各域不变。</li>
  * </ul>
- * Damage, warning distance and warning time stay the overworld's, as vanilla delegates them. The sizes are
- * never saved: they come from code on every start, so a changed size takes effect on the next start.
- *
- * <p>⚠ Region borders are server-wide constants: a {@code /worldborder} command changes the overworld's
- * border only, and the regions keep theirs.
  *
  * @author Alex
  * @version 1.0.0

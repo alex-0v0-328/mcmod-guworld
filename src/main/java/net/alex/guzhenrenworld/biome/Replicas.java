@@ -24,30 +24,21 @@ import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 /**
- * Gu World's replicas of vanilla overworld biomes: each one vanilla's biome under its vanilla name in this mod's
- * namespace ({@code guworld:plains} for {@code minecraft:plains}), with vanilla's climate, colors, music, mob spawns
- * and features in vanilla's order, so a region can place it and later tune it without touching the overworld.
- *
- * <p>Three things differ; the first two because the heightfield regions carve their own caves:
+ * 原版主世界群系的复刻：原版群系以原名进本模组命名空间。
  * <ul>
- *   <li>No replica carves. A carver's tunnel reaches up to eight chunks from where it starts, so a tunnel from one
- *   biome cuts a cliff face or a pillar standing in another open. {@link #getUncarved} drops a template's carvers,
- *   keeping its features or taking the ones it is given, for every biome Gu World builds on a vanilla one.</li>
- *   <li>Vanilla's overworld surface rules name their biomes by key, so a replica would lose its biome's surface,
- *   stony peaks their stone and calcite, the windswept hills their bare stone. {@link #getSurfaceRules} returns
- *   vanilla's rules with every replica added beside the biome it copies.</li>
- *   <li>Every spawn sits under its own entity type's category ({@link #getSpawnsByCategory}). Vanilla's bamboo jungle
- *   lists the ocelot under monsters, which spends the monster cap on it and makes the loader warn for a modded biome;
- *   the rebuild moves such a spawn, with its spawn cost, to its type's category.</li>
+ *   <li>{@code guworld:plains} 即 {@code minecraft:plains}；沿用原版气候、颜色、音乐、刷怪与地物（原版顺序），域可放
+ *       置、日后调整而不碰主世界。</li>
+ *   <li>不雕刻：高度场地形的域自己雕刻洞穴，雕刻器隧道可伸出起点 8 个区块，会切开别的群系里的崖壁或石柱；
+ *       {@link #getUncarved} 去掉模板的雕刻器，保留或替换地物，凡以原版群系为底的都经它。</li>
+ *   <li>原版主世界表层规则按键点名群系，复刻群系会失去地表（尖峭山峰的石头和方解石、风袭丘陵的裸石）；
+ *       {@link #getSurfaceRules} 返回原版规则，并把复刻群系加在原群系旁。</li>
+ *   <li>刷怪项按实体类型自身分类放（{@link #getSpawnsByCategory}）：原版竹林把豹猫放在 monster 下，占敌对生物上限，
+ *       在模组群系还引发加载器警告；重建时连同刷怪消耗移到所属分类。</li>
+ *   <li>{@link Template}：复刻键、原版群系、原版工厂（{@link Factory}，同原版签名），{@link #of} 按原版名起键。</li>
+ *   <li>{@link #SHARED}：各域可放的模板（平原、河流、两种洞穴），{@link #BIOMES} 同序列键（语言表 provider 命名序）；
+ *       仅一域放置的原版群系，模板留在该域包，与共用模板一并交给 {@link #registerBiomes}、{@link #getSurfaceRules}；
+ *       两域都要的移来此处，因群系只注册一次。</li>
  * </ul>
- *
- * <p>A {@link Template} pairs a replica's key with its vanilla biome and the vanilla factory that builds it
- * ({@link Factory}, the signature of vanilla's biome factories; {@link #of} names the key after the vanilla biome).
- * {@link #SHARED} is the templates every region may place, the plains, the river and the two caves;
- * {@link #BIOMES} lists their keys in that order, the order the language provider names them in. A region that
- * places a vanilla biome no other region does keeps that template in its own package and hands it to
- * {@link #registerBiomes} and {@link #getSurfaceRules} beside the shared ones; a template two regions both want
- * moves here, since a biome registers once.
  *
  * @author Alex
  * @version 1.0.0

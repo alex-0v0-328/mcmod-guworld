@@ -21,25 +21,19 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.Tags;
 
 /**
- * The feature {@code guworld:waterways}: fills one chunk's waterways [水系] channels with water and lays their beds,
- * run once per chunk in the first decoration step, {@code raw_generation}, after the surface rules and before the
- * chunk's own lakes, trees and plants. A chunk outside a carved region, with no {@link WaterwaysCarver} on its level,
- * is left alone.
+ * 地物 {@code guworld:waterways}：给一个区块的水系河道放水、铺河床。
  *
- * <p>Each column inside a channel ({@link WaterwaysCarver#getChannel}) is scanned down from the top water block, one
- * under the water surface rounded up, through open blocks to its floor, at most {@link #WATER_CAP} blocks. Open is
- * air or a block that is neither solid, a fluid nor a block entity: a neighbouring chunk's features run before this
- * chunk's whenever that chunk gets there first, and may have planted grass or flowers in the channel, which the water
- * then replaces. The floor has to lie where the carving put the channel's bottom, at most one block deeper; a column
- * open further down, into a cave, a pit or over a cliff the water profile spilled across, is left as it is, and the
- * water placed beside it flows in. The floor's block becomes the region's bed ({@link WaterwaysCarver#getBed}) when it
- * is open above, solid, neither an ore nor a block entity, and resting on a block a falling bed would not drop
- * through; a wet channel then gets vanilla water sources from the floor up, a dry one only its bed. Water already
- * standing in the column, the sea's or an aquifer's, is the floor and stays.
- *
- * <p>Water next to an open block, placed or found as the floor, at a step down the stream or where a bank falls short,
- * gets a fluid tick, so vanilla water flows out over it once the chunk is loaded; no other water rule changes.
- * {@link #fill} and {@link #touchesOpen} take plain block access, so a test can run them on chunks of its own.
+ * <ul>
+ *   <li>每区块一次，首个装饰步 {@code raw_generation}：表层规则后，本区块湖、树、植物前；维度无 {@link WaterwaysCarver}
+ *       则不动。</li>
+ *   <li>河道列（{@link WaterwaysCarver#getChannel}）从顶层水块（水面向上取整减 1）下穿空格找底，≤
+ *       {@link #WATER_CAP} 格；空格：空气或非实心、非流体、非方块实体（邻区块先种进河道的草花由水盖掉）。</li>
+ *   <li>底须在刻河河底，至多再深 1 格；更深（洞穴、坑、水面跨过的崖下）整列不动，靠邻列水流入。</li>
+ *   <li>底方块上空、实心、非矿石非方块实体、下方托得住下落河床时换成区域河床（{@link WaterwaysCarver#getBed}）；
+ *       有水河道从底往上放原版水源，干河道只铺床；列中原有的水（海、含水层）作底保留。</li>
+ *   <li>放下或作底的水侧挨空格（下游台阶、矮岸）时排一次流体刻，加载后按原版流出；不改其他水规则。</li>
+ *   <li>{@link #fill}、{@link #touchesOpen} 只取普通方块访问，测试可在自建区块上跑。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

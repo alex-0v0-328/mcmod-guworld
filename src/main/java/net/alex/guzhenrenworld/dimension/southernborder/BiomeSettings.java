@@ -22,14 +22,13 @@ import net.minecraft.world.level.levelgen.placement.NoiseBasedCountPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 /**
- * The Southern Border [南疆] biome built here rather than ported: the bamboo sea [竹海], vanilla's bamboo jungle with
- * its bamboo thinned. Vanilla grows {@link VegetationPlacements#BAMBOO} up to 160 clumps a chunk where its noise peaks,
- * a wall nobody can walk through; {@link #BAMBOO} places the same podzol-floored bamboo at most {@link #BAMBOO_COUNT}
- * times a chunk on the same noise, so the stands stay dense where the noise peaks and open up between them. The rest
- * of the template, jungle trees, flowers, pandas and parrots, stays vanilla's, and like every Gu World biome it does
- * not carve ({@link Replicas#getUncarved}).
- *
- * <p>⚠ {@link #BAMBOO_COUNT} is a first pick for Alex to judge in game.
+ * 南疆自制而非移植的竹海：竹子稀疏化的原版竹林。
+ * <ul>
+ *   <li>原版 {@link VegetationPlacements#BAMBOO} 在噪声峰值处每区块至多 160 丛，密不可行；{@link #BAMBOO} 按同一噪声放
+ *       同样的灰化土底竹子，每区块至多 {@link #BAMBOO_COUNT} 次，峰值处仍密、丛间留空。</li>
+ *   <li>其余（丛林树、花、熊猫、鹦鹉）照原版；同所有 Gu World 群系不雕刻洞穴（{@link Replicas#getUncarved}）。</li>
+ *   <li>⚠ {@link #BAMBOO_COUNT} 是初值，待 Alex 进游戏判断。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

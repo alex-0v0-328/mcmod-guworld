@@ -12,18 +12,15 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 /**
- * Wires every generator of this mod that runs at datagen time.
+ * 本模组数据生成期全部生成器的接线。
  *
- * <p>Annotated {@code @EventBusSubscriber}. On {@code GatherDataEvent} it adds every provider under
- * {@code datagen/}. Each is one NeoForge allows only once per run (the language table once per language), so it
- * lives here and collects its
- * entries from the function packages ({@code biome}, {@code dimension}, {@code feature}). The output is the committed
- * source set {@code src/generated/resources}, written by {@code runData}. The data run loads Guzhenren
- * too, as a required mod, but NeoForge only executes the generators of the mod named by {@code --mod},
- * so Guzhenren's providers write nothing here.
- *
- * <p>⚠ What they write is a committed source set, so a provider changed without regenerating ships a
- * stale jar while the build stays perfectly green.
+ * <ul>
+ *   <li>{@code GatherDataEvent} 时加入 {@code datagen/} 下全部 provider；NeoForge 每次运行每种只许一个（语言表每语言一
+ *       个），故都在此，条目取自功能包 {@code biome}、{@code dimension}、{@code feature}。</li>
+ *   <li>产物为入库源集 {@code src/generated/resources}，由 {@code runData} 写出；也加载必需的主模组，但 NeoForge
+ *       只执行 {@code --mod} 所指模组的生成器，主模组 provider 不写入。</li>
+ *   <li>⚠ 产物入库：改 provider 不重新生成，构建照样全绿，jar 却带旧数据。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

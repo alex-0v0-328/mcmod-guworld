@@ -17,22 +17,17 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 /**
- * Every string of this mod in all three languages, written as one table: each entry names its registered key, its
- * English rendering and its Simplified Chinese one. The same provider runs once per {@link Language} and writes
- * only its own column, so no language can miss a key the others have. Traditional Chinese [繁中] converts the
- * Simplified column through {@link TraditionalGlyphs}; the two differ in glyphs only.
+ * 本模组三语全部文本，注册键、英文、简中并排成表。
  *
- * <p>Every key is built from the registered key it names, never from a raw string, so a renamed dimension or biome
- * cannot leave a key behind pointing at nothing: {@link #getLanguageKey} spells the type, then the registered id.
- * {@link #addDimension} writes a dimension's name and its Traveler's Titles title; {@link #addTitleColor} adds the
- * title's color, the {@code travelerstitles.*} convention's lowercase hex without {@code #}, the same in every
- * language. {@link #addBiomes} names a registry list of biomes, one English and Simplified pair per biome in the
- * list's order, or a region's {@link BiomeName} list. The Treasure Yellow Heaven's one biome carries the dimension's
- * name.
- *
- * <p>⚠ Both renderings are the authority, not a translation of each other. ⚠ {@link #addBiomes} throws when the
- * pairs and the biomes differ in number, and {@link TraditionalGlyphs} throws on an unseen glyph, so a biome added
- * without a name, or a name with a new glyph, fails {@code runData} instead of shipping a raw key.
+ * <ul>
+ *   <li>provider 每种 {@link Language} 跑一次、只写本栏，键必齐；繁中由简中经 {@link TraditionalGlyphs} 只转字形。</li>
+ *   <li>键一律由所指注册键生成（{@link #getLanguageKey}：类型加注册 ID），不用裸字符串，改名不留指空的键。</li>
+ *   <li>{@link #addDimension} 写维度名与 Traveler's Titles 标题；{@link #addTitleColor} 写标题色，
+ *       按 {@code travelerstitles.*} 惯例为小写十六进制、无 {@code #}，各语言相同；{@link #addBiomes} 按序给群系配英
+ *       文、简中名，或取域的 {@link BiomeName} 名单；宝黄天[Treasure Yellow Heaven]唯一群系沿用维度名。</li>
+ *   <li>⚠ 两种写法都是权威，不互为翻译；{@link #addBiomes} 名字对数与群系数不符、{@link TraditionalGlyphs} 遇新字都抛
+ *       错，漏名或新字令 {@code runData} 失败，不发裸键。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

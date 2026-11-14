@@ -5,11 +5,9 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 
 /**
- * Moves a surface rule between its codec form and plain JSON, for the classes here that rewrite rules as data.
- *
- * <p>{@link Replicas} adds its replicas to vanilla's rule and {@link SurfacePruning} cuts a rule to a roster by
- * editing the JSON {@link #encode} gives and reading the result back through {@link #decode}; {@link Ports} decodes
- * Terralith's ported rule the same way. Each call names its rule, which a failure's message carries.
+ * 表层规则的 codec 形式与纯 JSON 互转，供本包把规则当数据改写。{@link Replicas} 加复刻群系、{@link SurfacePruning}
+ * 按名单裁剪，都改 {@link #encode} 给的 JSON 再经 {@link #decode} 读回，{@link Ports} 同样解码移植规则；每次调用给规则
+ * 命名，写进失败消息。
  *
  * @author Alex
  * @version 1.0.0

@@ -18,27 +18,18 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 
 /**
- * The Spirit Spring [元泉] worldgen: its keys, generation biomes and datapack entries.
+ * 元泉[Spirit Spring] 世界生成：键、生成群系与数据包条目。
  *
- * <p>Every key here shares {@link #ID}, {@code guworld:spirit_spring}, under which {@link SpiritSpringRegistration}
- * registers {@link SpiritSpringCluster}. {@link #registerConfiguredFeature} and {@link #registerPlacedFeature} are
- * the bootstraps {@code datagen.DatapackProvider} runs: the configured and placed feature, which
- * {@link SpiritSpringRegistration}'s biome modifier adds to {@link #BIOMES} at {@code TOP_LAYER_MODIFICATION} (after
- * vegetation); {@code datagen.BiomeTagsProvider} fills that tag from {@link #LAND_BIOMES} and the Southern Border's
- * land biomes ({@code BiomeLayout.LAND}). Guzhenren keeps the spring's block, fluid, item and client rendering; every
- * worldgen id here is in the {@code guworld} namespace.
- *
- * <p>{@link #LAND_BIOMES} is 39 overworld land biomes, moved here with the spring's worldgen as a copy of
- * Guzhenren's wild Gu land list; the two now belong to different mods and may diverge.
- *
- * <p>⚠ The spring is a land structure, so {@link #LAND_BIOMES} must NOT collapse to
- * {@code #minecraft:is_overworld}, which also carries the oceans and rivers.
- *
- * <p>⚠ {@link #RARITY} is Alex's pick, one roll per 300 chunks. The roll is not the rate: a roll grows a
- * cluster only where {@link SpiritSpringGround} finds level ground. In three 256-block overworld samples 1.2% of
- * columns pass its 15x15 rule, none in woods, so roughly 2% of rolls grow a cluster, about one per 15,000 overworld
- * chunks (an estimate from heightmaps, not a count of springs). There is no underground variant: a cave spot almost
- * never passes the level-ground check.
+ * <ul>
+ *   <li>键共用 {@link #ID}，{@link SpiritSpringRegistration} 以它注册地物，并在 {@code TOP_LAYER_MODIFICATION}（植被
+ *       后）把放置地物加进 {@link #BIOMES}；两个引导由 {@code datagen.DatapackProvider} 运行。</li>
+ *   <li>{@code datagen.BiomeTagsProvider} 按 {@link #LAND_BIOMES} 与南疆陆地群系（{@code BiomeLayout.LAND}）
+ *       填 {@link #BIOMES}；世界生成 ID 全在 {@code guworld}，方块、流体、物品与渲染归主模组。</li>
+ *   <li>{@link #LAND_BIOMES}：39 种主世界陆地群系，抄自主模组野生蛊陆地表，或会分叉；无地下变体（洞穴难过检查）。</li>
+ *   <li>⚠ 陆地结构：{@link #LAND_BIOMES} 不得并成 {@code #minecraft:is_overworld}（含海洋、河流）。</li>
+ *   <li>⚠ {@link #RARITY} 由 Alex 定，不得私调：每 300 区块抽一次，{@link SpiritSpringGround} 找到平地才成泉群。
+ *       三块 256 格样区 1.2% 列过 15×15 检查，树林为 0；约 2% 抽中成群，主世界约每 15,000 区块一处（高度图估算）。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

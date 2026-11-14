@@ -12,19 +12,16 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
 /**
- * The biomes only the Western Desert [西漠] places, which the datagen providers collect from here: {@link #PORTED},
- * the Terralith biomes the region ported ({@link Ports#biome} names each; the port's files are listed in
- * {@code src/ports/terralith/index.western_desert.json}), {@link #REPLICAS}, the vanilla biomes it replicates beside
- * {@link Replicas#SHARED}, {@link #NAMES}, the display names of both, and {@link #CROPS}, the land sorted into
- * the wild crop climates of Farmer's Delight ({@link WildCropClimate}). {@link WesternDesertLayout} places them and
- * derives the roster and the land list from its table.
- *
- * <p>The climates follow each biome's own temperature and downfall ({@link WildCropClimate}): the deserts, badlands,
- * canyons, mesas and the dry highlands and brushland, all temperature 1 and up and dry, hot, the two oases also wet by
- * name, the hot shrubland (0.8) temperate, and the gravel desert (0.14) cold.
- *
- * <p>⚠ A re-port that adds a biome gives it its key in {@link #PORTED}, its name in {@link #NAMES} and its climates
- * in {@link #CROPS} in the same change; {@link Ports#registerBiomes} fails while the index and the keys differ.
+ * 只有西漠放置的群系，供数据生成提供器收集。
+ * <ul>
+ *   <li>{@link #REPLICAS}：{@link Replicas#SHARED} 外的原版复刻；{@link #NAMES}：显示名；{@link #PORTED}：移植的
+ *       Terralith 群系（{@link Ports#biome} 命名，清单 {@code src/ports/terralith/index.western_desert.json}）。</li>
+ *   <li>{@link #CROPS}：陆地按群系自身温度降水分进农夫乐事野生作物气候（{@link WildCropClimate}）：沙漠、恶地、峡谷、台
+ *       地、旱原高地、荆丛地温度 ≥ 1 且干，为热；两种绿洲另按名字归湿；热灌丛（0.8）归温带；戈壁（0.14）归寒。</li>
+ *   <li>{@link WesternDesertLayout} 放置它们，由其表推出名单和陆地列表。</li>
+ *   <li>⚠ 重新移植新增群系，须同一改动补 {@link #PORTED} 的键、{@link #NAMES} 的名字、{@link #CROPS} 的气候；清单与键不
+ *       一致则 {@link Ports#registerBiomes} 失败。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

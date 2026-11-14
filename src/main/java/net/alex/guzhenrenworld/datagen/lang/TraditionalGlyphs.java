@@ -4,25 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The Simplified-to-Traditional glyph table behind this mod's {@code zh_tw}.
+ * 本模组 {@code zh_tw} 的简转繁字形表。
  *
- * <p>Traditional Chinese [繁中] differs from {@code zh_cn} in glyphs only, never in wording, so
- * {@link Translations} derives every {@code zh_tw} value through {@link #convert}. The glyphs follow the
- * Taiwan standard (OpenCC {@code s2tw}); vocabulary stays as written.
- *
- * <p>This is a copy of Guzhenren's {@code TraditionalGlyphs}, cut down to the glyphs this mod uses:
- * the two mods never compile against each other, so neither can borrow the other's table. A glyph
- * added here takes the Traditional form Guzhenren's table gives it, or OpenCC {@code s2tw}'s where that table has
- * none.
- *
- * <p>A token in {@link #PAIRS} is its Simplified half followed by its Traditional half (宝寶). A
- * glyph with more than one Traditional form goes in as a whole phrase token (冲刷沖刷) and never on
- * its own; {@link #convert} takes the longest token that matches at each position. {@link #UNCHANGED}
- * holds the glyphs both scripts share.
- *
- * <p>⚠ {@link #convert} throws on a Han glyph it cannot place, so a new {@code zh_cn} string with an
- * unseen glyph fails {@code runData} instead of shipping a Simplified glyph inside the Traditional
- * file.
+ * <ul>
+ *   <li>繁中与 {@code zh_cn} 只差字形不差用词，{@link Translations} 每个 {@code zh_tw} 值都经 {@link #convert} 得出；
+ *       字形按台湾标准（OpenCC {@code s2tw}），用词照原文。主模组 {@code TraditionalGlyphs} 的副本，只留本模组用字：
+ *       两模组互不编译依赖，借不到对方的表；新字取主模组表的繁体，表中没有则取 OpenCC {@code s2tw}。</li>
+ *   <li>{@link #PAIRS} 词元为简体半段接繁体半段（宝寶）；一简多繁的字只以整词录入（冲刷沖刷）；{@link #convert}
+ *       逐位取最长匹配；{@link #UNCHANGED} 收简繁同形字。</li>
+ *   <li>⚠ {@link #convert} 遇未收录汉字即抛错：{@code zh_cn} 含新字则 {@code runData} 失败，不把简体字混入繁体。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

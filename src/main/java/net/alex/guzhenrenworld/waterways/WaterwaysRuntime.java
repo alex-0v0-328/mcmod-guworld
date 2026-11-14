@@ -12,19 +12,18 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The carvers in use, one per {@link RandomState} whose final density is a {@link WaterwaysDensity}, keyed by that
- * random state's instance of {@link Waterways#MEANDER_NOISE}, the one object every copy of the density function
- * carries ({@link NormalNoise} keeps identity equality).
+ * 使用中的雕刻器：每个最终密度为 {@link WaterwaysDensity} 的 {@link RandomState} 一个。
  *
- * <p>{@link #onLevelLoad} attaches a carver to each loaded server level whose generator wraps its terrain, before the
- * level generates a chunk, and starts its build at once, so a player arriving later finds it ready instead of the
- * server thread waiting out a plan; a GameTest server only builds when a test asks. The build tries the dimension's
- * {@link WaterwaysData} first, keyed by {@link Waterways#PARAMETERS}, the border size and the sea level and checked
- * against a fingerprint of the ground and the biome at {@link #FINGERPRINT} columns, before planning the region and
- * saving the result. A change to the planner's own rules bumps the version in {@link Waterways#PARAMETERS}.
- * {@link #onLevelUnload} and {@link #clear} drop carvers with their levels; {@link #get} is a level's carver, for
- * {@link WaterwaysFeature} and tests. Tests attach their own carvers to random states they built ({@link #attach},
- * {@link #detach}).
+ * <ul>
+ *   <li>以 {@link Waterways#MEANDER_NOISE} 实例为键：各副本共有的对象（{@link NormalNoise} 按同一性判等）。</li>
+ *   <li>{@link #onLevelLoad} 在维度生成首个区块前给包了地形的服务端维度挂雕刻器并立即开建，玩家到时已建好，服务端线程不
+ *       必等；GameTest 服务端待测试要用才建。</li>
+ *   <li>建图先试维度的 {@link WaterwaysData}（键：{@link Waterways#PARAMETERS}、边长、海平面；
+ *       并核对 {@link #FINGERPRINT} 各列地面与群系指纹），不符才规划并存档；规划规则一改就升
+ *       {@link Waterways#PARAMETERS} 的版本号。</li>
+ *   <li>维度卸载、停服时丢弃雕刻器；{@link #get} 供 {@link WaterwaysFeature} 与测试；测试可给自建随机状态挂摘雕刻
+ *       器。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

@@ -11,17 +11,14 @@ import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Client-side visual effects for the Treasure Yellow Heaven dimension.
+ * 宝黄天[Treasure Yellow Heaven]的客户端天空效果。
  *
- * <p>Annotated {@code @EventBusSubscriber(value = Dist.CLIENT)}, so nothing which would crash a dedicated
- * server loads there: {@link #onRegisterDimensionSpecialEffects} registers an instance on the mod bus under
- * {@link TreasureYellowHeaven#EFFECTS}, the id the dimension type names in {@code effects}.
- *
- * <p>Keeps vanilla clouds, sun, moon and the day-night cycle by using the NORMAL sky type, while the
- * sky and fog stay the dimension biome's yellow. Vanilla hands
- * {@link #getBrightnessDependentFogColor} the biome's {@code fog_color} (FogRenderer), so the yellow is
- * tuned in one place, the biome in {@link TreasureYellowHeaven}, and this class only dims it with the
- * daylight.
+ * <ul>
+ *   <li>仅客户端订阅（{@code Dist.CLIENT}），专用服务端不加载；{@link #onRegisterDimensionSpecialEffects} 在模组总线以
+ *       {@link TreasureYellowHeaven#EFFECTS}（维度类型 {@code effects} 所填 ID）注册。</li>
+ *   <li>{@code NORMAL} 天空留原版云、日月、昼夜，天和雾取群系黄色：{@code FogRenderer} 把 {@code fog_color} 传给
+ *       {@link #getBrightnessDependentFogColor}，黄色只在 {@link TreasureYellowHeaven} 群系调，本类只按日光调暗。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

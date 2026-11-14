@@ -9,13 +9,13 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The density function type {@code guworld:x_gradient}, {@link ZGradient} along x: from {@code from_value} at x
- * {@code from_x} and beyond to {@code to_value} at x {@code to_x} and beyond, linear between. A region that changes
- * from west to east, such as the Eastern Sea [东海] with its open sea toward the east, fills a hook with it.
- *
- * <p>{@link #MAP_CODEC} is the type's data codec, which {@link GradientRegistration} registers under {@link #ID},
- * and {@link #CODEC} wraps that very instance: the registry finds the type by it.
- * The function reads only x, so it may sit inside a {@code cache_2d} ({@link ColumnCaches}).
+ * 密度函数类型 {@code guworld:x_gradient}：沿 x 的 {@link ZGradient}。
+ * <ul>
+ *   <li>x 在 {@code from_x} 以外取 {@code from_value}，{@code to_x} 以外取 {@code to_value}，其间线性；自西向东变化的域
+ *       用它填钩子，如东边是开阔海面的东海。</li>
+ *   <li>{@link #MAP_CODEC} 为数据 codec，{@link GradientRegistration} 以 {@link #ID} 注册；{@link #CODEC} 包装同一实
+ *       例，注册表凭它认类型；只读 x，可放进 {@code cache_2d}（{@link ColumnCaches}）。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

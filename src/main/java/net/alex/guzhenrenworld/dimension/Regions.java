@@ -9,10 +9,9 @@ import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesert;
 
 /**
- * The four {@link Region}s in the order their entries register, the only place that names every region package:
- * {@code datagen.DatapackProvider} runs {@link RegionBootstraps} over them, the biome tag and language providers read
- * their biome lists and names, and {@link RegionBorders} applies their border. A fifth region is one more line here
- * and one new package.
+ * 全部四个域（{@link Region}），按入口注册顺序；唯一点名各域包之处。
+ * {@code datagen.DatapackProvider} 对其跑 {@link RegionBootstraps}，群系标签与语言 provider 读其群系名单与名字，
+ * {@link RegionBorders} 应用其边界；加第五域只需此处一行加一个包。
  *
  * @author Alex
  * @version 1.0.0

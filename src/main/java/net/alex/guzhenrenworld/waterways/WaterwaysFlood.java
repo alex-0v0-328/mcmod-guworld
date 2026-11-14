@@ -4,22 +4,18 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /**
- * The drainage passes of a waterways [水系] plan [水系规划], on plain arrays over a square grid of cells (cell {@code
- * row * size + column}, eight neighbors), so they need no world:
+ * 水系规划的排水各步，在网格数组上运行，不需要世界。
  *
- * <ol>
- *   <li>{@link #fill}: Priority-Flood with an epsilon (Barnes, Lehman and Mulla 2014) from every water, outlet and
- *   edge cell, so each cell's filled height is its ground, or {@link #EPSILON} above the lowest way out of its
- *   depression. Any cell lowest among its eight neighbors yet filled more than {@link Waterways#LAKE_DEPTH} blocks
- *   becomes a sink, seeding the next flood, until a flood adds none or after {@link #MAX_SINK_PASSES} reruns: what
- *   stays filled is a lake at most that deep, and a stream into a deeper basin ends at its floor instead of a lake or
- *   a gorge tens of blocks deep (without sinks over a quarter of the stream cells crossed one, up to 51 blocks
- *   deep). It also records the order the flood popped the cells in.</li>
- *   <li>{@link #getReceivers}: each land cell drains into the neighbor of the eight with the steepest fall of filled
- *   height per block between the jittered points; its flood parent always falls, so every land cell has one.</li>
- *   <li>{@link #getCatchments}: one per cell, summed down the receivers in the reverse of the flood's pop order, which
- *   never rises in filled height, so a cell is done before its receiver.</li>
- * </ol>
+ * <ul>
+ *   <li>{@link #fill}：带 ε 的 Priority-Flood（Barnes、Lehman、Mulla 2014），从水、出口、边缘格出发，
+ *       格下标 {@code row * size + column}、八邻域；填后高度为地面或洼地最低出口加 {@link #EPSILON}；记下出队序。</li>
+ *   <li>八邻域最低、填后深于 {@link Waterways#LAKE_DEPTH} 格的格成汇点，作下轮起点，至不再新增或重跑
+ *       {@link #MAX_SINK_PASSES} 轮：余湖不超该深度，流进更深洼地的溪流终于谷底，而非几十格深的湖或峡谷（无汇点时逾四分
+ *       之一溪流格穿过这类洼地，最深 51 格）。</li>
+ *   <li>{@link #getReceivers}：陆地格流向八邻域中填后高度每格落差最陡者（按偏移后取样点计距）；填洼父格必更低，
+ *       故陆地格都有流向格。</li>
+ *   <li>{@link #getCatchments}：按出队逆序沿流向累加；逆序中填后高度不升，一格总先于其流向格算完。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

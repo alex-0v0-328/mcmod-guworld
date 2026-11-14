@@ -10,27 +10,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Where a Spirit Spring [元泉] basin may stand: level, dry, treeless ground, judged by {@link #findSurfaceGround}
- * (public for GameTests) for each spot {@link SpiritSpringCluster} tries.
+ * 元泉[Spirit Spring] 石盆落点：平整、干燥、无树的地面。
  *
- * <p>Surface placement happens on level, dry land only, on a mountain top, at a mountain foot or on a plain alike:
- * the ground of the 15x15 square around the center (radius {@link #FLAT_RADIUS}, about twice the basin's side) may
- * differ by at most {@link SpiritSpringBasin#MAX_RISE} blocks from its lowest to its highest column
- * ({@link #isTerrainRough}), the rise the basin's leveling absorbs. Vegetation runs before us
- * ({@code VEGETAL_DECORATION} precedes {@code TOP_LAYER_MODIFICATION}), so slopes, ponds and trees all move the
- * heightmap the check reads: a tree within the square vetoes it, and so do logs and leaves at the center. Stalk
- * plants that dodge the heightmap (no collision: bamboo, sugar cane) veto from the basin's clear band
- * ({@link SpiritSpringBasin#CLEAR_HEIGHT_ABOVE}). {@link #isTerrainWet} vetoes any structure column that is ice or
- * holds a fluid in its ground or the cell above: water level with the ground passes the height rule, and vanilla's
- * {@code freeze_top_layer} runs earlier in the same step (a biome modifier appends after the biome's own features),
- * so a frozen pond or river is flat ice with no fluid at the surface. The cluster's searches reach past the biome
- * filter, into rivers and frozen oceans as well.
- *
- * <p>⚠ The terrain checks reach up to ±16 blocks into neighbor chunks, which may not have grown their trees
- * yet, so whether a spot qualifies can depend on the order chunks generate in, as vanilla tree placement
- * does.
- *
- * <p>⚠ The flatness is Alex's pick, not a silent tunable.
+ * <ul>
+ *   <li>{@link #findSurfaceGround} 判定 {@link SpiritSpringCluster} 试的每个点，公开供 GameTest。</li>
+ *   <li>山顶、山脚、平原皆可：中心 15×15（半径 {@link #FLAT_RADIUS}，约石盆边长两倍）
+ *       内高差 ≤ {@link SpiritSpringBasin#MAX_RISE} 格，即整平能吸收的起伏。</li>
+ *   <li>植被先跑（{@code VEGETAL_DECORATION} 早于 {@code TOP_LAYER_MODIFICATION}），坡、水坑、树都改高度图：
+ *       范围内有树、中心是树干或树叶即否决；无碰撞、躲过高度图的竹子与甘蔗在清空带
+ *       （{@link SpiritSpringBasin#CLEAR_HEIGHT_ABOVE}）否决。</li>
+ *   <li>{@link #isTerrainWet}：结构列地面为冰、或地面及上一格有流体即否决：齐平的水过得了高度规则，
+ *       原版 {@code freeze_top_layer} 同步更早（群系修改器排在群系自身地物后），冻住的水坑或河只是平整冰面。</li>
+ *   <li>泉群搜索越出群系过滤，也会落到河流和冻洋。</li>
+ *   <li>⚠ 检查伸进邻区块 ±16 格，那里的树可能未长：合格与否随区块生成顺序变，同原版放树。</li>
+ *   <li>⚠ 平整度由 Alex 定，不得私调。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

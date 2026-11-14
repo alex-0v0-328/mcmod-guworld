@@ -11,28 +11,20 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The Spirit Spring [元泉] feature: from one feature origin it rolls a cluster of springs, finds level ground for each
- * ({@link SpiritSpringGround#findSurfaceGround}) and lays a basin there ({@link SpiritSpringBasin#placeStructure}).
- * {@link SpiritSpring} keys it and writes its placement data; {@link SpiritSpringRegistration} registers it.
+ * 元泉[Spirit Spring] 地物：从地物原点掷泉群，逐个找平地放石盆。
  *
- * <p>Clusters: a spot that passes the rarity roll grows 1 to 5 springs -- 50%,
- * 20%, 15%, 10%, 5% ({@link #CLUSTER_SIZE_WEIGHTS}; {@link #getClusterSize} maps a roll under
- * {@link #CLUSTER_ROLL_BOUND} through the cumulative weights). The members ring the cluster's first spring, 8 to 10
- * blocks (horizontal) from it ({@link #isWithinReach}) and at least 8 from every other
- * ({@link #isSeparationAcceptable}), so the 7x7 basins never overlap; a whole cluster spans about 25x25 blocks.
- * Every spring stays within the Chebyshev bound {@link #MAX_ORIGIN_OFFSET} of the feature origin
- * ({@link #isWithinOriginBound}): the origin sits inside the generating chunk and features may read and write one
- * chunk past its border, so ±9 keeps every 15x15 flatness check, and with it every 7x7 basin, inside the 3x3 chunk
- * window. {@link #findMemberSpot} tries {@link #MEMBER_SPOT_ATTEMPTS} random candidates per member; a member whose
- * candidates all fail terrain checks is dropped -- the rolled size is the attempt, not a quota.
- *
- * <p>Anchor search: {@link #findAnchorSpot} tries the origin column, then up to
- * {@link #ANCHOR_SPOT_ATTEMPTS} random columns within the same ±{@link #MAX_ORIGIN_OFFSET} bound.
- * The terrain rules alone would let few rolls through at the origin column; the search keeps the rules and only
- * gives each roll more columns. A {@code /place feature} likewise lands on qualifying ground within that bound of
- * the player instead of failing on the column underfoot.
- *
- * <p>⚠ The cluster numbers are Alex's picks, not silent tunables.
+ * <ul>
+ *   <li>找平地 {@link SpiritSpringGround#findSurfaceGround}，放石盆 {@link SpiritSpringBasin#placeStructure}；
+ *       {@link SpiritSpring} 定键与放置数据，{@link SpiritSpringRegistration} 注册。</li>
+ *   <li>抽中点长 1–5 个泉，概率 50%、20%、15%、10%、5%（{@link #CLUSTER_SIZE_WEIGHTS}，
+ *       掷值上限 {@link #CLUSTER_ROLL_BOUND}）；成员距首个泉眼 8–10 格、彼此 ≥ 8 格，石盆不重叠，泉群约 25×25 格。</li>
+ *   <li>全在原点切比雪夫距离 {@link #MAX_ORIGIN_OFFSET} 内：地物可越出所在区块一个区块读写，±9 让 15×15 检查与石盆都不
+ *       出 3×3 区块窗口。</li>
+ *   <li>{@link #findMemberSpot} 每成员试 {@link #MEMBER_SPOT_ATTEMPTS} 个候选，全不过即跳过（数量是尝试，非定额）；
+ *       首个泉眼（{@link #findAnchorSpot}）先试原点列，再随机试至多 {@link #ANCHOR_SPOT_ATTEMPTS} 列：原点列单独过检的
+ *       很少，搜索只多给列、不放宽规则，{@code /place feature} 也就落在玩家附近合格地面。</li>
+ *   <li>⚠ 泉群数值由 Alex 定，不得私调。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

@@ -12,22 +12,19 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
 /**
- * The biomes only the Northern Plains [北原] places, which the datagen providers collect from here: {@link #PORTED},
- * the Terralith biomes the region ported ({@link Ports#biome} names each; the port's files are listed in
- * {@code src/ports/terralith/index.northern_plains.json}), {@link #REPLICAS}, the vanilla biomes it replicates beside
- * {@link Replicas#SHARED}, {@link #NAMES}, the display names of both, and {@link #CROPS}, the land sorted into
- * the wild crop climates of Farmer's Delight ({@link WildCropClimate}). {@link NorthernPlainsLayout} places them and
- * derives the roster and the land list from its table.
+ * 只有北原放置的群系，供数据生成 provider 收集。
  *
- * <p>The climates follow each biome's own temperature and downfall ({@link WildCropClimate}): the steppe, the shield
- * and the alpine highlands (0.4 to 0.45) temperate, the shield also wet (downfall 0.8); the cold shrubland, the
- * Siberian taiga, the birch taiga, the snowy shield and the ice marsh (0.1 to 0.22) cold, the Siberian taiga, the
- * snowy shield and the ice marsh also wet (downfall 0.8 and up). Sitting in none, being below 0.1: the wintry
- * lowlands, the wintry forest, the frozen cliffs, the glacial chasm, and the replicas snowy plains, ice spikes, snowy
- * taiga, grove and frozen peaks; the frozen river is water.
- *
- * <p>⚠ A re-port that adds a biome gives it its key in {@link #PORTED}, its name in {@link #NAMES} and its climates
- * in {@link #CROPS} in the same change; {@link Ports#registerBiomes} fails while the index and the keys differ.
+ * <ul>
+ *   <li>{@link #PORTED}：移植的 Terralith 群系，键由 {@link Ports#biome} 生成；{@link #REPLICAS}：
+ *       {@link Replicas#SHARED} 外复刻的原版群系；{@link #NAMES}：二者显示名；{@link #CROPS}：陆地按农夫乐事野生作物气
+ *       候（{@link WildCropClimate}）分；移植文件列在 {@code src/ports/terralith/index.northern_plains.json}。</li>
+ *   <li>{@link NorthernPlainsLayout} 摆放它们，由群系表推出名单与陆地列表。</li>
+ *   <li>气候按自身温度与降水：温带（0.4–0.45）干草原、地盾、高寒高地，地盾兼湿（降水 0.8）；寒（0.1–0.22）寒灌丛、
+ *       西伯利亚针叶林、桦木针叶林、雪地盾、冰沼，西伯利亚针叶林、雪地盾、冰沼兼湿（降水 ≥ 0.8）；低于 0.1 不归任何气
+ *       候：寒原低地、寒林、冰崖、冰川裂谷与复刻的雪原、冰刺之地、积雪针叶林、雪林、冰封山峰；冻河是水体。</li>
+ *   <li>⚠ 重新移植多出的群系须在同一改动里补 {@link #PORTED} 键、{@link #NAMES} 名、{@link #CROPS} 气候；清单与键不符
+ *       时 {@link Ports#registerBiomes} 失败。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

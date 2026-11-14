@@ -6,15 +6,13 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.dimension.DimensionType;
 
 /**
- * Builds the dimension type of a Gu World dimension that lives under an open sky, as the overworld does.
- *
- * <p>{@link #create} fixes what every such dimension shares with the overworld's type: no fixed time, sky light and no
- * ceiling, not ultra-warm, natural (clocks, compasses and beds work, and a bed sets the spawn), coordinate scale 1,
- * logical height the whole height, the overworld's infiniburn tag and no ambient light. The caller names the rest:
- * the height range, whether respawn anchors work, the special-effects id and the monster settings.
- *
- * <p>Lives in the root package, beside {@link GuWorld}, so the regions under {@code dimension} share it
- * without one depending on another; it names nothing from the function packages.
+ * 露天 Gu World 维度的维度类型，同主世界。
+ * <ul>
+ *   <li>{@link #create} 固定与主世界相同的字段：无固定时间、有天空光照、无顶棚、非极热、自然维度（时钟、指南针、床可
+ *       用，床设重生点）、坐标缩放 1、逻辑高度即总高度、{@code #minecraft:infiniburn_overworld}、无环境光；调用方给高度
+ *       范围、重生锚是否可用、天空效果 ID、刷怪设置。</li>
+ *   <li>放根包、{@link GuWorld} 旁，{@code dimension} 下各域共用而互不依赖；不引用功能包。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

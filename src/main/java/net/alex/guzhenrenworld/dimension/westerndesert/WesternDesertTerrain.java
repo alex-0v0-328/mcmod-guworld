@@ -10,40 +10,22 @@ import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
 /**
- * The Western Desert [西漠] terrain: the region's copy of Tectonic's overworld router as Tectonic runs it beside
- * Terralith ({@link Ports#registerDensityFunctions}), with two of its functions reshaped ({@link #getReshaped}) and
- * the hooks the port leaves in it filled ({@link #HOOKS}, {@link RegionBootstraps}).
- *
- * <p>The two reshaped functions:
+ * 西漠地形：本域那份 Tectonic 主世界路由（{@link Ports#registerDensityFunctions}）。
  * <ul>
- *   <li>The temperature, {@value Reshaping#TEMPERATURE}, which Terralith's table, Tectonic's landform regions and its
- *   dunes all read: Tectonic's temperature noise plus {@link #TEMPERATURE_OFFSET}. Tectonic's own centers on the
- *   temperate band and leaves the hot band nearly empty; shifted, about three quarters of the region is hot and the
- *   rest warm, with no cold cell, so the table's deserts and badlands take the hot cells and Tectonic's dunes grow
- *   there.</li>
- *   <li>The folded erosion, {@value Reshaping#EROSION_FOLDED}, the distance of Tectonic's erosion from zero, which sets
- *   both the terrain splines and the erosion Terralith's table reads: low means mountains. Below Tectonic's spire band
- *   it is stretched by {@link #EROSION_SCALE}, lifted by {@link #EROSION_OFFSET} and capped at {@link #EROSION_CAP}, so
- *   the mountain and hill bands narrow and the flats widen without spilling into the spire band; from {@link
- *   #SPIRE_EROSION} up it stays as Tectonic computes it, so the spire cells, the desert spires, keep the share they
- *   have in Tectonic.</li>
+ *   <li>温度 {@value Reshaping#TEMPERATURE}（{@link #getReshaped} 改写；Terralith 表、Tectonic 地貌区与沙丘都读）=
+ *       Tectonic 温度噪声 + {@link #TEMPERATURE_OFFSET}：原本以温带为中心、热带几乎空，平移后约四分之三格子热、余暖、无
+ *       冷格，表的沙漠与恶地占热格，沙丘长在那里。</li>
+ *   <li>折叠侵蚀 {@value Reshaping#EROSION_FOLDED}（同样改写）是 Tectonic 侵蚀离零的距离，兼定地形样条与 Terralith 表读
+ *       到的侵蚀，低即山地；低于 Tectonic 尖柱带时乘 {@link #EROSION_SCALE}、加 {@link #EROSION_OFFSET}、封顶
+ *       {@link #EROSION_CAP}，山地与丘陵带收窄、平地带放宽而不溢进尖柱带；{@link #SPIRE_EROSION} 及以上保持原值，尖柱格
+ *       （沙漠石柱）占比同 Tectonic。</li>
+ *   <li>{@link ColumnCaches} 包住移植列函数（含改写的两个），噪声区块每列只算一次。</li>
+ *   <li>钩子（{@link #HOOKS}，经 {@link RegionBootstraps} 注册）：{@code ocean_offset} 取南疆的 -0.1
+ *       （{@link #OCEAN_OFFSET}），最低处抬到海岸带内侧，不留海；{@code vertical_scale} 取 {@link #VERTICAL_SCALE}，最
+ *       高峰约 y 210，非 Tectonic 的 300。</li>
+ *   <li>{@code dunes} 开（{@link #DUNES}）：Tectonic 沙丘长在其钻石地貌区平坦侵蚀带的热干格；其余钩子同四域，但地下河还
+ *       会给本域要保持干的河谷底下含水层灌水。</li>
  * </ul>
- *
- * <p>The hooks:
- * <ul>
- *   <li>{@code ocean_offset}: Tectonic's continentalness is its folded continent noise plus this offset
- *   ({@link #OCEAN_OFFSET}), the Southern Border's [南疆] -0.1, which lifts the lowest ground inland of the coast
- *   band so no sea remains.</li>
- *   <li>{@code vertical_scale}: the stretch of the height above sea level, {@link #VERTICAL_SCALE}, so the highest
- *   peaks stand at about y 210 instead of Tectonic's 300.</li>
- *   <li>{@code dunes}: Tectonic's dunes, which rise in hot, dry cells of its diamond landform region on the flat
- *   erosion band, on ({@link #DUNES}).</li>
- *   <li>{@code min_y}, {@code max_y}, {@code jungle_pillars}, {@code underground_rivers} with
- *   {@code underground_river_water}, and {@code lava_tunnels}: as in every region; the underground rivers would also
- *   flood the aquifers under the valleys the region keeps dry.</li>
- * </ul>
- * {@link ColumnCaches} wraps the ported column functions, the reshaped ones included, so a noise chunk computes each
- * once per column.
  *
  * @author Alex
  * @version 1.0.0

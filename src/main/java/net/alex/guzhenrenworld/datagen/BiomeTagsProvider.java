@@ -20,16 +20,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The single provider for every biome tag this mod writes.
+ * 本模组全部群系标签的唯一 provider。
  *
- * <p>Extends {@link TagsProvider} for {@link Biome}. Fills the Spirit Spring [元泉] generation tag
- * {@link SpiritSpring#BIOMES} from {@link SpiritSpring#LAND_BIOMES}, the overworld list the spring's package owns,
- * and each region's land biomes, and the wild crop climate tags of {@link WildCropClimate} from each region's crop
- * map (all of {@link Regions#ALL}); a biome two regions both place, the rainforest, enters
- * each tag once.
- *
- * <p>⚠ There can only be one per data run: a tags provider is named after its registry and mod, so a
- * second biome tags provider fails datagen as a duplicate; add the next biome tag here instead.
+ * <ul>
+ *   <li>元泉[Spirit Spring]生成标签 {@link SpiritSpring#BIOMES}：{@link SpiritSpring#LAND_BIOMES}（元泉包管的主世界名
+ *       单）加各域陆地群系；{@link WildCropClimate} 野生作物气候标签取 {@link Regions#ALL} 各域作物气候表；两域共有的群
+ *       系（雨林）每标签只记一次。</li>
+ *   <li>⚠ 每次数据生成仅一个：标签 provider 以注册表与模组命名，再加一个即重名失败；新群系标签加在这里。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

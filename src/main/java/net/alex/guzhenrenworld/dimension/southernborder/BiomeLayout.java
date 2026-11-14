@@ -12,41 +12,25 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
 /**
- * Where the Southern Border [南疆] places its biomes: Terralith's overworld multi-noise table as shipped ({@link
- * Ports#getBiomeParameters}), with every source biome mapped onto the region's own ({@link #GROUPS}, a roster biome to
- * the source biomes it stands in for). The terrain under it is Tectonic's ({@link Terrain}), which remaps its own
- * erosion and ridges into the bands Terralith's table expects, so each parameter cell keeps the terrain archetype
- * Terralith gave it and gets the Southern Border biome of its kind.
- *
- * <p>The roster, by terrain band:
+ * 南疆的群系摆放。
  * <ul>
- *   <li>Mountains: misty mountains, cloud forest, rocky peaks, emerald peaks, jungle mountains, painted mountains,
- *   granite cliffs, alpine meadow; and the two landforms, Zhangshiyan cliffs on Terralith's cliff and canyon cells and
- *   karst peak forest on its spire cells.</li>
- *   <li>Hills and plateaus: bamboo sea ({@link BiomeSettings}), rainforest, plateau, forested plateau, peach
- *   grove.</li>
- *   <li>Flats: plains, orchid swamp, hot springs, and the river.</li>
- *   <li>Underground: lush caves and dripstone caves.</li>
+ *   <li>原样用 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系映射到本域名单（{@link #GROUPS}：
+ *       名单群系 → 其替代的来源群系）；下层 Tectonic 地形（{@link Terrain}）把侵蚀与山脊重映射回该表分段，参数格保留
+ *       Terralith 地形原型，得南疆同类群系。</li>
+ *   <li>名单按地形带：山地为雾山、云雾林、裸岩峰、翠峰、丛林山、彩岩山、花岗岩崖、高山草甸，及嶂石岩（Terralith 崖与峡
+ *       谷格）、喀斯特峰林（石林带格）两种地貌；丘陵台地为竹海（{@link BiomeSettings}）、雨林、高原、林间高原、桃林；平
+ *       地为平原、兰花沼泽、热海、河流；地下为繁茂洞穴、溶洞。</li>
+ *   <li>来源归同地貌、植被最近的名单群系：寒带归山地森林与草甸，沙漠与干灌丛归平原，恶地归彩岩山；Terralith 把雾山、翠
+ *       峰、丛林山设得稀有，各多接一个常见邻居：原版山坡、尖峭山峰、岩石丛林。</li>
+ *   <li>海洋、海滩、岛屿来源只为完整而映射，{@link Terrain} 的大陆度到不了。</li>
+ *   <li>{@link #ROSTER}：能放的全部群系，含喀斯特峰林；{@link #LAND}：除河流外的地表群系，元泉[Spirit Spring]可生于此；
+ *       {@link #CROPS}：陆地按 {@link WildCropClimate} 的温度降水规则分进农夫乐事野生作物气候。</li>
+ *   <li>地形随侵蚀不随群系：Terralith 石林带（侵蚀 ≥ {@link BiomeTable#SPIRE_EROSION}，Tectonic 仅在自身侵蚀超过 1 处到
+ *       达）一律长 Tectonic 低因子尖柱地形，故陆地格改为喀斯特峰林（{@link BiomeTable#withSpires}），{@link #TABLE} 保
+ *       留的河流、洞穴、沼泽、热海、嶂石岩除外。</li>
+ *   <li>⚠ {@link BiomeTable#getBiome} 遇 {@link #GROUPS} 未映射的来源群系即抛错，重新移植多出一个则 {@code runData} 失
+ *       败，不丢格。</li>
  * </ul>
- * A source biome goes to the roster biome of the same landform and the nearest vegetation; cold sources take the
- * mountain-forest and meadow biomes, deserts and dry shrubland the plains, badlands the painted mountains. Terralith
- * keeps its haze mountain, emerald peaks and jungle mountains rare, so each also takes a common neighbor: the
- * misty mountains vanilla's mountain slopes, the emerald peaks the jagged peaks, the jungle mountains the rocky
- * jungle. Ocean,
- * beach and island sources are mapped for completeness only: {@link Terrain}'s continentalness never reaches their
- * cells. {@link #ROSTER} is every biome the region can place, the spire cells' karst peak forest included, and
- * {@link #LAND} every surface biome of it but the river, where the spirit spring [元泉] may stand. {@link #CROPS}
- * sorts the land into the wild crop climates of Farmer's Delight by the temperature and downfall rule of
- * {@link WildCropClimate}.
- *
- * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link
- * BiomeTable#SPIRE_EROSION} and up, which Tectonic reaches only where its own erosion runs past 1, grows Tectonic's
- * low-factor spire terrain whatever biome sits there. So a land cell there becomes karst peak forest ({@link
- * BiomeTable#withSpires}) unless it is one of the biomes {@link #TABLE} keeps: the river, the caves, the swamp, the hot
- * springs and the Zhangshiyan cliffs keep their own.
- *
- * <p>⚠ {@link BiomeTable#getBiome} throws on a source biome {@link #GROUPS} does not map, so a re-port that adds one
- * fails {@code runData} instead of dropping cells.
  *
  * @author Alex
  * @version 1.0.0

@@ -31,40 +31,29 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 /**
- * The datapack entries every {@link Region} has, which {@code datagen.DatapackProvider} runs for each of
- * {@link net.alex.guzhenrenworld.dimension.Regions#ALL}: the noises, the density functions, the noise settings and
- * the level stem, and once for all of them the dimension type.
- *
- * <p>The dimension type, {@link Region#DIMENSION_TYPE}, is the overworld's (sky, effects, beds, raids, monster light,
- * and the regions' height range) under this mod's own key, so a pack that reshapes the overworld leaves the regions
- * alone; the regions differ in nothing it holds, so all four point at the one entry. The noise column runs the
- * 4-block cells Tectonic takes beside Terralith, {@code size_vertical} 1, over the whole height.
- *
- * <p>The noise settings run the region's copy of Tectonic's overworld router ({@link Ports#getNoiseRouter}) over the
- * hooks {@link #registerDensityFunctions} fills, wrapped in the waterways' carving ({@link WaterwaysDensity}), with
- * the ported surface rules ahead of vanilla's, both cut to the region's roster ({@link SurfacePruning}), the region's
- * sea level, aquifers and ore veins; the level stem pairs them with the region's multi-noise source. The settings name
- * no spawn target: the overworld stays the spawn dimension. Every structure checks its biome tags and none of a
- * region's biomes is in one, so vanilla drops every structure set before the first chunk generates
- * ({@code ChunkGeneratorStructureState.createForNormal}): no vanilla structure generates or costs time in a region.
- *
- * <p>The hooks, {@code guworld:terrain/<region>/hook/*}:
+ * 每个 {@link Region} 的数据包条目。
  * <ul>
- *   <li>{@code ocean_offset}, {@code vertical_scale} and {@code dunes}: the region's own ({@link Region.Hooks}).</li>
- *   <li>{@code min_y} and {@code max_y}: Tectonic's height limits, the dimension's floor and top.</li>
- *   <li>{@code jungle_pillars}, {@code underground_rivers} with {@code underground_river_water}, and
- *   {@code lava_tunnels}: three Tectonic features, each switched by one constant here ({@link #JUNGLE_PILLARS},
- *   {@link #UNDERGROUND_RIVERS}, {@link #LAVA_TUNNELS}) and off in every region. Jungle pillars are extruded discs
- *   about 11 blocks wide and up to 100 tall with flat tops and sheer sides, the regular pillar shape Alex turned down
- *   for the regions' own landforms. Underground rivers carve water channels at y 32 to 72 under mountain valleys and
- *   flood the aquifers there, lava tunnels run along the floor; both read their noises at every cell corner or block
- *   of the column, about a quarter of the noise fill. A switch that is on points its hook back at the ported
- *   function, one that is off at zero, so an off feature costs nothing: a region registers only the ported functions
- *   and noises its router reaches, the switched-on features' among them ({@link #SWITCHES} names the functions),
- *   so an off feature's files are not in the datapack either ({@link Ports#registerDensityFunctions}).</li>
+ *   <li>{@code datagen.DatapackProvider} 对 {@link net.alex.guzhenrenworld.dimension.Regions#ALL} 逐域注册噪声、密度函
+ *       数、噪声设置、层级；维度类型只注册一次。</li>
+ *   <li>维度类型 {@link Region#DIMENSION_TYPE} 照搬主世界（天空、效果、床、袭击、刷怪光照、高度范围），键归本模组，整合
+ *       包改主世界不波及四域；四域无差别，共用一条。</li>
+ *   <li>噪声柱：Tectonic 与 Terralith 同装时的 4 格单元，{@code size_vertical} 1，覆盖全高；{@link ColumnCaches} 包住移
+ *       植列函数（含改写的），每列只算一次。</li>
+ *   <li>噪声设置：本域 Tectonic 路由副本（{@link Ports#getNoiseRouter}）读 {@link #registerDensityFunctions} 填的钩子，
+ *       外包水系刻河（{@link WaterwaysDensity}）；移植表层规则先于原版，都按名单裁剪（{@link SurfacePruning}）；含本域
+ *       海平面、含水层、矿脉；层级配上多噪声群系源。</li>
+ *   <li>不设出生目标，出生维度仍是主世界；结构都查群系标签而本域群系不在其中，原版在首个区块生成前丢掉全部结构集
+ *       （{@code ChunkGeneratorStructureState.createForNormal}），不生成、不耗时。</li>
+ *   <li>钩子 {@code guworld:terrain/<region>/hook/*}：{@code ocean_offset}、{@code vertical_scale}、{@code dunes} 各域
+ *       自定（{@link Region.Hooks}）；{@code min_y}、{@code max_y} 为 Tectonic 高度上下限，取维度底与顶。</li>
+ *   <li>{@code jungle_pillars}、{@code underground_rivers}（含 {@code underground_river_water}）、
+ *       {@code lava_tunnels}：三项 Tectonic 特性，各一个常量开关（{@link #JUNGLE_PILLARS}、
+ *       {@link #UNDERGROUND_RIVERS}、{@link #LAVA_TUNNELS}），四域全关；开则钩子指回移植函数，关则指向 0，零开销；只注
+ *       册路由够得到的移植函数与噪声（{@link #SWITCHES} 列出开关函数），关掉的特性文件不进数据包
+ *       （{@link Ports#registerDensityFunctions}）。</li>
+ *   <li>丛林石柱：约 11 格粗、高至 100 格、平顶直壁的挤出柱，正是 Alex 为各域地貌否掉的规整柱形；地下河在山谷底下 y 32
+ *       至 72 挖水道、给含水层充水，熔岩隧道沿底部走，二者在整列每个单元角点或方块读噪声，约占噪声填充四分之一。</li>
  * </ul>
- * {@link ColumnCaches} wraps the ported column functions, the ones a region reshapes included, so a noise chunk
- * computes each once per column.
  *
  * @author Alex
  * @version 1.0.0

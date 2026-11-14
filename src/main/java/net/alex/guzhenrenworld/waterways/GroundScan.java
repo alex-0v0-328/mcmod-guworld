@@ -1,14 +1,13 @@
 package net.alex.guzhenrenworld.waterways;
 
 /**
- * How {@link GroundHeights} finds the ground in a column: one above the highest solid block, scanning down from the top
- * {@link #STEP} blocks at a time and then block by block, over any {@link Solid} terrain, so the scan needs no density
- * function.
+ * {@link GroundHeights} 找一列地面的扫描：最高实心方块之上一格。
  *
- * <p>The banks of a stream ask with a guess, the stream's water surface plus the incision: the scan starts there,
- * climbs {@link #CLIMB} blocks at a time while solid and refines, or walks down up to {@link #DESCENT} blocks before
- * falling back to the coarse steps. That takes a handful of samples instead of some forty, and finds the ground
- * nearest the stream: under an overhang, the floor, not the overhang's top.
+ * <ul>
+ *   <li>自顶向下每步 {@link #STEP} 格再逐格细化；地形为任意 {@link Solid}，不需要密度函数。</li>
+ *   <li>带猜测值（水面加下切）时：实心则每次上爬 {@link #CLIMB} 格再细化，否则下探 ≤ {@link #DESCENT} 格，
+ *       仍无退回粗步；几次取样代替约 40 次，且取离溪流最近的地面（悬垂下取地板）。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0
@@ -30,10 +29,7 @@ final class GroundScan {
         this.topY = topY;
     }
 
-    /**
-     * Whether a block of a terrain of type {@code T} is solid; the terrain travels as an argument so a caller's
-     * implementation need not capture it and a scan allocates nothing.
-     */
+    /** {@code T} 类地形某方块是否实心；地形作参数传入，实现不必捕获，扫描零分配。 */
     @FunctionalInterface
     interface Solid<T> {
 

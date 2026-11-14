@@ -12,18 +12,14 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Cuts a region's surface rule down to the biomes the region can place.
- *
- * <p>A region's rule is built from whole rule trees, vanilla's overworld rule ({@link Replicas#getSurfaceRules})
- * among them, and those name dozens of biomes the region never places. The surface system walks the rule for every
- * block near the surface, so each such branch costs a biome test per block for nothing. {@link #getPruned} drops
- * every {@code condition} whose biome test names no biome of the roster from its {@code sequence}, drops a sequence
- * left empty and a condition left with nothing to run, and trims every other biome list to the roster. The biome
- * under a block is always one the region places, so a dropped branch could never apply and no block's surface
- * changes.
- *
- * <p>⚠ The roster must hold every biome the region's biome source can return: a biome left out loses its surface
- * rules. A biome test under {@code not} stays as it is.
+ * 把域的表层规则裁到本域放置的群系。
+ * <ul>
+ *   <li>域规则由整棵规则树拼成，含原版主世界规则（{@link Replicas#getSurfaceRules}），点名几十个本域不放的群系；表层系
+ *       统对地表附近每个方块都走规则，这些分支每方块白做一次群系判断。</li>
+ *   <li>{@link #getPruned} 从 {@code sequence} 删去群系判断不含名单群系的 {@code condition}，删去空 {@code sequence}
+ *       与无事可做的 {@code condition}，其余群系列表裁到名单；方块下群系总在名单内，被删分支本不生效，地表不变。</li>
+ *   <li>⚠ 名单须含群系源可能返回的每个群系，漏掉的失去表层规则；{@code not} 下的群系判断不动。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

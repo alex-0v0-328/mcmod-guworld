@@ -4,18 +4,15 @@ import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.waterways.Waterways;
 
 /**
- * The Western Desert [西漠] dimension, one of the four regions beyond the Central Continent [中州], which is the
- * overworld: its {@link #REGION}. The region is hot and dry: flat sand and dunes for the most part, mesas and canyons
- * for the rest, peaks up to about y 210 ({@link WesternDesertTerrain}), and little water.
- *
- * <p>The sea level is 11 blocks under the overworld's 63 and the terrain's, which Tectonic shapes from its own
- * splines whatever the level: the rivers it cuts at about y 56 and the low ground beside them stay dry beds, and
- * water stands only where an aquifer reaches the surface (about 2% of the columns) and in the oases, whose lakes are
- * Terralith's features and fill hollows at any height. Its waterways are dry gullies but for the widest, over a sand
- * bed.
- *
- * <p>The region is finite and its keys, borders and datapack entries are the shared ones ({@link Region}); the
- * terrain hooks are {@link WesternDesertTerrain}'s and the biome table {@link WesternDesertLayout}'s.
+ * 西漠维度的 {@link #REGION}：中州（主世界）外四域之一。
+ * <ul>
+ *   <li>热旱少水：多为平沙与沙丘，余为台地与峡谷，山峰最高约 y 210（{@link WesternDesertTerrain}）。</li>
+ *   <li>海平面比主世界与地形基准 63 低 11 格；Tectonic 按自身样条，不随海平面变：约 y 56 的河及两旁低地成干河床。</li>
+ *   <li>水只在含水层露头处（约 2% 的列）与绿洲（湖为 Terralith 地物，任何高度的洼地都填）；水系除最宽河段外为干沟，铺沙
+ *       床。</li>
+ *   <li>区域有限，键、边界、数据包条目用共用的（{@link Region}）；地形钩子见 {@link WesternDesertTerrain}，群系表见
+ *       {@link WesternDesertLayout}。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

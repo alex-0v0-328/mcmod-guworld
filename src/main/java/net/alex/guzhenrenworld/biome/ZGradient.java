@@ -9,15 +9,13 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The density function type {@code guworld:z_gradient}, vanilla's {@code y_clamped_gradient} along z: from
- * {@code from_value} at z {@code from_z} and beyond to {@code to_value} at z {@code to_z} and beyond, linear between.
- * Vanilla has no function of x or z alone, and a region that changes with latitude, such as the Northern Plains
- * [北原] with its temperature, needs one; a region names it in the JSON of its terrain copy
- * ({@link Ports#registerDensityFunctions}'s patch).
- *
- * <p>{@link #MAP_CODEC} is the type's data codec, which {@link GradientRegistration} registers under {@link #ID},
- * and {@link #CODEC} wraps that very instance: the registry finds the type by it.
- * The function reads only z, so it may sit inside a {@code cache_2d} ({@link ColumnCaches}).
+ * 密度函数类型 {@code guworld:z_gradient}：沿 z 的原版 {@code y_clamped_gradient}。
+ * <ul>
+ *   <li>z 在 {@code from_z} 以外取 {@code from_value}，{@code to_z} 以外取 {@code to_value}，其间线性；原版无只依赖 x
+ *       或 z 的函数，而北原温度随纬度变；由域地形副本的补丁（{@link Ports#registerDensityFunctions}）点名。</li>
+ *   <li>{@link #MAP_CODEC} 为数据 codec，{@link GradientRegistration} 以 {@link #ID} 注册；{@link #CODEC} 包装同一实
+ *       例，注册表凭它认类型；只读 z，可放进 {@code cache_2d}（{@link ColumnCaches}）。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

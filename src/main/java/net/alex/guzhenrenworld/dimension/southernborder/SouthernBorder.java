@@ -5,13 +5,12 @@ import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.waterways.Waterways;
 
 /**
- * The Southern Border [南疆] dimension, the first of the four regions beyond the Central Continent [中州], which is
- * the overworld: its {@link #REGION}. Peaks reach about y 300 ({@link Terrain}), about 20 blocks under the build
- * limit; sea level 63, and its waterways run over gravel with clay patches. The region places the shared replicas
- * only, no roster of its own.
- *
- * <p>The region is finite and its keys, borders and datapack entries are the shared ones ({@link Region}); the
- * terrain hooks are {@link Terrain}'s and the biome table {@link BiomeLayout}'s.
+ * 南疆维度的 {@link #REGION}：中州（主世界）外四域之首。
+ * <ul>
+ *   <li>山峰最高约 y 300（{@link Terrain}），比建筑上限低约 20 格；海平面 63；水系河床为砾石夹黏土。</li>
+ *   <li>只放四域共用的复刻，无本域名单；区域有限，键、边界、数据包条目用共用的（{@link Region}）；地形钩子见
+ *       {@link Terrain}，群系表见 {@link BiomeLayout}。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

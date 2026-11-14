@@ -25,23 +25,20 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
- * The single provider for every datapack registry this mod writes.
+ * 本模组全部数据包注册表的唯一 provider。
  *
- * <p>Extends {@link DatapackBuiltinEntriesProvider}. Builds in one {@code RegistrySetBuilder} the entries the function
- * packages bootstrap: the Treasure Yellow Heaven dimension's type, biome and level stem ({@link TreasureYellowHeaven});
- * the one dimension type the four regions share and, for each of them ({@link Regions#ALL}), the density functions
- * (Tectonic's router with the region's hooks), noise settings and level stem ({@link RegionBootstraps}), each
- * region's copy of the ported terrain its router reaches under its own prefix, and the Southern Border's [南疆]
- * bamboo sea with that biome's bamboo ({@link BiomeSettings}); Gu World's shared biomes, the vanilla replicas
- * ({@link Replicas#SHARED}) and each region's own, the biomes ported from Terralith with their features,
- * {@link Ports#BIOMES} and each region's own, and the noises both ports read ({@link Ports}); and the Spirit Spring
- * [元泉] configured and placed feature ({@link SpiritSpring}) and biome modifier ({@link SpiritSpringRegistration}).
- * A registry two dimensions both fill gets one bootstrap that runs both. The tag provider takes
- * {@code getRegistryProvider()} from this instance, not the plain lookup, so the tag pass sees the biome this run
- * generates.
- *
- * <p>⚠ There can only be one per data run. The builtin-entries provider reports a fixed name, so a
- * second instance fails datagen outright; add a registry to this one's builder instead.
+ * <ul>
+ *   <li>宝黄天[Treasure Yellow Heaven]的维度类型、群系、层级（{@link TreasureYellowHeaven}）；南疆竹海及其竹子
+ *       （{@link BiomeSettings}）；元泉[Spirit Spring]配置地物、放置地物（{@link SpiritSpring}）与群系修改器
+ *       （{@link SpiritSpringRegistration}）。</li>
+ *   <li>四域共用的维度类型；每域（{@link Regions#ALL}）的密度函数（Tectonic 路由加本域钩子）、噪声设置、
+ *       层级（{@link RegionBootstraps}），及本域路由够到的移植地形副本，挂本域前缀下。</li>
+ *   <li>群系：原版复刻（{@link Replicas#SHARED} 加各域的）、Terralith 移植群系连同地物（{@link Ports#BIOMES}
+ *       加各域的）；两份移植共读的噪声（{@link Ports}）。</li>
+ *   <li>两维度共填的注册表只用一个引导，内含两边；标签 provider 取本实例 {@code getRegistryProvider()} 而非普通查找，
+ *       才看得到本次生成的群系。</li>
+ *   <li>⚠ 每次数据生成只能一个：内置条目 provider 名字固定，第二个实例直接失败；新注册表加进本实例构建器。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

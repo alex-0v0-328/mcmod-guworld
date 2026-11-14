@@ -22,25 +22,20 @@ import net.minecraft.world.level.levelgen.FlatLevelSource;
 import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings;
 
 /**
- * The Treasure Yellow Heaven [宝黄天] dimension: its keys, and the datapack entries behind them.
+ * 宝黄天[Treasure Yellow Heaven]维度的注册键与数据包条目。
  *
- * <p>Every key shares the one location {@code guworld:treasure_yellow_heaven}. {@link #registerDimensionType},
- * {@link #registerBiome} and {@link #registerLevelStem} are the bootstraps {@code datagen.DatapackProvider}
- * runs: the dimension type, its one biome, and its level stem, a flat generator with no layers, so the
- * dimension is pure void. {@link #EFFECTS} is the special-effects id the dimension type names and
- * {@code client.dimension.TreasureYellowHeavenEffects} registers. {@link #COLOR} paints the sky, the fog
- * and the water, and is the Traveler's Titles color the language providers write; they name the dimension and its
- * biome from these keys.
- *
- * <p>Beds and respawn anchors work here, and a bed sets the spawn: the type is natural, which also lets
- * clocks and compasses work. Players cannot place blocks in this dimension, but should one ever get here,
- * it works instead of exploding. The flat generator names an empty structure set list, as vanilla's void
- * preset does: left unset it would consider every registered structure set, other mods' included.
- *
- * <p>⚠ Every key shares the location of Guzhenren's level key
- * {@code net.alex.guzhenren.registry.world.ModDimensions#TREASURE_YELLOW_HEAVEN}; the level stem is
- * what turns that key into a loaded level, so a renamed key here leaves Guzhenren's
- * {@code /guworld enter} pointing at nothing until that key is renamed too.
+ * <ul>
+ *   <li>各键共用 ID {@code guworld:treasure_yellow_heaven}；{@link #registerDimensionType}、{@link #registerBiome}、
+ *       {@link #registerLevelStem} 是 {@code datagen.DatapackProvider} 跑的引导：维度类型、唯一群系、层级（无地层平坦生
+ *       成器，纯虚空）。</li>
+ *   <li>{@link #EFFECTS}：维度类型所填、{@code client.dimension.TreasureYellowHeavenEffects} 注册的天空效果 ID；
+ *       {@link #COLOR} 染天空、雾、水，也是语言 provider 写的 Traveler's Titles 颜色，并据这些键命名维度与群系。</li>
+ *   <li>床与重生锚可用，床可设出生点：维度类型为自然维度，钟和指南针也因此可用；玩家不能在此放方块，万一床或重生锚到此
+ *       也照常可用，不爆炸。</li>
+ *   <li>平坦生成器显式写空结构集列表，同原版虚空预设：不写则考虑全部已注册结构集，含其他模组的。</li>
+ *   <li>⚠ 各键共用主模组维度键 {@code net.alex.guzhenren.registry.world.ModDimensions#TREASURE_YELLOW_HEAVEN} 的 ID；
+ *       层级才使该键成为已加载维度，此处改名会让主模组 {@code /guworld enter} 指空，直到那边同步改名。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

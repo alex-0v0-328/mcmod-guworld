@@ -9,16 +9,13 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.RandomState;
 
 /**
- * Builds a region's {@link WaterwaysPlan} [水系规划] in two steps over its grid, both deterministic in the world seed.
+ * 区域 {@link WaterwaysPlan} 的建造器：网格上两步，都只由世界种子决定。
  *
- * <ol>
- *   <li>Samples: each cell's point is its center moved by up to {@link Waterways#JITTER} blocks along each axis, a
- *   hash of the seed and the cell; its ground comes from {@link GroundHeights}, in parallel, and its kind from that
- *   height, the sea level and the biome there (any biome whose id ends in {@code river} is an outlet).</li>
- *   <li>Flood, flow and catchment: {@link WaterwaysFlood}, on the arrays the samples filled.</li>
- * </ol>
- *
- * <p>A region's grid is 512 cells square; sampling it costs about 45 CPU seconds, the other passes well under one.
+ * <ul>
+ *   <li>取样：格中心按种子与格的散列沿各轴偏移至多 {@link Waterways#JITTER} 格；地面由 {@link GroundHeights} 并行读，
+ *       类型由高度、海平面与群系定（ID 以 {@code river} 结尾为出口）；网格 512 × 512，约 45 CPU 秒。</li>
+ *   <li>填洼、流向、汇流：{@link WaterwaysFlood}，在取样数组上跑，远不到 1 秒。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

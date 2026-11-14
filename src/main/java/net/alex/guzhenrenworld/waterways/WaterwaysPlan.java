@@ -1,17 +1,15 @@
 package net.alex.guzhenrenworld.waterways;
 
 /**
- * One region's waterways [水系] plan, as {@link WaterwaysPlanner} built it: a square grid of
- * {@link Waterways#CELL}-block cells, row by row along x, each with its jittered sample point, its ground height, its
- * filled height, the cell it drains into and its catchment in cells.
+ * 一个区域的水系规划，由 {@link WaterwaysPlanner} 建成。
  *
- * <p>A cell is {@link Kind#WATER} when its ground lies below sea level, {@link Kind#OUTLET} when it stands in a river
- * biome above that (the Western Desert's [西漠] dry riverbeds), {@link Kind#EDGE} on the grid's outer ring,
- * {@link Kind#SINK} at the floor of a depression deeper than {@link Waterways#LAKE_DEPTH}, and {@link Kind#LAND}
- * otherwise. All but land seed the flood; their own receiver is {@code -1}. The filled height never falls below the
- * ground and strictly falls along every drainage path, so following receivers always ends at a seed; where it stands
- * above the ground, the cell lies in a lake at most {@link Waterways#LAKE_DEPTH} deep. Streams take land and edge
- * cells only: they end where they reach water, an outlet or a sink.
+ * <ul>
+ *   <li>{@link Waterways#CELL} 格方形网格，沿 x 逐行；每格记偏移后取样点、地面高度、填后高度、流向格与汇流格数。</li>
+ *   <li>{@link Kind#WATER} 地面低于海平面，{@link Kind#OUTLET} 其上的河流群系（西漠干河床），{@link Kind#EDGE}
+ *       最外圈，{@link Kind#SINK} 深洼底，余为 {@link Kind#LAND}；非陆地格是填洼起点，流向格 {@code -1}。</li>
+ *   <li>填后高度 ≥ 地面且沿排水路径严格下降，顺流向格必到起点；高出地面处是 ≤ {@link Waterways#LAKE_DEPTH} 格深的湖（更
+ *       深的底才是汇点）。溪流只取陆地与边缘格，遇水、出口、汇点即止。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

@@ -11,36 +11,23 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
 /**
- * Where the Eastern Sea [东海] places its biomes: Terralith's overworld multi-noise table as shipped
- * ({@link Ports#getBiomeParameters}), with every source biome mapped onto the region's own ({@link #GROUPS}, a
- * roster biome to the source biomes it stands in for). The terrain under it is the region's copy of Tectonic's
- * ({@link EasternSeaTerrain}), which remaps its own erosion and ridges into the bands Terralith's table expects, so
- * each parameter cell keeps the terrain archetype Terralith gave it and gets the region's biome of its kind.
+ * 东海的群系摆放。
  *
- * <p>The roster, by kind:
  * <ul>
- *   <li>Sea: the warm ocean, the lukewarm ocean, the ocean, the deep warm ocean and the deep ocean. The sea is warm:
- *   every sea moves two temperature bands warmer, so the frozen seas become the ocean and the deep ocean, the cold
- *   sea the lukewarm ocean, and every other sea the warm ocean or the deep warm ocean (the region has no deep
- *   lukewarm ocean). Terralith's sky islands stand over open sea, which the region keeps water, so their cells take
- *   the shallow sea of their band.</li>
- *   <li>Shores: the beach, the stony shore and the gravel beach; the deserts become sand islands, the beach.</li>
- *   <li>Lowlands: the isles, the island biome every temperate, cold or dry lowland source turns into; the mirage
- *   isles, the far-sea islands of Terralith's deepest band beside the mushroom fields, and the flowering and
- *   moonlit sources; the rainforest (the Southern Border's [南疆], Terralith's tropical jungle) and the jungle,
- *   every humid source.</li>
- *   <li>Highlands: the volcanic peaks on the warm mountain sources and the hot springs, the volcanic crater on the
- *   crater and the caldera; the basalt cliffs on the hot, dry badlands, canyons and spires (sea stacks); the
- *   white cliffs on every cool or snowy mountain and cliff source.</li>
- *   <li>The river, and underground the lush caves and the dripstone caves.</li>
+ *   <li>原样用 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系按 {@link #GROUPS}（名单群系 →
+ *       其替代的来源）映射到本域；下层本域 Tectonic 副本（{@link EasternSeaTerrain}）把侵蚀与山脊重映射回该表的分段，
+ *       参数格保留原地形原型，取同类群系。</li>
+ *   <li>海：暖水海洋、温水海洋、海洋、深暖海、深海。海整体暖两档：冻洋成海洋与深海，冷水海洋成温水海洋，其余成暖水海洋
+ *       或深暖海（无深温水海洋）；Terralith 浮空岛立在开阔海上，本域那里是水，故取所在温度档的浅海。</li>
+ *   <li>海岸：沙滩、石岸、砾滩，沙漠成沙岛即沙滩。低地：岛屿，接全部温带、寒带、干旱低地来源；蜃岛，接 Terralith
+ *       最深一档蘑菇岛旁的远海岛与开花、月光来源；雨林（南疆的，即 Terralith 热带丛林）和丛林，接全部湿润来源。</li>
+ *   <li>高地：火山峰接暖山来源与黄石温泉，火山口接火山口与破火山口；玄武岩崖接又热又干的恶地、峡谷、石柱（海蚀柱）；
+ *       白崖接全部凉或积雪的山地与悬崖来源。另有河流，地下有繁茂洞穴与溶洞。</li>
+ *   <li>无来源映射到寒冷或冰冻群系，本域无雪无冰，Tectonic 抬得最高的峰上也没有。</li>
+ *   <li>{@link #ROSTER}：本域可放的全部群系；{@link #LAND}：除水体（{@link #WATER_AND_CAVES}）外的地表群系，
+ *       元泉[Spirit Spring]可立于其上。</li>
+ *   <li>⚠ {@link BiomeTable#getBiome} 遇未映射来源即抛错：重移植新增来源时 {@code runData} 失败，不丢格。</li>
  * </ul>
- * No source maps to a cold or frozen biome, so the region has no snow or ice above the peaks Tectonic raises highest.
- *
- * <p>{@link #ROSTER} is every biome the region can place, {@link #LAND} every surface biome of it but the water
- * ({@link #WATER_AND_CAVES}), where the spirit spring [元泉] may stand.
- *
- * <p>⚠ {@link BiomeTable#getBiome} throws on a source biome {@link #GROUPS} does not map, so a re-port that adds one
- * fails {@code runData} instead of dropping cells.
  *
  * @author Alex
  * @version 1.0.0

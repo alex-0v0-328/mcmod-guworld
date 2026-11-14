@@ -14,29 +14,20 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The Spirit Spring [元泉] basin: a 7x7 structure laid out as three layers around the center column's ground
- * height g ({@code MOTION_BLOCKING_NO_LEAVES} - 1, {@link #getGroundY}), laid by {@link #placeStructure} on the spots
- * {@link SpiritSpringCluster} picks.
+ * 元泉[Spirit Spring] 石盆：7×7，以中心列地面高 g 分三层。
  *
- * <p>Layer one at g-1 buries the calcite basin; layer two at g paves the ground with slabs and
- * raises the calcite pillar under the spring; layer three at g+1 is only the source block. The
- * layer-two ring around the pillar is cleared to air ({@code a}), so the four streams fall into
- * the calcite basin and the rim holds the water instead of letting it sheet outward. Outer
- * {@code x} cells keep the original terrain (dirt stays dirt).
- * {@link #placeStructure} lays both grid layers and the source around the ground block at layer
- * two's level. Every non-{@code x} column ({@link #COLUMNS}) is first leveled to g: ground up to
- * {@link #MAX_RISE} lower is filled with dirt up to the basin, and {@link #CLEAR_HEIGHT_ABOVE} cells above g
- * are cleared, enough for ground up to {@link #MAX_RISE} higher with double plants or snow on it; that leveling is
- * the rise {@link SpiritSpringGround} accepts. Every block goes down with {@link Block#UPDATE_CLIENTS}.
- * {@link #placeStructure} is public for GameTests, which run on a {@code ServerLevel}.
- *
- * <p>The spring itself is Guzhenren's block, reached by id through {@link GuzhenrenBlocks#SPIRIT_SPRING}
- * because this mod never compiles against Guzhenren; the first flow tick goes to the fluid the
- * block's default state carries, its source. Guzhenren keeps the block, fluid, item and rendering.
- *
- * <p>⚠ The layout is Alex's pick, not a silent tunable. Symbol legend:
- * {@code x}=keep, {@code a}=air (the basin well), {@code y}=cobblestone, {@code t}=mossy cobblestone,
- * {@code f}=calcite, {@code c}=cobblestone slab (bottom), {@code m}=mossy cobblestone slab (bottom).
+ * <ul>
+ *   <li>g = {@code MOTION_BLOCKING_NO_LEAVES} − 1；g − 1 层方解石池底，g 层铺半砖、立方解石柱，g + 1 层放源方块。</li>
+ *   <li>g 层柱周清空（{@code a}），四股水落池、池沿兜住不外漫；外缘 {@code x} 格留原地形。</li>
+ *   <li>非 {@code x} 列（{@link #COLUMNS}）先整平到 g：低 ≤ {@link #MAX_RISE} 格垫泥土至池底下，
+ *       g 上清空 {@link #CLEAR_HEIGHT_ABOVE} 格（容高 {@link #MAX_RISE} 格带双格植物或雪的地面），
+ *       即 {@link SpiritSpringGround} 容许的起伏。</li>
+ *   <li>{@link #placeStructure} 落在 {@link SpiritSpringCluster} 选的点，公开供 GameTest（{@code ServerLevel}）。</li>
+ *   <li>泉方块（连同流体、物品、渲染）属主模组，因不编译依赖主模组，经 {@link GuzhenrenBlocks#SPIRIT_SPRING} 按 ID 取；
+ *       首次流体刻给默认状态的流体（源）。</li>
+ *   <li>⚠ 布局由 Alex 定，不得私调。符号：{@code x} 保留，{@code a} 空气（池井），{@code y} 圆石，{@code t}
+ *       苔石，{@code f} 方解石，{@code c}、{@code m} 圆石、苔石半砖（下半）。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

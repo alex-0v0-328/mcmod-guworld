@@ -6,21 +6,16 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 /**
- * The column caches a region puts on the ported density functions ({@link Ports#registerDensityFunctions}), a patch
- * that changes no value, only how often one is computed. The named functions vary only across the map, yet the router
- * reads them per block or per cell corner; each gets a {@code flat_cache}, so a noise chunk computes it once per
- * 4-block column, and every noise under them already sits inside a {@code flat_cache}, so they read the same value
- * anywhere in a column. A {@code flat_cache} only serves its own chunk's grid, though: the aquifers' preliminary
- * surface scan steps down columns of the neighboring chunks 4 blocks at a time, and there a {@code flat_cache}
- * recomputes its input at every step, Tectonic's whole map chain of shifted noises and splines with it, a third of
- * the noise fill. So every column cache, the ported ones included, holds a {@code cache_2d}, which keeps the last
- * column's value: the scan computes each column once.
- *
- * <p>{@link #PORTED_COLUMNS} are the ten ported functions a region's copy caches this way, and {@link #ofPorted}
- * the patch that caches them; two, the underground rivers' splines, exist only while a region switches that feature
- * on, and the patch leaves a name it never meets alone.
- *
- * <p>⚠ A function named here must not read y: a {@code cache_2d} returns the first y's value for every y.
+ * 移植密度函数（{@link Ports#registerDensityFunctions}）的列缓存补丁：不改值，只降计算频率。
+ * <ul>
+ *   <li>点名函数只随水平位置变，路由却逐方块或逐格角读；各套 {@code flat_cache}，噪声区块每 4 格一列只算一次，其下噪声
+ *       已在 {@code flat_cache} 内，列内读值相同。</li>
+ *   <li>{@code flat_cache} 只管本区块：含水层初步地表扫描在邻区块列上每 4 格下行一步，每步重算输入及 Tectonic 整条移位
+ *       噪声与样条链，占噪声填充 1/3；故列缓存（含移植原有的）内套 {@code cache_2d} 记上一列，每列算一次。</li>
+ *   <li>{@link #PORTED_COLUMNS}：域副本这样缓存的 10 个移植函数，{@link #ofPorted} 为其补丁；其中地下河的 2 条样条仅在
+ *       域开该功能时存在，补丁遇不到的名字不管。</li>
+ *   <li>⚠ 点名函数不得读 y：{@code cache_2d} 对任何 y 都返回首个 y 的值。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

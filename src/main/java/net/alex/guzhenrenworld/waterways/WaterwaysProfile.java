@@ -5,26 +5,18 @@ import java.util.stream.IntStream;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 /**
- * The water surface of a region's waterways [水系]: the level at each of {@link Waterways#KNOTS} + 1 evenly spaced
- * knots along every stream segment of a {@link WaterwaysPlan}, linear between them, never rising downstream and at
- * least {@link Waterways#INCISION} blocks under the ground read at each knot, on the channel and beside it, so the
- * banks hold the water.
+ * 区域水系的水面剖面：每段 {@link Waterways#KNOTS} + 1 个等距节点的水位。
  *
- * <p>At each knot the ground is read at three points: on the centerline, moved back by the meander to where the
- * carving puts the channel, and one block past each channel edge. Ground under the sea level reads as the sea level,
- * the sea's surface standing in for its floor, so a stream meets the sea at the sea level instead of cutting a trench
- * to the seabed. A reading more than {@link Waterways#MAX_DIP} blocks under the planned ground there, a canyon or
- * cliff the plan's grid missed, is skipped: the water may spill over it, instead of the whole stream below cutting a
- * gorge down to its floor.
- *
- * <p>Cells go upstream first, in falling filled height. A cell's arrival level is the lowest of its ground less the
- * incision and the ends of the segments flowing into it; its own segment carries that level down the knots, each
- * knot at the lower of the knot before and its reading less the incision. Every segment's last knot then becomes
- * its receiver's first knot, or the receiver's final arrival level where the receiver carries no stream, so the
- * segments meeting at a cell meet at one level. Water follows falling ground knot by knot and holds its level where
- * the ground rises, so it cuts through a rise: nothing follows the plan's filled height, and a stream through a
- * shallow lake on the plan cuts through the lake's rim. A segment into the sea arrives the incision under the sea
- * level, one into an outlet or a sink that far under its ground.
+ * <ul>
+ *   <li>节点间线性，往下游不升；每个节点比河道上及两侧读到的地面至少低 {@link Waterways#INCISION} 格，岸能兜住水。</li>
+ *   <li>每节点读三处地面：按摆动反推的中线，及两侧边缘外 1 格；海平面下按海平面读，溪流在海平面入海、不追海床下切；
+ *       低于规划地面 {@link Waterways#MAX_DIP} 格以上的读数（网格漏掉的峡谷、崖边）跳过：水或溢出，但不切深谷。</li>
+ *   <li>按填后高度降序（上游先）：到达水位取地面减下切与各汇入段末端的最低者；本段逐节点取前一节点与本节点读数减下切的
+ *       较小者。</li>
+ *   <li>再把每段末节点改为流向格那段的首节点（流向格不成河时取其最终到达水位），汇于一格的各段同高。</li>
+ *   <li>水随地面降、遇隆起保持水位而刻穿：不随规划填后高度，穿规划浅湖的溪流刻穿湖沿；入海段止于海平面减下切，
+ *       入出口或汇点的止于其地面减下切。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

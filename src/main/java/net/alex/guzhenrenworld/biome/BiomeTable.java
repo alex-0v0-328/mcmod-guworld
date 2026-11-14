@@ -15,22 +15,16 @@ import net.minecraft.world.level.biome.Climate;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A region's multi-noise table [群系表]: Terralith's overworld table as shipped ({@link Ports#getBiomeParameters}) with
- * every source biome mapped onto one of the region's own, by the groups the region lists (a roster biome to the source
- * biome names it stands in for). The terrain under it is the region's copy of Tectonic's, which remaps its own erosion
- * and ridges into the bands Terralith's table expects, so each parameter cell keeps the terrain archetype Terralith
- * gave it and gets the region's biome of its kind.
- *
- * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link #SPIRE_EROSION} and
- * up, grows Tectonic's spire terrain whatever biome sits there. A table made with {@link #withSpires} turns a cell
- * there into its spire biome unless the cell's own biome is one it keeps; one made with {@link #of} leaves the cells
- * as the groups map them.
- *
- * <p>⚠ {@link #getBiome} throws on a source biome the groups do not map, so a re-port that adds one fails
- * {@code runData} instead of dropping cells; {@link #of} throws on a source biome two groups map.
- *
- * <p>Built only through {@link #of} and {@link #withSpires}, so every table has passed the duplicate check. A table
- * without spires has no {@code spireBiome}, which is null there.
+ * 域的群系表：原样的 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系按组映射到本域。
+ * <ul>
+ *   <li>组由域列出：名单群系对应它代替的来源群系名；地形是本域的 Tectonic 副本，侵蚀、山脊重映射到 Terralith 表的分段，
+ *       故每个参数格保留 Terralith 的地形原型、得到本域同类群系。</li>
+ *   <li>地形随侵蚀不随群系：Terralith 尖柱带（侵蚀 ≥ {@link #SPIRE_EROSION}）每格都长 Tectonic 尖柱地形；
+ *       {@link #withSpires} 把该带的格改成尖柱群系（保留群系除外），{@link #of} 照组映射。</li>
+ *   <li>⚠ {@link #getBiome} 遇未映射来源抛错，新移植群系令 {@code runData} 失败而非丢格；{@link #of} 遇重复映射抛
+ *       错。</li>
+ *   <li>只经 {@link #of}、{@link #withSpires} 构建，每张表都过了重复检查；无尖柱的表 {@code spireBiome} 为 null。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

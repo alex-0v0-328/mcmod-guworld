@@ -26,31 +26,26 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 
 /**
- * One of the four regions beyond the Central Continent [中州], which is the overworld [主世界]: everything that
- * differs between the Southern Border [南疆], the Western Desert [西漠], the Eastern Sea [东海] and the Northern
- * Plains [北原] as plain values, so {@link RegionBootstraps} registers all four the same way. Each region's package
- * holds one instance ({@code SouthernBorder#REGION} and its siblings) beside the region's own prose.
+ * 四域之一的全部差异值。
+ * <ul>
+ *   <li>四域即中州（主世界）外的南疆、西漠、东海、北原；差异全为值，{@link RegionBootstraps} 方能同法注册；各域包持一实
+ *       例（{@code SouthernBorder#REGION} 等），附该域说明。</li>
+ *   <li>键共用位置 {@code guworld:<name>}，由 {@link #noiseSettings}、{@link #levelStem}、{@link #level} 构建；
+ *       {@link #name} 兼作移植地形副本前缀。</li>
+ *   <li>四域共用维度类型 {@link #DIMENSION_TYPE}（{@code guworld:region}，字段无差别）、高度 {@link #MIN_Y} 至
+ *       {@link #TOP_Y}（{@link #HEIGHT} 格）、{@link net.alex.guzhenrenworld.dimension.RegionBorders} 应用的方形世界边
+ *       界（中心 0, 0，边长 {@link #BORDER_SIZE} 格即 8 km，约 26.2 万区块）。</li>
+ *   <li>⚠ 键与主模组 {@code net.alex.guzhenren.registry.world.ModDimensions} 同名维度键共用位置，管理员传送
+ *       {@code /guworld enter guworld:<name>} 靠它落到 0, 0 上方地表（旅行归主模组）；只改一边则命令落空。</li>
+ * </ul>
  *
- * <p>Every key a region owns shares the one location {@code guworld:<name>} ({@link #name} is its path and the prefix
- * of the region's copy of the ported terrain); {@link #noiseSettings}, {@link #levelStem} and {@link #level} build
- * them. The dimension type is the one all four share, {@link #DIMENSION_TYPE}, {@code guworld:region}, since the
- * regions differ in nothing a dimension type holds. All four regions share the height range ({@link #MIN_Y} up to
- * {@link #TOP_Y}, {@link #HEIGHT} blocks) and the square world border around 0, 0 that
- * {@link net.alex.guzhenrenworld.dimension.RegionBorders} applies, {@link #BORDER_SIZE} blocks, eight kilometers
- * (about 262,000 chunks).
- *
- * <p>⚠ Every key shares the location of Guzhenren's level key of the same name in
- * {@code net.alex.guzhenren.registry.world.ModDimensions}, the admin travel there (Guzhenren owns travel):
- * {@code /guworld enter guworld:<name>} lands players on the surface above 0, 0. A renamed key here leaves that
- * command pointing at nothing until that key is renamed too.
- *
- * @param name     the path of every key, and the region's prefix in the ported terrain
- * @param title    the dimension's display name
- * @param seaLevel the noise settings' sea level
- * @param dry      whether only the widest waterways [水系] hold water ({@link Waterways.Region#dry})
- * @param bed      the block under the waterways' water
- * @param biomes   the biomes the region places
- * @param hooks    how the region fills the hooks of its copy of the ported terrain
+ * @param name     每个键的路径，也是该域在移植地形里的前缀
+ * @param title    维度显示名
+ * @param seaLevel 噪声设置的海平面
+ * @param dry      是否只有最宽的水系有水（{@link Waterways.Region#dry}）
+ * @param bed      水系水下的方块
+ * @param biomes   该域放置的群系
+ * @param hooks    该域如何填它那份移植地形的钩子
  * @author Alex
  * @version 1.0.0
  * @see RegionBootstraps
@@ -84,16 +79,15 @@ public record Region(String name, Title title, int seaLevel, boolean dry, Waterw
     }
 
     /**
-     * A dimension's display name in English and Simplified Chinese.
+     * 维度的英文与简体中文显示名。
      */
     public record Title(String english, String simplified) {}
 
     /**
-     * The biomes a region places: the vanilla replicas it adds beside {@link Replicas#SHARED}, the Terralith biomes
-     * it {@link #ported} beside {@link Ports#BIOMES}, {@link #roster}, every biome its table can place, {@link
-     * #land}, the surface biomes of it but the river, where the spirit spring [元泉] may stand, {@link #names}, the
-     * display names of the biomes only it places, {@link #crops}, its land sorted into the wild crop climates of
-     * Farmer's Delight, and {@link #parameters}, the table itself.
+     * 一个域放置的群系：{@code replicas}、{@link #ported}：{@link Replicas#SHARED}、{@link Ports#BIOMES} 外另加的原版复
+     * 刻与 Terralith 移植；{@link #roster}：表能放的全部群系；{@link #parameters}：群系表；{@link #land}：除河流外的地
+     * 表群系，元泉[Spirit Spring]可生成于此；{@link #names}：本域独有群系的显示名；{@link #crops}：陆地按农夫乐事野生作
+     * 物气候分组。
      */
     public record Biomes(List<Replicas.Template> replicas, List<ResourceKey<Biome>> ported,
             Set<ResourceKey<Biome>> roster, List<ResourceKey<Biome>> land, List<BiomeName> names,
@@ -101,9 +95,8 @@ public record Region(String name, Title title, int seaLevel, boolean dry, Waterw
             Function<HolderGetter<Biome>, List<Pair<Climate.ParameterPoint, Holder<Biome>>>> parameters) {}
 
     /**
-     * What a region puts in the hooks of its copy of the ported router ({@link RegionBootstraps}): {@link
-     * #oceanOffset}, {@link #verticalScale}, {@link #dunes}, and {@link #reshape}, which rewrites a ported function by
-     * its name ({@link #AS_PORTED} leaves them all).
+     * 一个域填进其移植路由副本钩子的值（{@link RegionBootstraps}）；{@link #reshape} 按名改写移植函数，
+     * {@link #AS_PORTED} 全不改。
      */
     public record Hooks(DensityFunction oceanOffset, double verticalScale, double dunes,
             BiFunction<String, JsonElement, JsonElement> reshape) {

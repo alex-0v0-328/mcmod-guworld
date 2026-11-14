@@ -18,13 +18,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The single provider for every block tag this mod writes.
+ * 本模组全部方块标签的唯一 provider。
  *
- * <p>Extends {@link TagsProvider} for {@link Block}. Writes the block tags the features ported from Terralith match
- * against ({@link Ports#getBlockTags}): each entry a block id, or a tag id after a {@code #}.
- *
- * <p>⚠ There can only be one per data run: a tags provider is named after its registry and mod, so a
- * second block tags provider fails datagen as a duplicate; add the next block tag here instead.
+ * <ul>
+ *   <li>Terralith 移植地物所匹配的方块标签（{@link Ports#getBlockTags}）；每项为方块 ID，或 {@code #} 加标签 ID。</li>
+ *   <li>⚠ 每次数据生成仅一个：标签 provider 以注册表与模组命名，再加一个即重名失败；新方块标签加在这里。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

@@ -9,14 +9,14 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A region dimension's saved waterways [水系] index, {@code data/guworld_waterways.dat} in the dimension's folder, so
- * the plan, about 45 CPU seconds a region, is built once per world instead of at every start.
+ * 区域维度存档的水系索引：维度文件夹下 {@code data/guworld_waterways.dat}。
  *
- * <p>The index is kept with what it was built from: a key of the plan's and the profile's numbers
- * ({@link Waterways#PARAMETERS}) and the region's size and sea level, the seed, and a fingerprint of the terrain, the
- * ground and biome at a few fixed columns ({@link WaterwaysRuntime}). {@link #get} hands it back only when all three
- * match, so a changed planner, seed, terrain or layout rebuilds it. The builder thread writes it while the server
- * saves it, so the writes, the dirty flag and the whole file save go through this object's lock.
+ * <ul>
+ *   <li>规划每区域约 45 CPU 秒，存下后每个世界只建一次。</li>
+ *   <li>连同依据存：键（{@link Waterways#PARAMETERS}、边长、海平面）、种子、地形指纹（几处固定列的地面与群系，
+ *       {@link WaterwaysRuntime}）；{@link #get} 三者全对才返回，规划器、种子、地形或布局一变即重建。</li>
+ *   <li>建造线程写入与服务端保存可能并发：写入、脏标记、整文件保存都走本对象锁。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

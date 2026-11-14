@@ -7,10 +7,9 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
 /**
- * How a region fills the hooks of its copy of the ported router ({@link Ports#getHookKey}): a constant, or a switch
- * that points the hook back at one of the region's ported functions (its full name, {@code terrain/...}) when on and
- * at zero when off, so an off feature costs nothing; a region registers the function only while a switch reaches it
- * ({@link Ports#registerDensityFunctions}).
+ * 域填移植路由钩子（{@link Ports#getHookKey}）的方式：常量或开关。开关开时指回本域某个移植函数（全名
+ * {@code terrain/...}），关时为零，关掉的功能零开销；开关够到时域才注册该函数
+ * （{@link Ports#registerDensityFunctions}）。
  *
  * @author Alex
  * @version 1.0.0

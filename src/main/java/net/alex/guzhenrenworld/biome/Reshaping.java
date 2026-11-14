@@ -5,11 +5,9 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 /**
- * What a region needs to rewrite a ported density function [密度函数] in JSON before it registers: the names of the two
- * ported functions the regions reshape, {@link #TEMPERATURE}, which Terralith's table, Tectonic's landform regions and
- * its dunes all read, and {@link #EROSION_FOLDED}, the distance of Tectonic's erosion from zero, which sets both the
- * terrain splines and the erosion Terralith's table reads; and {@link #getOperation}, a two-argument vanilla operation
- * ({@code add}, {@code mul}, {@code min}) over numbers and functions.
+ * 域注册前改写移植密度函数 JSON 的共用部件。被改写的两个移植函数：{@link #TEMPERATURE}，Terralith 群系表、Tectonic
+ * 地貌区与沙丘都读；{@link #EROSION_FOLDED}，Tectonic 侵蚀离零的距离，决定地形样条与 Terralith 表读到的侵蚀。
+ * {@link #getOperation}：原版二元运算（{@code add}、{@code mul}、{@code min}），参数为数或函数。
  *
  * @author Alex
  * @version 1.0.0

@@ -11,40 +11,26 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
 /**
- * Where the Western Desert [西漠] places its biomes: Terralith's overworld multi-noise table as shipped
- * ({@link Ports#getBiomeParameters}), with every source biome mapped onto the region's own ({@link #GROUPS}, a
- * roster biome to the source biomes it stands in for). The terrain under it is the region's copy of Tectonic's
- * ({@link WesternDesertTerrain}), which remaps its own erosion and ridges into the bands Terralith's table expects, so
- * each parameter cell keeps the terrain archetype Terralith gave it and gets the region's biome of its kind.
- *
- * <p>The roster, by terrain band:
+ * 西漠的群系摆放。
  * <ul>
- *   <li>Flats: desert (Tectonic's dunes), ancient sands, lush desert, the two oases, hot shrubland, brushland and
- *   gravel desert, and the river.</li>
- *   <li>Hills, mesas and canyons: badlands, wooded badlands, eroded badlands, white mesa, Bryce canyon, desert canyon,
- *   sandstone valley and arid highlands.</li>
- *   <li>Mountains: the badlands' banded terracotta on the warm peaks, the sandstone valley's sandstone on the cold
- *   ones, and desert spires on Terralith's spire cells.</li>
- *   <li>Underground: lush caves and dripstone caves.</li>
+ *   <li>原样用 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系映射到本域名单（{@link #GROUPS}：
+ *       名单群系 → 其替代的来源群系）；下层本域 Tectonic 地形（{@link WesternDesertTerrain}）把侵蚀与山脊重映射回该表分
+ *       段，参数格保留 Terralith 地形原型，得本域同类群系。</li>
+ *   <li>名单按地形带：平沙为沙漠（Tectonic 沙丘）、古沙海、疏林沙漠、两种绿洲、热灌丛、荆丛地、戈壁、河流；丘陵台地峡谷
+ *       为恶地、疏林恶地、风蚀恶地、白台地、石林峡谷、沙漠峡谷、砂岩谷、旱原高地；山地为暖山恶地的彩色陶瓦、冷山砂岩谷
+ *       的砂岩、石林带格的沙漠石柱；地下为繁茂洞穴、溶洞。</li>
+ *   <li>来源归同地貌、植被最近的名单群系：森林与丛林归热灌丛、疏林沙漠、疏林恶地，沼泽归绿洲，暖山归恶地。</li>
+ *   <li>全域偏热（{@link WesternDesertTerrain} 把温度抬进暖、热两带，表在此放沙漠、恶地、峡谷、干灌丛），较冷格只去三
+ *       处：温带平原、寒带平地与冰沼归戈壁（保留 Terralith 寒冷气候，当沙漠之夜）；寒带森林、丘陵、山坡归旱原高地；寒带
+ *       山峰与冰川裂谷归砂岩谷。</li>
+ *   <li>海洋、海滩、岛屿来源只为完整而映射，{@link WesternDesertTerrain} 的大陆度到不了。</li>
+ *   <li>{@link #ROSTER}：全部可放群系，含沙漠石柱；{@link #LAND}：除河流外地表群系，元泉[Spirit Spring]可生于此。</li>
+ *   <li>地形随侵蚀不随群系：Terralith 石林带（侵蚀 ≥ {@link BiomeTable#SPIRE_EROSION}）一律长 Tectonic 尖柱地形，故陆地
+ *       格改为沙漠石柱（{@link BiomeTable#withSpires}），但 {@link #TABLE} 保留河流、洞穴、两绿洲、砂岩谷、沙漠峡
+ *       谷。</li>
+ *   <li>⚠ {@link BiomeTable#getBiome} 遇 {@link #GROUPS} 未映射的来源群系即抛错，重新移植多出一个则 {@code runData} 失
+ *       败，不丢格。</li>
  * </ul>
- * A source biome goes to the roster biome of the same landform and the nearest vegetation: forests and jungles to the
- * shrublands, lush desert and wooded badlands, swamps to the oases, warm mountains to the badlands. The whole region is
- * hot ({@link WesternDesertTerrain} lifts the temperature into the warm and hot bands, which the table fills with its
- * deserts, badlands, canyons and dry shrubland), so the cooler cells go to three biomes only: the temperate plains and
- * the cold flats and marshes to the gravel desert, which keeps Terralith's cold climate (the desert's nights), the
- * cold forests, hills and slopes to the arid highlands, the cold peaks and chasms to the sandstone valley. Ocean,
- * beach and island sources are mapped for completeness only:
- * {@link WesternDesertTerrain}'s continentalness never reaches their cells. {@link #ROSTER} is every biome the region
- * can place, the spire cells' desert spires included, and {@link #LAND} every surface biome of it but the river,
- * where the spirit spring [元泉] may stand.
- *
- * <p>Terrain follows erosion, not the biome: every cell of Terralith's spire band, erosion {@link
- * BiomeTable#SPIRE_EROSION} and up, grows Tectonic's spire terrain whatever biome sits there, so a land cell there
- * becomes desert spires ({@link BiomeTable#withSpires}) unless it is one of the biomes {@link #TABLE} keeps: the river,
- * the caves, the oases and the two canyon biomes keep their own.
- *
- * <p>⚠ {@link BiomeTable#getBiome} throws on a source biome {@link #GROUPS} does not map, so a re-port that adds one
- * fails {@code runData} instead of dropping cells.
  *
  * @author Alex
  * @version 1.0.0

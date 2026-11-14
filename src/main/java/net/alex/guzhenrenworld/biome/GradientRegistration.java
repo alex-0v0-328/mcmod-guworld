@@ -7,12 +7,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 /**
- * The registration of {@link XGradient} and {@link ZGradient} as the density function types
- * {@code guworld:x_gradient} and {@code guworld:z_gradient}, kept apart from the functions themselves.
- *
- * <p>Annotated {@code @EventBusSubscriber}: {@link #onRegister} registers each type's {@code MAP_CODEC} under its
- * {@code ID}. The event also runs in the data run, so the datagen providers can encode a region's terrain that names
- * the types.
+ * {@link XGradient}、{@link ZGradient} 的密度函数类型注册（{@code guworld:x_gradient}、{@code guworld:z_gradient}），
+ * 与函数分开放。{@link #onRegister} 按 {@code ID} 注册 {@code MAP_CODEC}；数据生成时也触发，provider 才能编码点名这些类
+ * 型的域地形。
  *
  * @author Alex
  * @version 1.0.0

@@ -12,35 +12,26 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Waterways [水系]: Gu World's own streams, planned once for each finite region from its terrain, following the plate
- * plan of Davis, "Plate-Local River Generation" (arXiv 2610.00301; reference code CC BY 4.0,
- * github.com/Davismk3/plate-local-river-generation), with the whole 8192-block region as one plate. This class holds
- * the numbers the planner, the index and the carving share; {@link WaterwaysPlanner} builds a {@link WaterwaysPlan}
- * per region, {@link WaterwaysIndex} turns its streams into segments, and {@link WaterwaysDensity}, the density
- * function a region wraps its final density in, carves them through {@link WaterwaysCarver}.
+ * 水系：Gu World 自己的溪流，每个有限区域按地形规划一次。
  *
- * <p>The plan samples the ground on a grid of {@link #CELL}-block cells, each sample jittered up to {@link #JITTER}
- * blocks so channels do not follow the grid. A cell carries a stream once its catchment reaches
- * {@link #MIN_CATCHMENT} cells; the stream's full width grows with the square root of the catchment, from
- * {@link #WIDTH_SCALE} blocks at the threshold up to {@link #MAX_WIDTH}. A closed depression up to
- * {@link #LAKE_DEPTH} blocks deep holds a lake on the plan; a deeper one ends the stream at a sink on its floor. The
- * Western Desert [西漠] is {@link Region#dry}: its streams are carved alike, but only the widest carry water, the rest
- * are dry gullies.
- *
- * <p>The water surface runs at least {@link #INCISION} blocks under the ground, the sea level standing in for the
- * ground under it, and never rises downstream ({@link WaterwaysProfile}, which reads the ground at {@link #KNOTS} + 1
- * knots along each segment and on both sides of it, skipping dips deeper than {@link #MAX_DIP}); shallow lakes on the
- * plan are cut through. The water over the bottom is a whole block deep across the channel and, at the centerline,
- * {@link #MIN_DEPTH} blocks at the narrowest and {@link #MAX_DEPTH} at {@link #MAX_WIDTH}. Banks
- * {@code max(}{@link #BANK_MIN}{@code , }{@link #BANK_FACTOR}{@code  × width)} blocks wide rise from the water surface
- * back to the ground, ending {@link #BANK_MARGIN} blocks above the scanned ground so its usual 1 to 2 blocks of error
- * leave no step. Every channel wanders up to {@link #MEANDER} blocks along each axis off its centerline, a warp read
- * from {@link #MEANDER_NOISE} ({@link #getMeanderX}, {@link #getMeanderZ}), whose instance also tells the carving
- * which level's random state it is filling. {@link #PARAMETERS} names the numbers a saved index depends on, so one
- * built with others is rebuilt ({@link WaterwaysData}).
- *
- * <p>{@link WaterwaysFeature} fills the channels with water and lays each region's {@link Bed} under it; in a dry
- * region only channels at least {@link #DRY_WIDTH} wide hold water.
+ * <ul>
+ *   <li>依据 Davis 板块式河流生成论文（arXiv 2610.00301；参考代码 CC BY 4.0，
+ *       github.com/Davismk3/plate-local-river-generation），8192 格区域整个为一板块。</li>
+ *   <li>存规划、索引、刻河共用的数值：{@link WaterwaysPlanner} 建 {@link WaterwaysPlan}，{@link WaterwaysIndex}
+ *       转成线段，{@link WaterwaysDensity} 包住区域最终密度、经 {@link WaterwaysCarver} 刻出；{@link #PARAMETERS}
+ *       是存档索引依赖的数值，变则重建（{@link WaterwaysData}）。</li>
+ *   <li>在 {@link #CELL} 格网格上取样，样本偏移 ≤ {@link #JITTER} 格免得河道顺网格；汇流达 {@link #MIN_CATCHMENT} 格成
+ *       河，全宽随汇流平方根从 {@link #WIDTH_SCALE} 格增至封顶 {@link #MAX_WIDTH} 格。</li>
+ *   <li>深 ≤ {@link #LAKE_DEPTH} 格的封闭洼地在规划中成湖，更深的溪流终于洼底汇点；西漠 {@link Region#dry}：照样刻，
+ *       仅最宽的有水，余为干沟。</li>
+ *   <li>水面低于地面 ≥ {@link #INCISION} 格（海平面下按海平面），往下游不升（{@link WaterwaysProfile}：每段沿线及两侧
+ *       {@link #KNOTS} + 1 个节点读地面，跳过深于 {@link #MAX_DIP} 格的凹陷）；规划中的浅湖刻穿。</li>
+ *   <li>河底上整宽至少 1 格水，中线水深从 {@link #MIN_DEPTH} 格增至 {@link #MAX_DEPTH} 格（宽 {@link #MAX_WIDTH} 格）；
+ *       岸带宽 {@code max(}{@link #BANK_MIN}{@code , }{@link #BANK_FACTOR}{@code  × width)} 格，升到扫描地面上
+ *       {@link #BANK_MARGIN} 格，盖住常见 1–2 格的扫描误差。</li>
+ *   <li>河道沿各轴偏离中线 ≤ {@link #MEANDER} 格，读自 {@link #MEANDER_NOISE}，其实例也标明所填维度的随机状态。</li>
+ *   <li>{@link WaterwaysFeature} 放水并铺区域的 {@link Bed}；干旱区域仅宽 ≥ {@link #DRY_WIDTH} 格的河道有水。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

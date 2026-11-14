@@ -8,24 +8,19 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A region's waterways [水系] as straight segments, one per stream cell of its {@link WaterwaysPlan}, from the cell's
- * point to its receiver's, with the full channel width at each end and the water surface at each knot, bucketed on
- * the plan's {@link Waterways#CELL}-block grid for the carving to find the segments near a column in one array read.
+ * {@link WaterwaysPlan} 的水系线段索引：每个溪流格一段，连向流向格。
  *
- * <p>A segment's end width is its receiver's when the receiver carries a stream too, its own otherwise; its water
- * surface at its {@link Waterways#KNOTS} + 1 knots comes from the {@link WaterwaysProfile}, linear between them. A
- * bucket lists every segment whose channel, banks and meander can reach into it. A saved index with a value that is
- * not finite fails to load and is rebuilt.
- *
- * <p>{@link #getSurface} is the carved surface at a point: the lowest over the segments near it of the bottom inside
- * a channel or, across the banks, the water surface eased back up (smoothstep) to the ground plus
- * {@link Waterways#BANK_MARGIN}. The bottom sits at the bottom of the top water block (one under the water surface
- * rounded up) at the channel's edges, so even the edges hold one block of water, and deepens as a parabola to
- * {@link Waterways#getDepth} blocks at the centerline; the banks start at the water surface, a step of up to one block
- * above the edge. Taking the lowest, not the paper's inverse-distance blend (eq. 31), keeps every confluence open.
- * {@link #getChannel} is the channel a point lies in, with the lowest bottom there; in a dry region only a channel at
- * least {@link Waterways#DRY_WIDTH} wide is wet, and where channels meet, the lowest water surface of the wet ones
- * holds. The segments go into a world's saved data ({@link #save}, {@link #load}); the buckets are rebuilt.
+ * <ul>
+ *   <li>每段存两端全宽（流向格不成河时用本格的）与 {@link Waterways#KNOTS} + 1 个节点水面（{@link WaterwaysProfile}，
+ *       节点间线性）；按 {@link Waterways#CELL} 格分桶，每桶列出河道、岸带与摆动够得着的线段，刻河读一次数组即得。</li>
+ *   <li>{@link #getSurface}：附近线段目标高度取最低（非论文式 31 的反距离加权：汇流口必连通）；河道内为河底，
+ *       岸带从水面按 smoothstep 升到地面加 {@link Waterways#BANK_MARGIN}。</li>
+ *   <li>河底在边缘为顶层水块（水面向上取整减 1）底面，边缘也有 1 格水，向中线按抛物线深至
+ *       {@link Waterways#getDepth} 格；岸带从水面起，比边缘高 ≤ 1 格。</li>
+ *   <li>{@link #getChannel}：某点所在河道，取最低河底；干旱区域只有宽 ≥ {@link Waterways#DRY_WIDTH} 格的有水；
+ *       相交处取有水各段中最低的水面。</li>
+ *   <li>线段随世界存档存取，桶载入时重建；含非有限值的存档载入失败并重建。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

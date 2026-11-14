@@ -12,21 +12,17 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
 /**
- * The biomes only the Eastern Sea [东海] places, which the datagen providers collect from here: {@link #PORTED},
- * the Terralith biomes the region ported ({@link Ports#biome} names each; the port's files are listed in
- * {@code src/ports/terralith/index.eastern_sea.json}), {@link #REPLICAS}, the vanilla biomes it replicates beside
- * {@link Replicas#SHARED}, {@link #NAMES}, the display names of both, and {@link #CROPS}, the land sorted into
- * the wild crop climates of Farmer's Delight ({@link WildCropClimate}). {@link EasternSeaLayout} places them and
- * derives the roster and the land list from its table.
+ * 只有东海放置的群系，供数据生成 provider 收集。
  *
- * <p>The ports keep Terralith's names but one: Terralith's alpha islands are the isles. The region also places the
- * Southern Border's [南疆] rainforest ({@link Ports#RAINFOREST}, Terralith's tropical jungle), which that region
- * registers and names, so it is listed here only among the crop climates.
- *
- * <p>The crop climates follow each biome's own temperature and downfall ({@link WildCropClimate}): the volcanoes
- * (temperature 1, dry) hot; the jungles wet, the isles (0.7, downfall 0.8) wet and temperate; the shores beach, the
- * beach and the gravel beach (0.8) also temperate, the stony shore (0.2) also cold; the basalt and white cliffs
- * (0.5 and 0.4) temperate. The oceans sit in none.
+ * <ul>
+ *   <li>{@link #PORTED}：移植的 Terralith 群系，键由 {@link Ports#biome} 生成；{@link #REPLICAS}：
+ *       {@link Replicas#SHARED} 外复刻的原版群系；{@link #NAMES}：二者显示名；{@link #CROPS}：陆地按农夫乐事野生作物气
+ *       候（{@link WildCropClimate}）分；移植文件列在 {@code src/ports/terralith/index.eastern_sea.json}。</li>
+ *   <li>{@link EasternSeaLayout} 摆放它们，据表推出名单与陆地表；移植沿用 Terralith 名，唯 alpha 群岛改名岛屿。</li>
+ *   <li>也放南疆雨林（{@link Ports#RAINFOREST}，即 Terralith 热带丛林），由南疆注册命名，此处只列在作物气候里。</li>
+ *   <li>作物气候按群系自身温度与降水：火山（温度 1，干）热；丛林类湿；岛屿与蜃岛（0.7，降水 0.8）湿兼温带；海岸类滩，
+ *       沙滩与砾滩（0.8）兼温带，石岸（0.2）兼寒；玄武岩崖与白崖（0.5、0.4）温带；海洋不归任何气候。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

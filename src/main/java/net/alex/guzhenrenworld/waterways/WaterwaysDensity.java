@@ -16,21 +16,17 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The density function type {@code guworld:waterways}: a region's final density with its waterways [水系] cut in.
- * Each region's noise settings wrap the ported final density in it ({@link #getCarved}), naming the region, its
- * border size, whether it is dry, its bed and the meander noise; the type is registered by
- * {@link WaterwaysRegistration}.
+ * 密度函数类型 {@code guworld:waterways}：刻入水系的区域最终密度。
  *
- * <p>Where the wrapped density is solid, the result is the lower of it and {@link #SLOPE} times the height under the
- * carved surface ({@link WaterwaysCarver#getSurface}), so the carving only cuts: caves stay, and nothing is filled. Air
- * is returned as it is, so a column's surface is asked for only by its solid blocks. In a noise chunk, the banks read
- * the ground through this copy's own wrapped terrain, whose column caches the chunk has already filled.
- *
- * <p>The carver comes from {@link WaterwaysRuntime}, found by the instance of the meander noise, which the world's
- * {@code RandomState} creates once (one per level) and hands to every copy of this function a chunk makes. A random
- * state with no carver attached, such as one a test builds on its own seed, gets the terrain unchanged. Each copy looks
- * its carver up once, at its first solid block; a noise chunk copies the function for every chunk, so attaching or
- * detaching takes effect at the next chunk.
+ * <ul>
+ *   <li>各区域噪声设置用它包住移植的最终密度（{@link #getCarved}），写明区域名、边长、干旱、河床、摆动噪声；
+ *       由 {@link WaterwaysRegistration} 注册。</li>
+ *   <li>实心处取原密度与 {@link #SLOPE} ×（刻后地表 − y）的较小者（{@link WaterwaysCarver#getSurface}）：只削不填，
+ *       洞穴保留；空气原样返回，地表只由实心方块来问。噪声区块内岸带经本副本包住的地形读地面，列缓存已填好。</li>
+ *   <li>雕刻器由 {@link WaterwaysRuntime} 按摆动噪声实例认领：{@code RandomState} 每维度只建一个，交给区块复制的每个副
+ *       本；未挂雕刻器的随机状态（如测试自建）地形原样。</li>
+ *   <li>副本在首个实心方块查一次雕刻器；噪声区块每区块复制本函数，挂、摘从下一区块生效。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

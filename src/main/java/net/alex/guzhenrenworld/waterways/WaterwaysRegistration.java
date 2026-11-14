@@ -28,16 +28,15 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 /**
- * The wiring of the waterways [水系], kept apart from the parts it wires.
+ * 水系的接线，与被接的各部分分开。
  *
- * <p>Annotated {@code @EventBusSubscriber}: {@link #onRegister} registers {@link WaterwaysDensity#MAP_CODEC} as the
- * density function type {@code guworld:waterways} and {@link WaterwaysFeature} as the feature of that name (the event
- * also runs in the data run, so the datagen providers can encode what names them); the level events hand server
- * levels to {@link WaterwaysRuntime} as they load and unload, and a stopped server drops every carver.
- *
- * <p>{@link #registerConfiguredFeature}, {@link #registerPlacedFeature} and {@link #registerBiomeModifier} are the
- * bootstraps {@code datagen.DatapackProvider} runs: the feature once per chunk, with no placement, added at
- * {@code raw_generation} to the biomes the regions place, which the provider hands in from the regions' rosters.
+ * <ul>
+ *   <li>{@link #onRegister} 注册密度函数类型 {@code guworld:waterways}（{@link WaterwaysDensity#MAP_CODEC}）
+ *       与同名地物 {@link WaterwaysFeature}，数据生成运行也触发，供提供器编码；维度加载、
+ *       卸载转给 {@link WaterwaysRuntime}，服务端停止时清空雕刻器。</li>
+ *   <li>三个 {@code register*} 是 {@code datagen.DatapackProvider} 运行的引导：地物每区块一次、无放置修饰器，
+ *       在 {@code raw_generation} 加进提供器传入的各区域花名册群系。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

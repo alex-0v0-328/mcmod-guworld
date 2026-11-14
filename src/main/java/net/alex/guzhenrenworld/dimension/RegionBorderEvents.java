@@ -7,11 +7,8 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
 /**
- * Hands the server and player events {@link RegionBorders} acts on over to it.
- *
- * <p>Annotated {@code @EventBusSubscriber}. {@link #onServerStarted} fires once vanilla has applied the overworld's
- * saved border to every level; {@link #onPlayerLoggedIn}, {@link #onPlayerChangedDimension} and
- * {@link #onPlayerRespawn} fire after vanilla has sent the overworld's border.
+ * {@link RegionBorders} 的事件转交类。{@link #onServerStarted} 在原版把主世界存档边界应用到各维度后触发；
+ * {@link #onPlayerLoggedIn}、{@link #onPlayerChangedDimension}、{@link #onPlayerRespawn} 在原版发出主世界边界后触发。
  *
  * @author Alex
  * @version 1.0.0

@@ -47,59 +47,37 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Worldgen ported from Terralith 2.5.8 (Stardust Labs) and Tectonic 3.0.28 (Apollo; Alex holds both authors'
- * permission to use and modify them), renamed into this mod's namespace and kept as datagen input under
- * {@code src/ports}, which the data run names in the system property {@value #SOURCE_PROPERTY}: Terralith's biomes,
- * features, surfaces and biome table in {@code terralith/}, the terrain in {@code tectonic/}.
- *
- * <p>The ports keep the mods' JSON as data instead of rewriting it in Java: each port's index files list its files
- * by kind, and each bootstrap here decodes them with the registry's own codec, against the registries this run
- * builds and vanilla's built-in ones, the latter through a lookup that creates a named tag on demand, since no tag is
- * bound while datagen runs, and registers them, so they reach {@code src/generated} like any other entry. Every
- * {@code terralith:} id became {@code guworld:}. A port holds one index per region that ported from it:
- * {@code index.json} is the Southern Border's [南疆], the first region, and {@code index.<region>.json} another
- * region's; {@link #getIndex} reads them all as one list, a file two regions both ported counted once. The biomes
- * took the names of {@link #BIOMES} and each region's own list ({@link #biome} makes the key), and their surface
- * rules, the subtrees of Terralith's overworld rule that name them, sit in {@code surface_rule.json} and
- * {@code surface_rule.<region>.json}, which {@link #getSurfaceRules} runs in sequence. Terralith's overworld
- * multi-noise list keeps its source biome ids untouched ({@link #getBiomeParameters}).
- *
- * <p>The terrain is Tectonic's overworld noise router as Tectonic runs it beside Terralith, with the density
- * functions and noises it reaches from either mod under {@code guworld:terrain/<namespace>/}, and Tectonic's config
- * baked into vanilla density functions. Eleven of the functions read hooks, {@code terrain/hook/*}, nine of them,
- * that each region sets its own way, so each region registers its own copy of the ported functions and of the
- * router, under {@code guworld:terrain/<region>/}: {@link #registerDensityFunctions} takes the region's name and
- * its patch, handed each ported function's name with its JSON, for what it changes in one, then renames every
- * function reference into the region ({@link #getRegional}), the hook references with them, which the region
- * registers at {@link #getHookKey}; {@link #getNoiseRouter} does the same for the router.
- *
- * <p>A region registers only what its router reaches ({@link Reachable}): the ported functions the router names,
- * directly or through another, plus the ported functions the region's hooks point back at ({@code hooked}, the
- * features it switches on), and the ported noises those functions read, all found in the patched JSON. The ported
- * files behind a hook the region fills with a constant, or a feature it switches off, stay out of its datapack, and
- * switching a feature on brings its files back without a change here.
- *
- * <p>Each region also registers its own copy of every noise its terrain reads, since a random state derives each
- * noise from the world seed and the noise's id, and every region runs on the world seed: two regions that read one
- * id read one noise field, the same continents, rivers and ridges.
- * {@link #registerNoises(BootstrapContext, String, BiFunction, Set)} registers the reached ported noises under the
- * region's prefix and the vanilla noises the terrain reads under
- * {@code guworld:terrain/<region>/minecraft/}, with vanilla's parameters, and {@link #registerDensityFunctions} adds
- * the region's copy of each vanilla density function that reads a noise, such as {@code minecraft:shift_x}, at the
- * same place; {@link #getRegional} renames a noise reference like any other, and a vanilla reference only when it
- * names one of those copies. The nested scan finds them once, from vanilla's own registries, and encodes the copied
- * functions back to JSON. Still shared: {@code minecraft:overworld/base_3d_noise}, whose blended noise seeds itself
- * from vanilla's {@code minecraft:terrain} whatever its id, the surface rules' noises, and a random state's aquifer
- * and ore positions.
- *
- * <p>{@link #registerBiomes} fails when the indexes and the expected keys name different biomes, so a biome a port
- * script adds cannot register without a key the tables, translations and tags can name.
- *
- * <p>Ported biomes keep Terralith's climate, colors, mob spawns and features; like the replicas they do not carve
- * ({@link Replicas#getUncarved}). The block tags go out through the datagen tag provider ({@link #getBlockTags}).
- *
- * <p>⚠ The files are ported from Terralith and Tectonic, never edited by hand; a port script is written when a region
- * needs more of them or an upstream update needs one, then a fresh port, then {@code runData}.
+ * Terralith 2.5.8 与 Tectonic 3.0.28 的世界生成移植，作数据生成输入。
+ * <ul>
+ *   <li>Terralith 出自 Stardust Labs，Tectonic 出自 Apollo，Alex 已获两位作者许可使用与修改；改名进本模组命名空间，放
+ *       {@code src/ports}（数据生成以系统属性 {@value #SOURCE_PROPERTY} 指明）：{@code terralith/} 为群系、地物、表层与
+ *       群系表，{@code tectonic/} 为地形。</li>
+ *   <li>JSON 当数据保留，不改写成 Java：各移植的清单按种类列文件，引导方法用注册表自带 codec 解码注册，产物照常进
+ *       {@code src/generated}；解码对照本次构建的注册表与原版内置注册表，后者经按需建具名标签的查找（数据生成时无已绑定
+ *       标签）；{@code terralith:} 的 ID 全改为 {@code guworld:}。</li>
+ *   <li>每域一份清单：{@code index.json} 属首个域南疆，{@code index.<region>.json} 属其他域，{@link #getIndex} 合为一个
+ *       列表，两域共有的文件只计一次；群系名取自 {@link #BIOMES} 与各域列表（{@link #biome} 建键），表层规则是
+ *       Terralith 主世界规则中点名它们的子树，在 {@code surface_rule.json} 与 {@code surface_rule.<region>.json}，
+ *       {@link #getSurfaceRules} 依次拼接；多噪声表保留来源群系 ID（{@link #getBiomeParameters}）。</li>
+ *   <li>{@link #registerBiomes} 在清单与预期键不符时失败，移植脚本新增的群系须先有群系表、翻译、标签可引用的键；移植群
+ *       系保留 Terralith 的气候、颜色、刷怪、地物，同复刻群系不雕刻（{@link Replicas#getUncarved}）；方块标签经标签
+ *       provider 输出（{@link #getBlockTags}）。</li>
+ *   <li>地形是 Tectonic 与 Terralith 同装时的主世界噪声路由，连同它够到的两模组密度函数与噪声，放
+ *       {@code guworld:terrain/<namespace>/}，Tectonic 配置烘焙成原版密度函数；11 个函数读 9 种钩子
+ *       {@code terrain/hook/*}，按域取值，故每域在 {@code guworld:terrain/<region>/} 下注册各自的函数与路由。</li>
+ *   <li>{@link #registerDensityFunctions} 收域名与补丁（按函数名和 JSON 决定改动），再把函数与钩子引用改名进本域
+ *       （{@link #getRegional}），钩子由域在 {@link #getHookKey} 注册；{@link #getNoiseRouter} 同样处理路由。</li>
+ *   <li>域只注册路由够得到的（{@link Reachable}）：路由直接或间接点名的移植函数、钩回的函数（{@code hooked}，开着的功
+ *       能）及其所读移植噪声，均查补丁后的 JSON；常量钩子、关掉功能背后的文件不进数据包，打开即回，本类不用改。</li>
+ *   <li>噪声按域复制：随机状态按世界种子与噪声 ID 派生噪声，各域同种子，同 ID 即同一噪声场（大陆、河流、山脊相同）；
+ *       {@link #registerNoises(BootstrapContext, String, BiFunction, Set)} 把够到的移植噪声注册到域前缀下，地形读的原版
+ *       噪声按原版参数注册到 {@code guworld:terrain/<region>/minecraft/}，{@link #registerDensityFunctions} 在同处为读
+ *       噪声的原版函数（如 {@code minecraft:shift_x}）注册域副本；{@link #getRegional} 照常改噪声引用，原版引用只在指向
+ *       副本时改；内嵌扫描从原版注册表一次找出它们，并把函数编码回 JSON。</li>
+ *   <li>仍共用：{@code minecraft:overworld/base_3d_noise}（混合噪声不论 ID 都以原版 {@code minecraft:terrain} 为种
+ *       子）、表层规则的噪声、随机状态里含水层与矿脉的位置。</li>
+ *   <li>⚠ 文件只移植、不手改；需更多文件或上游更新时先写移植脚本、重新移植，再跑 {@code runData}。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

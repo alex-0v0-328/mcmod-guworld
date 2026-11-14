@@ -4,12 +4,13 @@ import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.waterways.Waterways;
 
 /**
- * The Northern Plains [北原] dimension, one of the four regions beyond the Central Continent [中州], which is the
- * overworld: its {@link #REGION}. The region is a cold grassland, flat and open for the most part, grass in the south
- * and snow in the north, with a few frozen peaks; its waterways run over a gravel bed.
+ * 北原维度的入口 {@link #REGION}：中州（主世界）外四域之一。
  *
- * <p>The region is finite and its keys, borders and datapack entries are the shared ones ({@link Region}); the
- * terrain hooks are {@link NorthernPlainsTerrain}'s and the biome table {@link NorthernPlainsLayout}'s.
+ * <ul>
+ *   <li>寒冷草原，大体平坦开阔，南草北雪，少数冰封山峰；水系河床铺砾石。</li>
+ *   <li>有限域，键、边界、数据包条目用共用的一套（{@link Region}）；地形钩子在 {@link NorthernPlainsTerrain}，群系表在
+ *       {@link NorthernPlainsLayout}。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0

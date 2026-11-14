@@ -8,26 +8,23 @@ import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
 /**
- * The Eastern Sea [东海] terrain: the region's copy of Tectonic's overworld router as Tectonic runs it beside
- * Terralith ({@link Ports#registerDensityFunctions}), reshaped through the hooks the port leaves in it
- * ({@link #HOOKS}, {@link RegionBootstraps}):
+ * 东海地形：本域的 Tectonic 主世界路由副本。
+ *
  * <ul>
- *   <li>{@code ocean_offset}: Tectonic's continentalness is its folded continent noise plus this offset. Where that
- *   sum falls under -0.5, Tectonic leaves its continents for its island noise: islands rise where that noise peaks,
- *   and where the island noise sinks past -1.07, flat islands stand in three erosion bands, Terralith's far-sea
- *   island cells; under -1 neither continent nor island remains, only deep sea. Land gives way to sea within a
- *   narrow band of offsets, about -0.9 to -1, so the offset runs along x in two {@code guworld:x_gradient}s
- *   ({@link XGradient}) added together: from {@link #WEST_OCEAN_OFFSET} at the west border to
- *   {@link #ISLAND_OCEAN_OFFSET} at x {@link #ISLAND_EDGE_X}, the archipelago thinning from a coast of continent
- *   peaks and large islands into scattered islands, then a further {@link #OPEN_SEA_DROP} by x
- *   {@link #OPEN_SEA_X}, so east of it, under the island range, lies open sea.</li>
- *   <li>{@code vertical_scale}: the stretch of the height above sea level, {@link #VERTICAL_SCALE}, a fifth under
- *   Tectonic's 1.125, so the highest island peaks stay under y 260.</li>
- *   <li>{@code dunes}: none ({@link #DUNES}); the region maps Tectonic's hot, dry cells to sand islands.</li>
- *   <li>{@code min_y}, {@code max_y}, {@code jungle_pillars}, {@code underground_rivers} with
- *   {@code underground_river_water}, and {@code lava_tunnels}: as in every region.</li>
+ *   <li>移植自 Tectonic 与 Terralith 同装时的路由（{@link Ports#registerDensityFunctions}），只经移植留下的钩子改形
+ *       （{@link #HOOKS}、{@link RegionBootstraps}）。</li>
+ *   <li>{@code ocean_offset}：Tectonic 大陆度是折叠大陆噪声加此偏移。和低于 -0.5 处不出大陆，改由岛屿噪声的峰起岛；
+ *       岛屿噪声低于 -1.07 处在三条侵蚀带出平坦岛，即 Terralith 远海岛格；低于 -1 既无大陆也无岛，只剩深海。</li>
+ *   <li>陆地只在约 -0.9 至 -1 的窄段偏移内退成海，故偏移沿 x 由两个 {@code guworld:x_gradient}（{@link XGradient}）
+ *       相加：西边界 {@link #WEST_OCEAN_OFFSET} 到 x {@link #ISLAND_EDGE_X} 的 {@link #ISLAND_OCEAN_OFFSET}，群岛由大陆
+ *       峰与大岛组成的海岸渐稀成散岛；到 x {@link #OPEN_SEA_X} 再降 {@link #OPEN_SEA_DROP}，以东低于岛屿区间，
+ *       为开阔海。</li>
+ *   <li>{@code vertical_scale}：海平面以上拉伸 {@link #VERTICAL_SCALE}，比 Tectonic 的 1.125 低五分之一，最高岛峰低于
+ *       y 260；{@code dunes}：无（{@link #DUNES}），本域把 Tectonic 热干格映射成沙岛。</li>
+ *   <li>{@code min_y}、{@code max_y}、{@code jungle_pillars}、{@code underground_rivers} 与
+ *       {@code underground_river_water}、{@code lava_tunnels} 同各域；{@link ColumnCaches} 包住移植的列函数，噪声区块每
+ *       列只算一次。</li>
  * </ul>
- * {@link ColumnCaches} wraps the ported column functions so a noise chunk computes each once per column.
  *
  * @author Alex
  * @version 1.0.0

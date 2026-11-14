@@ -4,10 +4,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
 /**
- * A biome's display name in the two authored languages, English and Simplified Chinese, which the language provider
- * ({@code datagen.lang.Translations}) writes; Traditional Chinese is converted from the Simplified column. Each region
- * lists the names of the biomes only it places, so a region's package names its own biomes and the provider only
- * collects the lists.
+ * 群系的英文、简体中文两种手写显示名。语言表 provider（{@code datagen.lang.Translations}）写出，繁体由简体列转换；
+ * 各域列出只有自己放置的群系名，provider 只汇总。
  *
  * @author Alex
  * @version 1.0.0

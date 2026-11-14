@@ -17,13 +17,14 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 /**
- * The registrations of the Spirit Spring [元泉] worldgen: the feature itself and the biome modifier that places it,
- * so {@link SpiritSpring} keeps only keys, biomes and the feature bootstraps.
+ * 元泉[Spirit Spring] 世界生成的注册：地物与放置它的群系修改器。
  *
- * <p>Annotated {@code @EventBusSubscriber}: {@link #onRegister} registers {@link SpiritSpringCluster} under
- * {@code SpiritSpring.ID}, which {@link #FEATURE} names. {@link #registerBiomeModifier} is the bootstrap
- * {@code datagen.DatapackProvider} runs for the biome modifier adding the placed feature to {@link SpiritSpring#BIOMES}
- * at {@code TOP_LAYER_MODIFICATION} (after vegetation).
+ * <ul>
+ *   <li>{@link SpiritSpring} 因此只留键、群系与地物引导；{@link #onRegister} 以 {@code SpiritSpring.ID}
+ *       注册 {@link SpiritSpringCluster}（即 {@link #FEATURE}）。</li>
+ *   <li>{@link #registerBiomeModifier} 是 {@code datagen.DatapackProvider} 运行的引导：
+ *       在 {@code TOP_LAYER_MODIFICATION}（植被后）把放置地物加进 {@link SpiritSpring#BIOMES}。</li>
+ * </ul>
  *
  * @author Alex
  * @version 1.0.0
