@@ -117,14 +117,15 @@ configurations {
 }
 
 // Guzhenren, the sibling project at ../mcmod-guzhenren (or -PguzhenrenDir), is a required mod, so every run
-// here, runData and the GameTests included, loads its built jar plus what it needs: Epic Fight and GeckoLib from its
-// run/mods. This mod compiles against none of them. A jar that is not there adds nothing, and the run
+// here, runData and the GameTests included, loads its built jar plus what it needs: Epic Fight, GeckoLib, Photon and
+// LDLib2 from its run/mods. This mod compiles against none of them. A jar that is not there adds nothing, and the run
 // then stops on the missing dependency; build Guzhenren first.
 def guzhenrenDir = file(providers.gradleProperty('guzhenrenDir').getOrElse('../mcmod-guzhenren'))
 
 dependencies {
     localRuntime fileTree(dir: new File(guzhenrenDir, 'build/libs'), include: 'guzhenren-*.jar', exclude: '*-sources.jar')
-    localRuntime fileTree(dir: new File(guzhenrenDir, 'run/mods'), include: ['epic-fight-*.jar', 'geckolib-*.jar'])
+    localRuntime fileTree(dir: new File(guzhenrenDir, 'run/mods'), include: [
+            'epic-fight-*.jar', 'geckolib-*.jar', 'photon-neoforge-*.jar', 'ldlib2-neoforge-*.jar'])
 }
 
 // GameTests run with the same Guzhenren set as the runs and compile against everything the mod compiles against.
