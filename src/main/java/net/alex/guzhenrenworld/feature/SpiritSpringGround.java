@@ -14,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
  *
  * <ul>
  *   <li>{@link #findSurfaceGround} 判定 {@link SpiritSpringCluster} 试的每个点，公开供 GameTest。</li>
- *   <li>山顶、山脚、平原皆可：中心 15×15（半径 {@link #FLAT_RADIUS}，约石盆边长两倍）
- *       内高差 ≤ {@link SpiritSpringBasin#MAX_RISE} 格，即整平能吸收的起伏。</li>
+ *   <li>平整：半径 {@link #FLAT_RADIUS} 内高差 ≤ {@link SpiritSpringBasin#MAX_RISE} 格，即整平能吸收的起伏；规格见
+ *       wiki《元泉生成》。</li>
  *   <li>植被先跑（{@code VEGETAL_DECORATION} 早于 {@code TOP_LAYER_MODIFICATION}），坡、水坑、树都改高度图：
  *       范围内有树、中心是树干或树叶即否决；无碰撞、躲过高度图的竹子与甘蔗在清空带
  *       （{@link SpiritSpringBasin#CLEAR_HEIGHT_ABOVE}）否决。</li>

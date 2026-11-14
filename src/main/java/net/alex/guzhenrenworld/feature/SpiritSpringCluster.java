@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
  * <ul>
  *   <li>找平地 {@link SpiritSpringGround#findSurfaceGround}，放石盆 {@link SpiritSpringBasin#placeStructure}；
  *       {@link SpiritSpring} 定键与放置数据，{@link SpiritSpringRegistration} 注册。</li>
- *   <li>抽中点长 1–5 个泉，概率 50%、20%、15%、10%、5%（{@link #CLUSTER_SIZE_WEIGHTS}，
- *       掷值上限 {@link #CLUSTER_ROLL_BOUND}）；成员距首个泉眼 8–10 格、彼此 ≥ 8 格，石盆不重叠，泉群约 25×25 格。</li>
+ *   <li>泉数权重 {@link #CLUSTER_SIZE_WEIGHTS}（掷值上限 {@link #CLUSTER_ROLL_BOUND}）与间距见 wiki《元泉生成》；石盆
+ *       不重叠。</li>
  *   <li>全在原点切比雪夫距离 {@link #MAX_ORIGIN_OFFSET} 内：地物可越出所在区块一个区块读写，±9 让 15×15 检查与石盆都不
  *       出 3×3 区块窗口。</li>
  *   <li>{@link #findMemberSpot} 每成员试 {@link #MEMBER_SPOT_ATTEMPTS} 个候选，全不过即跳过（数量是尝试，非定额）；

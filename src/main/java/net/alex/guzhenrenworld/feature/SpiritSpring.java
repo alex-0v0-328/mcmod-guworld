@@ -25,10 +25,10 @@ import net.minecraft.world.level.levelgen.placement.RarityFilter;
  *       后）把放置地物加进 {@link #BIOMES}；两个引导由 {@code datagen.DatapackProvider} 运行。</li>
  *   <li>{@code datagen.BiomeTagsProvider} 按 {@link #LAND_BIOMES} 与南疆陆地群系（{@code BiomeLayout.LAND}）
  *       填 {@link #BIOMES}；世界生成 ID 全在 {@code guworld}，方块、流体、物品与渲染归主模组。</li>
- *   <li>{@link #LAND_BIOMES}：39 种主世界陆地群系，抄自主模组野生蛊陆地表，或会分叉；无地下变体（洞穴难过检查）。</li>
+ *   <li>{@link #LAND_BIOMES}：主世界陆地群系，抄自主模组野生蛊陆地表，或会分叉；无地下变体（洞穴难过检查）。</li>
  *   <li>⚠ 陆地结构：{@link #LAND_BIOMES} 不得并成 {@code #minecraft:is_overworld}（含海洋、河流）。</li>
- *   <li>⚠ {@link #RARITY} 由 Alex 定，不得私调：每 300 区块抽一次，{@link SpiritSpringGround} 找到平地才成泉群。
- *       三块 256 格样区 1.2% 列过 15×15 检查，树林为 0；约 2% 抽中成群，主世界约每 15,000 区块一处（高度图估算）。</li>
+ *   <li>⚠ {@link #RARITY} 由 Alex 定，不得私调；{@link SpiritSpringGround} 找到平地才成泉群，频率估算见
+ *       wiki《元泉生成》。</li>
  * </ul>
  *
  * @author Alex

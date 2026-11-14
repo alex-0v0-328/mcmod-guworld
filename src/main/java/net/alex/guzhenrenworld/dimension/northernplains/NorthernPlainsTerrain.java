@@ -20,18 +20,15 @@ import net.minecraft.world.level.levelgen.DensityFunctions;
  *   <li>折叠侵蚀 {@value Reshaping#EROSION_FOLDED}：Tectonic 侵蚀离零的距离，定地形样条与 Terralith 表读的侵蚀，
  *       越低越山。乘 {@link #EROSION_SCALE} 加 {@link #EROSION_OFFSET}：山地带收窄到过零线附近，丘陵带略宽；
  *       上限 {@link #EROSION_CAP} 即 Terralith 低地段上沿，超过则表的下一段冰冻格全是冰川裂谷，超过 1 则 Tectonic
- *       长尖柱地形。地形与群系同步：平地、丘陵、山地占 74%、15%、10%。</li>
+ *       长尖柱地形。</li>
  *   <li>温度 {@value Reshaping#TEMPERATURE}（Terralith 表、Tectonic 地貌区、Terralith 冰刺都读）：Tectonic 温度噪声乘
  *       {@link #TEMPERATURE_SCALE} 加纬度 {@code guworld:z_gradient}，z {@code -}{@link #GRADIENT_EDGE} 及以北（-z
- *       为北）取 {@link #NORTH_TEMPERATURE}，z {@link #GRADIENT_EDGE} 及以南取 {@link #SOUTH_TEMPERATURE}。北部深在冰冻
- *       段，南部跨寒冷与温带段；缩小噪声使两头干净。地貌区与冰刺也读它，北部地貌偏寒、冰刺更多：接受的取舍。</li>
+ *       为北）取 {@link #NORTH_TEMPERATURE}，z {@link #GRADIENT_EDGE} 及以南取 {@link #SOUTH_TEMPERATURE}。</li>
  *   <li>{@link ColumnCaches} 包住移植的列函数（含两个改写函数），噪声区块每列只算一次；{@code min_y}、{@code max_y}、
  *       {@code jungle_pillars}、{@code underground_rivers} 与 {@code underground_river_water}、{@code lava_tunnels}
  *       同各域。</li>
- *   <li>{@code ocean_offset}：大陆度是折叠大陆噪声加此偏移（{@link #OCEAN_OFFSET}），同南疆 -0.1，抬起海岸带内侧最低地
- *       面，不留海。{@code vertical_scale}：海平面以上拉伸 {@link #VERTICAL_SCALE}，不到 Tectonic 1.125 的三分之二，
- *       少数山峰最高约 y 215。</li>
- *   <li>{@code dunes}：关（{@link #DUNES}），Tectonic 在热干格起沙丘，梯度下几乎采不到。</li>
+ *   <li>{@code ocean_offset}（{@link #OCEAN_OFFSET}）、{@code vertical_scale}（{@link #VERTICAL_SCALE}）、{@code dunes}
+ *       （{@link #DUNES}）的取值与温度、侵蚀的取舍见 wiki《北原#地形方法》。</li>
  * </ul>
  *
  * @author Alex

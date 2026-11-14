@@ -51,8 +51,7 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *       {@link #UNDERGROUND_RIVERS}、{@link #LAVA_TUNNELS}），四域全关；开则钩子指回移植函数，关则指向 0，零开销；只注
  *       册路由够得到的移植函数与噪声（{@link #SWITCHES} 列出开关函数），关掉的特性文件不进数据包
  *       （{@link Ports#registerDensityFunctions}）。</li>
- *   <li>丛林石柱：约 11 格粗、高至 100 格、平顶直壁的挤出柱，正是 Alex 为各域地貌否掉的规整柱形；地下河在山谷底下 y 32
- *       至 72 挖水道、给含水层充水，熔岩隧道沿底部走，二者在整列每个单元角点或方块读噪声，约占噪声填充四分之一。</li>
+ *   <li>三项全关的理由与开销见 wiki《南疆#硬件预算》。</li>
  * </ul>
  *
  * @author Alex

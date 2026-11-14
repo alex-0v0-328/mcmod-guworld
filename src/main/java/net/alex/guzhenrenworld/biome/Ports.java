@@ -77,6 +77,8 @@ import org.jetbrains.annotations.NotNull;
  *   <li>仍共用：{@code minecraft:overworld/base_3d_noise}（混合噪声不论 ID 都以原版 {@code minecraft:terrain} 为种
  *       子）、表层规则的噪声、随机状态里含水层与矿脉的位置。</li>
  *   <li>⚠ 文件只移植、不手改；需更多文件或上游更新时先写移植脚本、重新移植，再跑 {@code runData}。</li>
+ *   <li>有意超 300 行：两份移植共用清单读取、解码与域改名（{@link #getIndex}、{@link #decode}、{@link #getRegional}），
+ *       分成两类就得复制或公开这些私有方法。</li>
  * </ul>
  *
  * @author Alex

@@ -17,11 +17,7 @@ import net.minecraft.world.level.biome.Biome;
  *   <li>原样用 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系映射到本域名单（{@link #GROUPS}：
  *       名单群系 → 其替代的来源群系）；下层 Tectonic 地形（{@link Terrain}）把侵蚀与山脊重映射回该表分段，参数格保留
  *       Terralith 地形原型，得南疆同类群系。</li>
- *   <li>名单按地形带：山地为雾山、云雾林、裸岩峰、翠峰、丛林山、彩岩山、花岗岩崖、高山草甸，及嶂石岩（Terralith 崖与峡
- *       谷格）、喀斯特峰林（石林带格）两种地貌；丘陵台地为竹海（{@link BiomeSettings}）、雨林、高原、林间高原、桃林；平
- *       地为平原、兰花沼泽、热海、河流；地下为繁茂洞穴、溶洞。</li>
- *   <li>来源归同地貌、植被最近的名单群系：寒带归山地森林与草甸，沙漠与干灌丛归平原，恶地归彩岩山；Terralith 把雾山、翠
- *       峰、丛林山设得稀有，各多接一个常见邻居：原版山坡、尖峭山峰、岩石丛林。</li>
+ *   <li>名单与来源归属见 wiki《南疆#群系》。</li>
  *   <li>海洋、海滩、岛屿来源只为完整而映射，{@link Terrain} 的大陆度到不了。</li>
  *   <li>{@link #ROSTER}：能放的全部群系，含喀斯特峰林；{@link #LAND}：除河流外的地表群系，元泉[Spirit Spring]可生于此；
  *       {@link #CROPS}：陆地按 {@link WildCropClimate} 的温度降水规则分进农夫乐事野生作物气候。</li>

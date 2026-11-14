@@ -13,8 +13,7 @@ import org.jetbrains.annotations.NotNull;
  *   <li>{@link GroundScan} 不插值扫出；路由副本里 {@code flat_cache}、{@code cache_2d} 记住上一列的值
  *       （{@code flat_cache} 同噪声区块在 y 0 算输入），且不含刻河（{@link WaterwaysDensity#getUncarved}）：
  *       规划与岸带读刻河前地形。</li>
- *   <li>每列建噪声区块在 Gu World 路由上约 16 ms；本类 0.15–0.18 ms，95 分位误差 1–2 格，陆地最坏 6–10 格（P0 基准，
- *       wiki《Gu World 维护说明#地形性能工具》）。</li>
+ *   <li>耗时与误差基准见 wiki《Gu World 维护说明#地形性能工具》。</li>
  *   <li>岸带带猜测值（水面加下切）来问；噪声区块刻河时改扫本区块的地形副本，列缓存现成。</li>
  *   <li>⚠ 列记忆可变：每线程用自己的路由副本。</li>
  * </ul>

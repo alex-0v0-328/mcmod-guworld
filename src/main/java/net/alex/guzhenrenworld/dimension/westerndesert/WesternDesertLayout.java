@@ -16,13 +16,7 @@ import net.minecraft.world.level.biome.Biome;
  *   <li>原样用 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系映射到本域名单（{@link #GROUPS}：
  *       名单群系 → 其替代的来源群系）；下层本域 Tectonic 地形（{@link WesternDesertTerrain}）把侵蚀与山脊重映射回该表分
  *       段，参数格保留 Terralith 地形原型，得本域同类群系。</li>
- *   <li>名单按地形带：平沙为沙漠（Tectonic 沙丘）、古沙海、疏林沙漠、两种绿洲、热灌丛、荆丛地、戈壁、河流；丘陵台地峡谷
- *       为恶地、疏林恶地、风蚀恶地、白台地、石林峡谷、沙漠峡谷、砂岩谷、旱原高地；山地为暖山恶地的彩色陶瓦、冷山砂岩谷
- *       的砂岩、石林带格的沙漠石柱；地下为繁茂洞穴、溶洞。</li>
- *   <li>来源归同地貌、植被最近的名单群系：森林与丛林归热灌丛、疏林沙漠、疏林恶地，沼泽归绿洲，暖山归恶地。</li>
- *   <li>全域偏热（{@link WesternDesertTerrain} 把温度抬进暖、热两带，表在此放沙漠、恶地、峡谷、干灌丛），较冷格只去三
- *       处：温带平原、寒带平地与冰沼归戈壁（保留 Terralith 寒冷气候，当沙漠之夜）；寒带森林、丘陵、山坡归旱原高地；寒带
- *       山峰与冰川裂谷归砂岩谷。</li>
+ *   <li>名单与来源归属见 wiki《西漠#群系》。</li>
  *   <li>海洋、海滩、岛屿来源只为完整而映射，{@link WesternDesertTerrain} 的大陆度到不了。</li>
  *   <li>{@link #ROSTER}：全部可放群系，含沙漠石柱；{@link #LAND}：除河流外地表群系，元泉[Spirit Spring]可生于此。</li>
  *   <li>地形随侵蚀不随群系：Terralith 石林带（侵蚀 ≥ {@link BiomeTable#SPIRE_EROSION}）一律长 Tectonic 尖柱地形，故陆地

@@ -13,14 +13,10 @@ import net.minecraft.world.level.levelgen.DensityFunctions;
  * <ul>
  *   <li>移植自 Tectonic 与 Terralith 同装时的路由（{@link Ports#registerDensityFunctions}），只经移植留下的钩子改形
  *       （{@link #HOOKS}、{@link RegionBootstraps}）。</li>
- *   <li>{@code ocean_offset}：Tectonic 大陆度是折叠大陆噪声加此偏移。和低于 -0.5 处不出大陆，改由岛屿噪声的峰起岛；
- *       岛屿噪声低于 -1.07 处在三条侵蚀带出平坦岛，即 Terralith 远海岛格；低于 -1 既无大陆也无岛，只剩深海。</li>
- *   <li>陆地只在约 -0.9 至 -1 的窄段偏移内退成海，故偏移沿 x 由两个 {@code guworld:x_gradient}（{@link XGradient}）
- *       相加：西边界 {@link #WEST_OCEAN_OFFSET} 到 x {@link #ISLAND_EDGE_X} 的 {@link #ISLAND_OCEAN_OFFSET}，群岛由大陆
- *       峰与大岛组成的海岸渐稀成散岛；到 x {@link #OPEN_SEA_X} 再降 {@link #OPEN_SEA_DROP}，以东低于岛屿区间，
- *       为开阔海。</li>
- *   <li>{@code vertical_scale}：海平面以上拉伸 {@link #VERTICAL_SCALE}，比 Tectonic 的 1.125 低五分之一，最高岛峰低于
- *       y 260；{@code dunes}：无（{@link #DUNES}），本域把 Tectonic 热干格映射成沙岛。</li>
+ *   <li>{@code ocean_offset} 沿 x 由两个 {@code guworld:x_gradient}（{@link XGradient}）相加：西边界
+ *       {@link #WEST_OCEAN_OFFSET}，到 x {@link #ISLAND_EDGE_X} 为 {@link #ISLAND_OCEAN_OFFSET}，到 x
+ *       {@link #OPEN_SEA_X} 再降 {@link #OPEN_SEA_DROP}；各段成因与 {@link #VERTICAL_SCALE}、{@link #DUNES} 的取值见
+ *       wiki《东海#地形方法》。</li>
  *   <li>{@code min_y}、{@code max_y}、{@code jungle_pillars}、{@code underground_rivers} 与
  *       {@code underground_river_water}、{@code lava_tunnels} 同各域；{@link ColumnCaches} 包住移植的列函数，噪声区块每
  *       列只算一次。</li>

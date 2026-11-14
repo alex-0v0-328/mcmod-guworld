@@ -10,8 +10,7 @@ import java.util.stream.IntStream;
  *   <li>{@link #fill}：带 ε 的 Priority-Flood（Barnes、Lehman、Mulla 2014），从水、出口、边缘格出发，
  *       格下标 {@code row * size + column}、八邻域；填后高度为地面或洼地最低出口加 {@link #EPSILON}；记下出队序。</li>
  *   <li>八邻域最低、填后深于 {@link Waterways#LAKE_DEPTH} 格的格成汇点，作下轮起点，至不再新增或重跑
- *       {@link #MAX_SINK_PASSES} 轮：余湖不超该深度，流进更深洼地的溪流终于谷底，而非几十格深的湖或峡谷（无汇点时逾四分
- *       之一溪流格穿过这类洼地，最深 51 格）。</li>
+ *       {@link #MAX_SINK_PASSES} 轮：余湖不超该深度，流进更深洼地的溪流终于谷底，而非几十格深的湖或峡谷。</li>
  *   <li>{@link #getReceivers}：陆地格流向八邻域中填后高度每格落差最陡者（按偏移后取样点计距）；填洼父格必更低，
  *       故陆地格都有流向格。</li>
  *   <li>{@link #getCatchments}：按出队逆序沿流向累加；逆序中填后高度不升，一格总先于其流向格算完。</li>

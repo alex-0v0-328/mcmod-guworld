@@ -17,13 +17,7 @@ import net.minecraft.world.level.biome.Biome;
  *   <li>原样用 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系按 {@link #GROUPS}（名单群系 →
  *       其替代的来源）映射到本域；下层本域 Tectonic 副本（{@link EasternSeaTerrain}）把侵蚀与山脊重映射回该表的分段，
  *       参数格保留原地形原型，取同类群系。</li>
- *   <li>海：暖水海洋、温水海洋、海洋、深暖海、深海。海整体暖两档：冻洋成海洋与深海，冷水海洋成温水海洋，其余成暖水海洋
- *       或深暖海（无深温水海洋）；Terralith 浮空岛立在开阔海上，本域那里是水，故取所在温度档的浅海。</li>
- *   <li>海岸：沙滩、石岸、砾滩，沙漠成沙岛即沙滩。低地：岛屿，接全部温带、寒带、干旱低地来源；蜃岛，接 Terralith
- *       最深一档蘑菇岛旁的远海岛与开花、月光来源；雨林（南疆的，即 Terralith 热带丛林）和丛林，接全部湿润来源。</li>
- *   <li>高地：火山峰接暖山来源与黄石温泉，火山口接火山口与破火山口；玄武岩崖接又热又干的恶地、峡谷、石柱（海蚀柱）；
- *       白崖接全部凉或积雪的山地与悬崖来源。另有河流，地下有繁茂洞穴与溶洞。</li>
- *   <li>无来源映射到寒冷或冰冻群系，本域无雪无冰，Tectonic 抬得最高的峰上也没有。</li>
+ *   <li>名单与来源归属见 wiki《东海#群系》；无来源映射到寒冷或冰冻群系。</li>
  *   <li>{@link #ROSTER}：本域可放的全部群系；{@link #LAND}：除水体（{@link #WATER_AND_CAVES}）外的地表群系，
  *       元泉[Spirit Spring]可立于其上。</li>
  *   <li>⚠ {@link BiomeTable#getBiome} 遇未映射来源即抛错：重移植新增来源时 {@code runData} 失败，不丢格。</li>
