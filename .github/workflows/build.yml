@@ -67,8 +67,8 @@ jobs:
         working-directory: guzhenren
         run: ./gradlew assemble
 
-      # The test suites are local-only (src/test is gitignored) and run before every push through the
-      # maintainer's ship tool, so CI compiles, packages and checks generated data.
+      # 'build' runs the JUnit layer; the GameTests run before every push through Guzhenren's
+      # tools/commit_push.py.
       - name: Build with Gradle
         working-directory: guworld
         run: ./gradlew build -PguzhenrenDir="$GITHUB_WORKSPACE/guzhenren"

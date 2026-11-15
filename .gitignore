@@ -43,21 +43,14 @@ logs/
 repo/
 !**/src/**/repo/
 
-### Claude Code config, local-only in both repositories: the rules file, .claude/, personal instructions and the .mcp.json IDEA writes, as in Guzhenren ###
+### Agent files: sessions open in Guzhenren, whose rules cover this repository, so none belongs here ###
 /CLAUDE.md
 /CLAUDE.local.md
-/.claude/
-/.mcp.json
-
-### Codex config, local-only in both repositories: AGENTS.md (opencode reads it too), its personal override and .codex/, as in Guzhenren ###
 /AGENTS.md
 /AGENTS.override.md
+/.claude/
 /.codex/
-
-### opencode config, local-only in both repositories: opencode.json, a second config file and .opencode/, as in Guzhenren ###
+/.mcp.json
 /opencode.json
 /opencode.jsonc
 /.opencode/
-
-### Local-only tests: every test under src/test stays out of GitHub, as in Guzhenren ###
-src/test/

@@ -24,8 +24,7 @@ base {
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
-// Every test lives under src/test, one folder per layer, local-only and gitignored as in Guzhenren, and none of them
-// ships in the jar:
+// Every test lives under src/test, one folder per layer, and none of them ships in the jar:
 //   pure    L1 'pureTest': plain JVM JUnit, nothing booted -- the architecture rules and the logic that needs no
 //           registry. Anything touching a registered object or whose class loads a registry is L2.
 //   game    L2 'gametest': the @GameTest classes plus their scene templates, run by runGameTestServer on a real
@@ -104,10 +103,7 @@ neoForge {
     mods {
         "${mod_id}" {
             sourceSet(sourceSets.main)
-            // src/test is local-only (gitignored), so a CI checkout has no GameTests to join.
-            if (file('src/test/game/java').isDirectory()) {
-                sourceSet(sourceSets.gametest)
-            }
+            sourceSet(sourceSets.gametest)
         }
     }
 }
