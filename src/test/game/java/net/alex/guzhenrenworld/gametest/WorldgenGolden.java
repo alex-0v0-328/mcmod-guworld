@@ -73,8 +73,9 @@ public final class WorldgenGolden {
                     .append(", actual ").append(value);
         });
         helper.assertTrue(mismatches.isEmpty(), region + " terrain differs from the golden master:" + mismatches
-                + "\nIf the change is deliberate, run with JAVA_TOOL_OPTIONS=-D" + RECORD_SWITCH
-                + "=true and copy the golden-record lines of the log into " + SOURCE);
+                + "\nIf the change is deliberate, set $env:JAVA_TOOL_OPTIONS='-D" + RECORD_SWITCH
+                + "=true' in PowerShell, rerun the gametest stage and copy the golden-record lines of the log into "
+                + SOURCE);
     }
 
     private void mix(int value) {
