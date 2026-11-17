@@ -13,6 +13,7 @@ import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
 import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
+import net.alex.guzhenrenworld.feature.IntimateGrass;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
 import net.alex.guzhenrenworld.feature.SpiritSpringRegistration;
 import net.alex.guzhenrenworld.waterways.Waterways;
@@ -30,7 +31,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * <ul>
  *   <li>宝黄天[Treasure Yellow Heaven]的维度类型、群系、层级（{@link TreasureYellowHeaven}）；南疆竹海及其竹子
  *       （{@link BiomeSettings}）；元泉[Spirit Spring]配置地物、放置地物（{@link SpiritSpring}）与群系修改器
- *       （{@link SpiritSpringRegistration}）。</li>
+ *       （{@link SpiritSpringRegistration}）；野生知心草的配置地物、放置地物与群系修改器（{@link IntimateGrass}）。</li>
  *   <li>四域共用的维度类型；每域（{@link Regions#ALL}）的密度函数（Tectonic 路由加本域钩子）、噪声设置、
  *       层级（{@link RegionBootstraps}），及本域路由够到的移植地形副本，挂本域前缀下。</li>
  *   <li>群系：原版复刻（{@link Replicas#SHARED} 加各域的）、Terralith 移植群系连同地物（{@link Ports#BIOMES}
@@ -73,17 +74,20 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
             })
             .add(Registries.CONFIGURED_FEATURE, context -> {
                 SpiritSpring.registerConfiguredFeature(context);
+                IntimateGrass.registerConfiguredFeature(context);
                 WaterwaysRegistration.registerConfiguredFeature(context);
                 Ports.registerConfiguredFeatures(context);
             })
             .add(Registries.PLACED_FEATURE, context -> {
                 SpiritSpring.registerPlacedFeature(context);
+                IntimateGrass.registerPlacedFeature(context);
                 WaterwaysRegistration.registerPlacedFeature(context);
                 Ports.registerPlacedFeatures(context);
                 BiomeSettings.registerPlacedFeatures(context);
             })
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
                 SpiritSpringRegistration.registerBiomeModifier(context);
+                IntimateGrass.registerBiomeModifier(context);
                 WaterwaysRegistration.registerBiomeModifier(context, Regions.ALL.stream()
                         .flatMap(region -> region.biomes().roster().stream()).toList());
             });

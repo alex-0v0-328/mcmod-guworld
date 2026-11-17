@@ -8,6 +8,8 @@ import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.WildCropClimate;
 import net.alex.guzhenrenworld.dimension.Regions;
 import net.alex.guzhenrenworld.dimension.region.Region;
+import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
+import net.alex.guzhenrenworld.feature.IntimateGrass;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -26,6 +28,7 @@ import org.jetbrains.annotations.Nullable;
  *   <li>元泉[Spirit Spring]生成标签 {@link SpiritSpring#BIOMES}：{@link SpiritSpring#LAND_BIOMES}（元泉包管的主世界名
  *       单）加各域陆地群系；{@link WildCropClimate} 野生作物气候标签取 {@link Regions#ALL} 各域作物气候表；两域共有的群
  *       系（雨林）每标签只记一次。</li>
+ *   <li>野生知心草生成标签 {@link IntimateGrass#BIOMES}：同一份主世界名单加南疆陆地群系，别域不入。</li>
  *   <li>⚠ 每次数据生成仅一个：标签 provider 以注册表与模组命名，再加一个即重名失败；新群系标签加在这里。</li>
  * </ul>
  *
@@ -47,6 +50,10 @@ public class BiomeTagsProvider extends TagsProvider<Biome> {
         Set<ResourceKey<Biome>> land = new LinkedHashSet<>(SpiritSpring.LAND_BIOMES);
         Regions.ALL.forEach(region -> land.addAll(region.biomes().land()));
         land.forEach(spiritSpring::add);
+        TagAppender<Biome> intimateGrass = tag(IntimateGrass.BIOMES);
+        Set<ResourceKey<Biome>> grassland = new LinkedHashSet<>(SpiritSpring.LAND_BIOMES);
+        grassland.addAll(SouthernBorder.REGION.biomes().land());
+        grassland.forEach(intimateGrass::add);
         for (WildCropClimate climate : WildCropClimate.values()) {
             Set<ResourceKey<Biome>> biomes = new LinkedHashSet<>();
             for (Region region : Regions.ALL) biomes.addAll(region.biomes().crops().getOrDefault(climate, List.of()));

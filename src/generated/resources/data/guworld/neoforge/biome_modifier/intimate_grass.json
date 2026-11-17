@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#guworld:intimate_grass_generates",
+  "features": "guworld:intimate_grass",
+  "step": "vegetal_decoration"
+}

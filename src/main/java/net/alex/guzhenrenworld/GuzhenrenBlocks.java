@@ -10,9 +10,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
  * <ul>
  *   <li>不对主模组编译，故每个方块是指向其 ID 的 {@link DeferredHolder}，方块注册表填好后绑定；主模组为必需依赖，
  *       {@code get()} 只因 ID 写错抛错，不因缺模组；{@link #SPIRIT_SPRING} 是元泉[Spirit Spring]液体方块，流体取自方块
- *       状态，无需第二个 ID。</li>
+ *       状态，无需第二个 ID；{@link #INTIMATE_GRASS} 是野生两格高知心草。</li>
  *   <li>⚠ 每个 ID 对应主模组 {@code net.alex.guzhenren.registry.block.ModBlocks} 的一个方块：那边改名须同一任务改这里，
- *       否则元泉结构首次生成即失败。</li>
+ *       否则元泉结构、知心草丛首次生成即失败。</li>
  * </ul>
  *
  * @author Alex
@@ -24,6 +24,8 @@ public final class GuzhenrenBlocks {
 
     public static final DeferredHolder<Block, Block> SPIRIT_SPRING = DeferredHolder.create(Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath("guzhenren", "spirit_spring"));
+    public static final DeferredHolder<Block, Block> INTIMATE_GRASS = DeferredHolder.create(Registries.BLOCK,
+            ResourceLocation.fromNamespaceAndPath("guzhenren", "intimate_grass"));
 
     private GuzhenrenBlocks() {}
 }
