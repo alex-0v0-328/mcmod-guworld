@@ -31,7 +31,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * <ul>
  *   <li>宝黄天[Treasure Yellow Heaven]的维度类型、群系、层级（{@link TreasureYellowHeaven}）；南疆竹海及其竹子
  *       （{@link BiomeSettings}）；元泉[Spirit Spring]配置地物、放置地物（{@link SpiritSpring}）与群系修改器
- *       （{@link SpiritSpringRegistration}）；野生知心草的配置地物、放置地物与群系修改器（{@link IntimateGrass}）。</li>
+ *       （{@link SpiritSpringRegistration}）；野生知心草的配置地物、放置地物与群系修改器
+ *       （{@link IntimateGrass}）。</li>
  *   <li>四域共用的维度类型；每域（{@link Regions#ALL}）的密度函数（Tectonic 路由加本域钩子）、噪声设置、
  *       层级（{@link RegionBootstraps}），及本域路由够到的移植地形副本，挂本域前缀下。</li>
  *   <li>群系：原版复刻（{@link Replicas#SHARED} 加各域的）、Terralith 移植群系连同地物（{@link Ports#BIOMES}

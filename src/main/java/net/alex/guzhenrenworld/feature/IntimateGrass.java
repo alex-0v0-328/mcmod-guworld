@@ -39,7 +39,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  *   <li>{@code datagen.BiomeTagsProvider} 以 {@link SpiritSpring#LAND_BIOMES}（中州，即主世界陆地）加南疆陆地群系填
  *       {@link #BIOMES}；沙漠、雪峰等无草方块的群系在名单内也长不出。</li>
  *   <li>⚠ 标签按群系不按维度：南疆与别域共用的群系（雨林）在别域同样生成。</li>
- *   <li>群系修改器挂 {@code VEGETAL_DECORATION}，与原版草、花同步；三个引导由 {@code datagen.DatapackProvider} 运行。</li>
+ *   <li>群系修改器挂 {@code VEGETAL_DECORATION}，与原版草、花同步；三个引导由 {@code datagen.DatapackProvider}
+ *       运行。</li>
  * </ul>
  *
  * @author Alex
