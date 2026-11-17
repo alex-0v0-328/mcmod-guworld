@@ -130,10 +130,6 @@ public final class WaterwaysIndex {
         return tag;
     }
 
-    public Waterways.Region region() {
-        return region;
-    }
-
     public int segments() {
         return segments;
     }

@@ -33,10 +33,10 @@ public final class WaterwaysData extends SavedData {
     private CompoundTag index = new CompoundTag();
 
     public static Factory<WaterwaysData> factory() {
-        return new Factory<>(WaterwaysData::new, WaterwaysData::load);
+        return new Factory<>(WaterwaysData::new, (tag, registries) -> load(tag));
     }
 
-    private static WaterwaysData load(CompoundTag tag, HolderLookup.Provider registries) {
+    private static WaterwaysData load(CompoundTag tag) {
         WaterwaysData data = new WaterwaysData();
         data.key = tag.getString("key");
         data.seed = tag.getLong("seed");

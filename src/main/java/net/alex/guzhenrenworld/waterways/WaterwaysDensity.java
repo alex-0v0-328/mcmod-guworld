@@ -14,6 +14,7 @@ import net.minecraft.world.level.levelgen.NoiseChunk;
 import net.minecraft.world.level.levelgen.NoiseRouter;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 密度函数类型 {@code guworld:waterways}：刻入水系的区域最终密度。
@@ -25,7 +26,8 @@ import org.jetbrains.annotations.NotNull;
  *       洞穴保留；空气原样返回，地表只由实心方块来问。噪声区块内岸带经本副本包住的地形读地面，列缓存已填好。</li>
  *   <li>雕刻器由 {@link WaterwaysRuntime} 按摆动噪声实例认领：{@code RandomState} 每维度只建一个，交给区块复制的每个副
  *       本；未挂雕刻器的随机状态（如测试自建）地形原样。</li>
- *   <li>副本在首个实心方块查一次雕刻器；噪声区块每区块复制本函数，挂、摘从下一区块生效。</li>
+ *   <li>副本在首个实心方块查一次雕刻器；噪声区块每区块复制本函数，挂、摘从下一区块生效。{@code lookup} 为 null 即未查；
+ *       单引用读写，多线程同时首查无需加锁。</li>
  * </ul>
  *
  * @author Alex
@@ -54,7 +56,7 @@ public final class WaterwaysDensity implements DensityFunction {
     private final Waterways.Region region;
     private final NoiseHolder meander;
     private final DensityFunction argument;
-    private Optional<WaterwaysCarver> carver;
+    private @Nullable Lookup lookup;
 
     private WaterwaysDensity(Waterways.Region region, NoiseHolder meander, DensityFunction argument) {
         this.region = region;
@@ -75,8 +77,8 @@ public final class WaterwaysDensity implements DensityFunction {
 
     public static Optional<WaterwaysDensity> find(NoiseRouter router) {
         DensityFunction function = router.finalDensity();
-        while (function instanceof DensityFunctions.HolderHolder holder) {
-            function = holder.function().value();
+        while (function instanceof DensityFunctions.HolderHolder(var held)) {
+            function = held.value();
         }
         return function instanceof WaterwaysDensity waterways ? Optional.of(waterways) : Optional.empty();
     }
@@ -128,14 +130,17 @@ public final class WaterwaysDensity implements DensityFunction {
     }
 
     private double carve(double density, FunctionContext context) {
-        Optional<WaterwaysCarver> resolved = carver;
+        Lookup resolved = lookup;
         if (resolved == null) {
-            resolved = Optional.ofNullable(WaterwaysRuntime.find(meander.noise()));
-            carver = resolved;
+            resolved = new Lookup(WaterwaysRuntime.find(meander.noise()));
+            lookup = resolved;
         }
-        if (resolved.isEmpty()) return density;
-        double surface = resolved.get().getSurface(context.blockX(), context.blockZ(),
+        WaterwaysCarver carver = resolved.carver();
+        if (carver == null) return density;
+        double surface = carver.getSurface(context.blockX(), context.blockZ(),
                 context instanceof NoiseChunk ? argument : null);
         return surface == Double.POSITIVE_INFINITY ? density : Math.min(density, SLOPE * (surface - context.blockY()));
     }
+
+    private record Lookup(@Nullable WaterwaysCarver carver) {}
 }

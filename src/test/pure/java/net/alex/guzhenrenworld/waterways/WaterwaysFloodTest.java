@@ -39,9 +39,10 @@ class WaterwaysFloodTest {
         int[] x = new int[count];
         int[] z = new int[count];
         for (int cell = 0; cell < count; cell++) {
+            int row = cell / SIZE;
             x[cell] = cell % SIZE * Waterways.CELL;
-            z[cell] = cell / SIZE * Waterways.CELL;
-            ground[cell] = 20F + cell / SIZE * 5F + (cell % SIZE == 2 ? 0F : 2F);
+            z[cell] = row * Waterways.CELL;
+            ground[cell] = 20F + row * 5F + (cell % SIZE == 2 ? 0F : 2F);
         }
         double[] filled = new double[count];
         int[] order = new int[count];

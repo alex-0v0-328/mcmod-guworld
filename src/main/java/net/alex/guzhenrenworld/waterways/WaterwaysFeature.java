@@ -81,6 +81,7 @@ public final class WaterwaysFeature extends Feature<NoneFeatureConfiguration> {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     public static boolean isOpen(BlockState state) {
         return state.isAir() || !state.isSolid() && state.getFluidState().isEmpty() && !state.hasBlockEntity();
     }
@@ -108,6 +109,7 @@ public final class WaterwaysFeature extends Feature<NoneFeatureConfiguration> {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private static boolean isReplaceable(BlockState state) {
         return state.getFluidState().isEmpty() && state.isSolid() && !state.hasBlockEntity()
                 && !state.is(Tags.Blocks.ORES);

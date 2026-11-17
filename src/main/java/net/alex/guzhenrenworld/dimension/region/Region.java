@@ -42,7 +42,7 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
  * @param name     每个键的路径，也是该域在移植地形里的前缀
  * @param title    维度显示名
  * @param seaLevel 噪声设置的海平面
- * @param dry      是否只有最宽的水系有水（{@link Waterways.Region#dry}）
+ * @param dry      是否只有最宽的水系有水（{@link Waterways.Region#dry()}）
  * @param bed      水系水下的方块
  * @param biomes   该域放置的群系
  * @param hooks    该域如何填它那份移植地形的钩子

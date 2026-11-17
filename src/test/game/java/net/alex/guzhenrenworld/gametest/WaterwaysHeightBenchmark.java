@@ -139,7 +139,7 @@ public final class WaterwaysHeightBenchmark {
                 sink += estimate.applyAsDouble(i);
             }
             double micros = (System.nanoTime() - started) / 1e3 / count;
-            if (round > 0 && sink == sink) best = Math.min(best, micros);
+            if (round > 0 && !Double.isNaN(sink)) best = Math.min(best, micros);
         }
         boolean[] all = new boolean[count];
         Arrays.fill(all, true);

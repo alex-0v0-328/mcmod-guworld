@@ -72,12 +72,12 @@ import org.slf4j.Logger;
  *   <li>窗口 16×16 区块照 {@link SouthernBorderNoiseBenchmark} 填进 {@link ProtoChunk} 两遍：先由包装原样放过地形，
  *       再在区域 {@link RandomState} 上挂雕刻器；每遍先空跑一排区块。</li>
  *   <li>记建图耗时、全区与窗口线段数、窗口内 {@code OCEAN_FLOOR_WG} 变动列占比及降、升列数（刻河只削，升应为 0）、
- *       最大与平均下切、{@link WaterwaysCarver#getSurface} 有限的列、前后每区块毫秒数。</li>
+ *       最大与平均下切、{@link WaterwaysCarver#getSurface(int, int)} 有限的列、前后每区块毫秒数。</li>
  *   <li>写 {@code <region>-before.png}、{@code <region>-after.png}（海底晕渲，{@code WORLD_SURFACE_WG} 高于海底处水蓝，
  *       每格 2 像素）与 {@code <region>-cut.png}（下切深度：0 灰，1 到 8 及以上黄渐红，抬高品红）。</li>
  *   <li>写 {@code <region>-section.png}：窗口最长三条线段中点的高度剖面，每侧 24 格，每格 8 像素；灰为刻前，黑为刻后，
  *       蓝为刻后水面。</li>
- *   <li>放水：窗口区块挂雕刻器重填，逐个跑 {@link WaterwaysFeature#fill} 并计时；不跑表层规则，故河床替换石头。</li>
+ *   <li>放水：窗口区块挂雕刻器重填，逐个跑 {@link WaterwaysFeature#fill(WaterwaysCarver, ChunkPos, BlockGetter, java.util.function.BiConsumer)} 并计时；不跑表层规则，故河床替换石头。</li>
  *   <li>记河道列（湿河道分有水、缺水、溢出，溢出指底低于刻河河底而留干；干沟另计）、海平面以上河道外水列、水深、
  *       窗口内海平面及以上侧面挨空格的水块（地物在此排流体刻：台阶、矮岸与溢出）、河床方块直方图。</li>
  *   <li>写 {@code <region>-water.png}：每格 1 像素，地面晕渲，水蓝且越深越暗，干沟沙色，露空水面红，河道外水品红；
@@ -239,7 +239,7 @@ public final class WaterwaysCarveMaps {
         WindowBlocks blocks = new WindowBlocks(chunks, chunkX, chunkZ, terrain.column());
         long started = System.nanoTime();
         for (ProtoChunk chunk : chunks) {
-            WaterwaysFeature.fill(carver, chunk.getPos(), blocks, (pos, state) -> blocks.set(pos, state));
+            WaterwaysFeature.fill(carver, chunk.getPos(), blocks, blocks::set);
         }
         double millis = (System.nanoTime() - started) / 1e6 / chunks.length;
         int sea = terrain.generator().getSeaLevel();

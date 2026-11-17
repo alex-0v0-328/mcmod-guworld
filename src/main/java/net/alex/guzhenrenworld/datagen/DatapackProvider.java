@@ -63,12 +63,10 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 Regions.ALL.forEach(region -> RegionBootstraps.registerNoises(context, region));
                 Waterways.registerNoises(context);
             })
-            .add(Registries.DENSITY_FUNCTION, context -> {
-                Regions.ALL.forEach(region -> RegionBootstraps.registerDensityFunctions(context, region));
-            })
-            .add(Registries.NOISE_SETTINGS, context -> {
-                Regions.ALL.forEach(region -> RegionBootstraps.registerNoiseSettings(context, region));
-            })
+            .add(Registries.DENSITY_FUNCTION, context ->
+                    Regions.ALL.forEach(region -> RegionBootstraps.registerDensityFunctions(context, region)))
+            .add(Registries.NOISE_SETTINGS, context ->
+                    Regions.ALL.forEach(region -> RegionBootstraps.registerNoiseSettings(context, region)))
             .add(Registries.LEVEL_STEM, context -> {
                 TreasureYellowHeaven.registerLevelStem(context);
                 Regions.ALL.forEach(region -> RegionBootstraps.registerLevelStem(context, region));
