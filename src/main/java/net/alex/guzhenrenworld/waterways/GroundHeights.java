@@ -7,20 +7,16 @@ import net.minecraft.world.level.levelgen.NoiseRouter;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 水系规划读的地面高度：最终密度大于零的最高方块之上一格。
- *
+ * 水系规划与河岸过渡使用的刻河前地表高度采样器（定义为最终密度大于零的最高实心方块上方一格）。
  * <ul>
- *   <li>{@link GroundScan} 不插值扫出；路由副本里 {@code flat_cache}、{@code cache_2d} 记住上一列的值
- *       （{@code flat_cache} 同噪声区块在 y 0 算输入），且不含刻河（{@link WaterwaysDensity#getUncarved}）：
- *       规划与岸带读刻河前地形。</li>
- *   <li>耗时与误差基准见 wiki《Gu World 维护说明#地形性能工具》。</li>
- *   <li>岸带带猜测值（水面加下切）来问；噪声区块刻河时改扫本区块的地形副本，列缓存现成。</li>
- *   <li>⚠ 列记忆可变：每线程用自己的路由副本。</li>
+ *   <li>基于剥离了水系雕刻外壳的底层最终密度函数（{@link WaterwaysDensity#getUncarved}），通过 {@link GroundScan} 在不
+ *       依赖区块插值的情况下直接扫描地表高度；同时将路由中的 {@code flat_cache} 与 {@code cache_2d} 节点替换为记住上一
+ *       水平列求值结果的{@link ColumnMemo}，避免同一列垂直扫描时重复计算水平噪声。</li>
+ *   <li>规划阶段调用无猜测值的 {@link #sample(int, int)} 从顶向下扫描；河岸过渡阶段传入预估高度（水面加下切深度）调用带
+ *       {@code guess} 的重载，在噪声区块内雕刻时更直接复用当前区块已填充列缓存的地形密度函数副本。</li>
+ *   <li>⚠ {@link ColumnMemo} 内部持有可变的上一列坐标与缓存值，因此每个工作线程必须通过 {@link #terrain}（
+ *       {@link ThreadLocal}）各自持有独立的密度函数树副本，严禁跨线程共享。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class GroundHeights {

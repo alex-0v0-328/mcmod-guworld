@@ -12,19 +12,17 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 把域的表层规则裁到本域放置的群系。
+ * 域表层规则的群系裁剪器，将完整的组合表层规则树裁剪至当前域实际放置的群系集合。
  * <ul>
- *   <li>域规则由整棵规则树拼成，含原版主世界规则（{@link Replicas#getSurfaceRules}），点名几十个本域不放的群系；表层系
- *       统对地表附近每个方块都走规则，这些分支每方块白做一次群系判断。</li>
- *   <li>{@link #getPruned} 从 {@code sequence} 删去群系判断不含名单群系的 {@code condition}，删去空 {@code sequence}
- *       与无事可做的 {@code condition}，其余群系列表裁到名单；方块下群系总在名单内，被删分支本不生效，地表不变。</li>
- *   <li>⚠ 名单须含群系源可能返回的每个群系，漏掉的失去表层规则；{@code not} 下的群系判断不动。</li>
+ *   <li>各域的表层规则由移植规则与原版主世界规则（{@link Replicas#getSurfaceRules}）拼接而成，包含数十个不在本域生成的
+ *       群系分支；由于原版表层系统会对地表附近的每个方块逐一评估规则树，未出现的群系分支会在每个方块上造成无意义的群系
+ *       判定开销。</li>
+ *   <li>{@link #getPruned} 会遍历规则 JSON，将群系条件（{@code minecraft:biome}）中的群系列表裁剪为本域名单的交集，并递
+ *       归移除交集为空的条件分支与变空的 {@code sequence} 节点；由于域内生成的群系必然属于本域名单，裁剪不会改变任何实
+ *       际地表方块。</li>
+ *   <li>⚠ 传入的群系名单必须涵盖本域群系源可能返回的全部群系（不处理 {@code not} 取反条件下的群系判断），遗漏任何群系都
+ *       会导致该群系丢失表层方块规则。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see Replicas
- * @since 1.0.0
  */
 
 public final class SurfacePruning {

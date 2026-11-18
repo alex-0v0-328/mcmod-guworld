@@ -28,20 +28,14 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 /**
- * 水系的接线，与被接的各部分分开。
- *
+ * 水系系统的注册、数据包引导与服务端维度生命周期事件入口。
  * <ul>
- *   <li>{@link #onRegister} 注册密度函数类型 {@code guworld:waterways}（{@link WaterwaysDensity#MAP_CODEC}）
- *       与同名地物 {@link WaterwaysFeature}，数据生成运行也触发，供提供器编码；维度加载、
- *       卸载转给 {@link WaterwaysRuntime}，服务端停止时清空雕刻器。</li>
- *   <li>三个 {@code register*} 是 {@code datagen.DatapackProvider} 运行的引导：地物每区块一次、无放置修饰器，
- *       在 {@code raw_generation} 加进提供器传入的各区域花名册群系。</li>
+ *   <li>{@link #onRegister} 在模组总线上注册密度函数类型 {@code guworld:waterways}（{@link WaterwaysDensity#MAP_CODEC}
+ *       ）与同名地物 {@link WaterwaysFeature}（数据生成阶段同样触发，以供数据包生成器编码）；服务端维度加载、卸载与停服
+ *       事件则转发给{@link WaterwaysRuntime} 管理雕刻器实例。</li>
+ *   <li>三个 {@code register*} 引导方法由 {@code datagen.DatapackProvider} 调用：将无放置修饰器（每区块固定执行一次）的
+ *       水系地物在 {@code RAW_GENERATION} 阶段挂载到传入的四域全量群系名册上。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see WaterwaysDensity
- * @since 1.0.0
  */
 
 @EventBusSubscriber(modid = GuWorld.MOD_ID)

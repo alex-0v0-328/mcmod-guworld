@@ -12,19 +12,16 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 /**
- * 本模组数据生成期全部生成器的接线。
- *
+ * 本模组数据生成阶段全部 Provider 的统一挂载入口。
  * <ul>
- *   <li>{@code GatherDataEvent} 时加入 {@code datagen/} 下全部 provider；NeoForge 每次运行每种只许一个（语言表每语言一
- *       个），故都在此，条目取自功能包 {@code biome}、{@code dimension}、{@code feature}。</li>
- *   <li>产物为入库源集 {@code src/generated/resources}，由 {@code runData} 写出；也加载必需的主模组，但 NeoForge
- *       只执行 {@code --mod} 所指模组的生成器，主模组 provider 不写入。</li>
- *   <li>⚠ 产物入库：改 provider 不重新生成，构建照样全绿，jar 却带旧数据。</li>
+ *   <li>在 {@link GatherDataEvent} 中注册 {@code datagen/} 包下的全部生成器；由于 NeoForge 要求每种注册表或数据包生成器
+ *       在单次运行中仅注册一个实例（语言表按语言各一个），因此集中在此处从 {@code biome}、{@code dimension}、
+ *       {@code feature} 等功能包汇总数据。</li>
+ *   <li>生成产物通过 {@code runData} 写入入库源集 {@code src/generated/resources}；运行期虽会一并加载依赖的主模组，但
+ *       NeoForge 仅执行 {@code --mod} 指定模组的生成器，不会触发主模组的 Provider。</li>
+ *   <li>⚠ 生成产物直接提交进版本库：修改任何 Provider 后若未重新执行 {@code runData}，常规编译仍会通过，但构建出的 Jar
+ *       会带着旧数据。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 @EventBusSubscriber(modid = GuWorld.MOD_ID)

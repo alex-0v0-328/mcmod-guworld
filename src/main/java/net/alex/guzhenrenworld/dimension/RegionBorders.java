@@ -19,22 +19,19 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 /**
- * 各有限域（{@link Regions#ALL}）的方形世界边界：中心 0, 0，边长 {@link Region#BORDER_SIZE}。
- *
+ * 四域维度（{@link Regions#ALL}）的独立方形世界边界管理器（以 {@code (0, 0)} 为中心、边长 {@link Region#BORDER_SIZE}
+ * 格）。
  * <ul>
- *   <li>原版边界只属主世界：其余维度经委托监听器跟随主世界，存档设置待全部维度加载后才应用，{@code /worldborder}
- *       只改主世界，玩家在任何维度收到的都是主世界边界；故 {@link RegionBorderEvents} 在原版之后调进本类。</li>
- *   <li>{@link #start}：服务器启动、原版完成后应用各域尺寸并记日志，在主世界边界上原版监听器之后加监听器，主世界变动经
- *       委托传到玩家后重新应用并重发；{@link #sendBorder}：原版在登录、换维度、重生时发出主世界边界后调用；域内玩家改收
- *       本域边界，离域玩家照收原版的主世界边界。</li>
- *   <li>伤害、警告距离、警告时间沿用主世界（原版本就委托）；尺寸不存档，每次启动取自代码，改后下次启动生效。</li>
- *   <li>⚠ 域边界是全服常量：{@code /worldborder} 只改主世界，各域不变。</li>
+ *   <li>原版世界边界默认绑定主世界：其余维度通过委托监听器被动跟随主世界边界，{@code /worldborder} 指令也仅修改主世界，
+ *       且玩家在任何维度登录、切换维度或重生时原版均下发主世界边界包；因此需由 {@link RegionBorderEvents} 在原版流程之
+ *       后介入覆写。</li>
+ *   <li>{@link #start} 在服务端启动完成后将各域的服务端边界设为固定中心与边长，并在主世界边界的委托监听器之后追加
+ *       {@link Reapplier}，使得每当主世界边界变更穿透到各维度后立刻重新覆写四域边界并向域内玩家重发数据包；
+ *       {@link #sendBorder}则在玩家登录、切换维度或重生后为处于四域内的玩家下发当前域的边界包。</li>
+ *   <li>边界伤害、安全区与警告距离仍沿用主世界的委托配置；四域边界尺寸不写入存档，始终以代码常量为准。</li>
+ *   <li>⚠ 四域边界为服务端代码常量，执行 {@code /worldborder} 仅会改变主世界，四域边界会被 {@link Reapplier} 立即恢复为
+ *       {@link Region#BORDER_SIZE}。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see Regions
- * @since 1.0.0
  */
 
 public final class RegionBorders {

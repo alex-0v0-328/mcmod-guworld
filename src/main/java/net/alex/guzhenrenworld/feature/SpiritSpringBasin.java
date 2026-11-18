@@ -14,25 +14,19 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 元泉[Spirit Spring] 石盆：7×7，以中心列地面高 g 分三层。
- *
+ * 元泉 7×7 石盆结构的方块放置逻辑，以中心列的地表高度 {@code g} 为基准分三层构筑。
  * <ul>
- *   <li>g = {@code MOTION_BLOCKING_NO_LEAVES} − 1；g − 1 层方解石池底，g 层铺半砖、立方解石柱，g + 1 层放源方块。</li>
- *   <li>g 层柱周清空（{@code a}），四股水落池、池沿兜住不外漫；外缘 {@code x} 格留原地形。</li>
- *   <li>非 {@code x} 列（{@link #COLUMNS}）先整平到 g：低 ≤ {@link #MAX_RISE} 格垫泥土至池底下，
- *       g 上清空 {@link #CLEAR_HEIGHT_ABOVE} 格（容高 {@link #MAX_RISE} 格带双格植物或雪的地面），
- *       即 {@link SpiritSpringGround} 容许的起伏。</li>
- *   <li>{@link #placeStructure} 落在 {@link SpiritSpringCluster} 选的点，公开供 GameTest（{@code ServerLevel}）。</li>
- *   <li>泉方块（连同流体、物品、渲染）属主模组，因不编译依赖主模组，经 {@link GuzhenrenBlocks#SPIRIT_SPRING} 按 ID 取；
- *       首次流体刻给默认状态的流体（源）。</li>
- *   <li>⚠ 布局由 Alex 定，不得私调。符号：{@code x} 保留，{@code a} 空气（池井），{@code y} 圆石，{@code t}
- *       苔石，{@code f} 方解石，{@code c}、{@code m} 圆石、苔石半砖（下半）。</li>
+ *   <li>基准高 {@code g} 取 {@code MOTION_BLOCKING_NO_LEAVES - 1}：{@code g - 1} 层（{@link #LAYER_ONE}）铺设方解石池底
+ *       与外缘石料，{@code g} 层（{@link #LAYER_TWO}）铺设下半砖池沿、留出池井空气（{@code a}）并立起中心方解石柱，
+ *       {@code g + 1}层在中心柱顶放置元泉液体源方块并立即调度一次流体刻使其向四周流下池井。</li>
+ *   <li>放置前先对非保留列（{@link #COLUMNS}，即非 {@code x} 格）做地形整平：地面低于 {@code g - 1} 的列（至多低
+ *       {@link #MAX_RISE} 格）向上垫泥土至池底下方，并在 {@code g} 层以上清空 {@link #CLEAR_HEIGHT_ABOVE} 格高度以清除
+ *       隆起地面上的双格植物或积雪。</li>
+ *   <li>{@link #placeStructure} 在 {@link SpiritSpringCluster} 选定的落点生成石盆（公开供 GameTest 直接调用）；元泉液体
+ *       方块通过 {@link GuzhenrenBlocks#SPIRIT_SPRING} 按注册 ID 获取，避免编译期依赖主模组。</li>
+ *   <li>模板字符映射：{@code x} 保留原地形，{@code a} 为空气（池井），{@code y} 为圆石，{@code t} 为苔石，{@code f} 为
+ *       方解石，{@code c} 与 {@code m} 分别为圆石下半砖与苔石下半砖。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see SpiritSpringCluster
- * @since 1.0.0
  */
 
 public final class SpiritSpringBasin {

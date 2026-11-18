@@ -6,17 +6,10 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.dimension.DimensionType;
 
 /**
- * 露天 Gu World 维度的维度类型，同主世界。
- * <ul>
- *   <li>{@link #create} 固定与主世界相同的字段：无固定时间、有天空光照、无顶棚、非极热、自然维度（时钟、指南针、床可
- *       用，床设重生点）、坐标缩放 1、逻辑高度即总高度、{@code #minecraft:infiniburn_overworld}、无环境光；调用方给高度
- *       范围、重生锚是否可用、天空效果 ID、刷怪设置。</li>
- *   <li>放根包、{@link GuWorld} 旁，{@code dimension} 下各域共用而互不依赖；不引用功能包。</li>
- * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
+ * 本模组露天维度（四域与宝黄天）共用的 {@link DimensionType} 构建工具。{@link #create} 将露天维度的公共属性固定为与原版
+ * 主世界一致（无固定时间、有天空光照、无基岩顶棚、非极热、自然维度使钟与指南针及床正常生效、坐标缩放为 1、逻辑高度等于
+ * 总高度、使用主世界无限燃烧标签、无额外环境光），仅由调用方指定垂直高度范围、重生锚是否可用、客户端天空效果 ID 与怪物
+ * 生成设置。
  */
 
 public final class SurfaceDimensionTypes {

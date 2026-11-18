@@ -17,22 +17,18 @@ import net.minecraft.world.level.dimension.LevelStem;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 
 /**
- * 本模组三语全部文本，注册键、英文、简中并排成表。
- *
+ * 本模组英、简、繁三语翻译表的统一数据生成器。
  * <ul>
- *   <li>provider 每种 {@link Language} 跑一次、只写本栏，键必齐；繁中由简中经 {@link TraditionalGlyphs} 只转字形。</li>
- *   <li>键一律由所指注册键生成（{@link #getLanguageKey}：类型加注册 ID），不用裸字符串，改名不留指空的键。</li>
- *   <li>{@link #addDimension} 写维度名与 Traveler's Titles 标题；{@link #addTitleColor} 写标题色，
- *       按 {@code travelerstitles.*} 惯例为小写十六进制、无 {@code #}，各语言相同；{@link #addBiomes} 按序给群系配英
- *       文、简中名，或取域的 {@link BiomeName} 名单；宝黄天[Treasure Yellow Heaven]唯一群系沿用维度名。</li>
- *   <li>⚠ 两种写法都是权威，不互为翻译；{@link #addBiomes} 名字对数与群系数不符、{@link TraditionalGlyphs} 遇新字都抛
- *       错，漏名或新字令 {@code runData} 失败，不发裸键。</li>
+ *   <li>每种 {@link Language} 各自实例化并运行一次，共享同一套词条注册逻辑以保证三语键集合严格一致；繁体中文由简体中文
+ *       经{@link TraditionalGlyphs#convert} 自动转换字形。</li>
+ *   <li>所有翻译键均通过 {@link #getLanguageKey} 由对应的 {@link ResourceKey} 动态派生，不使用硬编码字符串，避免资源改
+ *       名后残留悬空翻译键。</li>
+ *   <li>{@link #addDimension} 同时写出原版维度名与 Traveler's Titles 标题，{@link #addTitleColor} 按该模组约定写出不带
+ *       {@code #} 的 6 位小写十六进制颜色值；{@link #addBiomes} 按顺序或按各域 {@link BiomeName} 列表写出群系译名，宝黄
+ *       天（{@link TreasureYellowHeaven}）的唯一群系直接沿用维度名称。</li>
+ *   <li>⚠ 英文与简体中文均为手写权威定稿，不互为机翻；若 {@link #addBiomes} 传入的译名对数与群系数量不匹配，或简体文本
+ *       包含{@link TraditionalGlyphs} 未收录的新汉字，都会在 {@code runData} 阶段直接抛错失败。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see TraditionalGlyphs
- * @since 1.0.0
  */
 
 public class Translations extends LanguageProvider {

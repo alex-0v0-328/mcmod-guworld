@@ -11,22 +11,16 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
 /**
- * 东海的群系摆放。
- *
+ * 东海维度的多噪声群系分布映射。
  * <ul>
- *   <li>原样用 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系按 {@link #GROUPS}（名单群系 →
- *       其替代的来源）映射到本域；下层本域 Tectonic 副本（{@link EasternSeaTerrain}）把侵蚀与山脊重映射回该表的分段，
- *       参数格保留原地形原型，取同类群系。</li>
- *   <li>名单与来源归属见 wiki《东海#群系》；无来源映射到寒冷或冰冻群系。</li>
- *   <li>{@link #ROSTER}：本域可放的全部群系；{@link #LAND}：除水体（{@link #WATER_AND_CAVES}）外的地表群系，
- *       元泉[Spirit Spring]可立于其上。</li>
- *   <li>⚠ {@link BiomeTable#getBiome} 遇未映射来源即抛错：重移植新增来源时 {@code runData} 失败，不丢格。</li>
+ *   <li>基于 Terralith 主世界多噪声参数表（{@link Ports#getBiomeParameters}），按 {@link #GROUPS} 将来源群系映射为东海
+ *       群系（不存在寒冷或冰冻群系）；底层 Tectonic 地形副本（{@link EasternSeaTerrain}）会将侵蚀度与山脊值重映射回该表
+ *       分段，使各气候参数格保留原有地形原型并替换为东海同类群系。</li>
+ *   <li>{@link #ROSTER} 为东海可生成的全部群系集合；{@link #LAND} 为剔除水体与洞穴（{@link #WATER_AND_CAVES}）后的陆地
+ *       群系列表，供元泉[Spirit Spring]等地表地物投放。</li>
+ *   <li>⚠ {@link BiomeTable#getBiome} 遇到未在 {@link #GROUPS} 中映射的来源群系会直接抛错，确保更新移植文件后新增的来源
+ *       群系在 {@code runData} 阶段显式报错。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see EasternSeaTerrain
- * @since 1.0.0
  */
 
 public final class EasternSeaLayout {

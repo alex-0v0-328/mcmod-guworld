@@ -9,17 +9,14 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.RandomState;
 
 /**
- * 区域 {@link WaterwaysPlan} 的建造器：网格上两步，都只由世界种子决定。
- *
+ * 域水文网格规划（{@link WaterwaysPlan}）的构建器，完全由世界种子与地形决定。
  * <ul>
- *   <li>取样：格中心按种子与格的散列沿各轴偏移至多 {@link Waterways#JITTER} 格；地面由 {@link GroundHeights} 并行读，
- *       类型由高度、海平面与群系定（ID 以 {@code river} 结尾为出口）；网格 512 × 512，约 45 CPU 秒。</li>
- *   <li>填洼、流向、汇流：{@link WaterwaysFlood}，在取样数组上跑，远不到 1 秒。</li>
+ *   <li>第一阶段为并行网格采样（{@link #sample}）：将每个网格中心按世界种子与行列散列在 X/Z 轴随机抖动至多
+ *       {@link Waterways#JITTER} 格，通过 {@link GroundHeights} 并行扫描地面高度，并结合海平面与噪声群系（路径以
+ *       {@code river}结尾视为河口）划分网格类型；512×512 网格约需 45 CPU 秒。</li>
+ *   <li>第二阶段为纯内存水文拓扑求解：调用 {@link WaterwaysFlood} 在采样数组上依次完成洼地填平、最陡流向判定与汇流面积
+ *       累加，耗时不足 1 秒。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class WaterwaysPlanner {

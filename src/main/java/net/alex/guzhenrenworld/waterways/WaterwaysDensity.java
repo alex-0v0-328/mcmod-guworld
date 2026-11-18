@@ -17,23 +17,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 密度函数类型 {@code guworld:waterways}：刻入水系的区域最终密度。
- *
+ * 在域最终密度上刻入水系河槽的包裹型密度函数（{@code guworld:waterways}）。
  * <ul>
- *   <li>各区域噪声设置用它包住移植的最终密度（{@link #getCarved}），写明区域名、边长、干旱、河床、摆动噪声；
- *       由 {@link WaterwaysRegistration} 注册。</li>
- *   <li>实心处取原密度与 {@link #SLOPE} ×（刻后地表 − y）的较小者（{@link WaterwaysCarver#getSurface}）：只削不填，
- *       洞穴保留；空气原样返回，地表只由实心方块来问。噪声区块内岸带经本副本包住的地形读地面，列缓存已填好。</li>
- *   <li>雕刻器由 {@link WaterwaysRuntime} 按摆动噪声实例认领：{@code RandomState} 每维度只建一个，交给区块复制的每个副
- *       本；未挂雕刻器的随机状态（如测试自建）地形原样。</li>
- *   <li>副本在首个实心方块查一次雕刻器；噪声区块每区块复制本函数，挂、摘从下一区块生效。{@code lookup} 为 null 即未查；
- *       单引用读写，多线程同时首查无需加锁。</li>
+ *   <li>各域噪声生成设置通过 {@link #getCarved} 将本函数包裹在移植噪声路由的 {@code finalDensity} 外层，编码域名称、边
+ *       界尺寸、干旱标志、河床类型与蜿蜒噪声引用；类型 Codec 由 {@link WaterwaysRegistration} 注册。</li>
+ *   <li>仅对原本为实心（{@code density > 0}）的坐标生效，取原密度与 {@code SLOPE × (surface - y)}（
+ *       {@link WaterwaysCarver#getSurface}）的较小值：只向下切削河槽与岸坡而不填充空气，从而完整保留下方的天然洞穴；在
+ *       {@link NoiseChunk} 内求值时会将当前区块已挂载列缓存的内部 {@link #argument} 传给雕刻器以加速岸带地面采样。</li>
+ *   <li>通过 {@link WaterwaysRuntime} 以实例化后的蜿蜒噪声对象（{@link NormalNoise}）为键查找当前维度的
+ *       {@link WaterwaysCarver}；未挂载雕刻器的独立 {@code RandomState}（如纯单元测试）直接原样返回底层地形密度。</li>
+ *   <li>每个区块通过 {@link #mapAll} 克隆出独立的密度函数副本，并在首次遇到实心方块时解析一次雕刻器缓存到不可变包装记录
+ *       {@link Lookup} 中，利用单引用写入实现无锁线程安全。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see WaterwaysRegistration
- * @since 1.0.0
  */
 
 public final class WaterwaysDensity implements DensityFunction {

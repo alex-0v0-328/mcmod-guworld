@@ -18,23 +18,18 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.RarityFilter;
 
 /**
- * 元泉[Spirit Spring] 世界生成：键、生成群系与数据包条目。
- *
+ * 元泉世界生成的注册键、主世界陆地群系名单与数据包引导入口。
  * <ul>
- *   <li>键共用 {@link #ID}，{@link SpiritSpringRegistration} 以它注册地物，并在 {@code TOP_LAYER_MODIFICATION}（植被
- *       后）把放置地物加进 {@link #BIOMES}；两个引导由 {@code datagen.DatapackProvider} 运行。</li>
- *   <li>{@code datagen.BiomeTagsProvider} 按 {@link #LAND_BIOMES} 与南疆陆地群系（{@code BiomeLayout.LAND}）
- *       填 {@link #BIOMES}；世界生成 ID 全在 {@code guworld}，方块、流体、物品与渲染归主模组。</li>
- *   <li>{@link #LAND_BIOMES}：主世界陆地群系，抄自主模组野生蛊陆地表，或会分叉；无地下变体（洞穴难过检查）。</li>
- *   <li>⚠ 陆地结构：{@link #LAND_BIOMES} 不得并成 {@code #minecraft:is_overworld}（含海洋、河流）。</li>
- *   <li>⚠ {@link #RARITY} 由 Alex 定，不得私调；{@link SpiritSpringGround} 找到平地才成泉群，频率估算见
- *       wiki《元泉生成》。</li>
+ *   <li>各键共用资源标识 {@link #ID}；{@link SpiritSpringRegistration} 以该标识注册地物，并在
+ *       {@code TOP_LAYER_MODIFICATION}（植被装饰之后）将放置地物注入 {@link #BIOMES} 群系标签；本类的两个引导方法由
+ *       {@code datagen.DatapackProvider} 调用。</li>
+ *   <li>{@code datagen.BiomeTagsProvider} 将本类的主世界陆地群系名单（{@link #LAND_BIOMES}，不含洞穴变体）与四域的陆地
+ *       群系汇总写入 {@link #BIOMES}；世界生成条目归属本模组命名空间，而元泉方块、流体、物品与渲染归属主模组。</li>
+ *   <li>放置地物按 {@link #RARITY} 稀有度尝试触发，实际能否成泉取决于 {@link SpiritSpringGround} 是否在候选范围内找到合
+ *       格平地。</li>
+ *   <li>⚠ 元泉为陆地地表结构，{@link #LAND_BIOMES} 严禁简化替换为包含海洋与河流的 {@code #minecraft:is_overworld}。
+ *       </li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see SpiritSpringCluster
- * @since 1.0.0
  */
 
 public final class SpiritSpring {

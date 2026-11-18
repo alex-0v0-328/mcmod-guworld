@@ -12,22 +12,19 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 使用中的雕刻器：每个最终密度为 {@link WaterwaysDensity} 的 {@link RandomState} 一个。
- *
+ * 运行期活动水系雕刻器（{@link WaterwaysCarver}）的全局注册表，每个包裹了 {@link WaterwaysDensity} 的维度
+ * {@link RandomState}对应一个实例。
  * <ul>
- *   <li>以 {@link Waterways#MEANDER_NOISE} 实例为键：各副本共有的对象（{@link NormalNoise} 按同一性判等）。</li>
- *   <li>{@link #onLevelLoad} 在维度生成首个区块前给包了地形的服务端维度挂雕刻器并立即开建，玩家到时已建好，服务端线程不
- *       必等；GameTest 服务端待测试要用才建。</li>
- *   <li>建图先试维度的 {@link WaterwaysData}（键：{@link Waterways#PARAMETERS}、边长、海平面；
- *       并核对 {@link #FINGERPRINT} 各列地面与群系指纹），不符才规划并存档；规划规则一改就升
- *       {@link Waterways#PARAMETERS} 的版本号。</li>
- *   <li>维度卸载、停服时丢弃雕刻器；{@link #get} 供 {@link WaterwaysFeature} 与测试；测试可给自建随机状态挂摘雕刻
- *       器。</li>
+ *   <li>以 {@link Waterways#MEANDER_NOISE} 派生出的 {@link NormalNoise} 实例作为映射键：同一维度 {@link RandomState} 下
+ *       的所有区块密度函数副本共享同一个噪声对象引用（{@link NormalNoise} 按对象引用判等）。</li>
+ *   <li>{@link #onLevelLoad} 在服务端维度加载（生成首个区块前）时为包含 {@link WaterwaysDensity} 的维度挂载雕刻器，并在
+ *       非GameTest 环境下立即调用 {@link WaterwaysCarver#prefetch} 启动后台异步建图，避免玩家进入维度时阻塞主线程。
+ *       </li>
+ *   <li>雕刻器构建时优先读取维度存档中的 {@link WaterwaysData}（校验 {@link Waterways#PARAMETERS}、边界尺寸、海平面、世
+ *       界种子及{@link #FINGERPRINT} 采样点地面与群系指纹），校验未命中时才执行完整水文规划并写回存档。</li>
+ *   <li>维度卸载或服务端停止时自动移除雕刻器以释放内存；{@link #get} 供 {@link WaterwaysFeature} 与测试获取当前维度的雕
+ *       刻器，测试也可通过 {@link #attach} 与 {@link #detach} 为自建的 {@link RandomState} 手动挂载或卸载雕刻器。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class WaterwaysRuntime {

@@ -12,24 +12,18 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
 /**
- * 只有北原放置的群系，供数据生成 provider 收集。
- *
+ * 北原维度独有的群系清单，供数据生成阶段的各 Provider 汇总读取。
  * <ul>
- *   <li>{@link #PORTED}：移植的 Terralith 群系，键由 {@link Ports#biome} 生成；{@link #REPLICAS}：
- *       {@link Replicas#SHARED} 外复刻的原版群系；{@link #NAMES}：二者显示名；{@link #CROPS}：陆地按农夫乐事野生作物气
- *       候（{@link WildCropClimate}）分；移植文件列在 {@code src/ports/terralith/index.northern_plains.json}。</li>
- *   <li>{@link NorthernPlainsLayout} 摆放它们，由群系表推出名单与陆地列表。</li>
- *   <li>气候按自身温度与降水：温带（0.4–0.45）干草原、地盾、高寒高地，地盾兼湿（降水 0.8）；寒（0.1–0.22）寒灌丛、
- *       西伯利亚针叶林、桦木针叶林、雪地盾、冰沼，西伯利亚针叶林、雪地盾、冰沼兼湿（降水 ≥ 0.8）；低于 0.1 不归任何气
- *       候：寒原低地、寒林、冰崖、冰川裂谷与复刻的雪原、冰刺之地、积雪针叶林、雪林、冰封山峰；冻河是水体。</li>
- *   <li>⚠ 重新移植多出的群系须在同一改动里补 {@link #PORTED} 键、{@link #NAMES} 名、{@link #CROPS} 气候；清单与键不符
- *       时 {@link Ports#registerBiomes} 失败。</li>
+ *   <li>{@link #PORTED} 列出北原独有的 Terralith 移植群系键（对应清单
+ *       {@code src/ports/terralith/index.northern_plains.json}）；{@link #REPLICAS} 列出除 {@link Replicas#SHARED} 外的
+ *       原版复刻群系；{@link #NAMES} 汇总两者的中英文显示名；{@link #CROPS} 将陆地群系按农夫乐事野生作物气候（
+ *       {@link WildCropClimate}）分组。</li>
+ *   <li>野生作物气候按各群系 JSON 的温度与降水量划分：干草原、地盾与高寒高地归温带（其中地盾兼入湿润）；寒灌丛、西伯利
+ *       亚针叶林、桦木针叶林、雪地盾与冰沼归寒冷（其中西伯利亚针叶林、雪地盾与冰沼兼入湿润）；温度低于 0.1 的严寒群系及
+ *       冻河水体不归入任何气候。</li>
+ *   <li>⚠ 更新移植清单新增群系时，必须在同一次改动中同步补齐 {@link #PORTED}、{@link #NAMES} 与 {@link #CROPS}，否则
+ *       {@link Ports#registerBiomes} 会在校验清单与键集合时直接报错。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see NorthernPlainsLayout
- * @since 1.0.0
  */
 
 public final class NorthernPlainsRoster {

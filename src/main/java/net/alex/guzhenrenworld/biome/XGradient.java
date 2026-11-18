@@ -9,18 +9,13 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 密度函数类型 {@code guworld:x_gradient}：沿 x 的 {@link ZGradient}。
+ * 沿 X 轴方向做线性插值与截断的密度函数类型（{@code guworld:x_gradient}），与 {@link ZGradient} 对称。
  * <ul>
- *   <li>x 在 {@code from_x} 以外取 {@code from_value}，{@code to_x} 以外取 {@code to_value}，其间线性；自西向东变化的域
- *       用它填钩子，如东边是开阔海面的东海。</li>
- *   <li>{@link #MAP_CODEC} 为数据 codec，{@link GradientRegistration} 以 {@link #ID} 注册；{@link #CODEC} 包装同一实
- *       例，注册表凭它认类型；只读 x，可放进 {@code cache_2d}（{@link ColumnCaches}）。</li>
+ *   <li>当方块 X 坐标超出 {@code [from_x, to_x]} 区间时分别钳制为 {@code from_value} 或 {@code to_value}，区间内按线性
+ *       比例插值；供地貌沿东西方向渐变的域（如东侧过渡为开阔海面的东海）填充地形钩子。</li>
+ *   <li>{@link #MAP_CODEC} 由 {@link GradientRegistration} 按 {@link #ID} 注册，{@link #CODEC} 供注册表分派类型；由于求
+ *       值仅依赖水平 X 坐标，可安全包裹在 {@code cache_2d} 列缓存中（{@link ColumnCaches}）。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see GradientRegistration
- * @since 1.0.0
  */
 
 public record XGradient(int fromX, int toX, double fromValue, double toValue)

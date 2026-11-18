@@ -6,18 +6,14 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.registries.DeferredHolder;
 
 /**
- * 本模组放置的主模组方块，只按注册 ID 引用。
+ * 本模组在世界生成中放置的主模组方块延迟引用表。
  * <ul>
- *   <li>不对主模组编译，故每个方块是指向其 ID 的 {@link DeferredHolder}，方块注册表填好后绑定；主模组为必需依赖，
- *       {@code get()} 只因 ID 写错抛错，不因缺模组；{@link #SPIRIT_SPRING} 是元泉[Spirit Spring]液体方块，流体取自方块
- *       状态，无需第二个 ID；{@link #INTIMATE_GRASS} 是野生两格高知心草。</li>
- *   <li>⚠ 每个 ID 对应主模组 {@code net.alex.guzhenren.registry.block.ModBlocks} 的一个方块：那边改名须同一任务改这里，
- *       否则元泉结构首次生成即失败，知心草的配置地物在数据包加载时就因未知方块 ID 失败。</li>
+ *   <li>由于本模组不建立对主模组的编译期依赖，所有主模组方块均通过指向其注册 ID 的 {@link DeferredHolder} 在方块注册表
+ *       冻结后绑定；{@link #SPIRIT_SPRING} 为元泉[Spirit Spring]液体源方块（流体直接从其默认方块状态获取），
+ *       {@link #INTIMATE_GRASS}为野生两格高知心草方块。</li>
+ *   <li>⚠ 各条目 ID 必须与主模组 {@code net.alex.guzhenren.registry.block.ModBlocks} 中的注册名严格一致；主模组改名时必
+ *       须在同一任务中同步更新此处，否则元泉首次生成或知心草配置地物加载时会因找不到方块而直接报错。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class GuzhenrenBlocks {

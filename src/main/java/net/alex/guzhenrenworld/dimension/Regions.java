@@ -9,13 +9,9 @@ import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.alex.guzhenrenworld.dimension.westerndesert.WesternDesert;
 
 /**
- * 全部四个域（{@link Region}），按入口注册顺序；唯一点名各域包之处。
- * {@code datagen.DatapackProvider} 对其跑 {@link RegionBootstraps}，群系标签与语言 provider 读其群系名单与名字，
- * {@link RegionBorders} 应用其边界；加第五域只需此处一行加一个包。
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
+ * 全部四个域（{@link Region}）的有序汇总表，也是全仓唯一直接引用各域子包入口的聚合点。{@code datagen.DatapackProvider}
+ * 遍历{@link #ALL} 执行 {@link RegionBootstraps} 注册，群系标签与语言表生成器从中提取群系名单与译名，
+ * {@link RegionBorders} 据此施加世界边界；未来扩展新域时仅需新建域包并在此列表追加一项。
  */
 
 public final class Regions {

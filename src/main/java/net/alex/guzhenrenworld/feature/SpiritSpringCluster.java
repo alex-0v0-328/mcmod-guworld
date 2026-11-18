@@ -11,25 +11,22 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 元泉[Spirit Spring] 地物：从地物原点掷泉群，逐个找平地放石盆。
- *
+ * 元泉丛生地物实现：从地物原点抽取泉群规模，并逐个搜寻合格平地放置石盆。
  * <ul>
- *   <li>找平地 {@link SpiritSpringGround#findSurfaceGround}，放石盆 {@link SpiritSpringBasin#placeStructure}；
- *       {@link SpiritSpring} 定键与放置数据，{@link SpiritSpringRegistration} 注册。</li>
- *   <li>泉数权重 {@link #CLUSTER_SIZE_WEIGHTS}（掷值上限 {@link #CLUSTER_ROLL_BOUND}）与间距见 wiki《元泉生成》；石盆
- *       不重叠。</li>
- *   <li>全在原点切比雪夫距离 {@link #MAX_ORIGIN_OFFSET} 内：地物可越出所在区块一个区块读写，±9 让 15×15 检查与石盆都不
- *       出 3×3 区块窗口。</li>
- *   <li>{@link #findMemberSpot} 每成员试 {@link #MEMBER_SPOT_ATTEMPTS} 个候选，全不过即跳过（数量是尝试，非定额）；
- *       首个泉眼（{@link #findAnchorSpot}）先试原点列，再随机试至多 {@link #ANCHOR_SPOT_ATTEMPTS} 列：原点列单独过检的
- *       很少，搜索只多给列、不放宽规则，{@code /place feature} 也就落在玩家附近合格地面。</li>
- *   <li>⚠ 泉群数值由 Alex 定，不得私调。</li>
+ *   <li>由 {@link SpiritSpring} 定义配置与放置规则、{@link SpiritSpringRegistration} 注册地物实例；放置时调用
+ *       {@link SpiritSpringGround#findSurfaceGround} 校验地面平整度，并通过 {@link SpiritSpringBasin#placeStructure} 构
+ *       筑石盆。</li>
+ *   <li>首个锚点泉眼（{@link #findAnchorSpot}）优先检验地物原点列，未通过时在半径范围内随机尝试至多
+ *       {@link #ANCHOR_SPOT_ATTEMPTS} 列，既提高自然生成命中率，也保证执行 {@code /place feature} 时能在附近找到合格地
+ *       面。</li>
+ *   <li>锚点确定后按权重表 {@link #CLUSTER_SIZE_WEIGHTS}（总权重 {@link #CLUSTER_ROLL_BOUND}）抽取泉群数量；其余成员泉
+ *       眼通过{@link #findMemberSpot} 在距锚点 {@link #CLUSTER_MAX_REACH} 格以内、且与已有泉眼中心间距不小于
+ *       {@link #CLUSTER_MIN_SEPARATION} 格的环带内至多尝试 {@link #MEMBER_SPOT_ATTEMPTS} 次，确保 7×7 石盆互不重叠。
+ *       </li>
+ *   <li>⚠ 所有候选中心点与地物原点的切比雪夫距离严禁超过 {@link #MAX_ORIGIN_OFFSET}（9 格），以保证石盆及 15×15 平整度
+ *       检查完全落在原版地物生成允许读写的 3×3 区块窗口（原点所在区块外扩 1 个区块）内，越界读写会触发区块访问死锁或异
+ *       常。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see SpiritSpringBasin
- * @since 1.0.0
  */
 
 public class SpiritSpringCluster extends Feature<NoneFeatureConfiguration> {

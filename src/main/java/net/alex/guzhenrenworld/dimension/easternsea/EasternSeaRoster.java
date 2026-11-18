@@ -12,22 +12,17 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
 /**
- * 只有东海放置的群系，供数据生成 provider 收集。
- *
+ * 东海维度独有的群系清单，供数据生成阶段的各 Provider 汇总读取。
  * <ul>
- *   <li>{@link #PORTED}：移植的 Terralith 群系，键由 {@link Ports#biome} 生成；{@link #REPLICAS}：
- *       {@link Replicas#SHARED} 外复刻的原版群系；{@link #NAMES}：二者显示名；{@link #CROPS}：陆地按农夫乐事野生作物气
- *       候（{@link WildCropClimate}）分；移植文件列在 {@code src/ports/terralith/index.eastern_sea.json}。</li>
- *   <li>{@link EasternSeaLayout} 摆放它们，据表推出名单与陆地表；移植沿用 Terralith 名，唯 alpha 群岛改名岛屿。</li>
- *   <li>也放南疆雨林（{@link Ports#RAINFOREST}，即 Terralith 热带丛林），由南疆注册命名，此处只列在作物气候里。</li>
- *   <li>作物气候按群系自身温度与降水：火山（温度 1，干）热；丛林类湿；岛屿与蜃岛（0.7，降水 0.8）湿兼温带；海岸类滩，
- *       沙滩与砾滩（0.8）兼温带，石岸（0.2）兼寒；玄武岩崖与白崖（0.5、0.4）温带；海洋不归任何气候。</li>
+ *   <li>{@link #PORTED} 列出东海独有的 Terralith 移植群系键（对应清单
+ *       {@code src/ports/terralith/index.eastern_sea.json}，其中 {@code alpha_islands} 重命名为 {@code isles}）；
+ *       {@link #REPLICAS} 列出除 {@link Replicas#SHARED} 外的原版复刻群系；{@link #NAMES} 汇总两者的中英文显示名；
+ *       {@link #CROPS} 将陆地群系按农夫乐事野生作物气候（{@link WildCropClimate}）分组。</li>
+ *   <li>东海同时放置与南疆共用的雨林群系（{@link Ports#RAINFOREST}），该群系由南疆公共清单负责注册与命名，此处仅将其加
+ *       入{@link #CROPS} 的湿润气候组。</li>
+ *   <li>野生作物气候严格按各群系 JSON 的温度与降水量划分：火山峰与火山口归干热；丛林、雨林、岛屿与蜃岛归湿润；沙滩、石
+ *       岸与砾滩归海岸；沙滩、砾滩、岛屿、蜃岛、玄武岩崖与白崖归温带；石岸归寒冷；各类海洋不归入任何气候。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see EasternSeaLayout
- * @since 1.0.0
  */
 
 public final class EasternSeaRoster {

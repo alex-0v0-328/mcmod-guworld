@@ -11,25 +11,19 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
 /**
- * 西漠的群系摆放。
+ * 西漠维度的多噪声群系分布映射。
  * <ul>
- *   <li>原样用 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系映射到本域名单（{@link #GROUPS}：
- *       名单群系 → 其替代的来源群系）；下层本域 Tectonic 地形（{@link WesternDesertTerrain}）把侵蚀与山脊重映射回该表分
- *       段，参数格保留 Terralith 地形原型，得本域同类群系。</li>
- *   <li>名单与来源归属见 wiki《西漠#群系》。</li>
- *   <li>海洋、海滩、岛屿来源只为完整而映射，{@link WesternDesertTerrain} 的大陆度到不了。</li>
- *   <li>{@link #ROSTER}：全部可放群系，含沙漠石柱；{@link #LAND}：除河流外地表群系，元泉[Spirit Spring]可生于此。</li>
- *   <li>地形随侵蚀不随群系：Terralith 石林带（侵蚀 ≥ {@link BiomeTable#SPIRE_EROSION}）一律长 Tectonic 尖柱地形，故陆地
- *       格改为沙漠石柱（{@link BiomeTable#withSpires}），但 {@link #TABLE} 保留河流、洞穴、两绿洲、砂岩谷、沙漠峡
- *       谷。</li>
- *   <li>⚠ {@link BiomeTable#getBiome} 遇 {@link #GROUPS} 未映射的来源群系即抛错，重新移植多出一个则 {@code runData} 失
- *       败，不丢格。</li>
+ *   <li>基于 Terralith 主世界多噪声参数表（{@link Ports#getBiomeParameters}），按 {@link #GROUPS} 将来源群系映射为西漠
+ *       群系（海洋、海滩与岛屿来源仅作完整性映射，{@link WesternDesertTerrain} 的大陆度不会采样到这些区间）；底层
+ *       Tectonic 地形将侵蚀度与山脊值重映射回该表分段，使各参数格保留原有地形原型并替换为西漠同类群系。</li>
+ *   <li>{@link #ROSTER} 为西漠可生成的全部群系集合；{@link #LAND} 为剔除水体与洞穴（{@link #WATER_AND_CAVES}）后的陆地
+ *       群系列表，供元泉[Spirit Spring]等地表地物投放。</li>
+ *   <li>Terralith 尖柱带（侵蚀度 ≥ {@link BiomeTable#SPIRE_EROSION}）在 Tectonic 下固定生成尖柱地形，因此
+ *       {@link #TABLE} 通过 {@link BiomeTable#withSpires} 将该区间内除河流、洞穴、两类绿洲、砂岩谷与沙漠峡谷外的参数格
+ *       统一替换为沙漠石柱（{@link WesternDesertRoster#DESERT_SPIRES}）。</li>
+ *   <li>⚠ {@link BiomeTable#getBiome} 遇到未在 {@link #GROUPS} 中映射的来源群系会直接抛错，确保更新移植文件后新增的来源
+ *       群系在 {@code runData} 阶段显式报错。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see WesternDesertTerrain
- * @since 1.0.0
  */
 
 public final class WesternDesertLayout {

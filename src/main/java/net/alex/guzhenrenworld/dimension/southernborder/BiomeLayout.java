@@ -12,26 +12,20 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
 /**
- * 南疆的群系摆放。
+ * 南疆维度的多噪声群系分布映射。
  * <ul>
- *   <li>原样用 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系映射到本域名单（{@link #GROUPS}：
- *       名单群系 → 其替代的来源群系）；下层 Tectonic 地形（{@link Terrain}）把侵蚀与山脊重映射回该表分段，参数格保留
- *       Terralith 地形原型，得南疆同类群系。</li>
- *   <li>名单与来源归属见 wiki《南疆#群系》。</li>
- *   <li>海洋、海滩、岛屿来源只为完整而映射，{@link Terrain} 的大陆度到不了。</li>
- *   <li>{@link #ROSTER}：能放的全部群系，含喀斯特峰林；{@link #LAND}：除河流外的地表群系，元泉[Spirit Spring]可生于此；
- *       {@link #CROPS}：陆地按 {@link WildCropClimate} 的温度降水规则分进农夫乐事野生作物气候。</li>
- *   <li>地形随侵蚀不随群系：Terralith 石林带（侵蚀 ≥ {@link BiomeTable#SPIRE_EROSION}，Tectonic 仅在自身侵蚀超过 1 处到
- *       达）一律长 Tectonic 低因子尖柱地形，故陆地格改为喀斯特峰林（{@link BiomeTable#withSpires}），{@link #TABLE} 保
- *       留的河流、洞穴、沼泽、热海、嶂石岩除外。</li>
- *   <li>⚠ {@link BiomeTable#getBiome} 遇 {@link #GROUPS} 未映射的来源群系即抛错，重新移植多出一个则 {@code runData} 失
- *       败，不丢格。</li>
+ *   <li>基于 Terralith 主世界多噪声参数表（{@link Ports#getBiomeParameters}），按 {@link #GROUPS} 将来源群系映射为南疆
+ *       群系（海洋、海滩与岛屿来源仅作完整性映射，{@link Terrain} 的大陆度不会采样到这些区间）；底层 Tectonic 地形将侵
+ *       蚀度与山脊值重映射回该表分段，使各参数格保留原有地形原型并替换为南疆同类群系。</li>
+ *   <li>{@link #ROSTER} 为南疆可生成的全部群系集合；{@link #LAND} 为剔除水体与洞穴（{@link #WATER_AND_CAVES}）后的陆地
+ *       群系列表，供元泉[Spirit Spring]与野生知心草投放；{@link #CROPS} 将陆地群系按 {@link WildCropClimate} 的温湿度规
+ *       则归入农夫乐事野生作物气候。</li>
+ *   <li>Terralith 尖柱带（侵蚀度 ≥ {@link BiomeTable#SPIRE_EROSION}）在 Tectonic 下固定生成尖柱地形，因此
+ *       {@link #TABLE} 通过 {@link BiomeTable#withSpires} 将该区间内除河流、洞穴、兰花沼泽、热海与嶂石岩外的参数格统一
+ *       替换为喀斯特峰林（{@link Ports#KARST_PEAK_FOREST}）。</li>
+ *   <li>⚠ {@link BiomeTable#getBiome} 遇到未在 {@link #GROUPS} 中映射的来源群系会直接抛错，确保更新移植文件后新增的来源
+ *       群系在 {@code runData} 阶段显式报错。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see Terrain
- * @since 1.0.0
  */
 
 public final class BiomeLayout {

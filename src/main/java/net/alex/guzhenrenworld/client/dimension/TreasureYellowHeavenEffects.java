@@ -11,18 +11,14 @@ import net.neoforged.neoforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 宝黄天[Treasure Yellow Heaven]的客户端天空效果。
- *
+ * 宝黄天的客户端维度天空与雾气视觉效果。
  * <ul>
- *   <li>仅客户端订阅（{@code Dist.CLIENT}），专用服务端不加载；{@link #onRegisterDimensionSpecialEffects} 在模组总线以
- *       {@link TreasureYellowHeaven#EFFECTS}（维度类型 {@code effects} 所填 ID）注册。</li>
- *   <li>{@code NORMAL} 天空留原版云、日月、昼夜，天和雾取群系黄色：{@code FogRenderer} 把 {@code fog_color} 传给
- *       {@link #getBrightnessDependentFogColor}，黄色只在 {@link TreasureYellowHeaven} 群系调，本类只按日光调暗。</li>
+ *   <li>仅在客户端加载（{@code Dist.CLIENT}），由 {@link #onRegisterDimensionSpecialEffects} 在模组总线上绑定至维度类型
+ *       配置的 {@link TreasureYellowHeaven#EFFECTS} 标识。</li>
+ *   <li>使用 {@code NORMAL} 天空类型以保留原版云层、日月与昼夜交替；天空与雾气的黄色基调统一在
+ *       {@link TreasureYellowHeaven}群系音效与颜色中定义，{@link #getBrightnessDependentFogColor} 仅负责按当前日光亮度
+ *       等比压暗雾色。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 @EventBusSubscriber(modid = GuWorld.MOD_ID, value = Dist.CLIENT)

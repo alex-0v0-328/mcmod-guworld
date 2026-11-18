@@ -10,26 +10,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 元泉[Spirit Spring] 石盆落点：平整、干燥、无树的地面。
- *
+ * 元泉石盆落点的地面资格判定：筛选平整、干燥且无树木竹蔗遮挡的地表位置。
  * <ul>
- *   <li>{@link #findSurfaceGround} 判定 {@link SpiritSpringCluster} 试的每个点，公开供 GameTest。</li>
- *   <li>平整：半径 {@link #FLAT_RADIUS} 内高差 ≤ {@link SpiritSpringBasin#MAX_RISE} 格，即整平能吸收的起伏；规格见
- *       wiki《元泉生成》。</li>
- *   <li>植被先跑（{@code VEGETAL_DECORATION} 早于 {@code TOP_LAYER_MODIFICATION}），坡、水坑、树都改高度图：
- *       范围内有树、中心是树干或树叶即否决；无碰撞、躲过高度图的竹子与甘蔗在清空带
- *       （{@link SpiritSpringBasin#CLEAR_HEIGHT_ABOVE}）否决。</li>
- *   <li>{@link #isTerrainWet}：结构列地面为冰、或地面及上一格有流体即否决：齐平的水过得了高度规则，
- *       原版 {@code freeze_top_layer} 同步更早（群系修改器排在群系自身地物后），冻住的水坑或河只是平整冰面。</li>
- *   <li>泉群搜索越出群系过滤，也会落到河流和冻洋。</li>
- *   <li>⚠ 检查伸进邻区块 ±16 格，那里的树可能未长：合格与否随区块生成顺序变，同原版放树。</li>
- *   <li>⚠ 平整度由 Alex 定，不得私调。</li>
+ *   <li>{@link #findSurfaceGround} 负责校验 {@link SpiritSpringCluster} 尝试的每个候选列（公开供 GameTest 直接调用）：
+ *       要求以中心列为基准、半径 {@link #FLAT_RADIUS}（15×15）内的地表高差不超过 {@link SpiritSpringBasin#MAX_RISE}
+ *       格，控制在石盆整平能够吸收的起伏范围内。</li>
+ *   <li>由于元泉挂载在 {@code TOP_LAYER_MODIFICATION} 阶段（晚于 {@code VEGETAL_DECORATION}），树木、水坑与陡坡均已反映
+ *       在高度图中：中心列地表为原木或树叶时直接否决；无碰撞体积而不计入高度图的竹子与甘蔗则在石盆清空带（
+ *       {@link SpiritSpringBasin#CLEAR_HEIGHT_ABOVE}）内逐格扫描否决。</li>
+ *   <li>{@link #isTerrainWet} 否决结构列地表为冰块、或地表及上方一格存在流体的位置，防止泉群跨出群系边界落入河流、冻河
+ *       或结冰水坑（原版 {@code freeze_top_layer} 作为群系内置地物先于群系修改器执行，会将水面冻成平整冰面）。</li>
+ *   <li>⚠ 15×15 檢查范围会伸入相邻区块，而相邻区块的树木可能尚未装饰完毕，因此候选点是否通过会受区块生成先后顺序影响（
+ *       与原版树木放置机制一致）。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see SpiritSpringBasin
- * @since 1.0.0
  */
 
 public final class SpiritSpringGround {

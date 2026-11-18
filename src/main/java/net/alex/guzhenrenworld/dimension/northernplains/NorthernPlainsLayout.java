@@ -11,24 +11,18 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
 /**
- * 北原的群系摆放。
- *
+ * 北原维度的多噪声群系分布映射。
  * <ul>
- *   <li>原样用 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系按 {@link #GROUPS}（名单群系 →
- *       其替代的来源）映射到本域；下层本域 Tectonic 副本（{@link NorthernPlainsTerrain}）把侵蚀与山脊重映射回该表的分
- *       段，参数格保留原地形原型，取同类群系。</li>
- *   <li>名单与来源归属见 wiki《北原#群系》；表按温度分段不改，温度靠 {@link NorthernPlainsTerrain} 的纬度梯度。</li>
- *   <li>暖段、热段来源（梯度下几乎采不到）与海洋、海滩、岛屿来源（大陆度到不了）只为表完整，映射到最近地貌；
- *       {@link #FROZEN}：冰冻段够到的群系。</li>
- *   <li>{@link #ROSTER}：本域可放的全部群系；{@link #LAND}：除水体与洞穴（{@link #WATER_AND_CAVES}）外的地表群系，
- *       元泉[Spirit Spring]可立于其上。</li>
- *   <li>⚠ {@link BiomeTable#getBiome} 遇未映射来源即抛错：重移植新增来源时 {@code runData} 失败，不丢格。</li>
+ *   <li>基于 Terralith 主世界多噪声参数表（{@link Ports#getBiomeParameters}），按 {@link #GROUPS} 将来源群系映射为北原
+ *       群系；参数表本身的温度分段保持不变，依靠 {@link NorthernPlainsTerrain} 的南北纬度温度梯度驱动南草北雪的群系过
+ *       渡。</li>
+ *   <li>温度梯度下几乎无法采样到的暖温带与热带来源群系，以及大陆度不会落入的海洋、海滩与岛屿来源群系，均映射到就近的陆
+ *       地地貌以保证映射表完整；{@link #FROZEN} 列出低温冰冻区间可达的群系集合。</li>
+ *   <li>{@link #ROSTER} 为北原可生成的全部群系集合；{@link #LAND} 为剔除水体与洞穴（{@link #WATER_AND_CAVES}）后的陆地
+ *       群系列表，供元泉[Spirit Spring]等地表地物投放。</li>
+ *   <li>⚠ {@link BiomeTable#getBiome} 遇到未在 {@link #GROUPS} 中映射的来源群系会直接抛错，确保更新移植文件后新增的来源
+ *       群系在 {@code runData} 阶段显式报错。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see NorthernPlainsTerrain
- * @since 1.0.0
  */
 
 public final class NorthernPlainsLayout {

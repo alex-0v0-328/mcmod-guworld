@@ -12,30 +12,27 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 水系：Gu World 自己的溪流，每个有限区域按地形规划一次。
- *
+ * 四域水系生成系统的全局参数、河床材质与区域配置定义。
  * <ul>
- *   <li>依据 Davis 板块式河流生成论文（arXiv 2610.00301；参考代码 CC BY 4.0，
- *       github.com/Davismk3/plate-local-river-generation），8192 格区域整个为一板块。</li>
- *   <li>存规划、索引、刻河共用的数值：{@link WaterwaysPlanner} 建 {@link WaterwaysPlan}，{@link WaterwaysIndex}
- *       转成线段，{@link WaterwaysDensity} 包住区域最终密度、经 {@link WaterwaysCarver} 刻出；{@link #PARAMETERS}
- *       是存档索引依赖的数值，变则重建（{@link WaterwaysData}）。</li>
- *   <li>在 {@link #CELL} 格网格上取样，样本偏移 ≤ {@link #JITTER} 格免得河道顺网格；汇流达 {@link #MIN_CATCHMENT} 格成
- *       河，全宽随汇流平方根从 {@link #WIDTH_SCALE} 格增至封顶 {@link #MAX_WIDTH} 格。</li>
- *   <li>深 ≤ {@link #LAKE_DEPTH} 格的封闭洼地在规划中成湖，更深的溪流终于洼底汇点；西漠 {@link Region#dry}：照样刻，
- *       仅最宽的有水，余为干沟。</li>
- *   <li>水面低于地面 ≥ {@link #INCISION} 格（海平面下按海平面），往下游不升（{@link WaterwaysProfile}：每段沿线及两侧
- *       {@link #KNOTS} + 1 个节点读地面，跳过深于 {@link #MAX_DIP} 格的凹陷）；规划中的浅湖刻穿。</li>
- *   <li>河底上整宽至少 1 格水，中线水深从 {@link #MIN_DEPTH} 格增至 {@link #MAX_DEPTH} 格（宽 {@link #MAX_WIDTH} 格）；
- *       岸带宽 {@code max(}{@link #BANK_MIN}{@code , }{@link #BANK_FACTOR}{@code  × width)} 格，升到扫描地面上
- *       {@link #BANK_MARGIN} 格，盖住常见 1–2 格的扫描误差。</li>
- *   <li>河道沿各轴偏离中线 ≤ {@link #MEANDER} 格，读自 {@link #MEANDER_NOISE}，其实例也标明所填维度的随机状态。</li>
- *   <li>{@link WaterwaysFeature} 放水并铺区域的 {@link Bed}；干旱区域仅宽 ≥ {@link #DRY_WIDTH} 格的河道有水。</li>
+ *   <li>算法基于 Davis 板块局部河流生成论文（arXiv:2610.00301，参考实现采用 CC BY 4.0 协议），将 8192×8192 格的有限域整
+ *       体视作单个水文板块一次性规划水网。</li>
+ *   <li>全流程串联参数：{@link WaterwaysPlanner} 在带随机抖动（≤ {@link #JITTER} 格）的 {@link #CELL} 格网格上构建水文
+ *       规划{@link WaterwaysPlan}，{@link WaterwaysIndex} 将其转换为分桶线段索引，{@link WaterwaysDensity} 包裹域最终密
+ *       度并委托{@link WaterwaysCarver} 在地形上刻出河槽，最后由 {@link WaterwaysFeature} 填充水体与河床方块（
+ *       {@link Bed}）；所有影响规划结果的常量拼入版本串 {@link #PARAMETERS}，供 {@link WaterwaysData} 校验存档索引是否
+ *       失效。</li>
+ *   <li>水文几何：汇流面积达到 {@link #MIN_CATCHMENT} 格起形成溪流，河宽随汇流面积平方根从 {@link #WIDTH_SCALE} 增长至
+ *       上限{@link #MAX_WIDTH}；深度不超过 {@link #LAKE_DEPTH} 格的封闭洼地填平为浅湖并刻穿，更深的洼地则在谷底设为汇点
+ *       （{@code SINK}）作为内流河终点。</li>
+ *   <li>剖面与横截面：水面至少低于两岸地面 {@link #INCISION} 格且向流向单调不升（{@link WaterwaysProfile} 在每段取
+ *       {@link #KNOTS} + 1 个节点采样并跳过深于 {@link #MAX_DIP} 格的窄裂缝）；河底保证全宽至少 1 格水深、中线水深在
+ *       {@link #MIN_DEPTH} 至 {@link #MAX_DEPTH} 间插值，两岸平滑过渡带宽 {@link #getBank} 并抬升至扫描地面上方
+ *       {@link #BANK_MARGIN} 格以吸收离散扫描误差。</li>
+ *   <li>河道中心线受摆动噪声 {@link #MEANDER_NOISE} 驱动，在 X/Z 轴产生至多 {@link #MEANDER} 格的蜿蜒偏移；同时该噪声实
+ *       例在运行时兼作 {@link WaterwaysRuntime} 识别所属维度 {@code RandomState} 的唯一身份键。</li>
+ *   <li>干旱域（{@link Region#dry()} 为 {@code true}，如西漠）同样刻出全套河槽并铺设河床，但仅在河宽达到
+ *       {@link #DRY_WIDTH} 格的主干河道中注水，其余支流保持为干涸河谷。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class Waterways {

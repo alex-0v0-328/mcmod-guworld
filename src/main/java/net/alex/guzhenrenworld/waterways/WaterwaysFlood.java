@@ -4,22 +4,19 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 
 /**
- * 水系规划的排水各步，在网格数组上运行，不需要世界。
- *
+ * 水系规划中的洼地填平、流向判定与汇流面积累加算法，纯内存网格数组运算而不访问世界。
  * <ul>
- *   <li>{@link #fill}：带 ε 的 Priority-Flood（Barnes、Lehman、Mulla 2014），从水、出口、边缘格出发，
- *       格下标 {@code row * size + column}、八邻域；填后高度为地面或洼地最低出口加 {@link #EPSILON}；记下出队序。</li>
- *   <li>八邻域最低、填后深于 {@link Waterways#LAKE_DEPTH} 格的格成汇点，作下轮起点，至不再新增或重跑
- *       {@link #MAX_SINK_PASSES} 轮：余湖不超该深度，流进更深洼地的溪流终于谷底，而非几十格深的湖或峡谷。</li>
- *   <li>{@link #getReceivers}：陆地格流向八邻域中填后高度每格落差最陡者（按偏移后取样点计距）；填洼父格必更低，
- *       故陆地格都有流向格。</li>
- *   <li>{@link #getCatchments}：按出队逆序沿流向累加；逆序中填后高度不升，一格总先于其流向格算完。</li>
+ *   <li>{@link #fill} 执行带微小梯度增量 {@link #EPSILON} 的 Priority-Flood 算法（Barnes 等，2014）：以水体、河口与边界
+ *       格为初始种子，在八邻域网格（下标 {@code row * size + column}）上优先扩展最低格，将封闭洼地抬升至最低溢流口高度
+ *       并按出队顺序记录拓扑序。</li>
+ *   <li>每轮填洼后扫描八邻域局部最低点：若填平深度超过浅湖上限 {@link Waterways#LAKE_DEPTH}，则将该谷底格标记为内流汇点
+ *       （{@link WaterwaysPlan.Kind#SINK}）并作为新种子重跑填洼（至多迭代 {@link #MAX_SINK_PASSES} 轮），使流入深谷的溪
+ *       流自然终止于谷底，避免填出数十格深的人工湖或切穿高耸山脊。</li>
+ *   <li>{@link #getReceivers} 为每个陆地格在八邻域中选择填洼后单位距离落差（按抖动后采样坐标计距）最大的邻居作为下游流
+ *       向格；由于 Priority-Flood 保证父节点高度严格更低，所有陆地格必然存在有效流向。</li>
+ *   <li>{@link #getCatchments} 按填洼出队逆序（高度由高到低）沿流向累加汇流格数，保证每个上游格必然先于其下游接收格完成
+ *       统计。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see WaterwaysPlanner
- * @since 1.0.0
  */
 
 final class WaterwaysFlood {

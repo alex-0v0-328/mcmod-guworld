@@ -5,17 +5,13 @@ import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.waterways.Waterways;
 
 /**
- * 南疆维度的 {@link #REGION}：中州（主世界）外四域之首。
+ * 南疆维度的域描述入口（{@link #REGION}），为中州（主世界）外四域之首。
  * <ul>
- *   <li>山峰最高约 y 300（{@link Terrain}），比建筑上限低约 20 格；海平面 63；水系河床为砾石夹黏土。</li>
- *   <li>只放四域共用的复刻，无本域名单；区域有限，键、边界、数据包条目用共用的（{@link Region}）；地形钩子见
- *       {@link Terrain}，群系表见 {@link BiomeLayout}。</li>
+ *   <li>地形以群山峻岭为主，山峰最高约达 Y=300（{@link Terrain}），海平面为 63，水系河床铺设砾石夹黏土。</li>
+ *   <li>南疆使用的移植群系与原版复刻群系均已收录在公共集合（{@link net.alex.guzhenrenworld.biome.Ports#BIOMES} 与
+ *       {@link net.alex.guzhenrenworld.biome.Replicas#SHARED}）中，因此本域独有复刻与移植列表为空；专属地形钩子定义在
+ *       {@link Terrain}，多噪声群系映射定义在 {@link BiomeLayout}。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see Terrain
- * @since 1.0.0
  */
 
 public final class SouthernBorder {

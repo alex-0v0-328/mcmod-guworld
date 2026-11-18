@@ -18,16 +18,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 本模组全部方块标签的唯一 provider。
- *
+ * 本模组方块标签的唯一数据生成器。
  * <ul>
- *   <li>Terralith 移植地物所匹配的方块标签（{@link Ports#getBlockTags}）；每项为方块 ID，或 {@code #} 加标签 ID。</li>
- *   <li>⚠ 每次数据生成仅一个：标签 provider 以注册表与模组命名，再加一个即重名失败；新方块标签加在这里。</li>
+ *   <li>负责写出 Terralith 移植地物所匹配的方块标签（{@link Ports#getBlockTags}），每条目可为直接方块 ID 或以 {@code #}
+ *       开头的子标签引用。</li>
+ *   <li>⚠ 每个注册表在同一模组的数据生成周期内只能注册一个标签 Provider，否则会因输出任务重名而报错；新增方块标签必须统
+ *       一在{@link #addTags} 中追加。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public class BlockTagsProvider extends TagsProvider<Block> {

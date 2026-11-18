@@ -12,29 +12,18 @@ import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
 /**
- * 北原地形：本域的 Tectonic 主世界路由副本。
- *
+ * 北原维度的地形参数配置，定制本域的 Tectonic 主世界噪声路由副本。
  * <ul>
- *   <li>移植自 Tectonic 与 Terralith 同装时的路由（{@link Ports#registerDensityFunctions}）；改写两个函数
- *       （{@link #getReshaped}），其余经移植留下的钩子（{@link #HOOKS}、{@link RegionBootstraps}）。</li>
- *   <li>折叠侵蚀 {@value Reshaping#EROSION_FOLDED}：Tectonic 侵蚀离零的距离，定地形样条与 Terralith 表读的侵蚀，
- *       越低越山。乘 {@link #EROSION_SCALE} 加 {@link #EROSION_OFFSET}：山地带收窄到过零线附近，丘陵带略宽；
- *       上限 {@link #EROSION_CAP} 即 Terralith 低地段上沿，超过则表的下一段冰冻格全是冰川裂谷，超过 1 则 Tectonic
- *       长尖柱地形。</li>
- *   <li>温度 {@value Reshaping#TEMPERATURE}（Terralith 表、Tectonic 地貌区、Terralith 冰刺都读）：Tectonic 温度噪声乘
- *       {@link #TEMPERATURE_SCALE} 加纬度 {@code guworld:z_gradient}，z {@code -}{@link #GRADIENT_EDGE} 及以北（-z
- *       为北）取 {@link #NORTH_TEMPERATURE}，z {@link #GRADIENT_EDGE} 及以南取 {@link #SOUTH_TEMPERATURE}。</li>
- *   <li>{@link ColumnCaches} 包住移植的列函数（含两个改写函数），噪声区块每列只算一次；{@code min_y}、{@code max_y}、
- *       {@code jungle_pillars}、{@code underground_rivers} 与 {@code underground_river_water}、{@code lava_tunnels}
- *       同各域。</li>
- *   <li>{@code ocean_offset}（{@link #OCEAN_OFFSET}）、{@code vertical_scale}（{@link #VERTICAL_SCALE}）、{@code dunes}
- *       （{@link #DUNES}）的取值与温度、侵蚀的取舍见 wiki《北原#地形方法》。</li>
+ *   <li>基于 Tectonic 与 Terralith 共存时的移植路由（{@link Ports#registerDensityFunctions}），除填充 {@link #HOOKS} 地
+ *       形钩子外，还通过 {@link #getReshaped} 重塑温度与折叠侵蚀度两个底层密度函数。</li>
+ *   <li>折叠侵蚀度（{@value Reshaping#EROSION_FOLDED}，值越低地势越陡峭）先乘以 {@link #EROSION_SCALE} 再加上
+ *       {@link #EROSION_OFFSET}，将山地带收窄到过零线附近并略微展宽丘陵带，最后以 {@link #EROSION_CAP} 封顶以防大面积落
+ *       入冰川裂谷或触发尖柱地形。</li>
+ *   <li>温度函数（{@value Reshaping#TEMPERATURE}）将原有噪声缩放 {@link #TEMPERATURE_SCALE} 后叠加沿 Z 轴变化的
+ *       {@link ZGradient}，使 Z ≤ {@code -}{@link #GRADIENT_EDGE}（北侧）基准温度为 {@link #NORTH_TEMPERATURE}、Z ≥
+ *       {@link #GRADIENT_EDGE}（南侧）基准温度为 {@link #SOUTH_TEMPERATURE}。</li>
+ *   <li>重塑后的函数与其余水平列函数均由 {@link ColumnCaches} 自动套上列缓存，确保每个水平列仅求值一次。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see NorthernPlains
- * @since 1.0.0
  */
 
 public final class NorthernPlainsTerrain {

@@ -21,24 +21,20 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.common.Tags;
 
 /**
- * 地物 {@code guworld:waterways}：给一个区块的水系河道放水、铺河床。
- *
+ * 为单个区块的水系河槽注入水体并铺设河床材质的地物实现（{@code guworld:waterways}）。
  * <ul>
- *   <li>每区块一次，首个装饰步 {@code raw_generation}：表层规则后，本区块湖、树、植物前；维度无 {@link WaterwaysCarver}
- *       则不动。</li>
- *   <li>河道列（{@link WaterwaysCarver#getChannel}）从顶层水块（水面向上取整减 1）下穿空格找底，≤
- *       {@link #WATER_CAP} 格；空格：空气或非实心、非流体、非方块实体（邻区块先种进河道的草花由水盖掉）。</li>
- *   <li>底须在刻河河底，至多再深 1 格；更深（洞穴、坑、水面跨过的崖下）整列不动，靠邻列水流入。</li>
- *   <li>底方块上空、实心、非矿石非方块实体、下方托得住下落河床时换成区域河床（{@link WaterwaysCarver#getBed}）；
- *       有水河道从底往上放原版水源，干河道只铺床；列中原有的水（海、含水层）作底保留。</li>
- *   <li>放下或作底的水侧挨空格（下游台阶、矮岸）时排一次流体刻，加载后按原版流出；不改其他水规则。</li>
- *   <li>{@link #fill}、{@link #touchesOpen} 只取普通方块访问，测试可在自建区块上跑。</li>
+ *   <li>挂载在首个装饰阶段 {@code RAW_GENERATION}（表层规则执行完毕后、任何湖泊与植被装饰之前），每个区块执行一次；若当
+ *       前维度未挂载 {@link WaterwaysCarver} 则直接跳过。</li>
+ *   <li>对命中河道的水平列（{@link WaterwaysCarver#getChannel}），从目标水面顶层水块（{@code ceil(level) - 1}）向下穿过
+ *       至多{@link #WATER_CAP} 格开放方块（空气，或无碰撞、无流体且无方块实体的植物）寻找河底。</li>
+ *   <li>探测到的底面必须不低于理论刻河河底以下 1 格，若下方为深坑、洞穴或悬崖断层则整列跳过，交由相邻河道列的水体自然漫
+ *       入。</li>
+ *   <li>若河底方块为可替换实心方块（非矿石、非方块实体）且其下方能托住重力方块，则将其替换为本域配置的河床方块（
+ *       {@link WaterwaysCarver#getBed}）；有水河道随后从河底上方填充水源至水面，干涸河道则仅铺设河床；若探测停止在原有
+ *       水体（海洋或含水层）上，则直接以该水体为底。</li>
+ *   <li>新放置或充当底面的水源方块若水平四邻接存在开放方块（如顺流而下的河道台阶），会立即调度一次水流体刻，使区块加载
+ *       后水流自然衔接。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see WaterwaysRegistration
- * @since 1.0.0
  */
 
 public final class WaterwaysFeature extends Feature<NoneFeatureConfiguration> {

@@ -4,19 +4,15 @@ import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.waterways.Waterways;
 
 /**
- * 东海维度的入口 {@link #REGION}：中州（主世界）外四域之一。
- *
+ * 东海维度的域描述入口（{@link #REGION}），为中州（主世界）外四域之一。
  * <ul>
- *   <li>暖海群岛，约 4/5 是水，岛宽两公里到几十格；水系河床铺沙；{@code /guworld enter guworld:eastern_sea} 落在 0, 0
- *       上方地表，原点是水即落海面。</li>
- *   <li>有限域，键、边界、数据包条目用共用的一套（{@link Region}）；地形钩子在 {@link EasternSeaTerrain}，群系表在
- *       {@link EasternSeaLayout}。</li>
+ *   <li>全域为暖海群岛地貌，约 4/5 面积为海域，岛屿跨度从数十格至两公里不等，水系河床统一铺设沙子；通过
+ *       {@code /guworld enter guworld:eastern_sea} 进入时会落在原点 {@code (0, 0)} 上方地表（原点为海域时落在海面）。
+ *       </li>
+ *   <li>作为有限边界域，其注册键、世界边界与数据包引导统一由 {@link Region} 体系驱动；专属地形钩子定义在
+ *       {@link EasternSeaTerrain}，多噪声群系映射定义在 {@link EasternSeaLayout}，独有群系清单定义在
+ *       {@link EasternSeaRoster}。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see EasternSeaTerrain
- * @since 1.0.0
  */
 
 public final class EasternSea {

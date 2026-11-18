@@ -7,13 +7,9 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
 /**
- * {@link RegionBorders} 的事件转交类。{@link #onServerStarted} 在原版把主世界存档边界应用到各维度后触发；
- * {@link #onPlayerLoggedIn}、{@link #onPlayerChangedDimension}、{@link #onPlayerRespawn} 在原版发出主世界边界后触发。
- *
- * @author Alex
- * @version 1.0.0
- * @see RegionBorders
- * @since 1.0.0
+ * {@link RegionBorders} 的 NeoForge 事件监听入口。{@link #onServerStarted} 在服务端启动且原版将主世界存档边界同步至各维
+ * 度后触发，用于覆写四域边界；{@link #onPlayerLoggedIn}、{@link #onPlayerChangedDimension} 与 {@link #onPlayerRespawn}
+ * 在原版向客户端发送主世界边界包后触发，为处于四域内的玩家补发本域边界包。
  */
 
 @EventBusSubscriber(modid = GuWorld.MOD_ID)

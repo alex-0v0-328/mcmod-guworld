@@ -26,30 +26,30 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 
 /**
- * 四域之一的全部差异值。
+ * 四域（南疆、西漠、东海、北原）维度差异化配置的统一数据载体。
  * <ul>
- *   <li>四域即中州（主世界）外的南疆、西漠、东海、北原；差异全为值，{@link RegionBootstraps} 方能同法注册；各域包持一实
- *       例（{@code SouthernBorder#REGION} 等），附该域说明。</li>
- *   <li>键共用位置 {@code guworld:<name>}，由 {@link #noiseSettings}、{@link #levelStem}、{@link #level} 构建；
- *       {@link #name} 兼作移植地形副本前缀。</li>
- *   <li>四域共用维度类型 {@link #DIMENSION_TYPE}（{@code guworld:region}，字段无差别）、高度 {@link #MIN_Y} 至
- *       {@link #TOP_Y}（{@link #HEIGHT} 格）、{@link net.alex.guzhenrenworld.dimension.RegionBorders} 应用的方形世界边
- *       界（中心 0, 0，边长 {@link #BORDER_SIZE} 格即 8 km，约 26.2 万区块）。</li>
- *   <li>⚠ 键与主模组 {@code net.alex.guzhenren.registry.world.ModDimensions} 同名维度键共用位置，管理员传送
- *       {@code /guworld enter guworld:<name>} 靠它落到 0, 0 上方地表（旅行归主模组）；只改一边则命令落空。</li>
+ *   <li>将各域的差异提炼为纯数据对象，使 {@link RegionBootstraps} 能够以统一流程注册数据包条目；每个域包各自持有一个静
+ *       态实例（如 {@code SouthernBorder#REGION}）。</li>
+ *   <li>{@link #noiseSettings}、{@link #levelStem} 与 {@link #level} 均以 {@code guworld:<name>} 构造对应注册键，且
+ *       {@link #name} 兼作该域移植地形副本的命名空间路径前缀。</li>
+ *   <li>四域共用同一维度类型 {@link #DIMENSION_TYPE}（{@code guworld:region}）、垂直高度范围 {@link #MIN_Y} 至
+ *       {@link #TOP_Y}（共 {@link #HEIGHT} 格），以及由 {@link net.alex.guzhenrenworld.dimension.RegionBorders} 施加的
+ *       以{@code (0, 0)} 为中心、边长 {@link #BORDER_SIZE} 格（8 km）的方形世界边界。</li>
+ *   <li>内嵌记录分别封装各子域配置：{@link Title} 保存中英文维度显示名；{@link Biomes} 汇总域独有的复刻与移植群系、全量
+ *       群系名单（{@code roster}）、可供元泉[Spirit Spring]生成的非水体陆地群系（{@code land}）、群系译名、野生作物气候
+ *       表及多噪声参数构造函数；{@link Hooks} 保存填充移植地形钩子的参数与密度函数 JSON 重塑回调（默认不重塑为
+ *       {@link Hooks#AS_PORTED}）。</li>
+ *   <li>⚠ 维度键路径必须与主模组 {@code net.alex.guzhenren.registry.world.ModDimensions} 中的同名维度键完全一致，否则主
+ *       模组的 {@code /guworld enter guworld:<name>} 跨维度传送指令将无法解析目标维度。</li>
  * </ul>
  *
- * @param name     每个键的路径，也是该域在移植地形里的前缀
- * @param title    维度显示名
- * @param seaLevel 噪声设置的海平面
- * @param dry      是否只有最宽的水系有水（{@link Waterways.Region#dry()}）
- * @param bed      水系水下的方块
- * @param biomes   该域放置的群系
- * @param hooks    该域如何填它那份移植地形的钩子
- * @author Alex
- * @version 1.0.0
- * @see RegionBootstraps
- * @since 1.0.0
+ * @param name     各注册键的共用路径名，兼作该域在移植地形中的路径前缀
+ * @param title    维度的中英文显示名
+ * @param seaLevel 噪声生成器的海平面高度
+ * @param dry      是否仅保留最宽的主干水系有水（{@link Waterways.Region#dry()}）
+ * @param bed      水系河床铺设的方块类型
+ * @param biomes   该域放置的生物群系与多噪声表配置
+ * @param hooks    该域填充移植地形路由钩子的参数与重塑函数
  */
 
 public record Region(String name, Title title, int seaLevel, boolean dry, Waterways.Bed bed, Biomes biomes,
@@ -78,26 +78,13 @@ public record Region(String name, Title title, int seaLevel, boolean dry, Waterw
         return new Waterways.Region(name, BORDER_SIZE, dry, bed);
     }
 
-    /**
-     * 维度的英文与简体中文显示名。
-     */
     public record Title(String english, String simplified) {}
 
-    /**
-     * 一个域放置的群系：{@code replicas}、{@link #ported}：{@link Replicas#SHARED}、{@link Ports#BIOMES} 外另加的原版复
-     * 刻与 Terralith 移植；{@link #roster}：表能放的全部群系；{@link #parameters}：群系表；{@link #land}：除河流外的地
-     * 表群系，元泉[Spirit Spring]可生成于此；{@link #names}：本域独有群系的显示名；{@link #crops}：陆地按农夫乐事野生作
-     * 物气候分组。
-     */
     public record Biomes(List<Replicas.Template> replicas, List<ResourceKey<Biome>> ported,
             Set<ResourceKey<Biome>> roster, List<ResourceKey<Biome>> land, List<BiomeName> names,
             Map<WildCropClimate, List<ResourceKey<Biome>>> crops,
             Function<HolderGetter<Biome>, List<Pair<Climate.ParameterPoint, Holder<Biome>>>> parameters) {}
 
-    /**
-     * 一个域填进其移植路由副本钩子的值（{@link RegionBootstraps}）；{@link #reshape} 按名改写移植函数，
-     * {@link #AS_PORTED} 全不改。
-     */
     public record Hooks(DensityFunction oceanOffset, double verticalScale, double dunes,
             BiFunction<String, JsonElement, JsonElement> reshape) {
 

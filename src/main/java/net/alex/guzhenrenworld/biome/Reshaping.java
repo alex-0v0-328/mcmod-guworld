@@ -5,13 +5,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
 /**
- * 域注册前改写移植密度函数 JSON 的共用部件。被改写的两个移植函数：{@link #TEMPERATURE}，Terralith 群系表、Tectonic
- * 地貌区与沙丘都读；{@link #EROSION_FOLDED}，Tectonic 侵蚀离零的距离，决定地形样条与 Terralith 表读到的侵蚀。
- * {@link #getOperation}：原版二元运算（{@code add}、{@code mul}、{@code min}），参数为数或函数。
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
+ * 各域注册地形密度函数前改写移植 JSON 的公共辅助类。提供两个常被各域重塑的移植函数路径常量：{@link #TEMPERATURE}（同时
+ * 被Terralith 多噪声群系表、Tectonic 地貌分区与沙丘读取）与 {@link #EROSION_FOLDED}（Tectonic 折叠侵蚀度，决定地形样条
+ * 走势与Terralith 群系表读取的侵蚀度），并通过 {@link #getOperation} 构造原版二元算术节点（如 {@code add}、{@code mul}
+ * 、{@code min}）。
  */
 
 public final class Reshaping {

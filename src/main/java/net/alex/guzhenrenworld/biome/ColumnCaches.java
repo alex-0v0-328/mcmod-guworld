@@ -6,20 +6,19 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 /**
- * 移植密度函数（{@link Ports#registerDensityFunctions}）的列缓存补丁：不改值，只降计算频率。
+ * 移植密度函数（{@link Ports#registerDensityFunctions}）的列缓存补丁：不改变计算结果，仅降低水平列函数的求值频率。
  * <ul>
- *   <li>点名函数只随水平位置变，路由却逐方块或逐格角读；各套 {@code flat_cache}，噪声区块每 4 格一列只算一次，其下噪声
- *       已在 {@code flat_cache} 内，列内读值相同。</li>
- *   <li>{@code flat_cache} 只管本区块：含水层初步地表扫描在邻区块列上每 4 格下行一步，每步重算输入及 Tectonic 整条移位
- *       噪声与样条链，占噪声填充 1/3；故列缓存（含移植原有的）内套 {@code cache_2d} 记上一列，每列算一次。</li>
- *   <li>{@link #PORTED_COLUMNS}：域副本这样缓存的 10 个移植函数，{@link #ofPorted} 为其补丁；其中地下河的 2 条样条仅在
- *       域开该功能时存在，补丁遇不到的名字不管。</li>
- *   <li>⚠ 点名函数不得读 y：{@code cache_2d} 对任何 y 都返回首个 y 的值。</li>
+ *   <li>{@link #PORTED_COLUMNS} 列出的 10 个移植函数仅随水平坐标变化，但噪声路由会逐方块或逐网格角读取；补丁为其套上
+ *       {@code flat_cache}，使每个噪声区块内每 4×4 水平格仅计算一次（其底层噪声本身已位于 {@code flat_cache} 内，列内读
+ *       值不变）。</li>
+ *   <li>原版 {@code flat_cache} 仅缓存当前正在生成的区块：含水层初步地表扫描会在相邻区块列上按每 4 格向下探测，每步都会
+ *       重算输入及 Tectonic 整条移位噪声与样条链（约占噪声填充耗时的 1/3）；因此补丁会在列缓存（含移植自带的
+ *       {@code flat_cache}）内层再套一层 {@code cache_2d} 记住上一列结果，确保跨区块扫描时每列也只计算一次。</li>
+ *   <li>{@link #ofPorted} 为默认补丁入口；其中地下河的 2 条样条仅在启用地下河的域中存在，补丁遇到未注册的函数名会自动跳
+ *       过。</li>
+ *   <li>⚠ 列入缓存名单的函数严禁依赖 Y 坐标，因为 {@code cache_2d} 对同一水平列的任意 Y 坐标都会返回首次求值的结果。
+ *       </li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class ColumnCaches {

@@ -47,43 +47,44 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Terralith 2.5.8 与 Tectonic 3.0.28 的世界生成移植，作数据生成输入。
+ * Terralith 2.5.8 与 Tectonic 3.0.28 世界生成数据的移植加载器，作为数据生成阶段的输入源。
  * <ul>
- *   <li>Terralith 出自 Stardust Labs，Tectonic 出自 Apollo，Alex 已获两位作者许可使用与修改；改名进本模组命名空间，放
- *       {@code src/ports}（数据生成以系统属性 {@value #SOURCE_PROPERTY} 指明）：{@code terralith/} 为群系、地物、表层与
- *       群系表，{@code tectonic/} 为地形。</li>
- *   <li>JSON 当数据保留，不改写成 Java：各移植的清单按种类列文件，引导方法用注册表自带 codec 解码注册，产物照常进
- *       {@code src/generated}；解码对照本次构建的注册表与原版内置注册表，后者经按需建具名标签的查找（数据生成时无已绑定
- *       标签）；{@code terralith:} 的 ID 全改为 {@code guworld:}。</li>
- *   <li>每域一份清单：{@code index.json} 属首个域南疆，{@code index.<region>.json} 属其他域，{@link #getIndex} 合为一个
- *       列表，两域共有的文件只计一次；群系名取自 {@link #BIOMES} 与各域列表（{@link #biome} 建键），表层规则是
- *       Terralith 主世界规则中点名它们的子树，在 {@code surface_rule.json} 与 {@code surface_rule.<region>.json}，
- *       {@link #getSurfaceRules} 依次拼接；多噪声表保留来源群系 ID（{@link #getBiomeParameters}）。</li>
- *   <li>{@link #registerBiomes} 在清单与预期键不符时失败，移植脚本新增的群系须先有群系表、翻译、标签可引用的键；移植群
- *       系保留 Terralith 的气候、颜色、刷怪、地物，同复刻群系不雕刻（{@link Replicas#getUncarved}）；方块标签经标签
- *       provider 输出（{@link #getBlockTags}）。</li>
- *   <li>地形是 Tectonic 与 Terralith 同装时的主世界噪声路由，连同它够到的两模组密度函数与噪声，放
- *       {@code guworld:terrain/<namespace>/}，Tectonic 配置烘焙成原版密度函数；11 个函数读 9 种钩子
- *       {@code terrain/hook/*}，按域取值，故每域在 {@code guworld:terrain/<region>/} 下注册各自的函数与路由。</li>
- *   <li>{@link #registerDensityFunctions} 收域名与补丁（按函数名和 JSON 决定改动），再把函数与钩子引用改名进本域
- *       （{@link #getRegional}），钩子由域在 {@link #getHookKey} 注册；{@link #getNoiseRouter} 同样处理路由。</li>
- *   <li>域只注册路由够得到的（{@link Reachable}）：路由直接或间接点名的移植函数、钩回的函数（{@code hooked}，开着的功
- *       能）及其所读移植噪声，均查补丁后的 JSON；常量钩子、关掉功能背后的文件不进数据包，打开即回，本类不用改。</li>
- *   <li>噪声按域复制：随机状态按世界种子与噪声 ID 派生噪声，各域同种子，同 ID 即同一噪声场（大陆、河流、山脊相同）；
- *       {@link #registerNoises(BootstrapContext, String, BiFunction, Set)} 把够到的移植噪声注册到域前缀下，地形读的原版
- *       噪声按原版参数注册到 {@code guworld:terrain/<region>/minecraft/}，{@link #registerDensityFunctions} 在同处为读
- *       噪声的原版函数（如 {@code minecraft:shift_x}）注册域副本；{@link #getRegional} 照常改噪声引用，原版引用只在指向
- *       副本时改；内嵌扫描从原版注册表一次找出它们，并把函数编码回 JSON。</li>
- *   <li>仍共用：{@code minecraft:overworld/base_3d_noise}（混合噪声不论 ID 都以原版 {@code minecraft:terrain} 为种
- *       子）、表层规则的噪声、随机状态里含水层与矿脉的位置。</li>
- *   <li>⚠ 文件只移植、不手改；需更多文件或上游更新时先写移植脚本、重新移植，再跑 {@code runData}。</li>
- *   <li>有意超 300 行：两份移植共用清单读取、解码与域改名（{@link #getIndex}、{@link #decode}、{@link #getRegional}），
- *       分成两类就得复制或公开这些私有方法。</li>
+ *   <li>Terralith（Stardust Labs）与 Tectonic（Apollo）均已由 Alex 获得原作者授权使用与修改；移植文件统一改入本模组命名
+ *       空间并存放在 {@code src/ports}（数据生成时通过系统属性 {@value #SOURCE_PROPERTY} 指定路径），其中
+ *       {@code terralith/}存放群系、地物、表层规则与多噪声参数表，{@code tectonic/} 存放地形密度函数、噪声与路由。</li>
+ *   <li>移植内容保留 JSON 数据形态而不改写为 Java 代码：各目录通过清单文件按类别列出条目，引导方法使用原版注册表自带的
+ *       Codec 解码并注册，最终随 {@code runData} 输出到 {@code src/generated}；解码时结合当前构建的注册表与原版内置注册
+ *       表（通过按需创建未绑定标签的 Lookup 解析引用），且所有 {@code terralith:} 前缀均已预先替换为 {@code guworld:}。
+ *       </li>
+ *   <li>清单与表层规则按域拆分：{@code index.json} 与 {@code surface_rule.json} 对应首个域（南疆），
+ *       {@code index.<region>.json}与 {@code surface_rule.<region>.json} 对应其余各域；{@link #getIndex} 会将多域清单去
+ *       重合并，{@link #getSurfaceRules}则按域顺序拼接表层规则子树，多噪声群系表（{@link #getBiomeParameters}）保留来源
+ *       群系 ID 供 {@link BiomeTable} 映射。</li>
+ *   <li>移植群系（{@link #BIOMES} 及各域列表，由 {@link #biome} 构造键）保留 Terralith 的气候、颜色、刷怪与地物，并通过
+ *       {@link Replicas#getUncarved} 移除雕刻器；方块标签则由 {@link #getBlockTags} 读取并交由标签生成器写出。</li>
+ *   <li>地形部分提取自 Tectonic 与 Terralith 共存时的主世界噪声路由及其可达的密度函数与噪声（位于
+ *       {@code guworld:terrain/<namespace>/}），并将 Tectonic 配置烘焙为原版密度函数；其中 11 个函数读取 9 个钩子函数（
+ *       {@code terrain/hook/*}）以按域定制参数，因此每个域都会在 {@code guworld:terrain/<region>/} 命名空间下独立注册一
+ *       套函数与噪声路由。</li>
+ *   <li>{@link #registerDensityFunctions} 接收域名与 JSON 补丁函数，先对原始 JSON 应用补丁，再通过 {@link #getRegional}
+ *       将内部函数与钩子引用改写到当前域前缀下（钩子本体由各域在 {@link #getHookKey} 处注册）；{@link #getNoiseRouter}
+ *       以同样方式改写并解码噪声路由。</li>
+ *   <li>各域仅注册可达条目（{@link Reachable}）：从噪声路由及已开启的开关钩子目标（{@code hooked}）出发，在打完补丁的
+ *       JSON引用图上做可达性遍历，仅注册可达的密度函数及其引用的噪声；被常量钩子替代或开关关闭的功能分支不会进入生成的
+ *       数据包。</li>
+ *   <li>噪声按域独立复制以隔离地形种子：原版 {@code RandomState} 根据世界种子与噪声注册名派生噪声实例，由于各域共享世界
+ *       种子，若共用同一噪声 ID 会导致各域的大陆、河流与山脊分布完全雷同；因此
+ *       {@link #registerNoises(BootstrapContext, String, BiFunction, Set)} 与 {@link #registerDensityFunctions} 会将可
+ *       达的移植噪声、地形引用的原版噪声以及读取原版噪声的原版密度函数（由内嵌类 {@code Vanilla} 从内置注册表扫描并重编
+ *       码）一并复制到本域前缀下，仅保留 {@code minecraft:overworld/base_3d_noise}、表层规则噪声以及含水层和矿脉位置共
+ *       用。</li>
+ *   <li>有意超过 300 行：Terralith 与 Tectonic 两套移植共享清单读取、Codec 解码及域内引用改写逻辑（{@link #getIndex}、
+ *       {@link #decode}、{@link #getRegional}），强行拆分会导致辅助方法重复或暴露内部实现。</li>
+ *   <li>⚠ {@code src/ports} 下的 JSON 文件仅由移植脚本生成，严禁手动修改；若需新增移植条目或同步上游更新，必须先更新移
+ *       植脚本重新导出，再执行 {@code runData}。</li>
+ *   <li>⚠ {@link #registerBiomes} 会校验清单群系集合与传入的预期键列表是否完全一致，不一致时直接抛错；因此移植脚本新增
+ *       群系后必须同步补齐群系键、映射表、翻译与标签。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class Ports {

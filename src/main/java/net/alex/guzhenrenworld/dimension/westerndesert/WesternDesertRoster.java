@@ -12,21 +12,17 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 
 /**
- * 只有西漠放置的群系，供数据生成提供器收集。
+ * 西漠维度独有的群系清单，供数据生成阶段的各 Provider 汇总读取。
  * <ul>
- *   <li>{@link #REPLICAS}：{@link Replicas#SHARED} 外的原版复刻；{@link #NAMES}：显示名；{@link #PORTED}：移植的
- *       Terralith 群系（{@link Ports#biome} 命名，清单 {@code src/ports/terralith/index.western_desert.json}）。</li>
- *   <li>{@link #CROPS}：陆地按群系自身温度降水分进农夫乐事野生作物气候（{@link WildCropClimate}）：沙漠、恶地、峡谷、台
- *       地、旱原高地、荆丛地温度 ≥ 1 且干，为热；两种绿洲另按名字归湿；热灌丛（0.8）归温带；戈壁（0.14）归寒。</li>
- *   <li>{@link WesternDesertLayout} 放置它们，由其表推出名单和陆地列表。</li>
- *   <li>⚠ 重新移植新增群系，须同一改动补 {@link #PORTED} 的键、{@link #NAMES} 的名字、{@link #CROPS} 的气候；清单与键不
- *       一致则 {@link Ports#registerBiomes} 失败。</li>
+ *   <li>{@link #PORTED} 列出西漠独有的 Terralith 移植群系键（对应清单
+ *       {@code src/ports/terralith/index.western_desert.json}）；{@link #REPLICAS} 列出除 {@link Replicas#SHARED} 外的
+ *       原版复刻群系；{@link #NAMES} 汇总两者的中英文显示名。</li>
+ *   <li>{@link #CROPS} 将陆地群系按农夫乐事野生作物气候（{@link WildCropClimate}）分组：沙漠、恶地、峡谷、台地、旱原高
+ *       地与荆丛地（温度 ≥ 1.0 且干燥）归干热；绿洲与红绿洲按名称归入湿润（同时满足温度条件也归入干热）；热灌丛归温带；
+ *       戈壁归寒冷。</li>
+ *   <li>⚠ 更新移植清单新增群系时，必须在同一次改动中同步补齐 {@link #PORTED}、{@link #NAMES} 与 {@link #CROPS}，否则
+ *       {@link Ports#registerBiomes} 会在校验清单与键集合时直接报错。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see WesternDesertLayout
- * @since 1.0.0
  */
 
 public final class WesternDesertRoster {

@@ -17,22 +17,20 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 /**
- * 一个区域在一个世界（一个 {@link RandomState}）里的刻河。
- *
+ * 单个域维度实例（绑定一个 {@link RandomState}）的水系河槽雕刻器。
  * <ul>
- *   <li>持 {@link WaterwaysIndex}；{@link #getSurface} 为一列刻后地表，供 {@link WaterwaysDensity}
- *       削地形；{@link #getChannel}、{@link #getBed} 为该列河道与河床方块，供 {@link WaterwaysFeature} 放水。</li>
- *   <li>索引在独立线程只建一次，由 {@link #prefetch} 或首个来问的列触发；其间来问者都等（区块工作线程经 fork-join 托管
- *       阻塞），服务端线程也等，故运行时在维度加载时即预建。</li>
- *   <li>建图失败或无法启动：记错误，区域不刻河；{@link #create} 总从规划建，{@link WaterwaysRuntime} 先试存档。</li>
- *   <li>远离溪流的列只多读一次桶；近处按摆动噪声（截到 ±1）偏移 ≤ {@link Waterways#MEANDER} 格，岸带伸到才经
- *       {@link GroundHeights} 从水面加下切处读地面（噪声区块内用 {@link WaterwaysDensity} 传入的本区块地形副本）。</li>
- *   <li>地表存入每线程 {@link #COLUMNS} 槽直接映射表：地形对一列每个实心方块都问一次。</li>
+ *   <li>内部延迟持有 {@link WaterwaysIndex}：{@link #getSurface} 计算单列刻河后的目标地表高度供
+ *       {@link WaterwaysDensity} 削低地形，{@link #getChannel} 与 {@link #getBed} 查询单列的河道水位、河底与河床方块供
+ *       {@link WaterwaysFeature} 铺床注水。</li>
+ *   <li>水系索引在后台守护线程池中仅构建一次，可由维度加载时的 {@link #prefetch} 提前触发，或由首个查询的列按需触发；构
+ *       建完成前所有调用方在 {@link CompletableFuture#join()} 上等待；若构建异常则记录错误日志并回退为空索引（该域保持
+ *       不刻河）。</li>
+ *   <li>远离开河网格桶的水平列只需一次桶数组判空即可快速跳过；落入有效桶的列先叠加 {@link Waterways#MEANDER} 蜿蜒偏移，
+ *       仅当落入岸带过渡区时才通过 {@link GroundHeights} 从水面加下切深度处采样原地面高度（在噪声区块内直接复用传入的本
+ *       区块地形副本）。</li>
+ *   <li>由于噪声生成会对同一水平列的每个实心高度格重复调用 {@link #getSurface}，每个线程通过 {@link #columns} 维护一个
+ *       {@link #COLUMNS} 槽位的直接映射列缓存，使同一水平列只求值一次。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class WaterwaysCarver {

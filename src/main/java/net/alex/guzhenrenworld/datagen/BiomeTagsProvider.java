@@ -22,19 +22,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 本模组全部群系标签的唯一 provider。
- *
+ * 本模组生物群系标签的唯一数据生成器。
  * <ul>
- *   <li>元泉[Spirit Spring]生成标签 {@link SpiritSpring#BIOMES}：{@link SpiritSpring#LAND_BIOMES}（元泉包管的主世界名
- *       单）加各域陆地群系；{@link WildCropClimate} 野生作物气候标签取 {@link Regions#ALL} 各域作物气候表；两域共有的群
- *       系（雨林）每标签只记一次。</li>
- *   <li>野生知心草生成标签 {@link IntimateGrass#BIOMES}：同一份主世界名单加南疆陆地群系，别域不入。</li>
- *   <li>⚠ 每次数据生成仅一个：标签 provider 以注册表与模组命名，再加一个即重名失败；新群系标签加在这里。</li>
+ *   <li>元泉生成群系标签（{@link SpiritSpring#BIOMES}）汇总主世界陆地群系名单（{@link SpiritSpring#LAND_BIOMES}）与所有
+ *       域的陆地群系；野生知心草生成群系标签（{@link IntimateGrass#BIOMES}）仅包含同一份主世界名单与南疆陆地群系；农夫
+ *       乐事野生作物气候标签（{@link WildCropClimate}）则汇总 {@link Regions#ALL} 各域的作物气候映射表，多域共用的群系
+ *       （如雨林）通过有序集合去重。</li>
+ *   <li>⚠ 每个注册表在同一模组的数据生成周期内只能注册一个标签 Provider，否则会因输出任务重名而报错；新增群系标签必须统
+ *       一在{@link #addTags} 中追加。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public class BiomeTagsProvider extends TagsProvider<Biome> {

@@ -15,21 +15,19 @@ import net.minecraft.world.level.biome.Climate;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 域的群系表：原样的 Terralith 主世界多噪声表（{@link Ports#getBiomeParameters}），来源群系按组映射到本域。
+ * 域的多噪声群系映射表：基于 Terralith 主世界多噪声参数表（{@link Ports#getBiomeParameters}），将来源群系按分组映射为本
+ * 域群系。
  * <ul>
- *   <li>组由域列出：名单群系对应它代替的来源群系名；地形是本域的 Tectonic 副本，侵蚀、山脊重映射到 Terralith 表的分段，
- *       故每个参数格保留 Terralith 的地形原型、得到本域同类群系。</li>
- *   <li>地形随侵蚀不随群系：Terralith 尖柱带（侵蚀 ≥ {@link #SPIRE_EROSION}）每格都长 Tectonic 尖柱地形；
- *       {@link #withSpires} 把该带的格改成尖柱群系（保留群系除外），{@link #of} 照组映射。</li>
- *   <li>⚠ {@link #getBiome} 遇未映射来源抛错，新移植群系令 {@code runData} 失败而非丢格；{@link #of} 遇重复映射抛
- *       错。</li>
- *   <li>只经 {@link #of}、{@link #withSpires} 构建，每张表都过了重复检查；无尖柱的表 {@code spireBiome} 为 null。</li>
+ *   <li>各域定义分组映射表，指明每个本域群系替代哪些来源群系；由于域地形使用 Tectonic 副本并将侵蚀度与山脊值重映射到
+ *       Terralith 的分段区间，每个气候参数格都能保留原有的地形原型并替换为本域对应的同类群系。</li>
+ *   <li>地形形态取决于侵蚀度而非群系本身：Terralith 尖柱带（侵蚀度 ≥ {@link #SPIRE_EROSION}）在 Tectonic 下固定生成尖柱
+ *       地形；{@link #withSpires} 会将该区间内除保留名单外的参数格统一替换为指定的尖柱群系，{@link #of} 则仅按分组原样
+ *       映射。</li>
+ *   <li>实例仅通过 {@link #of} 与 {@link #withSpires} 构建，构建时通过 {@link #getSources} 校验分组映射并转换为不可变
+ *       表；不设尖柱群系的表其 {@code spireBiome} 为 {@code null}。</li>
+ *   <li>⚠ {@link #getBiome} 遇到未映射的来源群系、或构建时遇到重复映射的来源群系都会直接抛出异常，使新增移植群系在
+ *       {@code runData} 阶段显式失败，防止静默漏格。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see Ports#getBiomeParameters
- * @since 1.0.0
  */
 
 public final class BiomeTable {

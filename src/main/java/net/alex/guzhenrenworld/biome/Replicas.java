@@ -24,25 +24,25 @@ import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 /**
- * 原版主世界群系的复刻：原版群系以原名进本模组命名空间。
+ * 原版主世界生物群系的本模组命名空间复刻工具。
  * <ul>
- *   <li>{@code guworld:plains} 即 {@code minecraft:plains}；沿用原版气候、颜色、音乐、刷怪与地物（原版顺序），域可放
- *       置、日后调整而不碰主世界。</li>
- *   <li>不雕刻：高度场地形的域自己雕刻洞穴，雕刻器隧道可伸出起点 8 个区块，会切开别的群系里的崖壁或石柱；
- *       {@link #getUncarved} 去掉模板的雕刻器，保留或替换地物，凡以原版群系为底的都经它。</li>
- *   <li>原版主世界表层规则按键点名群系，复刻群系会失去地表（尖峭山峰的石头和方解石、风袭丘陵的裸石）；
- *       {@link #getSurfaceRules} 返回原版规则，并把复刻群系加在原群系旁。</li>
- *   <li>刷怪项按实体类型自身分类放（{@link #getSpawnsByCategory}）：原版竹林把豹猫放在 monster 下，占敌对生物上限，
- *       在模组群系还引发加载器警告；重建时连同刷怪消耗移到所属分类。</li>
- *   <li>{@link Template}：复刻键、原版群系、原版工厂（{@link Factory}，同原版签名），{@link #of} 按原版名起键。</li>
- *   <li>{@link #SHARED}：各域可放的模板（平原、河流、两种洞穴），{@link #BIOMES} 同序列键（语言表 provider 命名序）；
- *       仅一域放置的原版群系，模板留在该域包，与共用模板一并交给 {@link #registerBiomes}、{@link #getSurfaceRules}；
- *       两域都要的移来此处，因群系只注册一次。</li>
+ *   <li>将原版群系按同名路径复刻到本模组命名空间下（如 {@code guworld:plains} 对应 {@code minecraft:plains}），完整保留
+ *       原版的气候、颜色、音效、刷怪与地物顺序，使各域能够独立放置并在日后调整而不污染原版主世界。</li>
+ *   <li>统一移除地形雕刻器：采用高度场地形的域由密度函数直接雕刻洞穴，而原版雕刻器隧道可跨出起点达 8 个区块，会切穿邻近
+ *       群系的崖壁或石柱；因此所有基于原版群系构建的复刻群系均经 {@link #getUncarved} 清空雕刻器，仅保留或替换地物列
+ *       表。</li>
+ *   <li>同步扩展原版表层规则：原版主世界表层规则按群系键精确匹配（如尖峭山峰的裸岩与方解石、风袭丘陵的石质地表），直接
+ *       复刻会导致新群系丢失专属地表；{@link #getSurfaceRules} 会将原版主世界表层规则编码为 JSON，在每处匹配的原版群系
+ *       旁追加对应的复刻群系键后再解码返回。</li>
+ *   <li>修正生物刷怪分类（{@link #getSpawnsByCategory}）：原版竹林将豹猫配置在 {@code monster} 分类下，既挤占敌对生物刷
+ *       怪上限，又会在模组群系中触发加载器警告；重建群系时会将所有刷怪项连同刷怪消耗按实体类型自身的
+ *       {@link MobCategory} 重新归类。</li>
+ *   <li>{@link Template} 封装复刻群系键、原版群系键及与原版签名一致的构建工厂（{@link Factory}），由 {@link #of} 按原版
+ *       路径自动生成复刻键。</li>
+ *   <li>{@link #SHARED} 汇总多域共用的复刻模板（平原、河流与两种洞穴），{@link #BIOMES} 按相同顺序导出群系键供语言表生
+ *       成器读取；仅单域使用的复刻模板留在对应域包内，在调用 {@link #registerBiomes} 与 {@link #getSurfaceRules} 时与共
+ *       用模板合并传入；一旦某个复刻群系被两个及以上域共用，必须上移至本类以避免重复注册。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class Replicas {

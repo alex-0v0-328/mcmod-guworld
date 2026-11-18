@@ -7,21 +7,14 @@ import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
 /**
- * 南疆地形：Tectonic 与 Terralith 同装时的 Tectonic 主世界路由。
+ * 南疆维度的地形参数配置，定制本域的 Tectonic 主世界噪声路由副本。
  * <ul>
- *   <li>经 {@link Ports} 移植并烘焙 Tectonic 默认配置，只经钩子 {@code guworld:terrain/hook/*} 改形，钩子由
- *       {@link RegionBootstraps#registerDensityFunctions} 随移植函数注册；函数与路由用本域前缀
- *       （{@link Ports#getRegionalKey}），钩子用 {@link Ports#getHookKey}。</li>
- *   <li>钩子取值与理由见 wiki《南疆#地形方法》：{@link #OCEAN_OFFSET}、{@link #VERTICAL_SCALE}、{@code dunes} 关，
- *       {@code min_y}、{@code max_y} 取维度底与顶（{@link Region#MIN_Y}、{@link Region#TOP_Y}）。</li>
- *   <li>三项 Tectonic 特性开关见 {@link RegionBootstraps}，四域全关；{@link ColumnCaches} 包住移植列函数，每列算一
- *       次。</li>
+ *   <li>基于 {@link Ports} 移植并烘焙默认配置的 Tectonic 路由，不改写底层密度函数，仅通过 {@link #HOOKS} 向
+ *       {@link RegionBootstraps#registerDensityFunctions} 提供 {@link #OCEAN_OFFSET}、{@link #VERTICAL_SCALE} 并关闭沙
+ *       丘（{@code dunes = 0}）。</li>
+ *   <li>高度上下限取维度底与顶（{@link Region#MIN_Y}、{@link Region#TOP_Y}），三项高开销 Tectonic 特性开关由
+ *       {@link RegionBootstraps} 统一关闭，水平列函数由 {@link ColumnCaches} 自动套上列缓存。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see SouthernBorder
- * @since 1.0.0
  */
 
 public final class Terrain {

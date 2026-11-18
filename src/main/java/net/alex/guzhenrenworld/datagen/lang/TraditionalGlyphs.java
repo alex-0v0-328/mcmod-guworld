@@ -4,21 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 本模组 {@code zh_tw} 的简转繁字形表。
- *
+ * 本模组繁体中文（{@code zh_tw}）的简繁字形转换表。
  * <ul>
- *   <li>繁中与 {@code zh_cn} 只差字形不差用词，{@link Translations} 每个 {@code zh_tw} 值都经 {@link #convert} 得出；
- *       字形按台湾标准（OpenCC {@code s2tw}），用词照原文。主模组 {@code TraditionalGlyphs} 的副本，只留本模组用字：
- *       两模组互不编译依赖，借不到对方的表；新字取主模组表的繁体，表中没有则取 OpenCC {@code s2tw}。</li>
- *   <li>{@link #PAIRS} 词元为简体半段接繁体半段（宝寶）；一简多繁的字只以整词录入（冲刷沖刷）；{@link #convert}
- *       逐位取最长匹配；{@link #UNCHANGED} 收简繁同形字。</li>
- *   <li>⚠ {@link #convert} 遇未收录汉字即抛错：{@code zh_cn} 含新字则 {@code runData} 失败，不把简体字混入繁体。</li>
+ *   <li>繁体中文与简体中文（{@code zh_cn}）保持相同词汇，仅按台湾正体字标准（OpenCC {@code s2tw}）转换字形，由
+ *       {@link Translations} 对每条简体文本调用 {@link #convert} 生成；因本模组与主模组无编译期依赖，此处仅维护本模组用
+ *       到的字形子集（新增字优先与主模组同名类对齐，未收录字参考 OpenCC {@code s2tw}）。</li>
+ *   <li>{@link #PAIRS} 中的词元按「前一半简体、后一半繁体」成对编码（如 {@code 宝寶}），一对多的多音多义字统一按整词录
+ *       入（如{@code 干草乾草}），由 {@link #convert} 从左到右按最长前缀匹配替换；简繁同形字收录在 {@link #UNCHANGED}
+ *       中。</li>
+ *   <li>⚠ {@link #convert} 遇到既不在 {@link #PAIRS} 也不在 {@link #UNCHANGED} 中的汉字会直接抛出异常，使新增简体字在
+ *       {@code runData} 阶段显式报错，防止简体字漏入繁体语言表。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see Translations
- * @since 1.0.0
  */
 
 public final class TraditionalGlyphs {

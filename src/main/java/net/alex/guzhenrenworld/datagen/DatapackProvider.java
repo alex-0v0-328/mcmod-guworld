@@ -26,25 +26,21 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
- * 本模组全部数据包注册表的唯一 provider。
- *
+ * 本模组全部数据包内置注册表条目的唯一生成器。
  * <ul>
- *   <li>宝黄天[Treasure Yellow Heaven]的维度类型、群系、层级（{@link TreasureYellowHeaven}）；南疆竹海及其竹子
- *       （{@link BiomeSettings}）；元泉[Spirit Spring]配置地物、放置地物（{@link SpiritSpring}）与群系修改器
- *       （{@link SpiritSpringRegistration}）；野生知心草的配置地物、放置地物与群系修改器
- *       （{@link IntimateGrass}）。</li>
- *   <li>四域共用的维度类型；每域（{@link Regions#ALL}）的密度函数（Tectonic 路由加本域钩子）、噪声设置、
- *       层级（{@link RegionBootstraps}），及本域路由够到的移植地形副本，挂本域前缀下。</li>
- *   <li>群系：原版复刻（{@link Replicas#SHARED} 加各域的）、Terralith 移植群系连同地物（{@link Ports#BIOMES}
- *       加各域的）；两份移植共读的噪声（{@link Ports}）。</li>
- *   <li>两维度共填的注册表只用一个引导，内含两边；标签 provider 取本实例 {@code getRegistryProvider()} 而非普通查找，
- *       才看得到本次生成的群系。</li>
- *   <li>⚠ 每次数据生成只能一个：内置条目 provider 名字固定，第二个实例直接失败；新注册表加进本实例构建器。</li>
+ *   <li>汇总注册宝黄天的维度类型、群系与维度层级（{@link TreasureYellowHeaven}），南疆自制的竹海群系与稀疏竹子放置地物
+ *       （{@link BiomeSettings}），元泉配置地物、放置地物（{@link SpiritSpring}）与群系修改器（
+ *       {@link SpiritSpringRegistration}），野生知心草地物与群系修改器（{@link IntimateGrass}），以及四域水系地物与修改
+ *       器（{@link WaterwaysRegistration}）。</li>
+ *   <li>注册四域共用的维度类型，并按 {@link Regions#ALL} 逐域注册各自的密度函数（Tectonic 路由与域钩子）、噪声生成设
+ *       置、维度层级（{@link RegionBootstraps}）以及挂载在各域前缀下的可达移植地形副本。</li>
+ *   <li>汇总注册原版复刻群系（{@link Replicas#SHARED} 加各域独有复刻）、Terralith 移植群系及地物（{@link Ports#BIOMES}
+ *       加各域独有移植），以及移植与水系共用的噪声参数（{@link Ports}、{@link Waterways}）。</li>
+ *   <li>多个维度共用的注册表统一在同一个 Bootstrap 回调内完成注册；下游群系标签生成器必须读取本实例的
+ *       {@link #getRegistryProvider()}，才能解析本次运行新生成的群系键。</li>
+ *   <li>⚠ {@link DatapackBuiltinEntriesProvider} 的任务名称固定，单次数据生成只能注册一个实例；新增数据包注册表必须并入
+ *       {@link #BUILDER}。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public class DatapackProvider extends DatapackBuiltinEntriesProvider {

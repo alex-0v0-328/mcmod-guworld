@@ -6,23 +6,20 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.fml.common.Mod;
 
 /**
- * Gu World 入口类：主模组（{@code guzhenren}）的配套模组，在其旁的独立仓库构建。
+ * Gu World 模组主类，作为主模组（{@code guzhenren}）的独立世界生成配套模组运行。
  * <ul>
- *   <li>本模组管全部维度、地形、群系及元泉[Spirit Spring]等自然生成的独特结构；主模组管玩家数据、锚定维度传送
- *       （{@code /guworld}）、维度内的守卫及元泉的方块、流体、物品。</li>
- *   <li>只在运行时相接：本模组依赖主模组、后于它加载，编译不依赖它；主模组只按键引用维度
- *       （{@code net.alex.guzhenren.registry.world.ModDimensions#TREASURE_YELLOW_HEAVEN}），本模组只按 ID 引用其方块
- *       （{@link GuzhenrenBlocks}）。</li>
- *   <li>本类只有 {@code MOD_ID} 与 {@link #id}、{@link #key}；功能各占一包（{@code biome}；{@code dimension}，每域一子
- *       包；{@code feature}；仅客户端的绘制在 {@code client}），经 {@code @EventBusSubscriber} 或 {@code datagen}
- *       provider 自行接线，根包不依赖它们，包图无环。</li>
- *   <li>⚠ 包名是 {@code net.alex.guzhenrenworld}，不可用 {@code net.alex.guzhenren.world}：主模组已占
- *       {@code net.alex.guzhenren}，NeoForge 每个模组一个模块，同一包拆在两个 jar 里无法加载。</li>
+ *   <li>职责边界：本模组负责全部自定义维度、地形、生物群系、水系以及元泉[Spirit Spring]、野生知心草等自然生成的结构与地
+ *       物；主模组负责玩家数据、跨维度旅行指令（{@code /guworld}）、维度守卫以及元泉与知心草的方块、流体、物品与渲染。
+ *       </li>
+ *   <li>跨模组解耦：本模组在运行期依赖主模组并在其后加载，但无编译期依赖；主模组仅按维度键引用本模组的维度（
+ *       {@code net.alex.guzhenren.registry.world.ModDimensions}），本模组仅按注册 ID 引用主模组的方块（
+ *       {@link GuzhenrenBlocks}）。</li>
+ *   <li>本类仅提供 {@link #MOD_ID} 及资源标识构造工具（{@link #id}、{@link #key}）；各功能子包（{@code biome}、
+ *       {@code dimension}、{@code feature}、{@code waterways}、{@code client}、{@code datagen}）通过各自的
+ *       {@code @EventBusSubscriber} 或数据生成器独立挂载，根包不反向依赖子包。</li>
+ *   <li>⚠ 根包名固定为 {@code net.alex.guzhenrenworld}，严禁改为 {@code net.alex.guzhenren.world}：主模组已占用
+ *       {@code net.alex.guzhenren} 包前缀，而 Java 模块系统禁止两个模组 Jar 拆分同一个包（Split Package）。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 @Mod(GuWorld.MOD_ID)

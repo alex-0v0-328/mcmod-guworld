@@ -5,14 +5,10 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.world.level.levelgen.SurfaceRules;
 
 /**
- * 表层规则的 codec 形式与纯 JSON 互转，供本包把规则当数据改写。{@link Replicas} 加复刻群系、{@link SurfacePruning}
- * 按名单裁剪，都改 {@link #encode} 给的 JSON 再经 {@link #decode} 读回，{@link Ports} 同样解码移植规则；每次调用给规则
- * 命名，写进失败消息。
- *
- * @author Alex
- * @version 1.0.0
- * @see SurfacePruning
- * @since 1.0.0
+ * 原版表层规则（{@link SurfaceRules.RuleSource}）与 Gson {@link JsonElement} 之间的编解码工具，供同包类将表层规则作为纯
+ * JSON 数据改写。{@link Replicas} 注入复刻群系与 {@link SurfacePruning} 按域名单裁剪规则时，均先调用 {@link #encode} 转
+ * 为JSON 修改，再经 {@link #decode} 还原为规则对象；{@link Ports} 也通过本类解码移植的表层规则文件，并在失败异常信息中
+ * 附带调用方传入的描述名。
  */
 
 final class SurfaceRuleJson {

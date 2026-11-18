@@ -8,23 +8,21 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * {@link WaterwaysPlan} 的水系线段索引：每个溪流格一段，连向流向格。
- *
+ * 由 {@link WaterwaysPlan} 构建的水系河道线段空间索引：将每个达标溪流格与其下游接收格连接为有向河道线段。
  * <ul>
- *   <li>每段存两端全宽（流向格不成河时用本格的）与 {@link Waterways#KNOTS} + 1 个节点水面（{@link WaterwaysProfile}，
- *       节点间线性）；按 {@link Waterways#CELL} 格分桶，每桶列出河道、岸带与摆动够得着的线段，刻河读一次数组即得。</li>
- *   <li>{@link #getSurface}：附近线段目标高度取最低（非论文式 31 的反距离加权：汇流口必连通）；河道内为河底，
- *       岸带从水面按 smoothstep 升到地面加 {@link Waterways#BANK_MARGIN}。</li>
- *   <li>河底在边缘为顶层水块（水面向上取整减 1）底面，边缘也有 1 格水，向中线按抛物线深至
- *       {@link Waterways#getDepth} 格；岸带从水面起，比边缘高 ≤ 1 格。</li>
- *   <li>{@link #getChannel}：某点所在河道，取最低河底；干旱区域只有宽 ≥ {@link Waterways#DRY_WIDTH} 格的有水；
- *       相交处取有水各段中最低的水面。</li>
- *   <li>线段随世界存档存取，桶载入时重建；含非有限值的存档载入失败并重建。</li>
+ *   <li>每条线段保存首尾两端的河宽（下游格未成河时沿用上游宽度）以及由 {@link WaterwaysProfile} 计算的
+ *       {@link Waterways#KNOTS} + 1 个等距节点水位；初始化时按 {@link Waterways#CELL} 网格建立空间分桶，将每条线段注册
+ *       到其河宽、岸带与蜿蜒偏移（{@link #getReach}）所能触及的全部网格桶中，使单列查询只需遍历所在桶的紧凑数组。</li>
+ *   <li>{@link #getSurface} 对桶内各线段计算刻河目标高度并取最小值（不同于论文公式 31 的反距离加权，取最小值可确保干支
+ *       流交汇口必定挖通）：落入河宽内时返回抛物线河底高度，落入岸带内时按 Smoothstep 从水面平滑抬升至原地面上方
+ *       {@link Waterways#BANK_MARGIN} 格。</li>
+ *   <li>河底横截面（{@link #getBottom}）在河岸边缘处对齐顶层水块底面（{@code ceil(level) - 1}，保证边缘至少有 1 格水
+ *       深），向河道中线按抛物线加深至 {@link Waterways#getDepth}。</li>
+ *   <li>{@link #getChannel} 查询某水平点命中的河道参数：取所有覆盖线段的最低河底；在干旱域中仅河宽 ≥
+ *       {@link Waterways#DRY_WIDTH}的线段视为有水，交汇处优先取有水线段的最低水位。</li>
+ *   <li>线段字段数组支持通过 {@link #save} 与 {@link #load} 以原始浮点位模式序列化到维度存档，加载时自动校验数值有限性
+ *       并重建空间分桶。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class WaterwaysIndex {

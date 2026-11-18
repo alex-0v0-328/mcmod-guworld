@@ -1,18 +1,14 @@
 package net.alex.guzhenrenworld.waterways;
 
 /**
- * {@link GroundHeights} 找一列地面的扫描：最高实心方块之上一格。
- *
+ * {@link GroundHeights} 寻找单列地表高度（最高实心方块上方一格）的垂直步进扫描算法。
  * <ul>
- *   <li>自顶向下每步 {@link #STEP} 格再逐格细化；地形为任意 {@link Solid}，不需要密度函数。</li>
- *   <li>带猜测值（水面加下切）时：实心则每次上爬 {@link #CLIMB} 格再细化，否则下探 ≤ {@link #DESCENT} 格，
- *       仍无退回粗步；几次取样代替约 40 次，且取离溪流最近的地面（悬垂下取地板）。</li>
+ *   <li>地形实心判定抽象为无状态函数式接口 {@link Solid}，将地形对象作为参数显式传入以避免闭包分配：无猜测值时从顶部按
+ *       {@link #STEP} 格粗步向下探测，命中实心方块后再逐格向上回扫定位精确表面。</li>
+ *   <li>传入猜测高度 {@code guess}（如河岸处的水面加下切深度）时优先在 {@code guess} 附近局部搜索：若该处为实心则每次向
+ *       上爬升{@link #CLIMB} 格直至空气再逐格细化（在悬崖或浮空地形下方会优先取贴近溪流的谷底地面），若为空气则向下探测
+ *       至多{@link #DESCENT} 格，仍未命中才退回全列粗步下扫，将单列采样次数从约 40 次降至数次。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see GroundHeights
- * @since 1.0.0
  */
 
 final class GroundScan {
@@ -29,7 +25,6 @@ final class GroundScan {
         this.topY = topY;
     }
 
-    /** {@code T} 类地形某方块是否实心；地形作参数传入，实现不必捕获，扫描零分配。 */
     @FunctionalInterface
     interface Solid<T> {
 

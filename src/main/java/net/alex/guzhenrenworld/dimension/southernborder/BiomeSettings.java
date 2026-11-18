@@ -22,18 +22,14 @@ import net.minecraft.world.level.levelgen.placement.NoiseBasedCountPlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 
 /**
- * 南疆自制而非移植的竹海：竹子稀疏化的原版竹林。
+ * 南疆自制群系「竹海」（{@link #BAMBOO_SEA}）及其稀疏竹子放置地物的注册引导。
  * <ul>
- *   <li>原版 {@link VegetationPlacements#BAMBOO} 在噪声峰值处每区块至多 160 丛，密不可行；{@link #BAMBOO} 按同一噪声放
- *       同样的灰化土底竹子，每区块至多 {@link #BAMBOO_COUNT} 次，峰值处仍密、丛间留空。</li>
- *   <li>其余（丛林树、花、熊猫、鹦鹉）照原版；同所有 Gu World 群系不雕刻洞穴（{@link Replicas#getUncarved}）。</li>
- *   <li>⚠ {@link #BAMBOO_COUNT} 是初值，待 Alex 进游戏判断。</li>
+ *   <li>原版竹林的 {@link VegetationPlacements#BAMBOO} 在噪声峰值处每区块最多生成 160 丛竹子，过于密集且阻碍通行；本类
+ *       注册{@link #BAMBOO} 将每区块上限降至 {@link #BAMBOO_COUNT}（待实机验收微调），在保留成片竹林观感的同时留出林间
+ *       穿行空隙。</li>
+ *   <li>除替换竹子放置地物并经 {@link Replicas#getUncarved} 移除地形雕刻器外，其余丛林树木、花草与熊猫、鹦鹉刷怪配置均
+ *       沿用原版竹林模板。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see BiomeLayout
- * @since 1.0.0
  */
 
 public final class BiomeSettings {

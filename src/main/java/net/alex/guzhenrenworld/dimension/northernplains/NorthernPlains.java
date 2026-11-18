@@ -4,18 +4,13 @@ import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.waterways.Waterways;
 
 /**
- * 北原维度的入口 {@link #REGION}：中州（主世界）外四域之一。
- *
+ * 北原维度的域描述入口（{@link #REGION}），为中州（主世界）外四域之一。
  * <ul>
- *   <li>寒冷草原，大体平坦开阔，南草北雪，少数冰封山峰；水系河床铺砾石。</li>
- *   <li>有限域，键、边界、数据包条目用共用的一套（{@link Region}）；地形钩子在 {@link NorthernPlainsTerrain}，群系表在
- *       {@link NorthernPlainsLayout}。</li>
+ *   <li>地貌以开阔平坦的寒冷草原为主，呈现南草北雪的纬度过渡与局部冰封山峰，水系河床统一铺设砾石。</li>
+ *   <li>作为有限边界域，其注册键、世界边界与数据包引导统一由 {@link Region} 体系驱动；专属地形钩子与纬度重塑定义在
+ *       {@link NorthernPlainsTerrain}，多噪声群系映射定义在 {@link NorthernPlainsLayout}，独有群系清单定义在
+ *       {@link NorthernPlainsRoster}。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see NorthernPlainsTerrain
- * @since 1.0.0
  */
 
 public final class NorthernPlains {

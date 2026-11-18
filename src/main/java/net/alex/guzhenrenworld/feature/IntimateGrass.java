@@ -29,23 +29,17 @@ import net.neoforged.neoforge.common.world.BiomeModifiers;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 /**
- * 野生知心草的世界生成：键、生成群系与数据包条目。
- *
+ * 野生知心草的世界生成配置：注册键、生成群系标签与数据包引导入口。
  * <ul>
- *   <li>全用原版地物类型，无自定义地物：{@code random_patch} 每次尝试经 {@code simple_block} 放主模组的两格高知心草
- *       （{@link GuzhenrenBlocks#INTIMATE_GRASS}），只落在空气且脚下是草方块处；双层植物上方无空位则该次尝试作废。</li>
- *   <li>⚠ {@link #RARITY}、{@link #TRIES}、{@link #XZ_SPREAD}、{@link #Y_SPREAD} 由 Alex 定，照抄农夫乐事野生胡萝卜，
- *       不得私调；频率估算见 wiki《世界》。</li>
- *   <li>{@code datagen.BiomeTagsProvider} 以 {@link SpiritSpring#LAND_BIOMES}（中州，即主世界陆地）加南疆陆地群系填
- *       {@link #BIOMES}；沙漠、雪峰等无草方块的群系在名单内也长不出。</li>
- *   <li>⚠ 标签按群系不按维度：南疆与别域共用的群系（雨林）在别域同样生成。</li>
- *   <li>群系修改器挂 {@code VEGETAL_DECORATION}，与原版草、花同步；三个引导由 {@code datagen.DatapackProvider}
- *       运行。</li>
+ *   <li>直接复用原版 {@code random_patch} 与 {@code simple_block} 地物类型，无需自定义地物类：每次尝试在下方为草方块且
+ *       自身为空气的位置放置主模组的两格高知心草（{@link GuzhenrenBlocks#INTIMATE_GRASS}），上方无空间容纳上半格时自动
+ *       放弃。</li>
+ *   <li>{@link #RARITY}、{@link #TRIES}、{@link #XZ_SPREAD} 与 {@link #Y_SPREAD} 对齐农夫乐事野生胡萝卜的生成密度；群系
+ *       修改器挂载在 {@code VEGETAL_DECORATION} 阶段，由 {@code datagen.DatapackProvider} 调用三个引导方法写出。</li>
+ *   <li>{@code datagen.BiomeTagsProvider} 将主世界陆地群系（{@link SpiritSpring#LAND_BIOMES}）与南疆陆地群系填入
+ *       {@link #BIOMES}；无草方块的沙漠或雪峰即使在标签内也不会实际长出知心草。</li>
+ *   <li>⚠ 群系修改器按群系标签而非按维度生效，因此南疆与其他域共用的群系（如东海的雨林）也会自然生成野生知心草。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class IntimateGrass {

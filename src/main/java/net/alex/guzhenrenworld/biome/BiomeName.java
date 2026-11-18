@@ -4,12 +4,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
 
 /**
- * 群系的英文、简体中文两种手写显示名。语言表 provider（{@code datagen.lang.Translations}）写出，繁体由简体列转换；
- * 各域列出只有自己放置的群系名，provider 只汇总。
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
+ * 生物群系的英文与简体中文手写显示名记录。各域仅列出各自独有的群系显示名，由语言表生成器（
+ * {@code datagen.lang.Translations}）统一汇总写出，繁体中文由简体中文自动转换生成。
  */
 
 public record BiomeName(ResourceKey<Biome> biome, String english, String simplified) {}

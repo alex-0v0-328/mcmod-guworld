@@ -31,33 +31,25 @@ import net.minecraft.world.level.levelgen.SurfaceRules;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 
 /**
- * 每个 {@link Region} 的数据包条目。
+ * 四域（{@link Region}）数据包条目的统一注册引导逻辑。
  * <ul>
- *   <li>{@code datagen.DatapackProvider} 对 {@link net.alex.guzhenrenworld.dimension.Regions#ALL} 逐域注册噪声、密度函
- *       数、噪声设置、层级；维度类型只注册一次。</li>
- *   <li>维度类型 {@link Region#DIMENSION_TYPE} 照搬主世界（天空、效果、床、袭击、刷怪光照、高度范围），键归本模组，整合
- *       包改主世界不波及四域；四域无差别，共用一条。</li>
- *   <li>噪声柱：Tectonic 与 Terralith 同装时的 4 格单元，{@code size_vertical} 1，覆盖全高；{@link ColumnCaches} 包住移
- *       植列函数（含改写的），每列只算一次。</li>
- *   <li>噪声设置：本域 Tectonic 路由副本（{@link Ports#getNoiseRouter}）读 {@link #registerDensityFunctions} 填的钩子，
- *       外包水系刻河（{@link WaterwaysDensity}）；移植表层规则先于原版，都按名单裁剪（{@link SurfacePruning}）；含本域
- *       海平面、含水层、矿脉；层级配上多噪声群系源。</li>
- *   <li>不设出生目标，出生维度仍是主世界；结构都查群系标签而本域群系不在其中，原版在首个区块生成前丢掉全部结构集
- *       （{@code ChunkGeneratorStructureState.createForNormal}），不生成、不耗时。</li>
- *   <li>钩子 {@code guworld:terrain/<region>/hook/*}：{@code ocean_offset}、{@code vertical_scale}、{@code dunes} 各域
- *       自定（{@link Region.Hooks}）；{@code min_y}、{@code max_y} 为 Tectonic 高度上下限，取维度底与顶。</li>
- *   <li>{@code jungle_pillars}、{@code underground_rivers}（含 {@code underground_river_water}）、
- *       {@code lava_tunnels}：三项 Tectonic 特性，各一个常量开关（{@link #JUNGLE_PILLARS}、
- *       {@link #UNDERGROUND_RIVERS}、{@link #LAVA_TUNNELS}），四域全关；开则钩子指回移植函数，关则指向 0，零开销；只注
- *       册路由够得到的移植函数与噪声（{@link #SWITCHES} 列出开关函数），关掉的特性文件不进数据包
- *       （{@link Ports#registerDensityFunctions}）。</li>
- *   <li>三项全关的理由与开销见 wiki《南疆#硬件预算》。</li>
+ *   <li>由 {@link net.alex.guzhenrenworld.datagen.DatapackProvider} 遍历
+ *       {@link net.alex.guzhenrenworld.dimension.Regions#ALL}，逐域调用本类注册噪声、密度函数、噪声生成设置与维度层级；
+ *       共用的维度类型 {@link Region#DIMENSION_TYPE} 则仅注册一次，属性对齐原版主世界但使用独立键名以防整合包修改主世界
+ *       时波及四域。</li>
+ *   <li>噪声生成设置采用与 Tectonic + Terralith 一致的 4×4 水平网格单元（{@code size_vertical = 1}），将本域的 Tectonic
+ *       噪声路由副本（{@link Ports#getNoiseRouter}）外包水系河道雕刻（{@link WaterwaysDensity}），并拼接经
+ *       {@link SurfacePruning} 按本域群系名单裁剪后的 Terralith 与原版复刻表层规则（{@link Replicas#getSurfaceRules}
+ *       ）。</li>
+ *   <li>维度不设置出生参数（玩家默认出生在主世界）；由于本域群系均不加入原版结构群系标签，原版在首个区块生成前会自动过
+ *       滤掉所有不匹配的结构集（{@code ChunkGeneratorStructureState.createForNormal}），实现零结构探测开销。</li>
+ *   <li>{@link #registerDensityFunctions} 将各域自定义的 {@code ocean_offset}、{@code vertical_scale}、{@code dunes}（
+ *       {@link Region.Hooks}）及维度高度上下限（{@code min_y}、{@code max_y}）注册到
+ *       {@code guworld:terrain/<region>/hook/*}，同时对移植函数应用域重塑补丁与 {@link ColumnCaches} 列缓存。</li>
+ *   <li>{@link #JUNGLE_PILLARS}、{@link #UNDERGROUND_RIVERS} 与 {@link #LAVA_TUNNELS} 三项高开销 Tectonic 特性在四域中
+ *       统一关闭，通过 {@link TerrainHooks} 将对应钩子绑定为常量 {@code 0}；配合 {@link Ports#registerDensityFunctions}
+ *       的可达性裁剪，未启用特性的密度函数与噪声不会写入数据包。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @see Region
- * @since 1.0.0
  */
 
 public final class RegionBootstraps {

@@ -22,24 +22,19 @@ import net.minecraft.world.level.levelgen.FlatLevelSource;
 import net.minecraft.world.level.levelgen.flat.FlatLevelGeneratorSettings;
 
 /**
- * 宝黄天[Treasure Yellow Heaven]维度的注册键与数据包条目。
- *
+ * 宝黄天维度的注册键定义与数据包引导入口。
  * <ul>
- *   <li>各键共用 ID {@code guworld:treasure_yellow_heaven}；{@link #registerDimensionType}、{@link #registerBiome}、
- *       {@link #registerLevelStem} 是 {@code datagen.DatapackProvider} 跑的引导：维度类型、唯一群系、层级（无地层平坦生
- *       成器，纯虚空）。</li>
- *   <li>{@link #EFFECTS}：维度类型所填、{@code client.dimension.TreasureYellowHeavenEffects} 注册的天空效果 ID；
- *       {@link #COLOR} 染天空、雾、水，也是语言 provider 写的 Traveler's Titles 颜色，并据这些键命名维度与群系。</li>
- *   <li>床与重生锚可用，床可设出生点：维度类型为自然维度，钟和指南针也因此可用；玩家不能在此放方块，万一床或重生锚到此
- *       也照常可用，不爆炸。</li>
- *   <li>平坦生成器显式写空结构集列表，同原版虚空预设：不写则考虑全部已注册结构集，含其他模组的。</li>
- *   <li>⚠ 各键共用主模组维度键 {@code net.alex.guzhenren.registry.world.ModDimensions#TREASURE_YELLOW_HEAVEN} 的 ID；
- *       层级才使该键成为已加载维度，此处改名会让主模组 {@code /guworld enter} 指空，直到那边同步改名。</li>
+ *   <li>{@link #DIMENSION_TYPE}、{@link #BIOME} 与 {@link #LEVEL_STEM} 共用同一资源路径
+ *       {@code guworld:treasure_yellow_heaven}；由 {@code datagen.DatapackProvider} 调用本类的三个引导方法分别注册维度
+ *       类型、唯一群系及无地层的纯虚空超平坦维度层级。</li>
+ *   <li>{@link #EFFECTS} 供客户端 {@link net.alex.guzhenrenworld.client.dimension.TreasureYellowHeavenEffects} 绑定自定
+ *       义天空效果；{@link #COLOR} 同时用于群系的天空、雾气、水体染色以及语言表中的 Traveler's Titles 维度标题颜色。
+ *       </li>
+ *   <li>维度类型设为自然维度且允许使用床与重生锚，使钟与指南针正常运作，并防止床或重生锚在维度内交互时发生爆炸。</li>
+ *   <li>超平坦生成器显式传入空结构集列表（同原版虚空预设），防止原版或其他模组的结构集在虚空中尝试生成。</li>
+ *   <li>⚠ 维度路径必须与主模组 {@code net.alex.guzhenren.registry.world.ModDimensions#TREASURE_YELLOW_HEAVEN} 保持严格
+ *       一致；单侧改名会导致主模组的跨维度进入指令无法找到已加载的目标维度。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class TreasureYellowHeaven {

@@ -9,18 +9,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * 区域维度存档的水系索引：维度文件夹下 {@code data/guworld_waterways.dat}。
- *
+ * 域维度水系线段索引的持久化存档数据（保存在维度目录下的 {@code data/guworld_waterways.dat}）。
  * <ul>
- *   <li>规划每区域约 45 CPU 秒，存下后每个世界只建一次。</li>
- *   <li>连同依据存：键（{@link Waterways#PARAMETERS}、边长、海平面）、种子、地形指纹（几处固定列的地面与群系，
- *       {@link WaterwaysRuntime}）；{@link #get} 三者全对才返回，规划器、种子、地形或布局一变即重建。</li>
- *   <li>建造线程写入与服务端保存可能并发：写入、脏标记、整文件保存都走本对象锁。</li>
+ *   <li>单个域的完整水系规划约耗费 45 CPU 秒，持久化后同一世界存档在后续启动时可直接加载，无需重复规划。</li>
+ *   <li>存档同时记录参数版本键（{@link Waterways#PARAMETERS}、边界尺寸与海平面）、世界种子以及采样点地形与群系指纹（
+ *       {@link WaterwaysRuntime}）；{@link #get} 仅在三者完全匹配且索引数据有限合法时才返回缓存索引，一旦规划参数、世界
+ *       种子、底层地形或群系布局发生变更即自动失效并触发重建。</li>
+ *   <li>⚠ 后台构建线程调用 {@link #put} 写入索引与主线程自动保存存档可能并发发生，因此所有读写、脏标记与文件保存方法均
+ *       使用{@code synchronized} 在当前实例上同步。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class WaterwaysData extends SavedData {
