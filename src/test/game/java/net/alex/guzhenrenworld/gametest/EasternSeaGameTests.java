@@ -43,9 +43,6 @@ import org.slf4j.Logger;
 public final class EasternSeaGameTests {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int SAMPLES = 32;
-    private static final int SPACING = 256;
-    private static final int ORIGIN = -SAMPLES * SPACING / 2;
     private static final int LOWEST_PEAK = 120;
     private static final int HIGHEST_PEAK = 260;
     private static final int WATER_MIN = 75;
@@ -53,7 +50,7 @@ public final class EasternSeaGameTests {
     private static final int WEST_WATER_MIN = 55;
     private static final int WEST_WATER_MAX = 70;
     private static final int EAST_WATER_MIN = 95;
-    private static final int THIRD = SAMPLES * SPACING / 6;
+    private static final int THIRD = RegionProbe.SAMPLES * RegionProbe.SPACING / 6;
     private static final int DRY_SEA_MAX = 2;
 
     private EasternSeaGameTests() {}
@@ -61,7 +58,7 @@ public final class EasternSeaGameTests {
     @GameTest(template = "empty9x9x9", timeoutTicks = 2000)
     public static void easternSeaMeetsItsTargets(GameTestHelper helper) {
         RegionProbe probe = new RegionProbe(helper, EasternSea.REGION.levelStem(), Region.MIN_Y, Region.HEIGHT);
-        int total = SAMPLES * SAMPLES;
+        int total = RegionProbe.TOTAL;
         int[] heights = new int[total];
         double[] erosion = new double[total];
         double[] continents = new double[total];
@@ -73,10 +70,11 @@ public final class EasternSeaGameTests {
         int[] thirds = new int[3];
         int drySea = 0;
         int wetLand = 0;
+        NoiseColumn[] columns = probe.getGridColumns();
         for (int i = 0; i < total; i++) {
-            int x = ORIGIN + i % SAMPLES * SPACING;
-            int z = ORIGIN + i / SAMPLES * SPACING;
-            NoiseColumn column = probe.getColumn(x, z);
+            int x = RegionProbe.gridX(i);
+            int z = RegionProbe.gridZ(i);
+            NoiseColumn column = columns[i];
             heights[i] = probe.getHeight(column, Heightmap.Types.OCEAN_FLOOR_WG);
             int surface = probe.getHeight(column, Heightmap.Types.WORLD_SURFACE_WG);
             boolean water = surface > heights[i];

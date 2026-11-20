@@ -41,9 +41,6 @@ import org.slf4j.Logger;
 public final class WesternDesertGameTests {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int SAMPLES = 32;
-    private static final int SPACING = 256;
-    private static final int ORIGIN = -SAMPLES * SPACING / 2;
     private static final int LOWEST_TOP = 180;
     private static final int HIGHEST_TOP = 220;
     private static final int WET_PERCENT = 3;
@@ -57,7 +54,7 @@ public final class WesternDesertGameTests {
     public static void westernDesertMeetsItsTargets(GameTestHelper helper) {
         RegionProbe probe = new RegionProbe(helper, WesternDesert.REGION.levelStem(), Region.MIN_Y,
                 Region.HEIGHT);
-        int total = SAMPLES * SAMPLES;
+        int total = RegionProbe.TOTAL;
         int[] heights = new int[total];
         double[] erosion = new double[total];
         double[] continents = new double[total];
@@ -68,10 +65,11 @@ public final class WesternDesertGameTests {
         int wet = 0;
         int mountains = 0;
         int hills = 0;
+        NoiseColumn[] columns = probe.getGridColumns();
         for (int i = 0; i < total; i++) {
-            int x = ORIGIN + i % SAMPLES * SPACING;
-            int z = ORIGIN + i / SAMPLES * SPACING;
-            NoiseColumn column = probe.getColumn(x, z);
+            int x = RegionProbe.gridX(i);
+            int z = RegionProbe.gridZ(i);
+            NoiseColumn column = columns[i];
             heights[i] = probe.getHeight(column, Heightmap.Types.OCEAN_FLOOR_WG);
             int surface = probe.getHeight(column, Heightmap.Types.WORLD_SURFACE_WG);
             Holder<Biome> holder = probe.getBiome(x, surface, z);

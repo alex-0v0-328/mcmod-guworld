@@ -43,9 +43,6 @@ import org.slf4j.Logger;
 public final class SouthernBorderGameTests {
 
     private static final Logger LOGGER = LogUtils.getLogger();
-    private static final int SAMPLES = 32;
-    private static final int SPACING = 256;
-    private static final int ORIGIN = -SAMPLES * SPACING / 2;
     private static final List<ResourceKey<Biome>> MOUNTAINS = List.of(Ports.MISTY_MOUNTAINS, Ports.CLOUD_FOREST,
             Ports.ROCKY_PEAKS, Ports.EMERALD_PEAKS, Ports.JUNGLE_MOUNTAINS, Ports.PAINTED_MOUNTAINS,
             Ports.GRANITE_CLIFFS, Ports.ALPINE_MEADOW, Ports.ZHANGSHIYAN_CLIFFS, Ports.KARST_PEAK_FOREST);
@@ -58,7 +55,7 @@ public final class SouthernBorderGameTests {
     public static void southernBorderMeetsItsTargets(GameTestHelper helper) {
         RegionProbe probe = new RegionProbe(helper, SouthernBorder.REGION.levelStem(), Region.MIN_Y,
                 Region.HEIGHT);
-        int total = SAMPLES * SAMPLES;
+        int total = RegionProbe.TOTAL;
         int[] heights = new int[total];
         double[] erosion = new double[total];
         double[] continents = new double[total];
@@ -67,10 +64,11 @@ public final class SouthernBorderGameTests {
         int wet = 0;
         int mountains = 0;
         int hills = 0;
+        NoiseColumn[] columns = probe.getGridColumns();
         for (int i = 0; i < total; i++) {
-            int x = ORIGIN + i % SAMPLES * SPACING;
-            int z = ORIGIN + i / SAMPLES * SPACING;
-            NoiseColumn column = probe.getColumn(x, z);
+            int x = RegionProbe.gridX(i);
+            int z = RegionProbe.gridZ(i);
+            NoiseColumn column = columns[i];
             heights[i] = probe.getHeight(column, Heightmap.Types.OCEAN_FLOOR_WG);
             int surface = probe.getHeight(column, Heightmap.Types.WORLD_SURFACE_WG);
             if (surface > heights[i]) wet++;
