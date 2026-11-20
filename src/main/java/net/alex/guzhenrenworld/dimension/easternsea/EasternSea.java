@@ -18,7 +18,7 @@ import net.alex.guzhenrenworld.waterways.Waterways;
 public final class EasternSea {
 
     private static final String NAME = "eastern_sea";
-    public static final Region REGION = new Region(NAME, new Region.Title("Eastern Sea", "东海"), 63, false,
+    public static final Region REGION = new Region(NAME, "东海", 63, false,
             Waterways.Bed.SAND,
             new Region.Biomes(EasternSeaRoster.REPLICAS, EasternSeaRoster.PORTED, EasternSeaLayout.ROSTER,
                     EasternSeaLayout.LAND, EasternSeaRoster.NAMES, EasternSeaRoster.CROPS,

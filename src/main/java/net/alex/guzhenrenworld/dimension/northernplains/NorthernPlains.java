@@ -16,7 +16,7 @@ import net.alex.guzhenrenworld.waterways.Waterways;
 public final class NorthernPlains {
 
     private static final String NAME = "northern_plains";
-    public static final Region REGION = new Region(NAME, new Region.Title("Northern Plains", "北原"), 63, false,
+    public static final Region REGION = new Region(NAME, "北原", 63, false,
             Waterways.Bed.GRAVEL,
             new Region.Biomes(NorthernPlainsRoster.REPLICAS, NorthernPlainsRoster.PORTED, NorthernPlainsLayout.ROSTER,
                     NorthernPlainsLayout.LAND, NorthernPlainsRoster.NAMES, NorthernPlainsRoster.CROPS,

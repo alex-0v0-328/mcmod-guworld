@@ -18,7 +18,7 @@ import net.alex.guzhenrenworld.waterways.Waterways;
 public final class WesternDesert {
 
     private static final String NAME = "western_desert";
-    public static final Region REGION = new Region(NAME, new Region.Title("Western Desert", "西漠"), 52, true,
+    public static final Region REGION = new Region(NAME, "西漠", 52, true,
             Waterways.Bed.SAND,
             new Region.Biomes(WesternDesertRoster.REPLICAS, WesternDesertRoster.PORTED, WesternDesertLayout.ROSTER,
                     WesternDesertLayout.LAND, WesternDesertRoster.NAMES, WesternDesertRoster.CROPS,

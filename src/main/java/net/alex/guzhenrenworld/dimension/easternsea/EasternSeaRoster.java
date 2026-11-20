@@ -16,7 +16,7 @@ import net.minecraft.world.level.biome.Biomes;
  * <ul>
  *   <li>{@link #PORTED} 列出东海独有的 Terralith 移植群系键（对应清单
  *       {@code src/ports/terralith/index.eastern_sea.json}，其中 {@code alpha_islands} 重命名为 {@code isles}）；
- *       {@link #REPLICAS} 列出除 {@link Replicas#SHARED} 外的原版复刻群系；{@link #NAMES} 汇总两者的中英文显示名；
+ *       {@link #REPLICAS} 列出除 {@link Replicas#SHARED} 外的原版复刻群系；{@link #NAMES} 汇总两者的显示名；
  *       {@link #CROPS} 将陆地群系按农夫乐事野生作物气候（{@link WildCropClimate}）分组。</li>
  *   <li>东海同时放置与南疆共用的雨林群系（{@link Ports#RAINFOREST}），该群系由南疆公共清单负责注册与命名，此处仅将其加
  *       入{@link #CROPS} 的湿润气候组。</li>
@@ -54,21 +54,21 @@ public final class EasternSeaRoster {
             Replicas.of(Biomes.STONY_SHORE, (placed, carvers) -> OverworldBiomes.beach(placed, carvers, false, true)),
             Replicas.of(Biomes.JUNGLE, OverworldBiomes::jungle));
     public static final List<BiomeName> NAMES = List.of(
-            new BiomeName(WARM_OCEAN, "Warm Ocean", "暖水海洋"),
-            new BiomeName(LUKEWARM_OCEAN, "Lukewarm Ocean", "温水海洋"),
-            new BiomeName(OCEAN, "Ocean", "海洋"),
-            new BiomeName(DEEP_OCEAN, "Deep Ocean", "深海"),
-            new BiomeName(BEACH, "Beach", "沙滩"),
-            new BiomeName(STONY_SHORE, "Stony Shore", "石岸"),
-            new BiomeName(JUNGLE, "Jungle", "丛林"),
-            new BiomeName(ISLES, "Isles", "岛屿"),
-            new BiomeName(MIRAGE_ISLES, "Mirage Isles", "蜃岛"),
-            new BiomeName(VOLCANIC_PEAKS, "Volcanic Peaks", "火山峰"),
-            new BiomeName(VOLCANIC_CRATER, "Volcanic Crater", "火山口"),
-            new BiomeName(BASALT_CLIFFS, "Basalt Cliffs", "玄武岩崖"),
-            new BiomeName(WHITE_CLIFFS, "White Cliffs", "白崖"),
-            new BiomeName(DEEP_WARM_OCEAN, "Deep Warm Ocean", "深暖海"),
-            new BiomeName(GRAVEL_BEACH, "Gravel Beach", "砾滩"));
+            new BiomeName(WARM_OCEAN, "暖水海洋"),
+            new BiomeName(LUKEWARM_OCEAN, "温水海洋"),
+            new BiomeName(OCEAN, "海洋"),
+            new BiomeName(DEEP_OCEAN, "深海"),
+            new BiomeName(BEACH, "沙滩"),
+            new BiomeName(STONY_SHORE, "石岸"),
+            new BiomeName(JUNGLE, "丛林"),
+            new BiomeName(ISLES, "岛屿"),
+            new BiomeName(MIRAGE_ISLES, "蜃岛"),
+            new BiomeName(VOLCANIC_PEAKS, "火山峰"),
+            new BiomeName(VOLCANIC_CRATER, "火山口"),
+            new BiomeName(BASALT_CLIFFS, "玄武岩崖"),
+            new BiomeName(WHITE_CLIFFS, "白崖"),
+            new BiomeName(DEEP_WARM_OCEAN, "深暖海"),
+            new BiomeName(GRAVEL_BEACH, "砾滩"));
     public static final Map<WildCropClimate, List<ResourceKey<Biome>>> CROPS = Map.of(
             WildCropClimate.HOT, List.of(VOLCANIC_PEAKS, VOLCANIC_CRATER),
             WildCropClimate.WET, List.of(JUNGLE, Ports.RAINFOREST, ISLES, MIRAGE_ISLES),

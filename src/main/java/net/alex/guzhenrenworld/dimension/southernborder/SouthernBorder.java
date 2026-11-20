@@ -17,7 +17,7 @@ import net.alex.guzhenrenworld.waterways.Waterways;
 public final class SouthernBorder {
 
     private static final String NAME = "southern_border";
-    public static final Region REGION = new Region(NAME, new Region.Title("Southern Border", "南疆"), 63, false,
+    public static final Region REGION = new Region(NAME, "南疆", 63, false,
             Waterways.Bed.GRAVEL_CLAY,
             new Region.Biomes(List.of(), List.of(), BiomeLayout.ROSTER, BiomeLayout.LAND, List.of(),
                     BiomeLayout.CROPS, BiomeLayout.TABLE::getParameters),

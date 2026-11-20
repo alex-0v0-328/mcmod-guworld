@@ -16,7 +16,7 @@ import net.minecraft.world.level.biome.Biomes;
  * <ul>
  *   <li>{@link #PORTED} 列出北原独有的 Terralith 移植群系键（对应清单
  *       {@code src/ports/terralith/index.northern_plains.json}）；{@link #REPLICAS} 列出除 {@link Replicas#SHARED} 外的
- *       原版复刻群系；{@link #NAMES} 汇总两者的中英文显示名；{@link #CROPS} 将陆地群系按农夫乐事野生作物气候（
+ *       原版复刻群系；{@link #NAMES} 汇总两者的显示名；{@link #CROPS} 将陆地群系按农夫乐事野生作物气候（
  *       {@link WildCropClimate}）分组。</li>
  *   <li>野生作物气候按各群系 JSON 的温度与降水量划分：干草原、地盾与高寒高地归温带（其中地盾兼入湿润）；寒灌丛、西伯利
  *       亚针叶林、桦木针叶林、雪地盾与冰沼归寒冷（其中西伯利亚针叶林、雪地盾与冰沼兼入湿润）；温度低于 0.1 的严寒群系及
@@ -59,24 +59,24 @@ public final class NorthernPlainsRoster {
             Replicas.of(Biomes.FROZEN_PEAKS, OverworldBiomes::frozenPeaks),
             Replicas.of(Biomes.FROZEN_RIVER, (placed, carvers) -> OverworldBiomes.river(placed, carvers, true)));
     public static final List<BiomeName> NAMES = List.of(
-            new BiomeName(STEPPE, "Steppe", "干草原"),
-            new BiomeName(COLD_SHRUBLAND, "Cold Shrubland", "寒灌丛"),
-            new BiomeName(WINTRY_LOWLANDS, "Wintry Lowlands", "寒原低地"),
-            new BiomeName(WINTRY_FOREST, "Wintry Forest", "寒林"),
-            new BiomeName(SIBERIAN_TAIGA, "Siberian Taiga", "西伯利亚针叶林"),
-            new BiomeName(BIRCH_TAIGA, "Birch Taiga", "桦木针叶林"),
-            new BiomeName(SHIELD, "Shield", "地盾"),
-            new BiomeName(SNOWY_SHIELD, "Snowy Shield", "雪地盾"),
-            new BiomeName(ICE_MARSH, "Ice Marsh", "冰沼"),
-            new BiomeName(FROZEN_CLIFFS, "Frozen Cliffs", "冰崖"),
-            new BiomeName(GLACIAL_CHASM, "Glacial Chasm", "冰川裂谷"),
-            new BiomeName(ALPINE_HIGHLANDS, "Alpine Highlands", "高寒高地"),
-            new BiomeName(SNOWY_PLAINS, "Snowy Plains", "雪原"),
-            new BiomeName(ICE_SPIKES, "Ice Spikes", "冰刺之地"),
-            new BiomeName(SNOWY_TAIGA, "Snowy Taiga", "积雪针叶林"),
-            new BiomeName(GROVE, "Grove", "雪林"),
-            new BiomeName(FROZEN_PEAKS, "Frozen Peaks", "冰封山峰"),
-            new BiomeName(FROZEN_RIVER, "Frozen River", "冻河"));
+            new BiomeName(STEPPE, "干草原"),
+            new BiomeName(COLD_SHRUBLAND, "寒灌丛"),
+            new BiomeName(WINTRY_LOWLANDS, "寒原低地"),
+            new BiomeName(WINTRY_FOREST, "寒林"),
+            new BiomeName(SIBERIAN_TAIGA, "西伯利亚针叶林"),
+            new BiomeName(BIRCH_TAIGA, "桦木针叶林"),
+            new BiomeName(SHIELD, "地盾"),
+            new BiomeName(SNOWY_SHIELD, "雪地盾"),
+            new BiomeName(ICE_MARSH, "冰沼"),
+            new BiomeName(FROZEN_CLIFFS, "冰崖"),
+            new BiomeName(GLACIAL_CHASM, "冰川裂谷"),
+            new BiomeName(ALPINE_HIGHLANDS, "高寒高地"),
+            new BiomeName(SNOWY_PLAINS, "雪原"),
+            new BiomeName(ICE_SPIKES, "冰刺之地"),
+            new BiomeName(SNOWY_TAIGA, "积雪针叶林"),
+            new BiomeName(GROVE, "雪林"),
+            new BiomeName(FROZEN_PEAKS, "冰封山峰"),
+            new BiomeName(FROZEN_RIVER, "冻河"));
     public static final Map<WildCropClimate, List<ResourceKey<Biome>>> CROPS = Map.of(
             WildCropClimate.HOT, List.of(),
             WildCropClimate.WET, List.of(SIBERIAN_TAIGA, SHIELD, SNOWY_SHIELD, ICE_MARSH),

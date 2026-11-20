@@ -16,7 +16,7 @@ import net.minecraft.world.level.biome.Biomes;
  * <ul>
  *   <li>{@link #PORTED} 列出西漠独有的 Terralith 移植群系键（对应清单
  *       {@code src/ports/terralith/index.western_desert.json}）；{@link #REPLICAS} 列出除 {@link Replicas#SHARED} 外的
- *       原版复刻群系；{@link #NAMES} 汇总两者的中英文显示名。</li>
+ *       原版复刻群系；{@link #NAMES} 汇总两者的显示名。</li>
  *   <li>{@link #CROPS} 将陆地群系按农夫乐事野生作物气候（{@link WildCropClimate}）分组：沙漠、恶地、峡谷、台地、旱原高
  *       地与荆丛地（温度 ≥ 1.0 且干燥）归干热；绿洲与红绿洲按名称归入湿润（同时满足温度条件也归入干热）；热灌丛归温带；
  *       戈壁归寒冷。</li>
@@ -53,23 +53,23 @@ public final class WesternDesertRoster {
             Replicas.of(Biomes.ERODED_BADLANDS, (placed, carvers) -> OverworldBiomes.badlands(placed, carvers, false)),
             Replicas.of(Biomes.WOODED_BADLANDS, (placed, carvers) -> OverworldBiomes.badlands(placed, carvers, true)));
     public static final List<BiomeName> NAMES = List.of(
-            new BiomeName(ANCIENT_SANDS, "Ancient Sands", "古沙海"),
-            new BiomeName(DESERT_CANYON, "Desert Canyon", "沙漠峡谷"),
-            new BiomeName(DESERT_OASIS, "Desert Oasis", "绿洲"),
-            new BiomeName(RED_OASIS, "Red Oasis", "红绿洲"),
-            new BiomeName(DESERT_SPIRES, "Desert Spires", "沙漠石柱"),
-            new BiomeName(GRAVEL_DESERT, "Gravel Desert", "戈壁"),
-            new BiomeName(LUSH_DESERT, "Lush Desert", "疏林沙漠"),
-            new BiomeName(SANDSTONE_VALLEY, "Sandstone Valley", "砂岩谷"),
-            new BiomeName(ARID_HIGHLANDS, "Arid Highlands", "旱原高地"),
-            new BiomeName(WHITE_MESA, "White Mesa", "白台地"),
-            new BiomeName(BRYCE_CANYON, "Bryce Canyon", "石林峡谷"),
-            new BiomeName(HOT_SHRUBLAND, "Hot Shrubland", "热灌丛"),
-            new BiomeName(BRUSHLAND, "Brushland", "荆丛地"),
-            new BiomeName(DESERT, "Desert", "沙漠"),
-            new BiomeName(BADLANDS, "Badlands", "恶地"),
-            new BiomeName(ERODED_BADLANDS, "Eroded Badlands", "风蚀恶地"),
-            new BiomeName(WOODED_BADLANDS, "Wooded Badlands", "疏林恶地"));
+            new BiomeName(ANCIENT_SANDS, "古沙海"),
+            new BiomeName(DESERT_CANYON, "沙漠峡谷"),
+            new BiomeName(DESERT_OASIS, "绿洲"),
+            new BiomeName(RED_OASIS, "红绿洲"),
+            new BiomeName(DESERT_SPIRES, "沙漠石柱"),
+            new BiomeName(GRAVEL_DESERT, "戈壁"),
+            new BiomeName(LUSH_DESERT, "疏林沙漠"),
+            new BiomeName(SANDSTONE_VALLEY, "砂岩谷"),
+            new BiomeName(ARID_HIGHLANDS, "旱原高地"),
+            new BiomeName(WHITE_MESA, "白台地"),
+            new BiomeName(BRYCE_CANYON, "石林峡谷"),
+            new BiomeName(HOT_SHRUBLAND, "热灌丛"),
+            new BiomeName(BRUSHLAND, "荆丛地"),
+            new BiomeName(DESERT, "沙漠"),
+            new BiomeName(BADLANDS, "恶地"),
+            new BiomeName(ERODED_BADLANDS, "风蚀恶地"),
+            new BiomeName(WOODED_BADLANDS, "疏林恶地"));
     public static final Map<WildCropClimate, List<ResourceKey<Biome>>> CROPS = Map.of(
             WildCropClimate.HOT, List.of(ANCIENT_SANDS, DESERT_CANYON, DESERT_OASIS, RED_OASIS, DESERT_SPIRES,
                     LUSH_DESERT, SANDSTONE_VALLEY, ARID_HIGHLANDS, WHITE_MESA, BRYCE_CANYON, BRUSHLAND, DESERT,
