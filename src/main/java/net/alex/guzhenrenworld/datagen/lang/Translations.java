@@ -8,6 +8,7 @@ import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.Regions;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
+import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
 import net.minecraft.data.PackOutput;
@@ -24,9 +25,10 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  *       {@code zh_hk} 写出简体经 {@link TraditionalGlyphs#convert} 自动转换字形的繁体文本。</li>
  *   <li>所有翻译键均通过 {@link #getLanguageKey} 由对应的 {@link ResourceKey} 动态派生，不使用硬编码字符串，避免资源改
  *       名后残留悬空翻译键。</li>
- *   <li>{@link #addDimensionName} 同时写出原版维度名与 Traveler's Titles 标题，{@link #addTitleColor} 按该模组约定写出不带
- *       {@code #} 的 6 位小写十六进制颜色值；{@link #addBiomes} 按顺序或按各域 {@link BiomeName} 列表写出群系译名，宝黄
- *       天（{@link TreasureYellowHeaven}）的唯一群系直接沿用维度名称。</li>
+ *   <li>{@link #addDimensionName} 同时写出原版维度名与 Traveler's Titles 标题，{@link #addTitleColor} 按该模组约定写出
+ *       不带 {@code #} 的 6 位小写十六进制颜色值；{@link #addBiomes} 按顺序或按各域 {@link BiomeName} 列表写出群系译
+ *       名，宝黄天（{@link TreasureYellowHeaven}）与狐仙福地（{@link FoxImmortalBlissfulLand}）的唯一群系直接沿用维度名
+ *       称。</li>
  *   <li>⚠ 简体中文为手写权威定稿；若 {@link #addBiomes} 传入的译名数与群系数量不匹配，或简体文本包含
  *       {@link TraditionalGlyphs} 未收录的新汉字，都会在 {@code runData} 阶段直接抛错失败。</li>
  * </ul>
@@ -48,6 +50,9 @@ public class Translations extends LanguageProvider {
         addDimensionName(TreasureYellowHeaven.LEVEL_STEM, "宝黄天");
         addTitleColor(TreasureYellowHeaven.LEVEL_STEM, TreasureYellowHeaven.COLOR);
         addBiomes(List.of(TreasureYellowHeaven.BIOME), "宝黄天");
+        addDimensionName(FoxImmortalBlissfulLand.LEVEL_STEM, FoxImmortalBlissfulLand.TITLE);
+        addTitleColor(FoxImmortalBlissfulLand.LEVEL_STEM, FoxImmortalBlissfulLand.COLOR);
+        addBiomes(List.of(FoxImmortalBlissfulLand.BIOME), FoxImmortalBlissfulLand.TITLE);
         addBiomes(Replicas.BIOMES,
                 "平原",
                 "河流",

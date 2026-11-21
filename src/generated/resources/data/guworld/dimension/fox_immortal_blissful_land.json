@@ -1,0 +1,12 @@
+{
+  "type": "guworld:blissful_land",
+  "generator": {
+    "type": "guworld:bounded_noise",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "guworld:fox_immortal_blissful_land"
+    },
+    "half_size_chunks": 612,
+    "settings": "guworld:fox_immortal_blissful_land"
+  }
+}

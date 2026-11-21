@@ -29,10 +29,12 @@ class ArchitectureTest {
     private static final String DIMENSION = ROOT + "dimension.";
     private static final String SHARED_REGION_PACKAGE = DIMENSION + "region";
     private static final Set<String> DATA_GENERATION_CLASSES = Set.of(
+            "net.minecraft.data.worldgen.BiomeDefaultFeatures",
             "net.minecraft.data.worldgen.BootstrapContext",
             "net.minecraft.data.worldgen.SurfaceRuleData",
             "net.minecraft.data.worldgen.biome.OverworldBiomes",
             "net.minecraft.data.worldgen.features.VegetationFeatures",
+            "net.minecraft.data.worldgen.placement.MiscOverworldPlacements",
             "net.minecraft.data.worldgen.placement.PlacementUtils",
             "net.minecraft.data.worldgen.placement.VegetationPlacements",
             "net.minecraft.data.registries.VanillaRegistries");

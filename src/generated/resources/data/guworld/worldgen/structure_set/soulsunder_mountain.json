@@ -2,8 +2,8 @@
   "placement": {
     "type": "minecraft:concentric_rings",
     "count": 1,
-    "distance": 42,
-    "preferred_biomes": "#guworld:soulsunder_mountain_biased_to",
+    "distance": 0,
+    "preferred_biomes": [],
     "salt": 0,
     "spread": 1
   },
