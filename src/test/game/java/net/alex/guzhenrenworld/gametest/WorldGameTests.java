@@ -22,10 +22,11 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
- * 元泉[Spirit Spring]世界生成运行时检查。{@link SpiritSpringBasin#placeStructure} 铺方解石池底与中心柱、清空一圈、
- * 放主模组元泉液体源，保留格不动；{@link SpiritSpringGround#findSurfaceGround} 接受干燥平地，拒绝与地面齐平的水、
- * 冰封水坑，15×15 内地面起伏 3 格接受、4 格拒绝；群系修改器把已放置地物挂到陆地群系 {@code TOP_LAYER_MODIFICATION} 步，
- * 不挂海洋。选址测试在 17×17 模板正中露天铺 15×15 石地板：平整检查读此范围高度图，模板更小则四周屏障墙会被当成地面。
+ * 元泉[Spirit Spring]世界生成运行时检查。{@link SpiritSpringBasin#placeStructure} 铺方解石池底与中心柱、清空一圈、放主
+ * 模组元泉液体源，保留格不动；{@link SpiritSpringGround#findSurfaceGround} 接受干燥平地，拒绝与地面齐平的水、冰封水坑与
+ * 石盆碰到的荡魂山石，15×15 内地面起伏 3 格接受、4 格拒绝；群系修改器把已放置地物挂到陆地群系
+ * {@code TOP_LAYER_MODIFICATION} 步，不挂海洋。选址测试在 17×17 模板正中露天铺 15×15 石地板：平整检查读此范围高度图，模
+ * 板更小则四周屏障墙会被当成地面。
  */
 
 @GameTestHolder(GuWorld.MOD_ID)
@@ -82,6 +83,20 @@ public final class WorldGameTests {
 
         helper.setBlock(corner.above(4), Blocks.STONE);
         helper.assertFalse(isSiteFound(helper), "a rise of 4 blocks is accepted");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty17x9x17", skyAccess = true)
+    public static void springStaysOffSoulquakeStone(GameTestHelper helper) {
+        layFloor(helper);
+        helper.assertTrue(isSiteFound(helper), "dry level ground is refused");
+
+        helper.setBlock(SITE.east(3), GuzhenrenBlocks.SOULQUAKE_STONE.get());
+        helper.assertFalse(isSiteFound(helper), "a basin column on soulquake stone is accepted");
+
+        helper.setBlock(SITE.east(3), Blocks.STONE);
+        helper.setBlock(SITE.east(3).below(), GuzhenrenBlocks.SOULQUAKE_STONE.get());
+        helper.assertFalse(isSiteFound(helper), "the basin floor would cut into soulquake stone");
         helper.succeed();
     }
 
