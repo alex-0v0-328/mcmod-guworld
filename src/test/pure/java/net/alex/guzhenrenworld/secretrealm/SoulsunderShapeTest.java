@@ -16,13 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 面相邻的段连到山底（无浮空）；坏魔数、段相接与尾随字节被拒收。
  */
 
-class SoulquakeShapeTest {
+class SoulsunderShapeTest {
 
     private static final int SIZE = 160;
 
     @Test
     void shippedShapeFitsTheDiscAndStandsOnItsBase() {
-        SoulquakeShape shape = SoulquakeShape.get();
+        SoulsunderShape shape = SoulsunderShape.get();
         assertEquals(SIZE, shape.getWidth());
         assertEquals(SIZE, shape.getDepth());
         assertEquals(128, shape.getHeight());
@@ -45,16 +45,16 @@ class SoulquakeShapeTest {
     @Test
     void brokenFilesAreRefused() throws IOException {
         byte[] good = write(0, 3, 5, 9);
-        assertEquals(9, SoulquakeShape.read(new ByteArrayInputStream(good)).getVolume());
+        assertEquals(9, SoulsunderShape.read(new ByteArrayInputStream(good)).getVolume());
         byte[] badMagic = good.clone();
         badMagic[0] = 'X';
         byte[] trailing = Arrays.copyOf(good, good.length + 1);
         for (byte[] broken : new byte[][]{badMagic, write(0, 3, 4, 9), trailing}) {
-            assertThrows(IOException.class, () -> SoulquakeShape.read(new ByteArrayInputStream(broken)));
+            assertThrows(IOException.class, () -> SoulsunderShape.read(new ByteArrayInputStream(broken)));
         }
     }
 
-    private static int countFloatingSpans(SoulquakeShape shape) {
+    private static int countFloatingSpans(SoulsunderShape shape) {
         int[] first = new int[SIZE * SIZE + 1];
         for (int column = 0; column < SIZE * SIZE; column++) {
             first[column + 1] = first[column] + shape.getSpanCount(column);

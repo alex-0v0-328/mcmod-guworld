@@ -12,10 +12,10 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.GuzhenrenBlocks;
-import net.alex.guzhenrenworld.secretrealm.SoulquakeClearance;
-import net.alex.guzhenrenworld.secretrealm.SoulquakeMountain;
-import net.alex.guzhenrenworld.secretrealm.SoulquakeMountainPiece;
-import net.alex.guzhenrenworld.secretrealm.SoulquakeShape;
+import net.alex.guzhenrenworld.secretrealm.SoulsunderClearance;
+import net.alex.guzhenrenworld.secretrealm.SoulsunderMountain;
+import net.alex.guzhenrenworld.secretrealm.SoulsunderMountainPiece;
+import net.alex.guzhenrenworld.secretrealm.SoulsunderShape;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -62,10 +62,10 @@ import org.slf4j.Logger;
  *   <li>注册：结构集是 1 个点的同心环，结构在 {@code SURFACE_STRUCTURES} 步、地形适配 {@code beard_thin}、群系含深海（
  *       偏好落空也照生成），偏好标签收平原、不收海洋与锯齿山峰。</li>
  *   <li>放置：种子 12345 与 20261120 下，山心离原点落在第一环半径加偏移的范围内，且与所有要塞起点相距超过
- *       {@link #STRONGHOLD_GAP} 格（同心环与要塞同种子同 distance 会重合，见 {@link SoulquakeMountain}）。</li>
+ *       {@link #STRONGHOLD_GAP} 格（同心环与要塞同种子同 distance 会重合，见 {@link SoulsunderMountain}）。</li>
  *   <li>生成：种子 12345（山脚低洼、泡水）、{@link #HILL_SEED}（坡地）与 {@link #GENTLE_SEED}（缓丘）的环区块起点有效、山心为
  *       环区块中心、每个区块一片；山体 11×11 个区块并行做噪声填充两遍（无胡须、有胡须，不含地表、雕刻与地物；12345 先空
- *       跑一遍预热），各由结构片逐区块写入并计时，日志 {@code soulquake mountain fill} 记噪声与写入毫秒数、山石、补石与
+ *       跑一遍预热），各由结构片逐区块写入并计时，日志 {@code soulsunder mountain fill} 记噪声与写入毫秒数、山石、补石与
  *       清除数；有胡须时补石不多于无胡须，写入后贴地列的最低山石下方是实心方块（无浮空），各列最高一段以上到地表只剩空
  *       气与流体，山心列顶到山底加山形顶高。</li>
  *   <li>积雪：荡魂山石上雪层不能存活，原版石头上能。</li>
@@ -78,7 +78,7 @@ import org.slf4j.Logger;
 
 @GameTestHolder(GuWorld.MOD_ID)
 @PrefixGameTestTemplate(false)
-public final class SoulquakeMountainGameTests {
+public final class SoulsunderMountainGameTests {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final long SEED = 12345L;
@@ -93,35 +93,35 @@ public final class SoulquakeMountainGameTests {
     private static final int DUMP_REACH = 112;
     private static final LevelHeightAccessor HEIGHTS = LevelHeightAccessor.create(-64, 384);
 
-    private SoulquakeMountainGameTests() {}
+    private SoulsunderMountainGameTests() {}
 
     @GameTest(template = "empty9x9x9")
     public static void registeredAsOneRingInTheOverworld(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         StructureSet set = registries.registryOrThrow(Registries.STRUCTURE_SET)
-                .getOrThrow(SoulquakeMountain.STRUCTURE_SET);
+                .getOrThrow(SoulsunderMountain.STRUCTURE_SET);
         helper.assertTrue(set.placement() instanceof ConcentricRingsStructurePlacement rings && rings.count() == 1
-                && rings.distance() == SoulquakeMountain.RING_DISTANCE, "the set is not one concentric ring point");
+                && rings.distance() == SoulsunderMountain.RING_DISTANCE, "the set is not one concentric ring point");
         helper.assertTrue(set.structures().size() == 1
-                && set.structures().getFirst().structure().is(SoulquakeMountain.STRUCTURE), "the set lists " + set);
-        Structure structure = registries.registryOrThrow(Registries.STRUCTURE).getOrThrow(SoulquakeMountain.STRUCTURE);
+                && set.structures().getFirst().structure().is(SoulsunderMountain.STRUCTURE), "the set lists " + set);
+        Structure structure = registries.registryOrThrow(Registries.STRUCTURE).getOrThrow(SoulsunderMountain.STRUCTURE);
         helper.assertTrue(structure.step() == GenerationStep.Decoration.SURFACE_STRUCTURES, "step " + structure.step());
         helper.assertTrue(structure.terrainAdaptation() == TerrainAdjustment.BEARD_THIN,
                 "terrain adaptation " + structure.terrainAdaptation());
         Registry<Biome> biomes = registries.registryOrThrow(Registries.BIOME);
         helper.assertTrue(structure.biomes().contains(biomes.getHolderOrThrow(Biomes.DEEP_OCEAN)),
                 "the mountain could vanish over a deep ocean");
-        helper.assertTrue(biomes.getHolderOrThrow(Biomes.PLAINS).is(SoulquakeMountain.BIASED_TO)
-                && !biomes.getHolderOrThrow(Biomes.OCEAN).is(SoulquakeMountain.BIASED_TO)
-                && !biomes.getHolderOrThrow(Biomes.JAGGED_PEAKS).is(SoulquakeMountain.BIASED_TO),
+        helper.assertTrue(biomes.getHolderOrThrow(Biomes.PLAINS).is(SoulsunderMountain.BIASED_TO)
+                && !biomes.getHolderOrThrow(Biomes.OCEAN).is(SoulsunderMountain.BIASED_TO)
+                && !biomes.getHolderOrThrow(Biomes.JAGGED_PEAKS).is(SoulsunderMountain.BIASED_TO),
                 "the preferred biomes take oceans or peaks, or leave out plains");
         helper.succeed();
     }
 
     @GameTest(template = "empty9x9x9", timeoutTicks = 400)
     public static void ringStaysClearOfTheStrongholds(GameTestHelper helper) {
-        int innermost = SoulquakeMountain.RING_DISTANCE * 16 * 11 / 4 - BIOME_SHIFT;
-        int outermost = SoulquakeMountain.RING_DISTANCE * 16 * 21 / 4 + BIOME_SHIFT;
+        int innermost = SoulsunderMountain.RING_DISTANCE * 16 * 11 / 4 - BIOME_SHIFT;
+        int outermost = SoulsunderMountain.RING_DISTANCE * 16 * 21 / 4 + BIOME_SHIFT;
         for (long seed : new long[]{SEED, OTHER_SEED}) {
             Overworld world = Overworld.create(helper, seed);
             ChunkPos mountain = world.getMountainChunk();
@@ -133,7 +133,7 @@ public final class SoulquakeMountainGameTests {
                 gap = Math.min(gap, Math.hypot(stronghold.getMiddleBlockX() - mountain.getMiddleBlockX(),
                         stronghold.getMiddleBlockZ() - mountain.getMiddleBlockZ()));
             }
-            LOGGER.info("soulquake mountain ring (seed {}): chunk {}, {} blocks out, nearest stronghold {} blocks",
+            LOGGER.info("soulsunder mountain ring (seed {}): chunk {}, {} blocks out, nearest stronghold {} blocks",
                     seed, mountain, (int) distance, (int) gap);
             helper.assertTrue(gap > STRONGHOLD_GAP, "seed " + seed + ": a stronghold " + (int) gap + " blocks off");
         }
@@ -143,10 +143,10 @@ public final class SoulquakeMountainGameTests {
     @GameTest(template = "empty9x9x9", timeoutTicks = 600)
     public static void mountainStandsOnNoiseTerrain(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
-        Structure structure = registries.registryOrThrow(Registries.STRUCTURE).getOrThrow(SoulquakeMountain.STRUCTURE);
-        SoulquakeShape shape = SoulquakeShape.get();
+        Structure structure = registries.registryOrThrow(Registries.STRUCTURE).getOrThrow(SoulsunderMountain.STRUCTURE);
+        SoulsunderShape shape = SoulsunderShape.get();
         Registry<Biome> biomes = registries.registryOrThrow(Registries.BIOME);
-        BlockState stone = GuzhenrenBlocks.SOULQUAKE_STONE.get().defaultBlockState();
+        BlockState stone = GuzhenrenBlocks.SOULSUNDER_STONE.get().defaultBlockState();
         for (long seed : MOUNTAIN_SEEDS) {
             Overworld world = Overworld.create(helper, seed);
             ChunkPos ring = world.getMountainChunk();
@@ -155,8 +155,8 @@ public final class SoulquakeMountainGameTests {
                     helper.getLevel().getServer().getStructureManager(), seed, ring, 0, HEIGHTS,
                     biome -> structure.biomes().contains(biome));
             helper.assertTrue(start.isValid(), "seed " + seed + ": no valid start at " + ring);
-            List<SoulquakeMountainPiece> pieces = start.getPieces().stream()
-                    .map(SoulquakeMountainPiece.class::cast).toList();
+            List<SoulsunderMountainPiece> pieces = start.getPieces().stream()
+                    .map(SoulsunderMountainPiece.class::cast).toList();
             BlockPos centre = pieces.getFirst().getCentre();
             helper.assertTrue(centre.getX() == ring.getMiddleBlockX() && centre.getZ() == ring.getMiddleBlockZ(),
                     "the centre " + centre + " is not the middle of " + ring);
@@ -186,11 +186,11 @@ public final class SoulquakeMountainGameTests {
     }
 
     @GameTest(template = "empty9x9x9")
-    public static void snowSlidesOffSoulquakeStone(GameTestHelper helper) {
+    public static void snowSlidesOffSoulsunderStone(GameTestHelper helper) {
         BlockPos ground = new BlockPos(1, 1, 1);
-        helper.setBlock(ground, GuzhenrenBlocks.SOULQUAKE_STONE.get());
+        helper.setBlock(ground, GuzhenrenBlocks.SOULSUNDER_STONE.get());
         helper.assertFalse(Blocks.SNOW.defaultBlockState().canSurvive(helper.getLevel(),
-                helper.absolutePos(ground.above())), "snow settles on soulquake stone");
+                helper.absolutePos(ground.above())), "snow settles on soulsunder stone");
         helper.setBlock(ground, Blocks.STONE);
         helper.assertTrue(Blocks.SNOW.defaultBlockState().canSurvive(helper.getLevel(),
                 helper.absolutePos(ground.above())), "snow no longer settles on plain stone");
@@ -203,7 +203,7 @@ public final class SoulquakeMountainGameTests {
         Registry<StructureSet> sets = registries.registryOrThrow(Registries.STRUCTURE_SET);
         Registry<Structure> structures = registries.registryOrThrow(Registries.STRUCTURE);
         StructureTemplateManager templates = helper.getLevel().getServer().getStructureManager();
-        Holder<StructureSet> mountainSet = sets.getHolderOrThrow(SoulquakeMountain.STRUCTURE_SET);
+        Holder<StructureSet> mountainSet = sets.getHolderOrThrow(SoulsunderMountain.STRUCTURE_SET);
         Holder<StructureSet> villages = sets.getHolderOrThrow(BuiltinStructureSets.VILLAGES);
         NoiseBasedChunkGenerator generator = Overworld.create(helper, SEED).generator();
         for (long seed = 1; seed <= VILLAGE_SEEDS; seed++) {
@@ -215,10 +215,10 @@ public final class SoulquakeMountainGameTests {
                     (ConcentricRingsStructurePlacement) mountainSet.value().placement()).getFirst();
             int x = ring.getMiddleBlockX();
             int z = ring.getMiddleBlockZ();
-            for (var kept : List.of(SoulquakeMountain.STRUCTURE, BuiltinStructures.STRONGHOLD)) {
+            for (var kept : List.of(SoulsunderMountain.STRUCTURE, BuiltinStructures.STRONGHOLD)) {
                 StructureStart start = structures.getOrThrow(kept).generate(registries, generator,
                         generator.getBiomeSource(), world.random(), templates, seed, ring, 0, HEIGHTS, biome -> true);
-                helper.assertFalse(SoulquakeClearance.crowds(state, registries, start), kept + " is kept out");
+                helper.assertFalse(SoulsunderClearance.crowds(state, registries, start), kept + " is kept out");
             }
             ChunkPos crowded = findCrowdingVillage(world, state, villages.value(), registries, templates, seed, x, z);
             if (crowded == null) continue;
@@ -227,10 +227,10 @@ public final class SoulquakeMountainGameTests {
                     registries.registryOrThrow(Registries.BIOME), null);
             generator.createStructures(registries, state, new StructureManager(null, null, null), chunk, templates);
             for (StructureStart start : chunk.getAllStarts().values()) {
-                helper.assertFalse(start.isValid() && SoulquakeClearance.crowds(start.getBoundingBox(), x, z),
+                helper.assertFalse(start.isValid() && SoulsunderClearance.crowds(start.getBoundingBox(), x, z),
                         "seed " + seed + ": " + start.getStructure() + " at " + crowded + " crowds the mountain");
             }
-            LOGGER.info("soulquake mountain clearance (seed {}): a village at {} would crowd the mountain at {}, "
+            LOGGER.info("soulsunder mountain clearance (seed {}): a village at {} would crowd the mountain at {}, "
                     + "{} other starts kept", seed, crowded, ring, chunk.getAllStarts().size());
             helper.succeed();
             return;
@@ -242,7 +242,7 @@ public final class SoulquakeMountainGameTests {
             StructureSet villages, RegistryAccess registries, StructureTemplateManager templates, long seed, int x,
             int z) {
         StructurePlacement placement = villages.placement();
-        int reach = (SoulquakeMountain.CLEARANCE + VILLAGE_REACH) >> 4;
+        int reach = (SoulsunderMountain.CLEARANCE + VILLAGE_REACH) >> 4;
         for (int chunkZ = (z >> 4) - reach; chunkZ <= (z >> 4) + reach; chunkZ++) {
             for (int chunkX = (x >> 4) - reach; chunkX <= (x >> 4) + reach; chunkX++) {
                 if (!placement.isStructureChunk(state, chunkX, chunkZ)) continue;
@@ -253,14 +253,14 @@ public final class SoulquakeMountainGameTests {
                     StructureStart start = village.generate(registries, world.generator(),
                             world.generator().getBiomeSource(), world.random(), templates, seed, position, 0, HEIGHTS,
                             village.biomes()::contains);
-                    if (start.isValid() && SoulquakeClearance.crowds(start.getBoundingBox(), x, z)) return position;
+                    if (start.isValid() && SoulsunderClearance.crowds(start.getBoundingBox(), x, z)) return position;
                 }
             }
         }
         return null;
     }
 
-    private static int[] fillMountain(Overworld world, long seed, List<SoulquakeMountainPiece> pieces,
+    private static int[] fillMountain(Overworld world, long seed, List<SoulsunderMountainPiece> pieces,
             StructureStart start, Registry<Biome> biomes, String label, Map<ChunkPos, ProtoChunk> chunks) {
         StructureManager structures = getStarts(start);
         long started = System.nanoTime();
@@ -271,16 +271,16 @@ public final class SoulquakeMountainGameTests {
             chunks.put(position, chunk);
         });
         long noise = System.nanoTime() - started;
-        BlockState mountain = GuzhenrenBlocks.SOULQUAKE_STONE.get().defaultBlockState();
+        BlockState mountain = GuzhenrenBlocks.SOULSUNDER_STONE.get().defaultBlockState();
         BlockState foundation = Blocks.STONE.defaultBlockState();
         started = System.nanoTime();
         int[] placed = new int[3];
-        for (SoulquakeMountainPiece piece : pieces) {
+        for (SoulsunderMountainPiece piece : pieces) {
             int[] counts = piece.fill(chunks.get(getChunk(piece)), mountain, foundation);
             for (int i = 0; i < placed.length; i++) placed[i] += counts[i];
         }
         long fill = System.nanoTime() - started;
-        LOGGER.info("soulquake mountain fill {} (seed {}): {} chunks, noise {} ms, fill {} ms, {} mountain + {} "
+        LOGGER.info("soulsunder mountain fill {} (seed {}): {} chunks, noise {} ms, fill {} ms, {} mountain + {} "
                 + "foundation blocks, {} cleared", label, seed, pieces.size(), noise / 1_000_000, fill / 1_000_000,
                 placed[0], placed[1], placed[2]);
         return placed;
@@ -298,12 +298,12 @@ public final class SoulquakeMountainGameTests {
     }
 
     /**
-     * 只在设了环境变量 {@code SOULQUAKE_DUMP}（目录）时写出山心 ±{@link #DUMP_REACH} 格的场景，供任务目录的预览脚本画低角度
+     * 只在设了环境变量 {@code SOULSUNDER_DUMP}（目录）时写出山心 ±{@link #DUMP_REACH} 格的场景，供任务目录的预览脚本画低角度
      * 侧视；每列四个 big-endian short：地形顶、山石底、山石顶（无山石为 -32768）、水面顶，按 z 行、x 列排。
      */
     private static void dumpScene(Overworld world, long seed, StructureStart start, Registry<Biome> biomes,
             Map<ChunkPos, ProtoChunk> chunks, BlockPos centre) {
-        String directory = System.getenv("SOULQUAKE_DUMP");
+        String directory = System.getenv("SOULSUNDER_DUMP");
         if (directory == null) return;
 
         int min = -DUMP_REACH;
@@ -318,7 +318,7 @@ public final class SoulquakeMountainGameTests {
                 });
             }
         }
-        Block stone = GuzhenrenBlocks.SOULQUAKE_STONE.get();
+        Block stone = GuzhenrenBlocks.SOULSUNDER_STONE.get();
         ByteBuffer out = ByteBuffer.allocate(8 + size * size * 8);
         out.putInt(size).putInt(centre.getY());
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
@@ -347,21 +347,21 @@ public final class SoulquakeMountainGameTests {
             }
         }
         try {
-            Files.write(Path.of(directory, "soulquake-" + seed + ".bin"), out.array());
+            Files.write(Path.of(directory, "soulsunder-" + seed + ".bin"), out.array());
         } catch (IOException exception) {
-            LOGGER.warn("soulquake mountain dump failed", exception);
+            LOGGER.warn("soulsunder mountain dump failed", exception);
         }
     }
 
-    private static ChunkPos getChunk(SoulquakeMountainPiece piece) { return getChunk(piece, false); }
+    private static ChunkPos getChunk(SoulsunderMountainPiece piece) { return getChunk(piece, false); }
 
-    private static ChunkPos getChunk(SoulquakeMountainPiece piece, boolean far) {
+    private static ChunkPos getChunk(SoulsunderMountainPiece piece, boolean far) {
         BoundingBox box = piece.getBoundingBox();
         return far ? new ChunkPos(box.maxX() >> 4, box.maxZ() >> 4) : new ChunkPos(box.minX() >> 4, box.minZ() >> 4);
     }
 
-    private static int countLeftoversOnTop(Map<ChunkPos, ProtoChunk> chunks, SoulquakeShape shape, BlockPos centre) {
-        Block stone = GuzhenrenBlocks.SOULQUAKE_STONE.get();
+    private static int countLeftoversOnTop(Map<ChunkPos, ProtoChunk> chunks, SoulsunderShape shape, BlockPos centre) {
+        Block stone = GuzhenrenBlocks.SOULSUNDER_STONE.get();
         int leftover = 0;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int column = 0; column < shape.getWidth() * shape.getDepth(); column++) {
@@ -380,8 +380,8 @@ public final class SoulquakeMountainGameTests {
         return leftover;
     }
 
-    private static int countFloatingColumns(Map<ChunkPos, ProtoChunk> chunks, SoulquakeShape shape, BlockPos centre) {
-        Block stone = GuzhenrenBlocks.SOULQUAKE_STONE.get();
+    private static int countFloatingColumns(Map<ChunkPos, ProtoChunk> chunks, SoulsunderShape shape, BlockPos centre) {
+        Block stone = GuzhenrenBlocks.SOULSUNDER_STONE.get();
         int floating = 0;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int column = 0; column < shape.getWidth() * shape.getDepth(); column++) {
@@ -418,7 +418,7 @@ public final class SoulquakeMountainGameTests {
         }
 
         ChunkPos getMountainChunk() {
-            StructureSet mountain = sets.getOrThrow(SoulquakeMountain.STRUCTURE_SET);
+            StructureSet mountain = sets.getOrThrow(SoulsunderMountain.STRUCTURE_SET);
             return structures.getRingPositionsFor(getRings(mountain)).getFirst();
         }
 

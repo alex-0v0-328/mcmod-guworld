@@ -1,0 +1,7 @@
+{
+  "type": "guworld:soulsunder_mountain",
+  "biomes": "#guworld:has_structure/soulsunder_mountain",
+  "spawn_overrides": {},
+  "step": "surface_structures",
+  "terrain_adaptation": "beard_thin"
+}

@@ -3,13 +3,13 @@
     "type": "minecraft:concentric_rings",
     "count": 1,
     "distance": 42,
-    "preferred_biomes": "#guworld:soulquake_mountain_biased_to",
+    "preferred_biomes": "#guworld:soulsunder_mountain_biased_to",
     "salt": 0,
     "spread": 1
   },
   "structures": [
     {
-      "structure": "guworld:soulquake_mountain",
+      "structure": "guworld:soulsunder_mountain",
       "weight": 1
     }
   ]

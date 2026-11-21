@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 /**
- * 荡魂山的结构片，每个与山形相交的区块一块：按 {@link SoulquakeShape} 的列跨度在本区块里逐列直接写荡魂山石。
+ * 荡魂山的结构片，每个与山形相交的区块一块：按 {@link SoulsunderShape} 的列跨度在本区块里逐列直接写荡魂山石。
  * <ul>
  *   <li>这是《世界#结构模板约定》（形状存 {@code .nbt} 模板、由共用模板地物加载）的特例：山体 160×128×160，按 48 格上限
  *       要拆成 4×3×4 块拼图，模板逐格存调色板序号，体积数十万格，放置时还要按模板逐块走 {@code StructureTemplate} 的处
@@ -61,7 +61,7 @@ import org.slf4j.Logger;
  * </ul>
  */
 
-public final class SoulquakeMountainPiece extends StructurePiece implements PieceBeardifierModifier {
+public final class SoulsunderMountainPiece extends StructurePiece implements PieceBeardifierModifier {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Map<BlockPos, Progress> PROGRESS = new ConcurrentHashMap<>();
@@ -72,21 +72,21 @@ public final class SoulquakeMountainPiece extends StructurePiece implements Piec
     private @Nullable BoundingBox core;
     private boolean coreFound;
 
-    private SoulquakeMountainPiece(BlockPos centre, BoundingBox box, int pieces) {
-        super(SoulquakeMountainRegistration.PIECE_TYPE, 0, box);
+    private SoulsunderMountainPiece(BlockPos centre, BoundingBox box, int pieces) {
+        super(SoulsunderMountainRegistration.PIECE_TYPE, 0, box);
         this.centre = centre;
         this.pieces = pieces;
     }
 
-    public SoulquakeMountainPiece(CompoundTag tag) {
-        super(SoulquakeMountainRegistration.PIECE_TYPE, tag);
+    public SoulsunderMountainPiece(CompoundTag tag) {
+        super(SoulsunderMountainRegistration.PIECE_TYPE, tag);
         this.centre = new BlockPos(tag.getInt("CX"), tag.getInt("BY"), tag.getInt("CZ"));
         this.pieces = tag.getInt("N");
     }
 
     /** 山心 {@code centre}（y 为山底）的全部结构片，每个与山形非空列相交的区块一块。 */
-    public static List<SoulquakeMountainPiece> forMountain(BlockPos centre, int floor) {
-        SoulquakeShape shape = SoulquakeShape.get();
+    public static List<SoulsunderMountainPiece> forMountain(BlockPos centre, int floor) {
+        SoulsunderShape shape = SoulsunderShape.get();
         int originX = centre.getX() - shape.getCentre();
         int originZ = centre.getZ() - shape.getCentre();
         int lastX = originX + shape.getWidth() - 1;
@@ -113,7 +113,7 @@ public final class SoulquakeMountainPiece extends StructurePiece implements Piec
                 if (minX <= maxX) boxes.add(new BoundingBox(minX, bottom, minZ, maxX, top, maxZ));
             }
         }
-        return boxes.stream().map(box -> new SoulquakeMountainPiece(centre, box, boxes.size())).toList();
+        return boxes.stream().map(box -> new SoulsunderMountainPiece(centre, box, boxes.size())).toList();
     }
 
     public BlockPos getCentre() { return centre; }
@@ -140,7 +140,7 @@ public final class SoulquakeMountainPiece extends StructurePiece implements Piec
     private @Nullable BoundingBox getCore() {
         if (coreFound) return core;
 
-        SoulquakeShape shape = SoulquakeShape.get();
+        SoulsunderShape shape = SoulsunderShape.get();
         int originX = centre.getX() - shape.getCentre();
         int originZ = centre.getZ() - shape.getCentre();
         BoundingBox box = getBoundingBox();
@@ -174,13 +174,13 @@ public final class SoulquakeMountainPiece extends StructurePiece implements Piec
             @NotNull ChunkPos chunkPos, @NotNull BlockPos pos) {
         long start = System.nanoTime();
         int[] placed = fill(level.getChunk(chunkPos.x, chunkPos.z),
-                GuzhenrenBlocks.SOULQUAKE_STONE.get().defaultBlockState(), Blocks.STONE.defaultBlockState());
+                GuzhenrenBlocks.SOULSUNDER_STONE.get().defaultBlockState(), Blocks.STONE.defaultBlockState());
         recordProgress(System.nanoTime() - start, placed);
     }
 
     /** 在 {@code chunk} 里写本结构片的列，返回 {山石数, 补石数, 清除数}。 */
     public int[] fill(ChunkAccess chunk, BlockState mountain, BlockState foundation) {
-        SoulquakeShape shape = SoulquakeShape.get();
+        SoulsunderShape shape = SoulsunderShape.get();
         int originX = centre.getX() - shape.getCentre();
         int originZ = centre.getZ() - shape.getCentre();
         BoundingBox box = getBoundingBox();
@@ -200,7 +200,7 @@ public final class SoulquakeMountainPiece extends StructurePiece implements Piec
         return placed;
     }
 
-    private void fillColumn(ChunkAccess chunk, SoulquakeShape shape, int column, BlockPos.MutableBlockPos cursor,
+    private void fillColumn(ChunkAccess chunk, SoulsunderShape shape, int column, BlockPos.MutableBlockPos cursor,
             BlockState mountain, BlockState foundation, int[] placed) {
         int count = shape.getSpanCount(column);
         if (count == 0) return;
@@ -260,7 +260,7 @@ public final class SoulquakeMountainPiece extends StructurePiece implements Piec
         progress.slowest.accumulateAndGet(nanos, Math::max);
         if (progress.pieces.incrementAndGet() < pieces || PROGRESS.remove(centre) == null) return;
 
-        LOGGER.info("Soulquake Mountain at {}: {} mountain + {} foundation blocks, {} cleared, in {} chunks, {} ms "
+        LOGGER.info("Soulsunder Mountain at {}: {} mountain + {} foundation blocks, {} cleared, in {} chunks, {} ms "
                         + "in all, slowest chunk {} ms", centre.toShortString(), progress.mountain.get(),
                 progress.foundation.get(), progress.cleared.get(), pieces, progress.nanos.get() / 1_000_000,
                 progress.slowest.get() / 1_000_000);

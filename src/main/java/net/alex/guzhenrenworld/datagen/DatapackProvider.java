@@ -16,7 +16,7 @@ import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
 import net.alex.guzhenrenworld.feature.IntimateGrass;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
 import net.alex.guzhenrenworld.feature.SpiritSpringRegistration;
-import net.alex.guzhenrenworld.secretrealm.SoulquakeMountain;
+import net.alex.guzhenrenworld.secretrealm.SoulsunderMountain;
 import net.alex.guzhenrenworld.waterways.Waterways;
 import net.alex.guzhenrenworld.waterways.WaterwaysRegistration;
 import net.minecraft.core.HolderLookup;
@@ -32,7 +32,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  *   <li>汇总注册宝黄天的维度类型、群系与维度层级（{@link TreasureYellowHeaven}），南疆自制的竹海群系与稀疏竹子放置地物
  *       （{@link BiomeSettings}），元泉配置地物、放置地物（{@link SpiritSpring}）与群系修改器（
  *       {@link SpiritSpringRegistration}），野生知心草地物与群系修改器（{@link IntimateGrass}），以及四域水系地物与修改
- *       器（{@link WaterwaysRegistration}）；另有荡魂山的结构与同心环结构集（{@link SoulquakeMountain}）。</li>
+ *       器（{@link WaterwaysRegistration}）；另有荡魂山的结构与同心环结构集（{@link SoulsunderMountain}）。</li>
  *   <li>注册四域共用的维度类型，并按 {@link Regions#ALL} 逐域注册各自的密度函数（Tectonic 路由与域钩子）、噪声生成设
  *       置、维度层级（{@link RegionBootstraps}）以及挂载在各域前缀下的可达移植地形副本。</li>
  *   <li>汇总注册原版复刻群系（{@link Replicas#SHARED} 加各域独有复刻）、Terralith 移植群系及地物（{@link Ports#BIOMES}
@@ -83,8 +83,8 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 Ports.registerPlacedFeatures(context);
                 BiomeSettings.registerPlacedFeatures(context);
             })
-            .add(Registries.STRUCTURE, SoulquakeMountain::registerStructure)
-            .add(Registries.STRUCTURE_SET, SoulquakeMountain::registerStructureSet)
+            .add(Registries.STRUCTURE, SoulsunderMountain::registerStructure)
+            .add(Registries.STRUCTURE_SET, SoulsunderMountain::registerStructureSet)
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
                 SpiritSpringRegistration.registerBiomeModifier(context);
                 IntimateGrass.registerBiomeModifier(context);

@@ -9,9 +9,9 @@ import java.io.InputStream;
 import java.io.UncheckedIOException;
 
 /**
- * 荡魂山[Soulquake Mountain]的山形：160×160 列、每列若干段相对山底的实心区间 [y0, y1]（列跨度），只读、全局一份。
+ * 荡魂山[Soulsunder Mountain]的山形：160×160 列、每列若干段相对山底的实心区间 [y0, y1]（列跨度），只读、全局一份。
  * <ul>
- *   <li>数据来自 {@link #RESOURCE}，由主仓库 {@code tools/soulquake_shape.py} 生成（格式与生成方法见该脚本文档）；改山
+ *   <li>数据来自 {@link #RESOURCE}，由主仓库 {@code tools/soulsunder_shape.py} 生成（格式与生成方法见该脚本文档）；改山
  *       形只重跑脚本，不手改文件。格式 1：魔数 {@code GZSQ}、版本、宽（x）、深（z）、高（y），随后按 z 优先逐列写段数与
  *       各段的 {@code (y0, y1)}，大端序。</li>
  *   <li>{@link #get} 在首次调用时从类路径读一次并常驻（约 65 KB），世界生成线程并发读取；文件不随数据包重载，因为放置只
@@ -21,9 +21,9 @@ import java.io.UncheckedIOException;
  * </ul>
  */
 
-public final class SoulquakeShape {
+public final class SoulsunderShape {
 
-    public static final String RESOURCE = "/data/guworld/secret_realm/soulquake_mountain.spans";
+    public static final String RESOURCE = "/data/guworld/secret_realm/soulsunder_mountain.spans";
     private static final int MAGIC = 0x475A5351;
     private static final int VERSION = 1;
 
@@ -34,7 +34,7 @@ public final class SoulquakeShape {
     private final byte[] spans;
     private final int volume;
 
-    private SoulquakeShape(int width, int depth, int height, int[] firstSpan, byte[] spans) {
+    private SoulsunderShape(int width, int depth, int height, int[] firstSpan, byte[] spans) {
         this.width = width;
         this.depth = depth;
         this.height = height;
@@ -45,11 +45,11 @@ public final class SoulquakeShape {
         this.volume = blocks;
     }
 
-    public static SoulquakeShape get() { return Holder.SHAPE; }
+    public static SoulsunderShape get() { return Holder.SHAPE; }
 
-    public static SoulquakeShape read(InputStream input) throws IOException {
+    public static SoulsunderShape read(InputStream input) throws IOException {
         DataInputStream data = new DataInputStream(new BufferedInputStream(input));
-        if (data.readInt() != MAGIC) throw new IOException("not a soulquake shape file");
+        if (data.readInt() != MAGIC) throw new IOException("not a soulsunder shape file");
         int version = data.readUnsignedByte();
         if (version != VERSION) throw new IOException("shape format " + version + ", expected " + VERSION);
         int width = data.readUnsignedShort();
@@ -74,7 +74,7 @@ public final class SoulquakeShape {
         }
         firstSpan[width * depth] = spans.size() / 2;
         if (data.read() >= 0) throw new IOException("bytes trail the column table");
-        return new SoulquakeShape(width, depth, height, firstSpan, spans.toByteArray());
+        return new SoulsunderShape(width, depth, height, firstSpan, spans.toByteArray());
     }
 
     public int getWidth() { return width; }
@@ -95,10 +95,10 @@ public final class SoulquakeShape {
 
     private static final class Holder {
 
-        private static final SoulquakeShape SHAPE = load();
+        private static final SoulsunderShape SHAPE = load();
 
-        private static SoulquakeShape load() {
-            try (InputStream input = SoulquakeShape.class.getResourceAsStream(RESOURCE)) {
+        private static SoulsunderShape load() {
+            try (InputStream input = SoulsunderShape.class.getResourceAsStream(RESOURCE)) {
                 if (input == null) throw new EOFException("missing " + RESOURCE);
                 return read(input);
             } catch (IOException exception) {

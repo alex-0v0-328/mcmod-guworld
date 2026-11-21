@@ -87,16 +87,16 @@ public final class WorldGameTests {
     }
 
     @GameTest(template = "empty17x9x17", skyAccess = true)
-    public static void springStaysOffSoulquakeStone(GameTestHelper helper) {
+    public static void springStaysOffSoulsunderStone(GameTestHelper helper) {
         layFloor(helper);
         helper.assertTrue(isSiteFound(helper), "dry level ground is refused");
 
-        helper.setBlock(SITE.east(3), GuzhenrenBlocks.SOULQUAKE_STONE.get());
-        helper.assertFalse(isSiteFound(helper), "a basin column on soulquake stone is accepted");
+        helper.setBlock(SITE.east(3), GuzhenrenBlocks.SOULSUNDER_STONE.get());
+        helper.assertFalse(isSiteFound(helper), "a basin column on soulsunder stone is accepted");
 
         helper.setBlock(SITE.east(3), Blocks.STONE);
-        helper.setBlock(SITE.east(3).below(), GuzhenrenBlocks.SOULQUAKE_STONE.get());
-        helper.assertFalse(isSiteFound(helper), "the basin floor would cut into soulquake stone");
+        helper.setBlock(SITE.east(3).below(), GuzhenrenBlocks.SOULSUNDER_STONE.get());
+        helper.assertFalse(isSiteFound(helper), "the basin floor would cut into soulsunder stone");
         helper.succeed();
     }
 

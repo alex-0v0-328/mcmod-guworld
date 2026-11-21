@@ -19,7 +19,7 @@ description='''
 The dimensions, terrain and biomes of Guzhenren. Requires Guzhenren.
 '''
 
-# Keeps the surface structures out of the Soulquake Mountain clearance (SoulquakeClearance).
+# Keeps the surface structures out of the Soulsunder Mountain clearance (SoulsunderClearance).
 [[mixins]]
 config="${mod_id}.mixins.json"
 

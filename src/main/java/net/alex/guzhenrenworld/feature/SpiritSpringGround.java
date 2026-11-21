@@ -71,14 +71,14 @@ public final class SpiritSpringGround {
         for (BlockPos offset : SpiritSpringBasin.COLUMNS) {
             BlockPos column = groundCenter.offset(offset);
             for (int offsetY = lowest; offsetY <= SpiritSpringBasin.CLEAR_HEIGHT_ABOVE; offsetY++) {
-                if (isSoulquakeStone(level, column.above(offsetY))) return true;
+                if (isSoulsunderStone(level, column.above(offsetY))) return true;
             }
         }
-        return isSoulquakeStone(level, groundCenter.above());
+        return isSoulsunderStone(level, groundCenter.above());
     }
 
-    private static boolean isSoulquakeStone(WorldGenLevel level, BlockPos pos) {
-        return level.getBlockState(pos).getBlockHolder().is(GuzhenrenBlocks.SOULQUAKE_STONE.getKey());
+    private static boolean isSoulsunderStone(WorldGenLevel level, BlockPos pos) {
+        return level.getBlockState(pos).getBlockHolder().is(GuzhenrenBlocks.SOULSUNDER_STONE.getKey());
     }
 
     private static boolean isTerrainWet(WorldGenLevel level, BlockPos groundCenter) {
