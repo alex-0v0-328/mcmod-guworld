@@ -14,7 +14,7 @@ import java.io.UncheckedIOException;
  *   <li>数据来自 {@link #RESOURCE}，由主仓库 {@code tools/soulsunder_shape.py} 生成（格式与生成方法见该脚本文档）；改山
  *       形只重跑脚本，不手改文件。格式 1：魔数 {@code GZSQ}、版本、宽（x）、深（z）、高（y），随后按 z 优先逐列写段数与
  *       各段的 {@code (y0, y1)}，大端序。</li>
- *   <li>{@link #get} 在首次调用时从类路径读一次并常驻（约 65 KB），世界生成线程并发读取；文件不随数据包重载，因为放置只
+ *   <li>{@link #get} 在首次调用时从类路径读一次（文件约 54 KB）并常驻，世界生成线程并发读取；文件不随数据包重载，因为放置只
  *       依赖 jar 内这一份。</li>
  *   <li>列序号 {@code z * width + x}；第 {@link #getCentre} 列对准山心方块，山底为 y = 0。</li>
  *   <li>⚠ {@link #read} 拒收段倒序、相接或越过高度的文件：结构片按段写方块且不再检查，坏数据会写出浮空块或越界。</li>

@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 荡魂山山形文件的读取与不变量：随 jar 发的山形为 160×160×128，全部列落在山心 80 格圆盘内，最高到 120 格以上，每段都经
- * 面相邻的段连到山底（无浮空）；坏魔数、段相接与尾随字节被拒收。
+ * 荡魂山山形文件的读取与不变量：随 jar 发的山形为 160×160×128，全部列落在山心 80 格圆盘内，最高到 112 格以上、体积超过
+ * 30 万格，每段都经面相邻的段连到山底（无浮空）；坏魔数、段相接与尾随字节被拒收。
  */
 
 class SoulsunderShapeTest {
@@ -37,8 +37,8 @@ class SoulsunderShapeTest {
             assertTrue(dx * dx + dz * dz <= 80 * 80, "column " + column + " lies outside the 80-block disc");
             highest = Math.max(highest, shape.getTop(column, count - 1));
         }
-        assertTrue(highest >= 120, "the summit reaches only y " + highest);
-        assertTrue(shape.getVolume() > 200_000, "the mountain holds only " + shape.getVolume() + " blocks");
+        assertTrue(highest >= 112, "the summit reaches only y " + highest);
+        assertTrue(shape.getVolume() > 300_000, "the mountain holds only " + shape.getVolume() + " blocks");
         assertEquals(0, countFloatingSpans(shape));
     }
 
