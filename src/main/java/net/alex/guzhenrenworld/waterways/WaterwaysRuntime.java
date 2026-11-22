@@ -60,7 +60,8 @@ public final class WaterwaysRuntime {
         long seed = level.getSeed();
         String key = String.join("/", Waterways.PARAMETERS, String.valueOf(region.borderSize()),
                 String.valueOf(generator.generatorSettings().value().seaLevel()))
-                + (region.keepOut() > 0 ? "/keep" + region.keepOut() : "") + (region.walled() ? "/walled" : "");
+                + (region.keepOut() > 0 ? "/keep" + region.keepOut() : "") + (region.walled() ? "/walled" : "")
+                + (region.cell() != Waterways.CELL ? "/cell" + region.cell() : "");
         WaterwaysCarver carver = new WaterwaysCarver(region, generator, random, ground -> {
             int[] fingerprint = getFingerprint(ground, generator, random);
             WaterwaysIndex saved = data.get(key, region, seed, fingerprint);

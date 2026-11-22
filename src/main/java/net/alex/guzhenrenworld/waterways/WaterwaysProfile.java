@@ -69,7 +69,7 @@ public final class WaterwaysProfile {
         double length = Math.hypot(dx, dz);
         double normalX = length == 0 ? 0 : -dz / length;
         double normalZ = length == 0 ? 0 : dx / length;
-        double width0 = plan.width(cell, Waterways.MIN_CATCHMENT);
+        double width0 = plan.width(cell, plan.region().minCatchment());
         double width1 = WaterwaysIndex.getEndWidth(plan, cell);
         int sea = plan.seaLevel();
         double[] readings = new double[Waterways.KNOTS + 1];

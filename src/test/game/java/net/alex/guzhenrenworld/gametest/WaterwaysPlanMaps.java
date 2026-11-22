@@ -39,10 +39,10 @@ import org.slf4j.Logger;
  * <ul>
  *   <li>仅当 GameTest 服务端带 {@code -Dguworld.waterwaysMaps=<directory>} 时单独成批；读区域或写图出错才失败。</li>
  *   <li>四域与狐仙福地各经 {@link RegionProbe}（种子 12345）建一次规划，记建图耗时，水、出口、边缘与墙格占比。</li>
- *   <li>{@link #THRESHOLDS} 各汇流阈值记河段格数与总长、河道刻去的区域占比、每侧 {@code max(5, 2w)} 格岸带碰到的占比、
- *       湖中河段格数及最深者、溪流终止的汇点数。</li>
+ *   <li>{@link #THRESHOLDS} 各汇流阈值（按 16 格网格计，粗网格按面积换算）记河段格数与总长、河道刻去的区域占比、每侧
+ *       {@code max(5, 2w)} 格岸带碰到的占比、湖中河段格数及最深者、溪流终止的汇点数。</li>
  *   <li>写 {@code <region>.png}（1024 像素对应全区边长）：地面晕渲，水蓝，出口青（干旱区域土黄），墙灰，
- *       {@link Waterways#MIN_CATCHMENT} 阈值的溪流画成随宽度加粗的线，穿过深于 1 格的湖处品红点，终止的汇点橙点。</li>
+ *       区域成河阈值（{@link Waterways.Region#minCatchment()}）的溪流画成随宽度加粗的线，穿过深于 1 格的湖处品红点，终止的汇点橙点。</li>
  * </ul>
  *
  * @author Alex
@@ -104,7 +104,9 @@ public final class WaterwaysPlanMaps {
     private static List<String> thresholds(WaterwaysPlan plan) {
         double area = plan.region().borderSize() * plan.region().borderSize();
         List<String> lines = new ArrayList<>();
-        for (int threshold : THRESHOLDS) {
+        for (int sixteen : THRESHOLDS) {
+            int threshold = Math.max(1, sixteen * Waterways.CELL * Waterways.CELL
+                    / (plan.region().cell() * plan.region().cell()));
             int streams = 0;
             int fedSinks = 0;
             int deep = 0;
@@ -125,7 +127,7 @@ public final class WaterwaysPlanMaps {
                 deepest = Math.max(deepest, plan.depression(cell));
             }
             lines.add("catchment >= %3d: %6d stream cells, %6.1f km, carved %.2f%%, corridor %.1f%%, in lakes %d "
-                    .formatted(threshold, streams, length / 1000, 100 * carved / area, 100 * corridor / area, deep)
+                    .formatted(sixteen, streams, length / 1000, 100 * carved / area, 100 * corridor / area, deep)
                     + "(deepest %.1f), ending in sinks %d".formatted(deepest, fedSinks));
         }
         return lines;
@@ -146,21 +148,22 @@ public final class WaterwaysPlanMaps {
         double origin = plan.region().origin();
         graphics.setColor(dry ? new Color(150, 90, 40) : new Color(20, 50, 220));
         for (int cell = 0; cell < plan.count(); cell++) {
-            if (!plan.isStream(cell, Waterways.MIN_CATCHMENT) || plan.receiver(cell) < 0) continue;
+            if (!plan.isStream(cell, plan.region().minCatchment()) || plan.receiver(cell) < 0) continue;
             int next = plan.receiver(cell);
-            graphics.setStroke(new BasicStroke((float) (0.8 + plan.width(cell, Waterways.MIN_CATCHMENT) / 3)));
+            graphics.setStroke(new BasicStroke((float) (0.8 + plan.width(cell, plan.region().minCatchment()) / 3)));
             graphics.draw(new Line2D.Double((plan.x(cell) - origin) * scale, (plan.z(cell) - origin) * scale,
                     (plan.x(next) - origin) * scale, (plan.z(next) - origin) * scale));
         }
         graphics.setColor(Color.MAGENTA);
         for (int cell = 0; cell < plan.count(); cell++) {
-            if (!plan.isStream(cell, Waterways.MIN_CATCHMENT) || plan.depression(cell) <= DEEP) continue;
+            if (!plan.isStream(cell, plan.region().minCatchment()) || plan.depression(cell) <= DEEP) continue;
             graphics.fill(new Ellipse2D.Double((plan.x(cell) - origin) * scale - 1.5,
                     (plan.z(cell) - origin) * scale - 1.5, 3, 3));
         }
         graphics.setColor(Color.ORANGE);
         for (int cell = 0; cell < plan.count(); cell++) {
-            if (plan.kind(cell) != WaterwaysPlan.Kind.SINK || plan.catchment(cell) < Waterways.MIN_CATCHMENT) continue;
+            if (plan.kind(cell) != WaterwaysPlan.Kind.SINK) continue;
+            if (plan.catchment(cell) < plan.region().minCatchment()) continue;
             graphics.fill(new Ellipse2D.Double((plan.x(cell) - origin) * scale - 2.5,
                     (plan.z(cell) - origin) * scale - 2.5, 5, 5));
         }

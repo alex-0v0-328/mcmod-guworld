@@ -32,6 +32,8 @@ import org.jetbrains.annotations.NotNull;
  *       例在运行时兼作 {@link WaterwaysRuntime} 识别所属维度 {@code RandomState} 的唯一身份键。</li>
  *   <li>干旱域（{@link Region#dry()} 为 {@code true}，如西漠）同样刻出全套河槽并铺设河床，但仅在河宽达到
  *       {@link #DRY_WIDTH} 格的主干河道中注水，其余支流保持为干涸河谷。</li>
+ *   <li>网格边长按区域给（{@link Region#cell()}，默认 {@link #CELL}）：抖动随之放大，成河的汇流格数按面积换算
+ *       （{@link Region#minCatchment()}），每段的水面节点数不变。</li>
  *   <li>禁区与墙（狐仙福地用）：{@link Region#keepOut()} 大于 0 时，离原点不到这么多格的网格是墙；{@link Region#walled()}
  *       时最外一圈也是墙而非出口。墙不进填洼、不收汇流，溪流绕开平地圈，也不流向疆域断面。</li>
  * </ul>
@@ -124,14 +126,24 @@ public final class Waterways {
         }
     }
 
-    public record Region(String name, double borderSize, boolean dry, Bed bed, double keepOut, boolean walled) {
+    public record Region(String name, double borderSize, boolean dry, Bed bed, double keepOut, boolean walled,
+            int cell) {
 
         public Region(String name, double borderSize, boolean dry, Bed bed) {
-            this(name, borderSize, dry, bed, 0.0, false);
+            this(name, borderSize, dry, bed, 0.0, false, CELL);
         }
 
         public int cells() {
-            return (int) (borderSize / CELL);
+            return (int) (borderSize / cell);
+        }
+
+        public int jitter() {
+            return JITTER * cell / CELL;
+        }
+
+        // 成河所需的汇流面积按格数换算，网格放粗后溪流仍从同样大的集水面积起头。
+        public int minCatchment() {
+            return Math.max(1, MIN_CATCHMENT * CELL * CELL / (cell * cell));
         }
 
         public int origin() {

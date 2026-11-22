@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
  * 由 {@link WaterwaysPlan} 构建的水系河道线段空间索引：将每个达标溪流格与其下游接收格连接为有向河道线段。
  * <ul>
  *   <li>每条线段保存首尾两端的河宽（下游格未成河时沿用上游宽度）以及由 {@link WaterwaysProfile} 计算的
- *       {@link Waterways#KNOTS} + 1 个等距节点水位；初始化时按 {@link Waterways#CELL} 网格建立空间分桶，将每条线段注册
+ *       {@link Waterways#KNOTS} + 1 个等距节点水位；初始化时按区域网格（{@link Waterways.Region#cell()}）建立空间分桶，将每条线段注册
  *       到其河宽、岸带与蜿蜒偏移（{@link #getReach}）所能触及的全部网格桶中，使单列查询只需遍历所在桶的紧凑数组。</li>
  *   <li>{@link #getSurface} 对桶内各线段计算刻河目标高度并取最小值（不同于论文公式 31 的反距离加权，取最小值可确保干支
  *       流交汇口必定挖通）：落入河宽内时返回抛物线河底高度，落入岸带内时按 Smoothstep 从水面平滑抬升至原地面上方
@@ -86,7 +86,7 @@ public final class WaterwaysIndex {
             fields[1][segment] = plan.z(cell);
             fields[2][segment] = plan.x(receiver);
             fields[3][segment] = plan.z(receiver);
-            fields[4][segment] = (float) plan.width(cell, Waterways.MIN_CATCHMENT);
+            fields[4][segment] = (float) plan.width(cell, plan.region().minCatchment());
             fields[5][segment] = (float) getEndWidth(plan, cell);
             for (int knot = 0; knot <= Waterways.KNOTS; knot++) {
                 fields[LEVELS + knot][segment] = profile.level(cell, knot);
@@ -161,8 +161,8 @@ public final class WaterwaysIndex {
     }
 
     public int getBucket(int x, int z) {
-        int column = Math.floorDiv(x - region.origin(), Waterways.CELL);
-        int row = Math.floorDiv(z - region.origin(), Waterways.CELL);
+        int column = Math.floorDiv(x - region.origin(), region.cell());
+        int row = Math.floorDiv(z - region.origin(), region.cell());
         if (column < 0 || row < 0 || column >= size || row >= size) return -1;
         int bucket = row * size + column;
         return start[bucket] == start[bucket + 1] ? -1 : bucket;
@@ -248,16 +248,17 @@ public final class WaterwaysIndex {
     }
 
     private int bucketOf(double coordinate) {
-        return Math.clamp(Math.floorDiv((int) Math.floor(coordinate) - region.origin(), Waterways.CELL), 0, size - 1);
+        return Math.clamp(Math.floorDiv((int) Math.floor(coordinate) - region.origin(), region.cell()), 0, size - 1);
     }
 
     static boolean isSegment(WaterwaysPlan plan, int cell) {
-        return plan.isStream(cell, Waterways.MIN_CATCHMENT) && plan.receiver(cell) >= 0;
+        return plan.isStream(cell, plan.region().minCatchment()) && plan.receiver(cell) >= 0;
     }
 
     static double getEndWidth(WaterwaysPlan plan, int cell) {
         int receiver = plan.receiver(cell);
-        return plan.width(plan.isStream(receiver, Waterways.MIN_CATCHMENT) ? receiver : cell, Waterways.MIN_CATCHMENT);
+        int threshold = plan.region().minCatchment();
+        return plan.width(plan.isStream(receiver, threshold) ? receiver : cell, threshold);
     }
 
     public record Channel(double level, double bottom, boolean wet) {}

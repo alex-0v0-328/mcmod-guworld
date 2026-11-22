@@ -38,6 +38,7 @@
         "offset": "guworld:terrain/fox_immortal_blissful_land/tectonic/terrain_spline/offset/final"
       },
       "bed": "gravel_clay_sand",
+      "cell": 32,
       "dry": false,
       "keep_out": 608.0,
       "meander": "guworld:waterways/meander",

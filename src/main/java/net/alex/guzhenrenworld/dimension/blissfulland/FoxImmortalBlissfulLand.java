@@ -50,7 +50,8 @@ import org.jetbrains.annotations.Nullable;
  *       </li>
  *   <li>群系照中州，名单与多噪声表见 {@link BlissfulLandBiomes}；{@link #BIOME} 是平地圈的群系，原版平原的同款（刷怪表、
  *       草花、矿石、软质圆盘、地下变化），只去掉雕刻器和地表熔岩湖，荡魂山只认它。</li>
- *   <li>水系：{@link #WATERWAYS} 边长同疆域，平地圈外 {@link #KEEP_OUT} 格内和疆域最外一圈是墙，河床砾石为主夹黏土和沙。
+ *   <li>水系：{@link #WATERWAYS} 边长同疆域，网格 {@link #WATERWAYS_CELL} 格，平地圈外 {@link #KEEP_OUT} 格内和疆域最外
+ *       一圈是墙，河床砾石为主夹黏土和沙。
  *       </li>
  *   <li>荡魂山经结构集落在原点区块，见 {@code net.alex.guzhenrenworld.secretrealm.SoulsunderMountain}。</li>
  *   <li>⚠ 维度路径必须与主模组 {@code ModDimensions} 中的同名维度键一致，否则 {@code /guworld enter} 找不到目标维度。
@@ -92,8 +93,10 @@ public final class FoxImmortalBlissfulLand {
     private static final double OCEAN_OFFSET = -0.1;
     private static final double VERTICAL_SCALE = 0.8;
     private static final double KEEP_OUT = BlissfulLandTerrain.MARGIN + 32;
+    // 疆域是四域的 5.7 倍，16 格网格首次建图要 30–60 秒；32 格降到约四分之一（Alex 定）。
+    private static final int WATERWAYS_CELL = 32;
     public static final Waterways.Region WATERWAYS = new Waterways.Region(NAME, BORDER_SIZE, false,
-            Waterways.Bed.GRAVEL_CLAY_SAND, KEEP_OUT, true);
+            Waterways.Bed.GRAVEL_CLAY_SAND, KEEP_OUT, true, WATERWAYS_CELL);
 
     private FoxImmortalBlissfulLand() {}
 
