@@ -63,6 +63,13 @@ jobs:
           ldlib_url=$(curl --fail --silent --retry 3 --retry-all-errors https://api.modrinth.com/v2/version/Zrj8M2XK | jq -er --arg file "$ldlib_file" '.files[] | select(.filename == $file) | .url')
           curl --fail --location --retry 3 "$ldlib_url" -o "guzhenren/run/mods/$ldlib_file"
 
+      - name: Download InventoryProfilesNext
+        run: |
+          mkdir -p guzhenren/run/mods
+          ipn_file=InventoryProfilesNext-neoforge-1.21.1-2.2.5.jar
+          ipn_url=$(curl --fail --silent --retry 3 --retry-all-errors https://api.modrinth.com/v2/version/vjuNnHLv | jq -er --arg file "$ipn_file" '.files[] | select(.filename == $file) | .url')
+          curl --fail --location --retry 3 "$ipn_url" -o "guzhenren/run/mods/$ipn_file"
+
       - name: Build Guzhenren
         working-directory: guzhenren
         run: ./gradlew assemble
