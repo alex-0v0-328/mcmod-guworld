@@ -46,6 +46,8 @@ import net.minecraft.world.level.levelgen.synth.NormalNoise;
  *   <li>{@link #registerDensityFunctions} 将各域自定义的 {@code ocean_offset}、{@code vertical_scale}、{@code dunes}（
  *       {@link Region.Hooks}）及维度高度上下限（{@code min_y}、{@code max_y}）注册到
  *       {@code guworld:terrain/<region>/hook/*}，同时对移植函数应用域重塑补丁与 {@link ColumnCaches} 列缓存。</li>
+ *   <li>噪声与密度函数的注册另有按名字、钩子与高度上下限的重载，狐仙福地（{@code dimension.blissfulland}）借它注册自己的
+ *       Tectonic 副本，开关与列缓存同四域。</li>
  *   <li>{@link #JUNGLE_PILLARS}、{@link #UNDERGROUND_RIVERS} 与 {@link #LAVA_TUNNELS} 三项高开销 Tectonic 特性在四域中
  *       统一关闭，通过 {@link TerrainHooks} 将对应钩子绑定为常量 {@code 0}；配合 {@link Ports#registerDensityFunctions}
  *       的可达性裁剪，未启用特性的密度函数与噪声不会写入数据包。</li>
@@ -79,26 +81,33 @@ public final class RegionBootstraps {
     }
 
     public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context, Region region) {
-        Ports.registerNoises(context, region.name(), getPatch(region), getHooked());
+        registerNoises(context, region.name(), region.hooks());
+    }
+
+    public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context, String name,
+            Region.Hooks hooks) {
+        Ports.registerNoises(context, name, getPatch(hooks), getHooked());
     }
 
     public static void registerDensityFunctions(BootstrapContext<DensityFunction> context, Region region) {
-        String name = region.name();
-        Region.Hooks hooks = region.hooks();
-        Ports.registerDensityFunctions(context, name, getPatch(region), getHooked());
+        registerDensityFunctions(context, region.name(), region.hooks(), Region.MIN_Y, Region.TOP_Y);
+    }
+
+    public static void registerDensityFunctions(BootstrapContext<DensityFunction> context, String name,
+            Region.Hooks hooks, int minY, int topY) {
+        Ports.registerDensityFunctions(context, name, getPatch(hooks), getHooked());
         context.register(Ports.getHookKey(name, "ocean_offset"), hooks.oceanOffset());
         TerrainHooks.constant(context, name, "vertical_scale", hooks.verticalScale());
-        TerrainHooks.constant(context, name, "min_y", Region.MIN_Y);
-        TerrainHooks.constant(context, name, "max_y", Region.TOP_Y);
+        TerrainHooks.constant(context, name, "min_y", minY);
+        TerrainHooks.constant(context, name, "max_y", topY);
         TerrainHooks.constant(context, name, "dunes", hooks.dunes());
         TerrainHooks.constant(context, name, "jungle_pillars", JUNGLE_PILLARS ? 1.0 : 0.0);
         SWITCHES.forEach(feature -> TerrainHooks.switched(context, name, feature.hook(), feature.ported(),
                 feature.on()));
     }
 
-    private static BiFunction<String, JsonElement, JsonElement> getPatch(Region region) {
+    private static BiFunction<String, JsonElement, JsonElement> getPatch(Region.Hooks hooks) {
         BiFunction<String, JsonElement, JsonElement> columnCaches = ColumnCaches.ofPorted();
-        Region.Hooks hooks = region.hooks();
         return (function, json) -> columnCaches.apply(function, hooks.reshape().apply(function, json));
     }
 

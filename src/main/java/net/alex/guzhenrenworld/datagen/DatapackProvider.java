@@ -5,11 +5,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
+import java.util.stream.Stream;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.Regions;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
 import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
@@ -33,8 +35,9 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  *   <li>汇总注册宝黄天的维度类型、群系与维度层级（{@link TreasureYellowHeaven}），南疆自制的竹海群系与稀疏竹子放置地物
  *       （{@link BiomeSettings}），元泉配置地物、放置地物（{@link SpiritSpring}）与群系修改器（
  *       {@link SpiritSpringRegistration}），野生知心草地物与群系修改器（{@link IntimateGrass}），以及四域水系地物与修改
- *       器（{@link WaterwaysRegistration}）；另有狐仙福地的维度类型、群系、噪声、噪声设置与维度层级（
- *       {@link FoxImmortalBlissfulLand}），以及荡魂山的结构与同心环结构集（{@link SoulsunderMountain}）。</li>
+ *       器（{@link WaterwaysRegistration}，福地的群系也在内）；另有狐仙福地的维度类型、群系与复刻（
+ *       {@link BlissfulLandBiomes}）、噪声、Tectonic 副本、噪声设置与维度层级（{@link FoxImmortalBlissfulLand}），以及荡魂
+ *       山的结构与同心环结构集（{@link SoulsunderMountain}）。</li>
  *   <li>注册四域共用的维度类型，并按 {@link Regions#ALL} 逐域注册各自的密度函数（Tectonic 路由与域钩子）、噪声生成设
  *       置、维度层级（{@link RegionBootstraps}）以及挂载在各域前缀下的可达移植地形副本。</li>
  *   <li>汇总注册原版复刻群系（{@link Replicas#SHARED} 加各域独有复刻）、Terralith 移植群系及地物（{@link Ports#BIOMES}
@@ -60,6 +63,7 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 Ports.registerBiomes(context, getJoined(Ports.BIOMES, Region.Biomes::ported));
                 BiomeSettings.registerBiomes(context);
                 FoxImmortalBlissfulLand.registerBiome(context);
+                Replicas.registerBiomes(context, BlissfulLandBiomes.REPLICAS);
             })
             .add(Registries.NOISE, context -> {
                 Ports.registerNoises(context);
@@ -67,8 +71,10 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 Waterways.registerNoises(context);
                 FoxImmortalBlissfulLand.registerNoises(context);
             })
-            .add(Registries.DENSITY_FUNCTION, context ->
-                    Regions.ALL.forEach(region -> RegionBootstraps.registerDensityFunctions(context, region)))
+            .add(Registries.DENSITY_FUNCTION, context -> {
+                Regions.ALL.forEach(region -> RegionBootstraps.registerDensityFunctions(context, region));
+                FoxImmortalBlissfulLand.registerDensityFunctions(context);
+            })
             .add(Registries.NOISE_SETTINGS, context -> {
                 Regions.ALL.forEach(region -> RegionBootstraps.registerNoiseSettings(context, region));
                 FoxImmortalBlissfulLand.registerNoiseSettings(context);
@@ -96,8 +102,9 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
             .add(NeoForgeRegistries.Keys.BIOME_MODIFIERS, context -> {
                 SpiritSpringRegistration.registerBiomeModifier(context);
                 IntimateGrass.registerBiomeModifier(context);
-                WaterwaysRegistration.registerBiomeModifier(context, Regions.ALL.stream()
-                        .flatMap(region -> region.biomes().roster().stream()).toList());
+                WaterwaysRegistration.registerBiomeModifier(context, Stream.concat(Regions.ALL.stream()
+                        .flatMap(region -> region.biomes().roster().stream()),
+                        BlissfulLandBiomes.ROSTER.stream()).toList());
             });
 
     public DatapackProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {

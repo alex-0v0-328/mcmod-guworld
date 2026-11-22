@@ -3,11 +3,16 @@ package net.alex.guzhenrenworld.dimension.blissfulland;
 import java.util.List;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.SurfaceDimensionTypes;
+import net.alex.guzhenrenworld.biome.Ports;
+import net.alex.guzhenrenworld.biome.Replicas;
+import net.alex.guzhenrenworld.biome.SurfacePruning;
+import net.alex.guzhenrenworld.dimension.region.Region;
+import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
+import net.alex.guzhenrenworld.waterways.Waterways;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BiomeDefaultFeatures;
 import net.minecraft.data.worldgen.BootstrapContext;
-import net.minecraft.data.worldgen.SurfaceRuleData;
 import net.minecraft.data.worldgen.placement.MiscOverworldPlacements;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.Music;
@@ -17,12 +22,15 @@ import net.minecraft.world.level.biome.AmbientMoodSettings;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
-import net.minecraft.world.level.biome.FixedBiomeSource;
+import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.DensityFunctions;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.NoiseSettings;
@@ -37,10 +45,14 @@ import org.jetbrains.annotations.Nullable;
  *   <li>疆域是以原点为中心、边长 {@link #HALF_SIZE_CHUNKS} × 2 个区块的正方形（一区块记 4 亩，1224² 区块约 599 万亩）；
  *       {@link BoundedNoiseGenerator} 让界外区块整块留空，世界边界由
  *       {@link net.alex.guzhenrenworld.dimension.RegionBorders} 按 {@link #BORDER_SIZE} 施加。</li>
- *   <li>群系是原版平原的同款（刷怪表、草花、矿石、软质圆盘、地下变化），只去掉雕刻器和地表熔岩湖：洞穴全由噪声路由挖，
- *       峡谷和地表熔岩湖不会破坏山脚平台。</li>
- *   <li>地形见 {@link BlissfulLandTerrain}；荡魂山经结构集落在原点区块，见
- *       {@code net.alex.guzhenrenworld.secretrealm.SoulsunderMountain}。</li>
+ *   <li>地形是本福地自己的一份 Tectonic 副本，取给原版群系调的变体（{@link Ports#getVariant}），钩子见 {@link #getHooks}：
+ *       不出海，竖直拉伸 {@link #VERTICAL_SCALE} 让山峰最高约 y 250；平地圈、湖和水系刻河见 {@link BlissfulLandTerrain}。
+ *       </li>
+ *   <li>群系照中州，名单与多噪声表见 {@link BlissfulLandBiomes}；{@link #BIOME} 是平地圈的群系，原版平原的同款（刷怪表、
+ *       草花、矿石、软质圆盘、地下变化），只去掉雕刻器和地表熔岩湖，荡魂山只认它。</li>
+ *   <li>水系：{@link #WATERWAYS} 边长同疆域，平地圈外 {@link #KEEP_OUT} 格内和疆域最外一圈是墙，河床砾石为主夹黏土和沙。
+ *       </li>
+ *   <li>荡魂山经结构集落在原点区块，见 {@code net.alex.guzhenrenworld.secretrealm.SoulsunderMountain}。</li>
  *   <li>⚠ 维度路径必须与主模组 {@code ModDimensions} 中的同名维度键一致，否则 {@code /guworld enter} 找不到目标维度。
  *       </li>
  * </ul>
@@ -65,7 +77,7 @@ public final class FoxImmortalBlissfulLand {
     public static final int SEA_LEVEL = 63;
     private static final boolean RESPAWN_ANCHORS_WORK = false;
     private static final int NOISE_SIZE_HORIZONTAL = 1;
-    private static final int NOISE_SIZE_VERTICAL = 2;
+    private static final int NOISE_SIZE_VERTICAL = 1;
     private static final boolean MOB_GENERATION_DISABLED = false;
     private static final boolean AQUIFERS = true;
     private static final boolean ORE_VEINS = true;
@@ -77,6 +89,11 @@ public final class FoxImmortalBlissfulLand {
     private static final int WATER_COLOR = 0x3F76E4;
     private static final int WATER_FOG_COLOR = 0x050533;
     private static final @Nullable Music MUSIC = null;
+    private static final double OCEAN_OFFSET = -0.1;
+    private static final double VERTICAL_SCALE = 0.8;
+    private static final double KEEP_OUT = BlissfulLandTerrain.MARGIN + 32;
+    public static final Waterways.Region WATERWAYS = new Waterways.Region(NAME, BORDER_SIZE, false,
+            Waterways.Bed.GRAVEL_CLAY_SAND, KEEP_OUT, true);
 
     private FoxImmortalBlissfulLand() {}
 
@@ -122,6 +139,17 @@ public final class FoxImmortalBlissfulLand {
 
     public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context) {
         BlissfulLandTerrain.registerNoises(context, NAME);
+        RegionBootstraps.registerNoises(context, NAME, getHooks());
+    }
+
+    public static void registerDensityFunctions(BootstrapContext<DensityFunction> context) {
+        RegionBootstraps.registerDensityFunctions(context, NAME, getHooks(), MIN_Y, MIN_Y + HEIGHT);
+    }
+
+    // 变体在数据生成时才读移植文件，所以钩子按需建，不放静态常量。
+    private static Region.Hooks getHooks() {
+        return new Region.Hooks(DensityFunctions.constant(OCEAN_OFFSET), VERTICAL_SCALE, 0.0,
+                Ports.getVariant("vanilla"));
     }
 
     public static void registerNoiseSettings(BootstrapContext<NoiseGeneratorSettings> context) {
@@ -129,9 +157,9 @@ public final class FoxImmortalBlissfulLand {
                 NoiseSettings.create(MIN_Y, HEIGHT, NOISE_SIZE_HORIZONTAL, NOISE_SIZE_VERTICAL),
                 Blocks.STONE.defaultBlockState(),
                 Blocks.WATER.defaultBlockState(),
-                BlissfulLandTerrain.getRouter(context.lookup(Registries.DENSITY_FUNCTION),
-                        context.lookup(Registries.NOISE), NAME, MIN_Y, HEIGHT),
-                SurfaceRuleData.overworld(),
+                BlissfulLandTerrain.getRouter(context, NAME, WATERWAYS),
+                SurfacePruning.getPruned(Replicas.getSurfaceRules(BlissfulLandBiomes.getSurfaceTemplates()),
+                        BlissfulLandBiomes.ROSTER),
                 List.of(),
                 SEA_LEVEL,
                 MOB_GENERATION_DISABLED,
@@ -144,7 +172,8 @@ public final class FoxImmortalBlissfulLand {
     public static void registerLevelStem(BootstrapContext<LevelStem> context) {
         HolderGetter<DimensionType> dimensionTypes = context.lookup(Registries.DIMENSION_TYPE);
         context.register(LEVEL_STEM, new LevelStem(dimensionTypes.getOrThrow(DIMENSION_TYPE),
-                new BoundedNoiseGenerator(new FixedBiomeSource(context.lookup(Registries.BIOME).getOrThrow(BIOME)),
+                new BoundedNoiseGenerator(MultiNoiseBiomeSource.createFromList(new Climate.ParameterList<>(
+                        BlissfulLandBiomes.getParameters(context.lookup(Registries.BIOME)))),
                         context.lookup(Registries.NOISE_SETTINGS).getOrThrow(NOISE_SETTINGS), HALF_SIZE_CHUNKS)));
     }
 }

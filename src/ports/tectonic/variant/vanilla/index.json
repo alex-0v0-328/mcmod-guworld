@@ -1,0 +1,13 @@
+{
+  "density_function": [
+    "terrain/tectonic/base_terrain",
+    "terrain/tectonic/biome_parameter/ridges",
+    "terrain/tectonic/cave/cheese",
+    "terrain/tectonic/noise/raw_continents",
+    "terrain/tectonic/terrain_spline/factor/continents",
+    "terrain/tectonic/terrain_spline/factor/islands",
+    "terrain/tectonic/terrain_spline/offset/continents",
+    "terrain/tectonic/terrain_spline/offset/islands",
+    "terrain/tectonic/terrain_spline/roughness"
+  ]
+}

@@ -16,6 +16,14 @@
     "guworld:white_cliffs",
     "guworld:steppe",
     "guworld:shield",
-    "guworld:alpine_highlands"
+    "guworld:alpine_highlands",
+    "guworld:sunflower_plains",
+    "guworld:meadow",
+    "guworld:forest",
+    "guworld:flower_forest",
+    "guworld:birch_forest",
+    "guworld:old_growth_birch_forest",
+    "guworld:dark_forest",
+    "guworld:cherry_grove"
   ]
 }

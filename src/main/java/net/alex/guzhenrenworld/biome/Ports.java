@@ -69,6 +69,8 @@ import org.jetbrains.annotations.NotNull;
  *   <li>{@link #registerDensityFunctions} 接收域名与 JSON 补丁函数，先对原始 JSON 应用补丁，再通过 {@link #getRegional}
  *       将内部函数与钩子引用改写到当前域前缀下（钩子本体由各域在 {@link #getHookKey} 处注册）；{@link #getNoiseRouter}
  *       以同样方式改写并解码噪声路由。</li>
+ *   <li>变体（{@link #getVariant}）：{@code tectonic/variant/<名>/} 存放 Tectonic 未叠 terratonic 时的同名函数，作为补丁
+ *       整份替换；{@code vanilla} 是给原版群系表调的那一版（9 个函数，路由相同），狐仙福地用它。</li>
  *   <li>各域仅注册可达条目（{@link Reachable}）：从噪声路由及已开启的开关钩子目标（{@code hooked}）出发，在打完补丁的
  *       JSON引用图上做可达性遍历，仅注册可达的密度函数及其引用的噪声；被常量钩子替代或开关关闭的功能分支不会进入生成的
  *       数据包。</li>
@@ -115,6 +117,7 @@ public final class Ports {
     private static final String TERRAIN_ID_PREFIX = GuWorld.MOD_ID + ":" + TERRAIN;
     private static final String HOOK = "hook/";
     private static final String VANILLA = "minecraft/";
+    private static final String VARIANT = "variant/";
     private static final String TYPE = "type";
     private static final Set<String> NOISE_ARGUMENT_TYPES = Set.of("shift", "shift_a", "shift_b");
     private static final BiFunction<String, JsonElement, JsonElement> UNPATCHED = (name, json) -> json;
@@ -174,6 +177,13 @@ public final class Ports {
         JsonElement router = getRegional(region, read(TECTONIC, "noise_router"));
         return NoiseRouter.CODEC.parse(getOps(context), router)
                 .getOrThrow(message -> new IllegalStateException("ported noise router: " + message));
+    }
+
+    public static BiFunction<String, JsonElement, JsonElement> getVariant(String variant) {
+        String folder = VARIANT + variant + "/";
+        Set<String> replaced = Set.copyOf(getStrings(read(TECTONIC, folder + "index").getAsJsonObject()
+                .getAsJsonArray("density_function")));
+        return (name, json) -> replaced.contains(name) ? read(TECTONIC, folder + "density_function/" + name) : json;
     }
 
     public static ResourceKey<DensityFunction> getRegionalKey(String region, String name) {

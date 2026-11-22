@@ -7,6 +7,7 @@ import java.util.concurrent.CompletableFuture;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.WildCropClimate;
 import net.alex.guzhenrenworld.dimension.Regions;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
 import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
@@ -28,8 +29,8 @@ import org.jetbrains.annotations.Nullable;
  * <ul>
  *   <li>元泉生成群系标签（{@link SpiritSpring#BIOMES}）汇总主世界陆地群系名单（{@link SpiritSpring#LAND_BIOMES}）与所有
  *       域的陆地群系；野生知心草生成群系标签（{@link IntimateGrass#BIOMES}）仅包含同一份主世界名单与南疆陆地群系；农夫
- *       乐事野生作物气候标签（{@link WildCropClimate}）则汇总 {@link Regions#ALL} 各域的作物气候映射表，多域共用的群系
- *       （如雨林）通过有序集合去重。</li>
+ *       乐事野生作物气候标签（{@link WildCropClimate}）则汇总 {@link Regions#ALL} 各域与狐仙福地（
+ *       {@link BlissfulLandBiomes#CROPS}）的作物气候映射表，多域共用的群系（如雨林）通过有序集合去重。</li>
  *   <li>荡魂山的结构群系标签（{@link SoulsunderMountain#BIOMES}）只含狐仙福地的群系（
  *       {@link FoxImmortalBlissfulLand#BIOME}），所以只有福地生成它。</li>
  *   <li>⚠ 每个注册表在同一模组的数据生成周期内只能注册一个标签 Provider，否则会因输出任务重名而报错；新增群系标签必须统
@@ -58,6 +59,7 @@ public class BiomeTagsProvider extends TagsProvider<Biome> {
         for (WildCropClimate climate : WildCropClimate.values()) {
             Set<ResourceKey<Biome>> biomes = new LinkedHashSet<>();
             for (Region region : Regions.ALL) biomes.addAll(region.biomes().crops().getOrDefault(climate, List.of()));
+            biomes.addAll(BlissfulLandBiomes.CROPS.getOrDefault(climate, List.of()));
             TagAppender<Biome> appender = tag(climate.tag());
             biomes.forEach(appender::add);
         }

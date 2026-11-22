@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:shifted_noise",
+  "noise": "guworld:terrain/fox_immortal_blissful_land/tectonic/parameter/erosion",
+  "shift_x": "guworld:terrain/fox_immortal_blissful_land/minecraft/shift_x",
+  "shift_y": 0.0,
+  "shift_z": "guworld:terrain/fox_immortal_blissful_land/minecraft/shift_z",
+  "xz_scale": 0.25,
+  "y_scale": 0.0
+}

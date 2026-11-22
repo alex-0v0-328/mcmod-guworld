@@ -11,6 +11,11 @@
     "guworld:siberian_taiga",
     "guworld:birch_taiga",
     "guworld:snowy_shield",
-    "guworld:ice_marsh"
+    "guworld:ice_marsh",
+    "guworld:taiga",
+    "guworld:old_growth_pine_taiga",
+    "guworld:old_growth_spruce_taiga",
+    "guworld:windswept_hills",
+    "guworld:windswept_forest"
   ]
 }

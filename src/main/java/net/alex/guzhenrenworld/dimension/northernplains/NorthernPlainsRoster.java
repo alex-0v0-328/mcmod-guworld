@@ -16,7 +16,7 @@ import net.minecraft.world.level.biome.Biomes;
  * <ul>
  *   <li>{@link #PORTED} 列出北原独有的 Terralith 移植群系键（对应清单
  *       {@code src/ports/terralith/index.northern_plains.json}）；{@link #REPLICAS} 列出除 {@link Replicas#SHARED} 外的
- *       原版复刻群系；{@link #NAMES} 汇总两者的显示名；{@link #CROPS} 将陆地群系按农夫乐事野生作物气候（
+ *       原版复刻群系（雪林、冰封山峰与狐仙福地共用，放在 {@link Replicas#SHARED}）；{@link #NAMES} 汇总两者的显示名；{@link #CROPS} 将陆地群系按农夫乐事野生作物气候（
  *       {@link WildCropClimate}）分组。</li>
  *   <li>野生作物气候按各群系 JSON 的温度与降水量划分：干草原、地盾与高寒高地归温带（其中地盾兼入湿润）；寒灌丛、西伯利
  *       亚针叶林、桦木针叶林、雪地盾与冰沼归寒冷（其中西伯利亚针叶林、雪地盾与冰沼兼入湿润）；温度低于 0.1 的严寒群系及
@@ -43,8 +43,8 @@ public final class NorthernPlainsRoster {
     public static final ResourceKey<Biome> SNOWY_PLAINS = Replicas.keyOf(Biomes.SNOWY_PLAINS);
     public static final ResourceKey<Biome> ICE_SPIKES = Replicas.keyOf(Biomes.ICE_SPIKES);
     public static final ResourceKey<Biome> SNOWY_TAIGA = Replicas.keyOf(Biomes.SNOWY_TAIGA);
-    public static final ResourceKey<Biome> GROVE = Replicas.keyOf(Biomes.GROVE);
-    public static final ResourceKey<Biome> FROZEN_PEAKS = Replicas.keyOf(Biomes.FROZEN_PEAKS);
+    public static final ResourceKey<Biome> GROVE = Replicas.GROVE;
+    public static final ResourceKey<Biome> FROZEN_PEAKS = Replicas.FROZEN_PEAKS;
     public static final ResourceKey<Biome> FROZEN_RIVER = Replicas.keyOf(Biomes.FROZEN_RIVER);
     public static final List<ResourceKey<Biome>> PORTED = List.of(STEPPE, COLD_SHRUBLAND, WINTRY_LOWLANDS,
             WINTRY_FOREST, SIBERIAN_TAIGA, BIRCH_TAIGA, SHIELD, SNOWY_SHIELD, ICE_MARSH, FROZEN_CLIFFS, GLACIAL_CHASM,
@@ -55,8 +55,6 @@ public final class NorthernPlainsRoster {
             Replicas.of(Biomes.ICE_SPIKES,
                     (placed, carvers) -> OverworldBiomes.plains(placed, carvers, false, true, true)),
             Replicas.of(Biomes.SNOWY_TAIGA, (placed, carvers) -> OverworldBiomes.taiga(placed, carvers, true)),
-            Replicas.of(Biomes.GROVE, OverworldBiomes::grove),
-            Replicas.of(Biomes.FROZEN_PEAKS, OverworldBiomes::frozenPeaks),
             Replicas.of(Biomes.FROZEN_RIVER, (placed, carvers) -> OverworldBiomes.river(placed, carvers, true)));
     public static final List<BiomeName> NAMES = List.of(
             new BiomeName(STEPPE, "干草原"),
@@ -74,8 +72,6 @@ public final class NorthernPlainsRoster {
             new BiomeName(SNOWY_PLAINS, "雪原"),
             new BiomeName(ICE_SPIKES, "冰刺之地"),
             new BiomeName(SNOWY_TAIGA, "积雪针叶林"),
-            new BiomeName(GROVE, "雪林"),
-            new BiomeName(FROZEN_PEAKS, "冰封山峰"),
             new BiomeName(FROZEN_RIVER, "冻河"));
     public static final Map<WildCropClimate, List<ResourceKey<Biome>>> CROPS = Map.of(
             WildCropClimate.HOT, List.of(),

@@ -7,7 +7,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.RegisterEvent;
 
 /**
- * 福地的代码注册入口：注册区块生成器类型 {@code guworld:bounded_noise}（{@link BoundedNoiseGenerator#CODEC}）。
+ * 福地的代码注册入口：注册区块生成器类型 {@code guworld:bounded_noise}（{@link BoundedNoiseGenerator#CODEC}）与密度函数
+ * 类型 {@code guworld:blissful_shape}（{@link BlissfulLandShape#MAP_CODEC}）。
  * <ul>
  *   <li>⚠ 生成器类型 ID 写进维度层级 JSON 与存档的维度设置；改名后福地读不回来。</li>
  * </ul>
@@ -22,5 +23,7 @@ public final class BlissfulLandRegistration {
     public static void onRegister(RegisterEvent event) {
         event.register(Registries.CHUNK_GENERATOR, GuWorld.id(BoundedNoiseGenerator.ID),
                 () -> BoundedNoiseGenerator.CODEC);
+        event.register(Registries.DENSITY_FUNCTION_TYPE, GuWorld.id(BlissfulLandShape.ID),
+                () -> BlissfulLandShape.MAP_CODEC);
     }
 }

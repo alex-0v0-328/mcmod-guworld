@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import net.alex.guzhenrenworld.GuWorld;
+import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.easternsea.EasternSea;
 import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlains;
@@ -37,10 +38,10 @@ import org.slf4j.Logger;
  * 水系规划的可选俯视图。
  * <ul>
  *   <li>仅当 GameTest 服务端带 {@code -Dguworld.waterwaysMaps=<directory>} 时单独成批；读区域或写图出错才失败。</li>
- *   <li>四域各经 {@link RegionProbe}（种子 12345）建一次规划，记建图耗时，水、出口与边缘格占比。</li>
+ *   <li>四域与狐仙福地各经 {@link RegionProbe}（种子 12345）建一次规划，记建图耗时，水、出口、边缘与墙格占比。</li>
  *   <li>{@link #THRESHOLDS} 各汇流阈值记河段格数与总长、河道刻去的区域占比、每侧 {@code max(5, 2w)} 格岸带碰到的占比、
  *       湖中河段格数及最深者、溪流终止的汇点数。</li>
- *   <li>写 {@code <region>.png}（1024 像素对应 8192 格）：地面晕渲，水蓝，出口青（干旱区域土黄），
+ *   <li>写 {@code <region>.png}（1024 像素对应全区边长）：地面晕渲，水蓝，出口青（干旱区域土黄），墙灰，
  *       {@link Waterways#MIN_CATCHMENT} 阈值的溪流画成随宽度加粗的线，穿过深于 1 格的湖处品红点，终止的汇点橙点。</li>
  * </ul>
  *
@@ -58,7 +59,8 @@ public final class WaterwaysPlanMaps {
     private static final int IMAGE = 1024;
     private static final double DEEP = 1.0;
     private static final List<ResourceKey<LevelStem>> STEMS = List.of(SouthernBorder.REGION.levelStem(),
-            WesternDesert.REGION.levelStem(), EasternSea.REGION.levelStem(), NorthernPlains.REGION.levelStem());
+            WesternDesert.REGION.levelStem(), EasternSea.REGION.levelStem(), NorthernPlains.REGION.levelStem(),
+            FoxImmortalBlissfulLand.LEVEL_STEM);
 
     private WaterwaysPlanMaps() {}
 
@@ -178,6 +180,9 @@ public final class WaterwaysPlanMaps {
             }
             case OUTLET -> {
                 return dry ? new Color(205, 170, 110).getRGB() : new Color(70, 160, 210).getRGB();
+            }
+            case WALL -> {
+                return new Color(110, 110, 110).getRGB();
             }
             default -> {
             }
