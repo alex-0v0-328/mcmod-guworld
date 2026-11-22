@@ -11,7 +11,10 @@ import java.util.stream.IntStream;
  *       并按出队顺序记录拓扑序。</li>
  *   <li>每轮填洼后扫描八邻域局部最低点：若填平深度超过浅湖上限 {@link Waterways#LAKE_DEPTH}，则将该谷底格标记为内流汇点
  *       （{@link WaterwaysPlan.Kind#SINK}）并作为新种子重跑填洼（至多迭代 {@link #MAX_SINK_PASSES} 轮），使流入深谷的溪
- *       流自然终止于谷底，避免填出数十格深的人工湖或切穿高耸山脊。</li>
+ *       流自然终止于谷底，避免填出数十格深的人工湖或切穿高耸山脊；比较邻格时不看墙，否则贴着更低墙格的谷底永远成不了
+ *       汇点。</li>
+ *   <li>墙（{@link WaterwaysPlan.Kind#WALL}）不作种子、不被扩展，填洼高度记为正无穷，排在出队顺序末尾；被墙围死、够不
+ *       到任何种子的陆地，每片最低一格设为汇点后重跑。</li>
  *   <li>{@link #getReceivers} 为每个陆地格在八邻域中选择填洼后单位距离落差（按抖动后采样坐标计距）最大的邻居作为下游流
  *       向格；由于 Priority-Flood 保证父节点高度严格更低，所有陆地格必然存在有效流向。</li>
  *   <li>{@link #getCatchments} 按填洼出队逆序（高度由高到低）沿流向累加汇流格数，保证每个上游格必然先于其下游接收格完成
@@ -30,7 +33,11 @@ final class WaterwaysFlood {
 
     static void fill(WaterwaysPlan.Kind[] kind, float[] ground, double[] filled, int[] order, int size) {
         for (int pass = 0; ; pass++) {
-            flood(kind, ground, filled, order, size);
+            boolean[] closed = flood(kind, ground, filled, order, size);
+            if (addEnclosedSinks(kind, ground, closed, size)) {
+                pass--;
+                continue;
+            }
             if (pass == MAX_SINK_PASSES || !addSinks(kind, ground, filled, size)) break;
         }
     }
@@ -63,15 +70,20 @@ final class WaterwaysFlood {
         return receiver;
     }
 
-    private static void flood(WaterwaysPlan.Kind[] kind, float[] ground, double[] filled, int[] order, int size) {
+    private static boolean[] flood(WaterwaysPlan.Kind[] kind, float[] ground, double[] filled, int[] order,
+            int size) {
         int count = kind.length;
         boolean[] closed = new boolean[count];
         int popped = 0;
         Heap open = new Heap(count);
         for (int cell = 0; cell < count; cell++) {
             if (kind[cell] == WaterwaysPlan.Kind.LAND) continue;
-            filled[cell] = ground[cell];
             closed[cell] = true;
+            if (kind[cell] == WaterwaysPlan.Kind.WALL) {
+                filled[cell] = Double.POSITIVE_INFINITY;
+                continue;
+            }
+            filled[cell] = ground[cell];
             open.push(filled[cell], cell);
         }
         while (!open.isEmpty()) {
@@ -85,6 +97,36 @@ final class WaterwaysFlood {
                 open.push(filled[next], next);
             }
         }
+        for (int cell = 0; cell < count; cell++) {
+            if (kind[cell] == WaterwaysPlan.Kind.WALL) order[popped++] = cell;
+        }
+        return closed;
+    }
+
+    private static boolean addEnclosedSinks(WaterwaysPlan.Kind[] kind, float[] ground, boolean[] closed, int size) {
+        boolean added = false;
+        int[] stack = null;
+        for (int start = 0; start < kind.length; start++) {
+            if (closed[start]) continue;
+            if (stack == null) stack = new int[kind.length];
+            int lowest = start;
+            int top = 0;
+            stack[top++] = start;
+            closed[start] = true;
+            while (top > 0) {
+                int cell = stack[--top];
+                if (ground[cell] < ground[lowest]) lowest = cell;
+                for (int direction = 0; direction < 8; direction++) {
+                    int next = neighbor(cell, direction, size);
+                    if (next < 0 || closed[next]) continue;
+                    closed[next] = true;
+                    stack[top++] = next;
+                }
+            }
+            kind[lowest] = WaterwaysPlan.Kind.SINK;
+            added = true;
+        }
+        return added;
     }
 
     private static boolean addSinks(WaterwaysPlan.Kind[] kind, float[] ground, double[] filled, int size) {
@@ -94,7 +136,7 @@ final class WaterwaysFlood {
             boolean lowest = true;
             for (int direction = 0; direction < 8 && lowest; direction++) {
                 int next = neighbor(cell, direction, size);
-                lowest = next < 0 || ground[next] >= ground[cell];
+                lowest = next < 0 || kind[next] == WaterwaysPlan.Kind.WALL || ground[next] >= ground[cell];
             }
             if (!lowest) continue;
             kind[cell] = WaterwaysPlan.Kind.SINK;

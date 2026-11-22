@@ -25,6 +25,9 @@ import org.slf4j.Logger;
  *   <li>水系索引在后台守护线程池中仅构建一次，可由维度加载时的 {@link #prefetch} 提前触发，或由首个查询的列按需触发；构
  *       建完成前所有调用方在 {@link CompletableFuture#join()} 上等待；若构建异常则记录错误日志并回退为空索引（该域保持
  *       不刻河）。</li>
+ *   <li>禁区内的列不等索引：离原点不到 {@link Waterways.Region#keepOut()} 减 {@link Waterways#KEEP_OUT_REACH} 格的列一定
+ *       不刻河、不放水，直接返回。狐仙福地起服时荡魂山就在主线程上取山脚高度，等福地建图（几十秒）会被看门狗判卡死。
+ *       </li>
  *   <li>远离开河网格桶的水平列只需一次桶数组判空即可快速跳过；落入有效桶的列先叠加 {@link Waterways#MEANDER} 蜿蜒偏移，
  *       仅当落入岸带过渡区时才通过 {@link GroundHeights} 从水面加下切深度处采样原地面高度（在噪声区块内直接复用传入的本
  *       区块地形副本）。</li>
@@ -49,6 +52,7 @@ public final class WaterwaysCarver {
     private final Function<GroundHeights, WaterwaysIndex> builder;
     private final GroundHeights ground;
     private final NormalNoise meander;
+    private final double keptOut;
     private final AtomicReference<CompletableFuture<WaterwaysIndex>> build = new AtomicReference<>();
     private final ThreadLocal<Columns> columns = ThreadLocal.withInitial(Columns::new);
     private volatile WaterwaysIndex ready;
@@ -60,6 +64,8 @@ public final class WaterwaysCarver {
         this.builder = builder;
         this.ground = new GroundHeights(random.router(), noise.minY(), noise.minY() + noise.height());
         this.meander = random.getOrCreateNoise(Waterways.MEANDER_NOISE);
+        double reach = region.keepOut() - Waterways.KEEP_OUT_REACH;
+        this.keptOut = region.keepOut() > 0 && reach > 0 ? reach * reach : -1.0;
     }
 
     public static WaterwaysCarver create(Waterways.Region region, NoiseBasedChunkGenerator generator,
@@ -90,6 +96,7 @@ public final class WaterwaysCarver {
     }
 
     public @Nullable WaterwaysIndex.Channel getChannel(int x, int z) {
+        if (isKeptOut(x, z)) return null;
         WaterwaysIndex index = getIndex();
         int bucket = index.getBucket(x, z);
         if (bucket < 0) return null;
@@ -97,11 +104,16 @@ public final class WaterwaysCarver {
                 z + Waterways.getMeanderZ(meander, x, z));
     }
 
+    private boolean isKeptOut(int x, int z) {
+        return (double) x * x + (double) z * z < keptOut;
+    }
+
     public BlockState getBed(int x, int z) {
         return region.bed().getBlock(meander, x, z);
     }
 
     double getSurface(int x, int z, @Nullable DensityFunction terrain) {
+        if (isKeptOut(x, z)) return Double.POSITIVE_INFINITY;
         WaterwaysIndex index = getIndex();
         int bucket = index.getBucket(x, z);
         if (bucket < 0) return Double.POSITIVE_INFINITY;

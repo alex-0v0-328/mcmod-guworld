@@ -108,6 +108,7 @@ public final class WaterwaysPlan {
         WATER,
         OUTLET,
         EDGE,
-        SINK
+        SINK,
+        WALL
     }
 }

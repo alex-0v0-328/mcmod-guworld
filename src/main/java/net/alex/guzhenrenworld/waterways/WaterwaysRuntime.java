@@ -59,7 +59,8 @@ public final class WaterwaysRuntime {
         WaterwaysData data = level.getDataStorage().computeIfAbsent(WaterwaysData.factory(), WaterwaysData.NAME);
         long seed = level.getSeed();
         String key = String.join("/", Waterways.PARAMETERS, String.valueOf(region.borderSize()),
-                String.valueOf(generator.generatorSettings().value().seaLevel()));
+                String.valueOf(generator.generatorSettings().value().seaLevel()))
+                + (region.keepOut() > 0 ? "/keep" + region.keepOut() : "") + (region.walled() ? "/walled" : "");
         WaterwaysCarver carver = new WaterwaysCarver(region, generator, random, ground -> {
             int[] fingerprint = getFingerprint(ground, generator, random);
             WaterwaysIndex saved = data.get(key, region, seed, fingerprint);

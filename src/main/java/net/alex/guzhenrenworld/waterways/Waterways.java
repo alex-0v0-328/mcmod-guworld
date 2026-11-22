@@ -32,6 +32,8 @@ import org.jetbrains.annotations.NotNull;
  *       例在运行时兼作 {@link WaterwaysRuntime} 识别所属维度 {@code RandomState} 的唯一身份键。</li>
  *   <li>干旱域（{@link Region#dry()} 为 {@code true}，如西漠）同样刻出全套河槽并铺设河床，但仅在河宽达到
  *       {@link #DRY_WIDTH} 格的主干河道中注水，其余支流保持为干涸河谷。</li>
+ *   <li>禁区与墙（狐仙福地用）：{@link Region#keepOut()} 大于 0 时，离原点不到这么多格的网格是墙；{@link Region#walled()}
+ *       时最外一圈也是墙而非出口。墙不进填洼、不收汇流，溪流绕开平地圈，也不流向疆域断面。</li>
  * </ul>
  */
 
@@ -53,11 +55,15 @@ public final class Waterways {
     public static final int KNOTS = 3;
     public static final double MAX_DIP = 4.0;
     public static final double DRY_WIDTH = 5.0;
+    // 河道半宽、岸带与摆动（两轴合成）之和再留 8 格：禁区内比这更深的列碰不到任何线段，改河宽或岸带时随之变。
+    public static final double KEEP_OUT_REACH = MAX_WIDTH / 2 + Math.max(BANK_MIN, BANK_FACTOR * MAX_WIDTH)
+            + MEANDER * Math.sqrt(2) + 8.0;
     public static final ResourceKey<NormalNoise.NoiseParameters> MEANDER_NOISE =
             GuWorld.key(Registries.NOISE, "waterways/meander");
     private static final int MEANDER_OCTAVE = -6;
     private static final double MEANDER_OFFSET = 4096.0;
     private static final double CLAY = 0.4;
+    private static final double SANDY = 0.2;
     public static final String PARAMETERS = String.join("/", "v3", String.valueOf(CELL), String.valueOf(JITTER),
             String.valueOf(MIN_CATCHMENT), String.valueOf(WIDTH_SCALE), String.valueOf(MAX_WIDTH),
             String.valueOf(LAKE_DEPTH), String.valueOf(INCISION), String.valueOf(MEANDER),
@@ -89,7 +95,8 @@ public final class Waterways {
     public enum Bed implements StringRepresentable {
         GRAVEL_CLAY("gravel_clay"),
         GRAVEL("gravel"),
-        SAND("sand");
+        SAND("sand"),
+        GRAVEL_CLAY_SAND("gravel_clay_sand");
 
         public static final Codec<Bed> CODEC = StringRepresentable.fromEnum(Bed::values);
 
@@ -110,11 +117,18 @@ public final class Waterways {
                         ? Blocks.CLAY.defaultBlockState() : Blocks.GRAVEL.defaultBlockState();
                 case GRAVEL -> Blocks.GRAVEL.defaultBlockState();
                 case SAND -> Blocks.SAND.defaultBlockState();
+                case GRAVEL_CLAY_SAND -> meander.getValue(x, 2 * MEANDER_OFFSET, z) > CLAY
+                        ? Blocks.CLAY.defaultBlockState() : meander.getValue(x, 3 * MEANDER_OFFSET, z) > SANDY
+                        ? Blocks.SAND.defaultBlockState() : Blocks.GRAVEL.defaultBlockState();
             };
         }
     }
 
-    public record Region(String name, double borderSize, boolean dry, Bed bed) {
+    public record Region(String name, double borderSize, boolean dry, Bed bed, double keepOut, boolean walled) {
+
+        public Region(String name, double borderSize, boolean dry, Bed bed) {
+            this(name, borderSize, dry, bed, 0.0, false);
+        }
 
         public int cells() {
             return (int) (borderSize / CELL);

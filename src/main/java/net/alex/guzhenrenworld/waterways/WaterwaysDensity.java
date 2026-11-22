@@ -42,10 +42,13 @@ public final class WaterwaysDensity implements DensityFunction {
                     .forGetter(density -> density.region.borderSize()),
             Codec.BOOL.fieldOf("dry").forGetter(density -> density.region.dry()),
             Waterways.Bed.CODEC.fieldOf("bed").forGetter(density -> density.region.bed()),
+            Codec.doubleRange(0.0, 60_000_000.0).optionalFieldOf("keep_out", 0.0)
+                    .forGetter(density -> density.region.keepOut()),
+            Codec.BOOL.optionalFieldOf("walled", false).forGetter(density -> density.region.walled()),
             NoiseHolder.CODEC.fieldOf("meander").forGetter(density -> density.meander),
             DensityFunction.HOLDER_HELPER_CODEC.fieldOf("argument").forGetter(WaterwaysDensity::argument)
-    ).apply(instance, (name, size, dry, bed, meander, argument) ->
-            new WaterwaysDensity(new Waterways.Region(name, size, dry, bed), meander, argument)));
+    ).apply(instance, (name, size, dry, bed, keepOut, walled, meander, argument) -> new WaterwaysDensity(
+            new Waterways.Region(name, size, dry, bed, keepOut, walled), meander, argument)));
     static final KeyDispatchDataCodec<WaterwaysDensity> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
 
     private final Waterways.Region region;

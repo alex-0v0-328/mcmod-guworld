@@ -7,7 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 小网格上水系规划的排水各步测试：盆地填到最低出口，比湖深的盆地改作汇点；每个陆地格流向更低邻格；汇流顺流向逐级累加。
+ * 小网格上水系规划的排水各步测试：盆地填到最低出口，比湖深的盆地改作汇点；每个陆地格流向更低邻格；汇流顺流向逐级累加；
+ * 墙不收汇流，被墙围死的陆地终于最低格的汇点。
  */
 class WaterwaysFloodTest {
 
@@ -68,6 +69,65 @@ class WaterwaysFloodTest {
     }
 
     @Test
+    void wallsTakeNoFlowAndTheLandDrainsAroundThemToTheOutlet() {
+        int count = SIZE * SIZE;
+        WaterwaysPlan.Kind[] kind = border(SIZE, WaterwaysPlan.Kind.WALL);
+        int outlet = 2 * SIZE;
+        kind[outlet] = WaterwaysPlan.Kind.OUTLET;
+        float[] ground = new float[count];
+        Arrays.fill(ground, 10F);
+        ground[outlet] = 5F;
+        ground[12] = 12F;
+        double[] filled = new double[count];
+        int[] order = new int[count];
+        WaterwaysFlood.fill(kind, ground, filled, order, SIZE);
+        int[] receiver = WaterwaysFlood.getReceivers(kind, filled, grid(SIZE, true), grid(SIZE, false), SIZE);
+        int[] catchment = WaterwaysFlood.getCatchments(receiver, order);
+        for (int cell = 0; cell < count; cell++) {
+            if (kind[cell] == WaterwaysPlan.Kind.WALL) {
+                assertEquals(Double.POSITIVE_INFINITY, filled[cell]);
+                assertEquals(1, catchment[cell], "wall " + cell + " takes flow");
+            }
+        }
+        assertEquals(10, catchment[outlet], "all 9 land cells drain to the single outlet");
+        assertEquals(count, Arrays.stream(order).distinct().count(), "every cell is ordered once");
+    }
+
+    @Test
+    void landWalledOffFromEverySeedEndsInASinkAtItsLowestCell() {
+        int count = SIZE * SIZE;
+        WaterwaysPlan.Kind[] kind = border(SIZE, WaterwaysPlan.Kind.WALL);
+        float[] ground = new float[count];
+        Arrays.fill(ground, 10F);
+        ground[18] = 7F;
+        double[] filled = new double[count];
+        int[] order = new int[count];
+        WaterwaysFlood.fill(kind, ground, filled, order, SIZE);
+        int[] receiver = WaterwaysFlood.getReceivers(kind, filled, grid(SIZE, true), grid(SIZE, false), SIZE);
+        int[] catchment = WaterwaysFlood.getCatchments(receiver, order);
+        assertEquals(WaterwaysPlan.Kind.SINK, kind[18]);
+        assertEquals(9, catchment[18], "the 8 other land cells end in the sink");
+    }
+
+    @Test
+    void aDeepBasinBesideALowerWallStillBecomesASink() {
+        int count = SIZE * SIZE;
+        WaterwaysPlan.Kind[] kind = border(SIZE, WaterwaysPlan.Kind.WALL);
+        int outlet = 2 * SIZE + SIZE - 1;
+        kind[outlet] = WaterwaysPlan.Kind.OUTLET;
+        float[] ground = new float[count];
+        Arrays.fill(ground, 0F);
+        for (int cell = 0; cell < count; cell++) {
+            if (kind[cell] == WaterwaysPlan.Kind.LAND) ground[cell] = 20F;
+        }
+        ground[outlet] = 5F;
+        int floor = SIZE + 1;
+        ground[floor] = 20F - (float) Waterways.LAKE_DEPTH - 6F;
+        WaterwaysFlood.fill(kind, ground, new double[count], new int[count], SIZE);
+        assertEquals(WaterwaysPlan.Kind.SINK, kind[floor], "walls lower than the basin floor do not count as outlets");
+    }
+
+    @Test
     void aLandCellDrainsIntoTheNeighborWithTheSteepestFallPerBlock() {
         assertEquals(5, drain(new float[] {100, 100, 100, 100, 100, 92, 100, 100, 90}),
                 "east falls 8 over 16 blocks, south-east 10 over 22.6: the longer drop is shallower");
@@ -101,6 +161,14 @@ class WaterwaysFloodTest {
         double[] filled = new double[9];
         WaterwaysFlood.fill(kind, ground, filled, new int[9], 3);
         return WaterwaysFlood.getReceivers(kind, filled, x, z, 3)[4];
+    }
+
+    private static int[] grid(int size, boolean x) {
+        int[] coordinates = new int[size * size];
+        for (int cell = 0; cell < coordinates.length; cell++) {
+            coordinates[cell] = (x ? cell % size : cell / size) * Waterways.CELL;
+        }
+        return coordinates;
     }
 
     private static WaterwaysPlan.Kind[] border(int size, WaterwaysPlan.Kind rim) {
