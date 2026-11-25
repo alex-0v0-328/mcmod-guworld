@@ -23,8 +23,8 @@ Gu World works alongside Guzhenren and decouples cross-mod references via regist
 
 | Mod | Repository | Scope |
 |---|---|---|
-| [Guzhenren](https://github.com/alex-0v0-328/mcmod-guzhenren) | `mcmod-guzhenren` | Cultivation systems, Gu worms and refinement, block and fluid definitions, entities, dimension travel, and guards |
-| Gu World | `mcmod-guworld` (this repo) | All dimensions, regional terrain generation, waterways, biomes, primeval spring worldgen, and natural structures |
+| [Guzhenren](https://github.com/alex-0v0-328/mcmod-guzhenren) | `mcmod-guzhenren` | Cultivation systems, Gu worms and refinement,<br>block and fluid definitions, entities, dimension travel, and guards |
+| Gu World | `mcmod-guworld` (this repo) | All dimensions, regional terrain generation, waterways,<br>biomes, primeval spring worldgen, and natural structures |
 
 ## Dependencies
 
