@@ -20,10 +20,6 @@ import org.slf4j.Logger;
  *       {@code <region>.surfaceSum}，重构挪动地形时失败并给出期望与实际值；有意改地形时更新该文件。</li>
  *   <li>带 {@code -Dguworld.recordGolden=true} 时按该文件格式记 {@code golden-record <key>=<value>} 行，不比对。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class WorldgenGolden {

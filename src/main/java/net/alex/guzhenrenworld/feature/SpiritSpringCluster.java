@@ -23,9 +23,9 @@ import org.jetbrains.annotations.Nullable;
  *       眼通过{@link #findMemberSpot} 在距锚点 {@link #CLUSTER_MAX_REACH} 格以内、且与已有泉眼中心间距不小于
  *       {@link #CLUSTER_MIN_SEPARATION} 格的环带内至多尝试 {@link #MEMBER_SPOT_ATTEMPTS} 次，确保 7×7 石盆互不重叠。
  *       </li>
- *   <li>⚠ 所有候选中心点与地物原点的切比雪夫距离严禁超过 {@link #MAX_ORIGIN_OFFSET}（9 格），以保证石盆及 15×15 平整度
- *       检查完全落在原版地物生成允许读写的 3×3 区块窗口（原点所在区块外扩 1 个区块）内，越界读写会触发区块访问死锁或异
- *       常。</li>
+ *   <li>⚠ 所有候选中心点与地物原点的切比雪夫距离严禁超过 {@link #MAX_ORIGIN_OFFSET}（9 格），以保证石盆及 15×15 平整
+ *       度检查完全落在原版地物生成允许读写的 3×3 区块窗口（原点所在区块外扩 1 个区块）内，越界读写会触发区块访问死锁或
+ *       异常。</li>
  * </ul>
  */
 

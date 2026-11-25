@@ -39,9 +39,10 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  *       {@link MobCategory} 重新归类。</li>
  *   <li>{@link Template} 封装复刻群系键、原版群系键及与原版签名一致的构建工厂（{@link Factory}），由 {@link #of} 按原版
  *       路径自动生成复刻键。</li>
- *   <li>{@link #SHARED} 汇总多域共用的复刻模板（平原、河流、两种洞穴、雪林与冰封山峰），{@link #BIOMES} 按相同顺序导出群系键供语言表生
- *       成器读取；仅单域使用的复刻模板留在对应域包内，在调用 {@link #registerBiomes} 与 {@link #getSurfaceRules} 时与共
- *       用模板合并传入；一旦某个复刻群系被两个及以上域共用，必须上移至本类以避免重复注册。</li>
+ *   <li>{@link #SHARED} 汇总多域共用的复刻模板（平原、河流、两种洞穴、雪林与冰封山峰），{@link #BIOMES} 按相同顺序导出
+ *       群系键供语言表生成器读取；仅单域使用的复刻模板留在对应域包内，在调用 {@link #registerBiomes} 与
+ *       {@link #getSurfaceRules} 时与共用模板合并传入；一旦某个复刻群系被两个及以上域共用，必须上移至本类以避免重复注
+ *       册。</li>
  * </ul>
  */
 

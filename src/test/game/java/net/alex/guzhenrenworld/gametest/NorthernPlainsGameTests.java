@@ -31,10 +31,6 @@ import org.slf4j.Logger;
  *   <li>记高度分位、侵蚀、大陆度与温度十分位、各群系占比，供调参。</li>
  *   <li>同批列喂 {@link WorldgenGolden} 哈希，与 golden 文件记录不再逐字节一致即失败。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 @GameTestHolder(GuWorld.MOD_ID)

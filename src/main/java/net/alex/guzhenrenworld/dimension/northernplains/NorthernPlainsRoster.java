@@ -16,8 +16,8 @@ import net.minecraft.world.level.biome.Biomes;
  * <ul>
  *   <li>{@link #PORTED} 列出北原独有的 Terralith 移植群系键（对应清单
  *       {@code src/ports/terralith/index.northern_plains.json}）；{@link #REPLICAS} 列出除 {@link Replicas#SHARED} 外的
- *       原版复刻群系（雪林、冰封山峰与狐仙福地共用，放在 {@link Replicas#SHARED}）；{@link #NAMES} 汇总两者的显示名；{@link #CROPS} 将陆地群系按农夫乐事野生作物气候（
- *       {@link WildCropClimate}）分组。</li>
+ *       原版复刻群系（雪林、冰封山峰与狐仙福地共用，放在 {@link Replicas#SHARED}）；{@link #NAMES} 汇总两者的显示名；
+ *       {@link #CROPS} 将陆地群系按农夫乐事野生作物气候（{@link WildCropClimate}）分组。</li>
  *   <li>野生作物气候按各群系 JSON 的温度与降水量划分：干草原、地盾与高寒高地归温带（其中地盾兼入湿润）；寒灌丛、西伯利
  *       亚针叶林、桦木针叶林、雪地盾与冰沼归寒冷（其中西伯利亚针叶林、雪地盾与冰沼兼入湿润）；温度低于 0.1 的严寒群系及
  *       冻河水体不归入任何气候。</li>

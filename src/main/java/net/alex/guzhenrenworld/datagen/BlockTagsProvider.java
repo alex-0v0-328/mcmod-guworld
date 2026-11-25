@@ -22,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
  * <ul>
  *   <li>负责写出 Terralith 移植地物所匹配的方块标签（{@link Ports#getBlockTags}），每条目可为直接方块 ID 或以 {@code #}
  *       开头的子标签引用。</li>
- *   <li>⚠ 每个注册表在同一模组的数据生成周期内只能注册一个标签 Provider，否则会因输出任务重名而报错；新增方块标签必须统
- *       一在{@link #addTags} 中追加。</li>
+ *   <li>⚠ 每个注册表在同一模组的数据生成周期内只能注册一个标签 Provider，否则会因输出任务重名而报错；新增方块标签必须
+ *       统一在{@link #addTags} 中追加。</li>
  * </ul>
  */
 

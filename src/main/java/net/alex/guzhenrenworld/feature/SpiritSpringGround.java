@@ -17,15 +17,15 @@ import org.jetbrains.annotations.Nullable;
  *       要求以中心列为基准、半径 {@link #FLAT_RADIUS}（15×15）内的地表高差不超过 {@link SpiritSpringBasin#MAX_RISE}
  *       格，控制在石盆整平能够吸收的起伏范围内。</li>
  *   <li>由于元泉挂载在 {@code TOP_LAYER_MODIFICATION} 阶段（晚于 {@code VEGETAL_DECORATION}），树木、水坑与陡坡均已反映
- *       在高度图中：中心列地表为原木或树叶时直接否决；无碰撞体积而不计入高度图的竹子与甘蔗则在石盆清空带（
- *       {@link SpiritSpringBasin#CLEAR_HEIGHT_ABOVE}）内逐格扫描否决。</li>
+ *       在高度图中：中心列地表为原木或树叶时直接否决；无碰撞体积而不计入高度图的竹子与甘蔗则在石盆清空带
+ *       （{@link SpiritSpringBasin#CLEAR_HEIGHT_ABOVE}）内逐格扫描否决。</li>
  *   <li>{@link #isTerrainWet} 否决结构列地表为冰块、或地表及上方一格存在流体的位置，防止泉群跨出群系边界落入河流、冻河
  *       或结冰水坑（原版 {@code freeze_top_layer} 作为群系内置地物先于群系修改器执行，会将水面冻成平整冰面）。</li>
  *   <li>{@link #isOnTheMountain} 否决石盆会写到的任一格（各盆柱从池底下 {@link SpiritSpringBasin#MAX_RISE} 格到清空带
  *       顶，及中心泉眼）为荡魂山石（按主模组 ID 判断）的落点：元泉晚于荡魂山写入，不否决就会把池底、垫土和清空带凿进山
  *       体。</li>
- *   <li>⚠ 15×15 檢查范围会伸入相邻区块，而相邻区块的树木可能尚未装饰完毕，因此候选点是否通过会受区块生成先后顺序影响（
- *       与原版树木放置机制一致）。</li>
+ *   <li>⚠ 15×15 檢查范围会伸入相邻区块，而相邻区块的树木可能尚未装饰完毕，因此候选点是否通过会受区块生成先后顺序影响
+ *       （与原版树木放置机制一致）。</li>
  * </ul>
  */
 

@@ -11,8 +11,9 @@ import org.jetbrains.annotations.Nullable;
  * 由 {@link WaterwaysPlan} 构建的水系河道线段空间索引：将每个达标溪流格与其下游接收格连接为有向河道线段。
  * <ul>
  *   <li>每条线段保存首尾两端的河宽（下游格未成河时沿用上游宽度）以及由 {@link WaterwaysProfile} 计算的
- *       {@link Waterways#KNOTS} + 1 个等距节点水位；初始化时按区域网格（{@link Waterways.Region#cell()}）建立空间分桶，将每条线段注册
- *       到其河宽、岸带与蜿蜒偏移（{@link #getReach}）所能触及的全部网格桶中，使单列查询只需遍历所在桶的紧凑数组。</li>
+ *       {@link Waterways#KNOTS} + 1 个等距节点水位；初始化时按区域网格（{@link Waterways.Region#cell()}）建立空间分桶，
+ *       将每条线段注册到其河宽、岸带与蜿蜒偏移（{@link #getReach}）所能触及的全部网格桶中，使单列查询只需遍历所在桶的紧
+ *       凑数组。</li>
  *   <li>{@link #getSurface} 对桶内各线段计算刻河目标高度并取最小值（不同于论文公式 31 的反距离加权，取最小值可确保干支
  *       流交汇口必定挖通）：落入河宽内时返回抛物线河底高度，落入岸带内时按 Smoothstep 从水面平滑抬升至原地面上方
  *       {@link Waterways#BANK_MARGIN} 格。</li>

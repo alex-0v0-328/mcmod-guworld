@@ -19,7 +19,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /**
  * 世界生成 Mixin，让荡魂山山心净空圆里的地表结构起点作废，规则见 {@link SoulsunderClearance}。
  * <ul>
- *   <li>⚠ 不用事件：NeoForge 21.1.265 没有否决结构起点的事件，结构集的 {@code exclusion_zone} 只能挂在被排斥一方。</li>
+ *   <li>⚠ 不用事件：NeoForge 21.1.265 没有否决结构起点的事件，结构集的 {@code exclusion_zone} 只能挂在被排斥一方。
+ *       </li>
  * </ul>
  */
 

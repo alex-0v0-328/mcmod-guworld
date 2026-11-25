@@ -23,8 +23,8 @@ import net.minecraft.world.level.biome.Biome;
  *   <li>Terralith 尖柱带（侵蚀度 ≥ {@link BiomeTable#SPIRE_EROSION}）在 Tectonic 下固定生成尖柱地形，因此
  *       {@link #TABLE} 通过 {@link BiomeTable#withSpires} 将该区间内除河流、洞穴、兰花沼泽、热海与嶂石岩外的参数格统一
  *       替换为喀斯特峰林（{@link Ports#KARST_PEAK_FOREST}）。</li>
- *   <li>⚠ {@link BiomeTable#getBiome} 遇到未在 {@link #GROUPS} 中映射的来源群系会直接抛错，确保更新移植文件后新增的来源
- *       群系在 {@code runData} 阶段显式报错。</li>
+ *   <li>⚠ {@link BiomeTable#getBiome} 遇到未在 {@link #GROUPS} 中映射的来源群系会直接抛错，确保更新移植文件后新增的来
+ *       源群系在 {@code runData} 阶段显式报错。</li>
  * </ul>
  */
 

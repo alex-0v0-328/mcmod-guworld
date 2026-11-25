@@ -83,10 +83,6 @@ import org.slf4j.Logger;
  *   <li>写 {@code <region>-water.png}：每格 1 像素，地面晕渲，水蓝且越深越暗，干沟沙色，露空水面红，河道外水品红；
  *       另记按宽度分档的线段长度及 3 到 7 格宽的累计长度；只在文件写不出时失败。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 @GameTestHolder(GuWorld.MOD_ID)

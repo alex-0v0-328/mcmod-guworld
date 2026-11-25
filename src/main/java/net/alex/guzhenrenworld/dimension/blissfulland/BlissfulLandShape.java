@@ -11,22 +11,21 @@ import net.minecraft.world.level.levelgen.NoiseChunk;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * 福地路由的整形函数（{@code guworld:blissful_shape}）：一个类按 {@link Kind} 包住路由的四个字段，平地圈、湖与平地圈群系
- * 的算术都在这里，数值见 {@link BlissfulLandTerrain}。
+ * 福地路由的整形函数（{@code guworld:blissful_shape}）：一个类按 {@link Kind} 包住路由的四个字段，平地圈、湖与平地圈群
+ * 系的算术都在这里，数值见 {@link BlissfulLandTerrain}。
  * <ul>
- *   <li>{@link Kind#FINAL}、{@link Kind#INITIAL}：原密度夹在地板和顶面两个平坦场之间，{@code min(max(原值, 地板), 顶面)}；
- *       地板只是地板面以下 {@link BlissfulLandTerrain#FLOOR_SLAB} 格厚的一层，地板面和顶面只随水平位置变，湖并进顶面，
- *       初估密度的顶面在湖处再低 {@link BlissfulLandTerrain#LAKE_FLAG} 格，两个场都加上
- *       {@link BlissfulLandTerrain#PRELIMINARY}。</li>
+ *   <li>{@link Kind#FINAL}、{@link Kind#INITIAL}：原密度夹在地板和顶面两个平坦场之间，
+ *       {@code min(max(原值, 地板), 顶面)}；地板只是地板面以下 {@link BlissfulLandTerrain#FLOOR_SLAB} 格厚的一层，地板
+ *       面和顶面只随水平位置变，湖并进顶面，初估密度的顶面在湖处再低 {@link BlissfulLandTerrain#LAKE_FLAG} 格，两个场都
+ *       加上 {@link BlissfulLandTerrain#PRELIMINARY}。</li>
  *   <li>{@link Kind#CONTINENTS}：截到原版上限，平地圈内压到 {@link BlissfulLandTerrain#RING_CONTINENTS}；
  *       {@link Kind#FLOODEDNESS}：平地圈内压到 {@link BlissfulLandTerrain#DRY_FLOODEDNESS}。</li>
- *   <li>为什么写成一个类：同样的式子用原版密度函数拼，二维辅助函数共用的子树在建噪声区块时会逐个展开映射，
- *       Tectonic 的偏移样条每区块要重复映射十来次，实测噪声填充从 34 慢到 84 ms/区块；这里偏移样条和原路由各只引用一次。
- *       </li>
+ *   <li>为什么写成一个类：同样的式子用原版密度函数拼，二维辅助函数共用的子树在建噪声区块时会逐个展开映射， Tectonic 的
+ *       偏移样条每区块要重复映射十来次，实测噪声填充从 34 慢到 84 ms/区块；这里偏移样条和原路由各只引用一次。</li>
  *   <li>列缓存：一区块 16×16 列各占一槽，存地板面与顶面；原版按单元逐格填，相邻两格不在同一列，只记上一列命中不了。
  *       </li>
- *   <li>⚠ 列缓存只在上下文是噪声区块时用：噪声区块只求值它自己映射出的那份实例，那份只属于一个区块、一个线程；路由里
- *       的原实例会被多个线程单点求值，不缓存。</li>
+ *   <li>⚠ 列缓存只在上下文是噪声区块时用：噪声区块只求值它自己映射出的那份实例，那份只属于一个区块、一个线程；路由里的
+ *       原实例会被多个线程单点求值，不缓存。</li>
  * </ul>
  */
 

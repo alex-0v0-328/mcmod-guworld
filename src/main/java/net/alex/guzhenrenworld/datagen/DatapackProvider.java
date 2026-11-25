@@ -33,19 +33,19 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * 本模组全部数据包内置注册表条目的唯一生成器。
  * <ul>
  *   <li>汇总注册宝黄天的维度类型、群系与维度层级（{@link TreasureYellowHeaven}），南疆自制的竹海群系与稀疏竹子放置地物
- *       （{@link BiomeSettings}），元泉配置地物、放置地物（{@link SpiritSpring}）与群系修改器（
- *       {@link SpiritSpringRegistration}），野生知心草地物与群系修改器（{@link IntimateGrass}），以及四域水系地物与修改
- *       器（{@link WaterwaysRegistration}，福地的群系也在内）；另有狐仙福地的维度类型、群系与复刻（
- *       {@link BlissfulLandBiomes}）、噪声、Tectonic 副本、噪声设置与维度层级（{@link FoxImmortalBlissfulLand}），以及荡魂
- *       山的结构与同心环结构集（{@link SoulsunderMountain}）。</li>
+ *       （{@link BiomeSettings}），元泉配置地物、放置地物（{@link SpiritSpring}）与群系修改器
+ *       （{@link SpiritSpringRegistration}），野生知心草地物与群系修改器（{@link IntimateGrass}），以及四域水系地物与修
+ *       改器（{@link WaterwaysRegistration}，福地的群系也在内）；另有狐仙福地的维度类型、群系与复刻
+ *       （{@link BlissfulLandBiomes}）、噪声、Tectonic 副本、噪声设置与维度层级（{@link FoxImmortalBlissfulLand}），以
+ *       及荡魂山的结构与同心环结构集（{@link SoulsunderMountain}）。</li>
  *   <li>注册四域共用的维度类型，并按 {@link Regions#ALL} 逐域注册各自的密度函数（Tectonic 路由与域钩子）、噪声生成设
  *       置、维度层级（{@link RegionBootstraps}）以及挂载在各域前缀下的可达移植地形副本。</li>
  *   <li>汇总注册原版复刻群系（{@link Replicas#SHARED} 加各域独有复刻）、Terralith 移植群系及地物（{@link Ports#BIOMES}
  *       加各域独有移植），以及移植与水系共用的噪声参数（{@link Ports}、{@link Waterways}）。</li>
  *   <li>多个维度共用的注册表统一在同一个 Bootstrap 回调内完成注册；下游群系标签生成器必须读取本实例的
  *       {@link #getRegistryProvider()}，才能解析本次运行新生成的群系键。</li>
- *   <li>⚠ {@link DatapackBuiltinEntriesProvider} 的任务名称固定，单次数据生成只能注册一个实例；新增数据包注册表必须并入
- *       {@link #BUILDER}。</li>
+ *   <li>⚠ {@link DatapackBuiltinEntriesProvider} 的任务名称固定，单次数据生成只能注册一个实例；新增数据包注册表必须并
+ *       入 {@link #BUILDER}。</li>
  * </ul>
  */
 

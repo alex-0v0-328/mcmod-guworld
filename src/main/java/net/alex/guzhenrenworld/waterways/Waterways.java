@@ -14,13 +14,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * 四域水系生成系统的全局参数、河床材质与区域配置定义。
  * <ul>
- *   <li>算法基于 Davis 板块局部河流生成论文（arXiv:2610.00301，参考实现采用 CC BY 4.0 协议），将 8192×8192 格的有限域整
- *       体视作单个水文板块一次性规划水网。</li>
+ *   <li>算法基于 Davis 板块局部河流生成论文（arXiv:2610.00301，参考实现采用 CC BY 4.0 协议），将 8192×8192 格的有限域
+ *       整体视作单个水文板块一次性规划水网。</li>
  *   <li>全流程串联参数：{@link WaterwaysPlanner} 在带随机抖动（≤ {@link #JITTER} 格）的 {@link #CELL} 格网格上构建水文
  *       规划{@link WaterwaysPlan}，{@link WaterwaysIndex} 将其转换为分桶线段索引，{@link WaterwaysDensity} 包裹域最终密
- *       度并委托{@link WaterwaysCarver} 在地形上刻出河槽，最后由 {@link WaterwaysFeature} 填充水体与河床方块（
- *       {@link Bed}）；所有影响规划结果的常量拼入版本串 {@link #PARAMETERS}，供 {@link WaterwaysData} 校验存档索引是否
- *       失效。</li>
+ *       度并委托{@link WaterwaysCarver} 在地形上刻出河槽，最后由 {@link WaterwaysFeature} 填充水体与河床方块
+ *       （{@link Bed}）；所有影响规划结果的常量拼入版本串 {@link #PARAMETERS}，供 {@link WaterwaysData} 校验存档索引是
+ *       否失效。</li>
  *   <li>水文几何：汇流面积达到 {@link #MIN_CATCHMENT} 格起形成溪流，河宽随汇流面积平方根从 {@link #WIDTH_SCALE} 增长至
  *       上限{@link #MAX_WIDTH}；深度不超过 {@link #LAKE_DEPTH} 格的封闭洼地填平为浅湖并刻穿，更深的洼地则在谷底设为汇点
  *       （{@code SINK}）作为内流河终点。</li>
@@ -33,9 +33,11 @@ import org.jetbrains.annotations.NotNull;
  *   <li>干旱域（{@link Region#dry()} 为 {@code true}，如西漠）同样刻出全套河槽并铺设河床，但仅在河宽达到
  *       {@link #DRY_WIDTH} 格的主干河道中注水，其余支流保持为干涸河谷。</li>
  *   <li>网格边长按区域给（{@link Region#cell()}，默认 {@link #CELL}）：抖动随之放大，成河的汇流格数按面积换算
- *       （{@link Region#minCatchment()}），每段的水面节点数不变。</li>
- *   <li>禁区与墙（狐仙福地用）：{@link Region#keepOut()} 大于 0 时，离原点不到这么多格的网格是墙；{@link Region#walled()}
- *       时最外一圈也是墙而非出口。墙不进填洼、不收汇流，溪流绕开平地圈，也不流向疆域断面。</li>
+ *       （{@link Region#minCatchment()}），使网格放粗后溪流仍从同样大的集水面积起头，每段的水面节点数不变。</li>
+ *   <li>禁区与墙（狐仙福地用）：{@link Region#keepOut()} 大于 0 时，离原点不到这么多格的网格是墙；
+ *       {@link Region#walled()} 时最外一圈也是墙而非出口。墙不进填洼、不收汇流，溪流绕开平地圈，也不流向疆域断面；
+ *       {@link #KEEP_OUT_REACH} 为河道半宽、岸带与两轴摆动之和再留 8 格，禁区内更深处碰不到任何线段（随河宽或岸带联
+ *       动）。</li>
  * </ul>
  */
 
@@ -57,7 +59,6 @@ public final class Waterways {
     public static final int KNOTS = 3;
     public static final double MAX_DIP = 4.0;
     public static final double DRY_WIDTH = 5.0;
-    // 河道半宽、岸带与摆动（两轴合成）之和再留 8 格：禁区内比这更深的列碰不到任何线段，改河宽或岸带时随之变。
     public static final double KEEP_OUT_REACH = MAX_WIDTH / 2 + Math.max(BANK_MIN, BANK_FACTOR * MAX_WIDTH)
             + MEANDER * Math.sqrt(2) + 8.0;
     public static final ResourceKey<NormalNoise.NoiseParameters> MEANDER_NOISE =
@@ -141,7 +142,6 @@ public final class Waterways {
             return JITTER * cell / CELL;
         }
 
-        // 成河所需的汇流面积按格数换算，网格放粗后溪流仍从同样大的集水面积起头。
         public int minCatchment() {
             return Math.max(1, MIN_CATCHMENT * CELL * CELL / (cell * cell));
         }

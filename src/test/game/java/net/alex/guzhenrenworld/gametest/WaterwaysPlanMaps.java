@@ -44,10 +44,6 @@ import org.slf4j.Logger;
  *   <li>写 {@code <region>.png}（1024 像素对应全区边长）：地面晕渲，水蓝，出口青（干旱区域土黄），墙灰，
  *       区域成河阈值（{@link Waterways.Region#minCatchment()}）的溪流画成随宽度加粗的线，穿过深于 1 格的湖处品红点，终止的汇点橙点。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 @GameTestHolder(GuWorld.MOD_ID)

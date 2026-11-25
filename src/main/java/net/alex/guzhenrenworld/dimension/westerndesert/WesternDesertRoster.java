@@ -18,8 +18,8 @@ import net.minecraft.world.level.biome.Biomes;
  *       {@code src/ports/terralith/index.western_desert.json}）；{@link #REPLICAS} 列出除 {@link Replicas#SHARED} 外的
  *       原版复刻群系；{@link #NAMES} 汇总两者的显示名。</li>
  *   <li>{@link #CROPS} 将陆地群系按农夫乐事野生作物气候（{@link WildCropClimate}）分组：沙漠、恶地、峡谷、台地、旱原高
- *       地与荆丛地（温度 ≥ 1.0 且干燥）归干热；绿洲与红绿洲按名称归入湿润（同时满足温度条件也归入干热）；热灌丛归温带；
- *       戈壁归寒冷。</li>
+ *       地与荆丛地（温度 ≥ 1.0 且干燥）归干热；绿洲与红绿洲按名称归入湿润（同时满足温度条件也归入干热）；热灌丛归温
+ *       带；戈壁归寒冷。</li>
  *   <li>⚠ 更新移植清单新增群系时，必须在同一次改动中同步补齐 {@link #PORTED}、{@link #NAMES} 与 {@link #CROPS}，否则
  *       {@link Ports#registerBiomes} 会在校验清单与键集合时直接报错。</li>
  * </ul>

@@ -63,14 +63,14 @@ import org.jetbrains.annotations.NotNull;
  *   <li>移植群系（{@link #BIOMES} 及各域列表，由 {@link #biome} 构造键）保留 Terralith 的气候、颜色、刷怪与地物，并通过
  *       {@link Replicas#getUncarved} 移除雕刻器；方块标签则由 {@link #getBlockTags} 读取并交由标签生成器写出。</li>
  *   <li>地形部分提取自 Tectonic 与 Terralith 共存时的主世界噪声路由及其可达的密度函数与噪声（位于
- *       {@code guworld:terrain/<namespace>/}），并将 Tectonic 配置烘焙为原版密度函数；其中 11 个函数读取 9 个钩子函数（
- *       {@code terrain/hook/*}）以按域定制参数，因此每个域都会在 {@code guworld:terrain/<region>/} 命名空间下独立注册一
- *       套函数与噪声路由。</li>
+ *       {@code guworld:terrain/<namespace>/}），并将 Tectonic 配置烘焙为原版密度函数；其中 11 个函数读取 9 个钩子函数
+ *       （{@code terrain/hook/*}）以按域定制参数，因此每个域都会在 {@code guworld:terrain/<region>/} 命名空间下独立注册
+ *       一套函数与噪声路由。</li>
  *   <li>{@link #registerDensityFunctions} 接收域名与 JSON 补丁函数，先对原始 JSON 应用补丁，再通过 {@link #getRegional}
  *       将内部函数与钩子引用改写到当前域前缀下（钩子本体由各域在 {@link #getHookKey} 处注册）；{@link #getNoiseRouter}
  *       以同样方式改写并解码噪声路由。</li>
- *   <li>变体（{@link #getVariant}）：{@code tectonic/variant/<名>/} 存放 Tectonic 未叠 terratonic 时的同名函数，作为补丁
- *       整份替换；{@code vanilla} 是给原版群系表调的那一版（9 个函数，路由相同），狐仙福地用它。</li>
+ *   <li>变体（{@link #getVariant}）：{@code tectonic/variant/<名>/} 存放 Tectonic 未叠 terratonic 时的同名函数，作为补
+ *       丁整份替换；{@code vanilla} 是给原版群系表调的那一版（9 个函数，路由相同），狐仙福地用它。</li>
  *   <li>各域仅注册可达条目（{@link Reachable}）：从噪声路由及已开启的开关钩子目标（{@code hooked}）出发，在打完补丁的
  *       JSON引用图上做可达性遍历，仅注册可达的密度函数及其引用的噪声；被常量钩子替代或开关关闭的功能分支不会进入生成的
  *       数据包。</li>

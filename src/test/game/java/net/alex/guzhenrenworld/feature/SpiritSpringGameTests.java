@@ -15,10 +15,6 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
  *   <li>{@link #acceptedOffsetsKeepBasinsApart}：间距接受的成员偏移不让两石盆共用非保留格。</li>
  *   <li>跑在本就加载注册表的 GameTest 服务端，免 JUnit 层为几毫秒检查再启动模组；放 {@code feature} 包读包私有表。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 @GameTestHolder(GuWorld.MOD_ID)

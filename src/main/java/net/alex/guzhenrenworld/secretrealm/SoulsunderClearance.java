@@ -30,8 +30,8 @@ import org.jetbrains.annotations.Nullable;
  *       成；主模组的地表结构与海洋地表结构（沉船、海底废墟、海底神殿）同样受净空约束。</li>
  *   <li>已知不修：{@code /locate structure} 与探险地图走原版跳过结构检查的路径（只看放置与群系，不生成起点），绕过本规
  *       则，可能报出净空圆里实际不生成的村庄；只影响显示。</li>
- *   <li>⚠ 结构状态经 {@link #STATE} 从 {@code createStructures} 传到 {@code tryGenerateStructure}：后者的参数里没有它；
- *       区块生成在多线程上并行，故用线程局部变量。</li>
+ *   <li>⚠ 结构状态经 {@link #STATE} 从 {@code createStructures} 传到 {@code tryGenerateStructure}：后者的参数里没有
+ *       它；区块生成在多线程上并行，故用线程局部变量。</li>
  * </ul>
  */
 

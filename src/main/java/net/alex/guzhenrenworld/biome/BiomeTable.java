@@ -20,9 +20,9 @@ import org.jetbrains.annotations.Nullable;
  * <ul>
  *   <li>各域定义分组映射表，指明每个本域群系替代哪些来源群系；由于域地形使用 Tectonic 副本并将侵蚀度与山脊值重映射到
  *       Terralith 的分段区间，每个气候参数格都能保留原有的地形原型并替换为本域对应的同类群系。</li>
- *   <li>地形形态取决于侵蚀度而非群系本身：Terralith 尖柱带（侵蚀度 ≥ {@link #SPIRE_EROSION}）在 Tectonic 下固定生成尖柱
- *       地形；{@link #withSpires} 会将该区间内除保留名单外的参数格统一替换为指定的尖柱群系，{@link #of} 则仅按分组原样
- *       映射。</li>
+ *   <li>地形形态取决于侵蚀度而非群系本身：Terralith 尖柱带（侵蚀度 ≥ {@link #SPIRE_EROSION}）在 Tectonic 下固定生成尖
+ *       柱地形；{@link #withSpires} 会将该区间内除保留名单外的参数格统一替换为指定的尖柱群系，{@link #of} 则仅按分组原
+ *       样映射。</li>
  *   <li>实例仅通过 {@link #of} 与 {@link #withSpires} 构建，构建时通过 {@link #getSources} 校验分组映射并转换为不可变
  *       表；不设尖柱群系的表其 {@code spireBiome} 为 {@code null}。</li>
  *   <li>⚠ {@link #getBiome} 遇到未映射的来源群系、或构建时遇到重复映射的来源群系都会直接抛出异常，使新增移植群系在

@@ -42,17 +42,17 @@ import org.jetbrains.annotations.Nullable;
  * <ul>
  *   <li>维度、维度层级、群系、噪声设置共用路径 {@code guworld:fox_immortal_blissful_land}；维度类型
  *       {@link #DIMENSION_TYPE}（{@code guworld:blissful_land}）留给以后的福地共用。</li>
- *   <li>疆域是以原点为中心、边长 {@link #HALF_SIZE_CHUNKS} × 2 个区块的正方形（一区块记 4 亩，1224² 区块约 599 万亩）；
- *       {@link BoundedNoiseGenerator} 让界外区块整块留空，世界边界由
+ *   <li>疆域是以原点为中心、边长 {@link #HALF_SIZE_CHUNKS} × 2 个区块的正方形（一区块记 4 亩，1224² 区块约 599 万
+ *       亩）；{@link BoundedNoiseGenerator} 让界外区块整块留空，世界边界由
  *       {@link net.alex.guzhenrenworld.dimension.RegionBorders} 按 {@link #BORDER_SIZE} 施加。</li>
- *   <li>地形是本福地自己的一份 Tectonic 副本，取给原版群系调的变体（{@link Ports#getVariant}），钩子见 {@link #getHooks}：
- *       不出海，竖直拉伸 {@link #VERTICAL_SCALE} 让山峰最高约 y 250；平地圈、湖和水系刻河见 {@link BlissfulLandTerrain}。
- *       </li>
- *   <li>群系照中州，名单与多噪声表见 {@link BlissfulLandBiomes}；{@link #BIOME} 是平地圈的群系，原版平原的同款（刷怪表、
+ *   <li>地形是本福地自己的一份 Tectonic 副本，取给原版群系调的变体（{@link Ports#getVariant}），钩子见
+ *       {@link #getHooks}（变体在数据生成时才读移植文件，故钩子按需构造而不放静态常量）：不出海，竖直拉伸
+ *       {@link #VERTICAL_SCALE} 让山峰最高约 y 250；平地圈、湖和水系刻河见 {@link BlissfulLandTerrain}。</li>
+ *   <li>群系照中州，名单与多噪声表见 {@link BlissfulLandBiomes}；{@link #BIOME} 是平地圈的群系，原版平原同款（刷怪表、
  *       草花、矿石、软质圆盘、地下变化），只去掉雕刻器和地表熔岩湖，荡魂山只认它。</li>
- *   <li>水系：{@link #WATERWAYS} 边长同疆域，网格 {@link #WATERWAYS_CELL} 格，平地圈外 {@link #KEEP_OUT} 格内和疆域最外
- *       一圈是墙，河床砾石为主夹黏土和沙。
- *       </li>
+ *   <li>水系：{@link #WATERWAYS} 边长同疆域，疆域为四域的 5.7 倍，16 格网格首次建图要 30–60 秒，故用
+ *       {@link #WATERWAYS_CELL}（32 格）将耗时降至约四分之一（Alex 定）；平地圈外 {@link #KEEP_OUT} 格内和疆域最外一圈
+ *       是墙，河床砾石为主夹黏土和沙。</li>
  *   <li>荡魂山经结构集落在原点区块，见 {@code net.alex.guzhenrenworld.secretrealm.SoulsunderMountain}。</li>
  *   <li>⚠ 维度路径必须与主模组 {@code ModDimensions} 中的同名维度键一致，否则 {@code /guworld enter} 找不到目标维度。
  *       </li>
@@ -93,7 +93,6 @@ public final class FoxImmortalBlissfulLand {
     private static final double OCEAN_OFFSET = -0.1;
     private static final double VERTICAL_SCALE = 0.8;
     private static final double KEEP_OUT = BlissfulLandTerrain.MARGIN + 32;
-    // 疆域是四域的 5.7 倍，16 格网格首次建图要 30–60 秒；32 格降到约四分之一（Alex 定）。
     private static final int WATERWAYS_CELL = 32;
     public static final Waterways.Region WATERWAYS = new Waterways.Region(NAME, BORDER_SIZE, false,
             Waterways.Bed.GRAVEL_CLAY_SAND, KEEP_OUT, true, WATERWAYS_CELL);
@@ -149,7 +148,6 @@ public final class FoxImmortalBlissfulLand {
         RegionBootstraps.registerDensityFunctions(context, NAME, getHooks(), MIN_Y, MIN_Y + HEIGHT);
     }
 
-    // 变体在数据生成时才读移植文件，所以钩子按需建，不放静态常量。
     private static Region.Hooks getHooks() {
         return new Region.Hooks(DensityFunctions.constant(OCEAN_OFFSET), VERTICAL_SCALE, 0.0,
                 Ports.getVariant("vanilla"));

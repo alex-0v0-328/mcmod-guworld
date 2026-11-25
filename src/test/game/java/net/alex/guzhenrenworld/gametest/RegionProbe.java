@@ -35,10 +35,6 @@ import net.minecraft.world.level.levelgen.RandomState;
  *   <li>并行安全的依据：原版区块生成本就在多个工作线程上共用同一 {@link RandomState} 与密度函数；
  *       顺序敏感的统计（{@link WorldgenGolden}）仍按网格下标串行累加。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 public final class RegionProbe {

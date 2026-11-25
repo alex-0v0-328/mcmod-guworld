@@ -39,10 +39,6 @@ import static net.alex.guzhenrenworld.dimension.region.Region.MIN_Y;
  *   <li>每种估计记绝对误差（中位、95 分位、最大）、偏差、最小二乘拟合及拟合后 95 分位、海平面以上陆地的同样数值、
  *       三轮计时中每样本最佳微秒数；只在读取出错时失败。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 @GameTestHolder(GuWorld.MOD_ID)

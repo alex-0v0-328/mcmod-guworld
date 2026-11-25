@@ -20,8 +20,8 @@ import net.minecraft.world.level.biome.Biome;
  *       地地貌以保证映射表完整；{@link #FROZEN} 列出低温冰冻区间可达的群系集合。</li>
  *   <li>{@link #ROSTER} 为北原可生成的全部群系集合；{@link #LAND} 为剔除水体与洞穴（{@link #WATER_AND_CAVES}）后的陆地
  *       群系列表，供元泉[Spirit Spring]等地表地物投放。</li>
- *   <li>⚠ {@link BiomeTable#getBiome} 遇到未在 {@link #GROUPS} 中映射的来源群系会直接抛错，确保更新移植文件后新增的来源
- *       群系在 {@code runData} 阶段显式报错。</li>
+ *   <li>⚠ {@link BiomeTable#getBiome} 遇到未在 {@link #GROUPS} 中映射的来源群系会直接抛错，确保更新移植文件后新增的来
+ *       源群系在 {@code runData} 阶段显式报错。</li>
  * </ul>
  */
 

@@ -9,8 +9,8 @@ import java.util.function.BiFunction;
  * 移植密度函数（{@link Ports#registerDensityFunctions}）的列缓存补丁：不改变计算结果，仅降低水平列函数的求值频率。
  * <ul>
  *   <li>{@link #PORTED_COLUMNS} 列出的 10 个移植函数仅随水平坐标变化，但噪声路由会逐方块或逐网格角读取；补丁为其套上
- *       {@code flat_cache}，使每个噪声区块内每 4×4 水平格仅计算一次（其底层噪声本身已位于 {@code flat_cache} 内，列内读
- *       值不变）。</li>
+ *       {@code flat_cache}，使每个噪声区块内每 4×4 水平格仅计算一次（其底层噪声本身已位于 {@code flat_cache} 内，列内
+ *       读值不变）。</li>
  *   <li>原版 {@code flat_cache} 仅缓存当前正在生成的区块：含水层初步地表扫描会在相邻区块列上按每 4 格向下探测，每步都会
  *       重算输入及 Tectonic 整条移位噪声与样条链（约占噪声填充耗时的 1/3）；因此补丁会在列缓存（含移植自带的
  *       {@code flat_cache}）内层再套一层 {@code cache_2d} 记住上一列结果，确保跨区块扫描时每列也只计算一次。</li>

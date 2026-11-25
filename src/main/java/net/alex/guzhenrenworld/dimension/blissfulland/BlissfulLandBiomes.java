@@ -26,10 +26,12 @@ import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList;
  *   <li>表取原版主世界预设（{@link MultiNoiseBiomeSourceParameterList.Preset#OVERWORLD}）逐条照抄，只把群系按
  *       {@link #SOURCES} 换成本名单里的复刻；沙漠、热带草原、恶地、丛林、红树林与海洋、海滩这些名单外的群系并到最接近的
  *       平原或森林（原著称狐仙福地是草原地貌，不是沙漠），雪原、冰刺并到针叶林，冻河并到河流，深暗之域并到溶洞。</li>
- *   <li>平地圈：表里另加一格，大陆度在 {@link #RING_CONTINENTALNESS} 以上、深度 0 到 {@link #RING_DEPTH}、其余参数全域，指向
- *       {@link FoxImmortalBlissfulLand#BIOME}；圈外大陆度截到 1，只有 {@link BlissfulLandTerrain} 在山心周围把大陆度压到
- *       2 时才落进这一格，荡魂山的结构群系标签也只认这个群系。这一格离 1 留得远：Tectonic 的温度、侵蚀会超出原版范围，
- *       离原版各格都远的点会被全域的这一格抢走。</li>
+ *   <li>平地圈：表里另加一格，大陆度在 {@link #RING_CONTINENTALNESS} 以上、深度 0 到 {@link #RING_DEPTH}、其余参数全
+ *       域，指向 {@link FoxImmortalBlissfulLand#BIOME}；圈外大陆度截到 1，只有 {@link BlissfulLandTerrain} 在山心周围
+ *       把大陆度压到 2 时才落进这一格，荡魂山的结构群系标签也只认这个群系。这一格离 1 留得远：Tectonic 的温度、侵
+ *       蚀会超出原版范围，离原版各格都远的点会被全域的这一格抢走。</li>
+ *   <li>气候参数编解码只收 ±{@link #PARAMETER_LIMIT}（±2）；原版各格深度只有 0、1、0.2–0.9 与 1.1 几档，若平地圈深
+ *       度设为全域会让远处高空（深度很负）落进该格，故限定在 0 到 {@link #RING_DEPTH}。</li>
  *   <li>复刻：{@link #REPLICAS} 是只有福地用的原版复刻；平原、河流、两种洞穴、雪林与冰封山峰和别的域共用，在
  *       {@link Replicas#SHARED}。</li>
  *   <li>⚠ 原版预设里每个群系都要在 {@link #SOURCES} 有去处，漏掉的在数据生成时直接报错。</li>
@@ -39,9 +41,7 @@ import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList;
 public final class BlissfulLandBiomes {
 
     public static final float RING_CONTINENTALNESS = 1.9F;
-    // 气候参数的编解码只收 −2 到 2。
     private static final float PARAMETER_LIMIT = 2.0F;
-    // 原版各格的深度只有 0、1、0.2–0.9、1.1 几档；全域的深度会让远处高空（深度很负）落进平地圈那一格。
     private static final float RING_DEPTH = 1.1F;
     public static final List<Replicas.Template> REPLICAS = List.of(
             Replicas.of(Biomes.SUNFLOWER_PLAINS,

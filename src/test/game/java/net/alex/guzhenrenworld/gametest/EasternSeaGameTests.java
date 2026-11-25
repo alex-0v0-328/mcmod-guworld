@@ -32,10 +32,6 @@ import org.slf4j.Logger;
  *   <li>陆地列至多 {@link #DRY_SEA_MAX}% 带水体群系而非 {@link EasternSeaLayout#LAND}：群系表与地形不符的海岸格。</li>
  *   <li>同批列喂 {@link WorldgenGolden} 哈希，与 golden 文件记录不再逐字节一致即失败。</li>
  * </ul>
- *
- * @author Alex
- * @version 1.0.0
- * @since 1.0.0
  */
 
 @GameTestHolder(GuWorld.MOD_ID)
