@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.IntStream;
 import net.alex.guzhenrenworld.GuWorld;
@@ -29,6 +30,9 @@ import org.slf4j.Logger;
  *       最高处在 {@link #PEAK_LOW} 到 {@link #PEAK_HIGH} 之间（照中州的尺度，山峰约 y 250），水面列 2%–30%，地表群系至
  *       少 {@link #MIN_BIOMES} 种、都在名单里（地表与 {@link #SKY} 高空都查）；福地全部群系的地物按装饰步排得出顺序（原
  *       版遇到顺序成环会抛错）。</li>
+ *   <li>比例（草原地貌，Alex 定）：地表草原（{@link BlissfulLandBiomes#PRAIRIE}）占 {@link #PRAIRIE_LOW}%–
+ *       {@link #PRAIRIE_HIGH}%，林地（{@link #WOODLAND}）不超过 {@link #WOODLAND_HIGH}%；8 个种子实测草原 50%–58%、林地
+ *       25%–31%。</li>
  *   <li>原点附近不再整形：山心外 {@link #NEAR} 格一圈 {@link #SPOKES} 列的地面高差至少 {@link #NEAR_RELIEF} 格（旧平地
  *       圈全在 y 64）。</li>
  * </ul>
@@ -46,6 +50,12 @@ public final class BlissfulLandTerrainGameTests {
     private static final int PEAK_LOW = 200;
     private static final int PEAK_HIGH = 290;
     private static final int MIN_BIOMES = 12;
+    private static final int PRAIRIE_LOW = 45;
+    private static final int PRAIRIE_HIGH = 65;
+    private static final int WOODLAND_HIGH = 35;
+    private static final Set<String> WOODLAND = Set.of("forest", "flower_forest", "birch_forest",
+            "old_growth_birch_forest", "dark_forest", "cherry_grove", "taiga", "old_growth_pine_taiga",
+            "old_growth_spruce_taiga", "windswept_forest", "grove");
     private static final int NEAR = 376;
     private static final int SPOKES = 64;
     private static final int NEAR_RELIEF = 8;
@@ -72,11 +82,15 @@ public final class BlissfulLandTerrainGameTests {
         long highland = Arrays.stream(floors).filter(floor -> floor > HIGHLAND).count();
         Map<String, Integer> biomes = new TreeMap<>();
         int strays = 0;
+        int prairie = 0;
+        int woodland = 0;
         for (int[] column : columns) {
             Holder<Biome> biome = probe.getBiome(column[0], column[3], column[1]);
             ResourceKey<Biome> key = biome.unwrapKey().orElseThrow();
             biomes.merge(key.location().getPath(), 1, Integer::sum);
             if (!BlissfulLandBiomes.ROSTER.contains(key)) strays++;
+            if (BlissfulLandBiomes.PRAIRIE.contains(key)) prairie++;
+            if (WOODLAND.contains(key.location().getPath())) woodland++;
             for (int y : SKY) {
                 if (!probe.getBiome(column[0], y, column[1]).is(BlissfulLandBiomes.ROSTER::contains)) strays++;
             }
@@ -95,6 +109,10 @@ public final class BlissfulLandTerrainGameTests {
         helper.assertTrue(wet >= total / 50 && wet <= total * 3 / 10, wet + " of " + total + " columns hold water");
         helper.assertTrue(biomes.size() >= MIN_BIOMES, "only " + biomes.size() + " surface biomes: " + biomes);
         helper.assertTrue(strays == 0, strays + " samples sit in biomes off the roster: " + biomes);
+        helper.assertTrue(prairie * 100 >= PRAIRIE_LOW * total && prairie * 100 <= PRAIRIE_HIGH * total,
+                prairie + " of " + total + " samples are prairie: " + biomes);
+        helper.assertTrue(woodland * 100 <= WOODLAND_HIGH * total,
+                woodland + " of " + total + " samples are woodland: " + biomes);
         List<Holder<Biome>> possible = List.copyOf(probe.getGenerator().getBiomeSource().possibleBiomes());
         FeatureSorter.buildFeaturesPerStep(possible, biome -> biome.value().getGenerationSettings().features(), true);
         checkNatural(helper, probe);

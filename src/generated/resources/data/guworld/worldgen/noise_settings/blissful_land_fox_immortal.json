@@ -52,7 +52,11 @@
     "lava": "guworld:terrain/blissful_land_fox_immortal/minecraft/overworld/noise_router/lava",
     "ridges": "guworld:terrain/blissful_land_fox_immortal/minecraft/overworld/noise_router/ridges",
     "temperature": "guworld:terrain/blissful_land_fox_immortal/minecraft/overworld/noise_router/temperature",
-    "vegetation": "guworld:terrain/blissful_land_fox_immortal/minecraft/overworld/noise_router/vegetation",
+    "vegetation": {
+      "type": "minecraft:add",
+      "argument1": -0.2,
+      "argument2": "guworld:terrain/blissful_land_fox_immortal/minecraft/overworld/noise_router/vegetation"
+    },
     "vein_gap": "guworld:terrain/blissful_land_fox_immortal/minecraft/overworld/noise_router/vein_gap",
     "vein_ridged": "guworld:terrain/blissful_land_fox_immortal/minecraft/overworld/noise_router/vein_ridged",
     "vein_toggle": "guworld:terrain/blissful_land_fox_immortal/minecraft/overworld/noise_router/vein_toggle"

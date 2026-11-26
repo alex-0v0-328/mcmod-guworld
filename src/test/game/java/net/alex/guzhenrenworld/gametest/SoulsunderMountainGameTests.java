@@ -81,13 +81,16 @@ import org.slf4j.Logger;
  *   <li>挑址：{@link #SITE_SEEDS} 三个种子下，各建两份互不相干的福地生成器与 {@code RandomState}，挑出的区块相同（确定
  *       性），在原点 ±32 区块内、合格（无水、起伏不超过 24 格、山底不高于 y 190，山巅不超建造上限）；山心周围
  *       {@link #DRY_CHECK} 格 3×3 列的噪声地形上没有水；放置器只在该区块命中；原版主世界的结构状态处处不命中。日志
- *       {@code soulsunder mountain site} 记每次挑址毫秒数、区块、山底与起伏。</li>
+ *       {@code soulsunder mountain site} 记每次挑址毫秒数、区块、山底、起伏与草原占比。</li>
  *   <li>生成：福地里挑址区块起点有效、山心为挑址给出的山心、结构片边界框最高顶是山巅（山底 + 117）、每个区块一片；山体区块并行做噪声填充两遍（无胡须、有胡须，
  *       不含地表、雕刻与地物；先空跑一遍预热），各由结构片逐区块写入并计时，日志 {@code soulsunder mountain fill} 记噪
  *       声与写入毫秒数、山石、补石与清除数；有胡须时补石不多于无胡须，写入后贴地列的最低山石下方是实心方块（无浮空），
  *       各列最高一段以上到地表只剩空气与流体，山心列顶到山底加山形顶高；行宫锚点（山心 + {@link #ANCHOR}）脚下是山石、
  *       往上 {@link #HEADROOM} 格是空的、{@link #ROOF_REACH} 格内有洞顶，山巅站立点（山心 + {@link #SUMMIT}）脚下是山石。
  *       </li>
+ *   <li>草原：{@link #PRAIRIE_SEEDS} 三个种子下，不比草原时荡魂山落在林地过半的缓地上（山心 256 格内林地 62% / 80% /
+ *       81%），比草原后山周草原占比都不低于 {@link #MIN_PRAIRIE}%（实测 97% / 100% / 97%）。原点 ±512 格内没有草原缓地的种
+ *       子仍会落在林地里（24 个种子中 1 个），挑址范围是主模组扫山心的契约，不在这里放宽。</li>
  *   <li>坡地：在原版主世界（种子 {@link #SLOPE_SEED}）沿一条斜线找第一个山心周围 ±{@link #SLOPE_REACH} 格地面落差
  *       不小于 {@link #SLOPE_RELIEF} 格的陆地区块，把山立在那里（福地挑的是缓地，补石少，这轮补上覆盖）：无胡须时要补石，有胡须时补石不多于无胡须，没有浮空列，山上不压原地形。</li>
  *   <li>福地疆域：界内最后一列区块有方块、界外第一列区块全空；疆域内稀疏取样有水面、有地下洞穴，日志 {@code blissful land terrain} 记水面
@@ -116,6 +119,8 @@ public final class SoulsunderMountainGameTests {
     private static final BlockPos SUMMIT = new BlockPos(4, 118, -2);
     private static final int SUMMIT_RISE = 117;
     private static final int DRY_CHECK = 32;
+    private static final int MIN_PRAIRIE = 75;
+    private static final long[] PRAIRIE_SEEDS = {20261120L, 118785L, 174218L};
     private static final int TERRAIN_REACH = 4096;
     private static final int TERRAIN_STEP = 128;
     private static final int CAVE_DEPTH = 8;
@@ -163,8 +168,9 @@ public final class SoulsunderMountainGameTests {
             BlissfulLandSite site = land.generator().getSite(land.random());
             long millis = (System.nanoTime() - started) / 1_000_000;
             BlissfulLandSite again = BlissfulLand.create(helper, seed).site();
-            LOGGER.info("soulsunder mountain site (seed {}): {} ms, chunk {}, floor y {}, relief {}, wet {}", seed,
-                    millis, site.chunk(), site.floor(), site.relief(), site.wet());
+            LOGGER.info("soulsunder mountain site (seed {}): {} ms, chunk {}, floor y {}, relief {}, wet {}, "
+                    + "prairie {}%", seed, millis, site.chunk(), site.floor(), site.relief(), site.wet(),
+                    site.prairie());
             helper.assertTrue(site.equals(again), "seed " + seed + ": picked " + site + " then " + again);
             helper.assertTrue(Math.abs(site.chunk().x) <= BlissfulLandSite.REACH_CHUNKS
                     && Math.abs(site.chunk().z) <= BlissfulLandSite.REACH_CHUNKS, "seed " + seed + ": " + site
@@ -196,6 +202,16 @@ public final class SoulsunderMountainGameTests {
             helper.assertTrue(GentleSitePlacement.find(overworld.structures()) == null
                     && !placement.isStructureChunk(overworld.structures(), chunk.x, chunk.z),
                     "seed " + seed + ": the overworld still places the mountain");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty9x9x9", timeoutTicks = 600)
+    public static void siteSitsOnThePrairie(GameTestHelper helper) {
+        for (long seed : PRAIRIE_SEEDS) {
+            BlissfulLandSite site = BlissfulLand.create(helper, seed).site();
+            helper.assertTrue(site.isGentle() && site.prairie() >= MIN_PRAIRIE,
+                    "seed " + seed + ": the mountain stands off the prairie, picked " + site);
         }
         helper.succeed();
     }

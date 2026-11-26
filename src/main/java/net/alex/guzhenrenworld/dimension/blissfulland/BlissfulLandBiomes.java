@@ -23,8 +23,10 @@ import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList;
  * 狐仙福地的群系名单与多噪声表：照中州（原版主世界）的温带陆地与山地群系。
  * <ul>
  *   <li>表取原版主世界预设（{@link MultiNoiseBiomeSourceParameterList.Preset#OVERWORLD}）逐条照抄，只把群系按
- *       {@link #SOURCES} 换成本名单里的复刻；沙漠、热带草原、恶地、丛林、红树林与海洋、海滩这些名单外的群系并到最接近的
- *       平原或森林（原著称狐仙福地是草原地貌，不是沙漠），雪原、冰刺并到针叶林，冻河并到河流，深暗之域并到溶洞。</li>
+ *       {@link #SOURCES} 换成本名单里的复刻。名单外的群系一律不添林子（原著称狐仙福地是草原地貌，Alex 定）：沙漠、热带
+ *       草原、恶地、丛林、竹林、雪原、冰刺与海洋、海滩并到平原，热带高原、林地恶地并到草甸，红树林并到沼泽，积雪针叶林
+ *       并到针叶林，冻河并到河流，深暗之域并到溶洞；全域偏干另见 {@link BlissfulLandTerrain#DRYNESS}。</li>
+ *   <li>草原（{@link #PRAIRIE}）：平原、向日葵平原、草甸；荡魂山挑址比山周草原占比用它（{@link BlissfulLandSite}）。</li>
  *   <li>复刻：{@link #REPLICAS} 是只有福地用的原版复刻；平原、河流、两种洞穴、雪林与冰封山峰和别的域共用，在
  *       {@link Replicas#SHARED}。{@link #ROSTER} 是福地全部群系，荡魂山的结构群系标签也取它。</li>
  *   <li>陆地（{@link #LAND}）：名单去掉河流与两种洞穴，元泉与野生知心草按它在福地生成（Alex 定，同四域）。</li>
@@ -87,6 +89,7 @@ public final class BlissfulLandBiomes {
             OLD_GROWTH_PINE_TAIGA, OLD_GROWTH_SPRUCE_TAIGA, WINDSWEPT_HILLS, WINDSWEPT_FOREST, Replicas.GROVE,
             SNOWY_SLOPES, JAGGED_PEAKS, STONY_PEAKS, Replicas.FROZEN_PEAKS);
     public static final List<ResourceKey<Biome>> GRASSLAND = getGrassland();
+    public static final Set<ResourceKey<Biome>> PRAIRIE = Set.of(Replicas.PLAINS, SUNFLOWER_PLAINS, MEADOW);
     public static final List<BiomeName> NAMES = List.of(
             new BiomeName(SUNFLOWER_PLAINS, "向日葵平原"),
             new BiomeName(MEADOW, "草甸"),
@@ -107,21 +110,21 @@ public final class BlissfulLandBiomes {
             new BiomeName(STONY_PEAKS, "裸岩山峰"));
     private static final Map<ResourceKey<Biome>, List<ResourceKey<Biome>>> SOURCES = Map.ofEntries(
             Map.entry(Replicas.PLAINS, List.of(Biomes.PLAINS, Biomes.DESERT, Biomes.SAVANNA, Biomes.BADLANDS,
-                    Biomes.ERODED_BADLANDS, Biomes.MUSHROOM_FIELDS, Biomes.BEACH, Biomes.SNOWY_BEACH,
+                    Biomes.ERODED_BADLANDS, Biomes.JUNGLE, Biomes.SPARSE_JUNGLE, Biomes.BAMBOO_JUNGLE,
+                    Biomes.SNOWY_PLAINS, Biomes.ICE_SPIKES, Biomes.MUSHROOM_FIELDS, Biomes.BEACH, Biomes.SNOWY_BEACH,
                     Biomes.STONY_SHORE, Biomes.OCEAN, Biomes.DEEP_OCEAN, Biomes.WARM_OCEAN, Biomes.LUKEWARM_OCEAN,
                     Biomes.DEEP_LUKEWARM_OCEAN, Biomes.COLD_OCEAN, Biomes.DEEP_COLD_OCEAN, Biomes.FROZEN_OCEAN,
                     Biomes.DEEP_FROZEN_OCEAN)),
             Map.entry(SUNFLOWER_PLAINS, List.of(Biomes.SUNFLOWER_PLAINS)),
-            Map.entry(MEADOW, List.of(Biomes.MEADOW, Biomes.SAVANNA_PLATEAU)),
-            Map.entry(SWAMP, List.of(Biomes.SWAMP)),
-            Map.entry(FOREST, List.of(Biomes.FOREST, Biomes.WOODED_BADLANDS, Biomes.JUNGLE, Biomes.SPARSE_JUNGLE,
-                    Biomes.BAMBOO_JUNGLE, Biomes.MANGROVE_SWAMP)),
+            Map.entry(MEADOW, List.of(Biomes.MEADOW, Biomes.SAVANNA_PLATEAU, Biomes.WOODED_BADLANDS)),
+            Map.entry(SWAMP, List.of(Biomes.SWAMP, Biomes.MANGROVE_SWAMP)),
+            Map.entry(FOREST, List.of(Biomes.FOREST)),
             Map.entry(FLOWER_FOREST, List.of(Biomes.FLOWER_FOREST)),
             Map.entry(BIRCH_FOREST, List.of(Biomes.BIRCH_FOREST)),
             Map.entry(OLD_GROWTH_BIRCH_FOREST, List.of(Biomes.OLD_GROWTH_BIRCH_FOREST)),
             Map.entry(DARK_FOREST, List.of(Biomes.DARK_FOREST)),
             Map.entry(CHERRY_GROVE, List.of(Biomes.CHERRY_GROVE)),
-            Map.entry(TAIGA, List.of(Biomes.TAIGA, Biomes.SNOWY_TAIGA, Biomes.SNOWY_PLAINS, Biomes.ICE_SPIKES)),
+            Map.entry(TAIGA, List.of(Biomes.TAIGA, Biomes.SNOWY_TAIGA)),
             Map.entry(OLD_GROWTH_PINE_TAIGA, List.of(Biomes.OLD_GROWTH_PINE_TAIGA)),
             Map.entry(OLD_GROWTH_SPRUCE_TAIGA, List.of(Biomes.OLD_GROWTH_SPRUCE_TAIGA)),
             Map.entry(WINDSWEPT_HILLS, List.of(Biomes.WINDSWEPT_HILLS, Biomes.WINDSWEPT_GRAVELLY_HILLS,

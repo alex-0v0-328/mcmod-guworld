@@ -104,7 +104,8 @@ public final class BoundedNoiseGenerator extends NoiseBasedChunkGenerator implem
     }
 
     public BlissfulLandSite getSite(RandomState random) {
-        return sites.computeIfAbsent(random, key -> new SiteSlot()).get(generatorSettings().value(), random);
+        return sites.computeIfAbsent(random, key -> new SiteSlot()).get(generatorSettings().value(), random,
+                getBiomeSource());
     }
 
     @Override
@@ -176,11 +177,11 @@ public final class BoundedNoiseGenerator extends NoiseBasedChunkGenerator implem
 
         private volatile BlissfulLandSite site;
 
-        private BlissfulLandSite get(NoiseGeneratorSettings settings, RandomState random) {
+        private BlissfulLandSite get(NoiseGeneratorSettings settings, RandomState random, BiomeSource biomes) {
             BlissfulLandSite known = site;
             if (known != null) return known;
             synchronized (this) {
-                if (site == null) site = BlissfulLandSite.pick(settings, random);
+                if (site == null) site = BlissfulLandSite.pick(settings, random, biomes);
                 return site;
             }
         }
