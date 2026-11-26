@@ -1,11 +1,7 @@
 {
   "placement": {
-    "type": "minecraft:concentric_rings",
-    "count": 1,
-    "distance": 0,
-    "preferred_biomes": [],
-    "salt": 0,
-    "spread": 1
+    "type": "guworld:gentle_site",
+    "salt": 20261126
   },
   "structures": [
     {

@@ -1,11 +1,14 @@
 package net.alex.guzhenrenworld.waterways;
 
+import com.google.common.base.Suppliers;
 import com.mojang.logging.LogUtils;
 import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
@@ -29,9 +32,9 @@ import org.slf4j.Logger;
  *       {@link WaterwaysRuntime} 调 {@link #cancel}：排队中的任务直接出队并回退为空索引，运行中的规划阶段地面扫描随即
  *       抛出 {@link CancellationException} 停下，回退为空索引且不写存档，免得单人退回标题后旧世界的建图继续占满线程、重
  *       进时再起第二份。</li>
- *   <li>禁区内的列不等索引：离原点不到 {@link Waterways.Region#keepOut()} 减 {@link Waterways#KEEP_OUT_REACH} 格的列一
- *       定不刻河、不放水，直接返回。狐仙福地起服时荡魂山就在主线程上取山脚高度，等福地建图（几十秒）会被看门狗判卡死。
- *       </li>
+ *   <li>禁区内的列不等索引：离禁区中心（{@link Waterways#getKeepOutCentre}，首次用到时取一次）不到
+ *       {@link Waterways.Region#keepOut()} 减 {@link Waterways#KEEP_OUT_REACH} 格的列一定不刻河、不放水，直接返回。主模
+ *       组在主线程上同步生成荡魂山起点区块与正南 160 格的入口区块，等福地建图（几十秒）会被看门狗判卡死。</li>
  *   <li>远离开河网格桶的水平列只需一次桶数组判空即可快速跳过；落入有效桶的列先叠加 {@link Waterways#MEANDER} 蜿蜒偏移，
  *       仅当落入岸带过渡区时才通过 {@link GroundHeights} 从水面加下切深度处采样原地面高度（在噪声区块内直接复用传入的本
  *       区块地形副本）。</li>
@@ -51,6 +54,7 @@ public final class WaterwaysCarver {
     private final GroundHeights ground;
     private final NormalNoise meander;
     private final double keptOut;
+    private final Supplier<BlockPos> centre;
     private final WaterwaysBuild<WaterwaysIndex> build;
     private final ThreadLocal<Columns> columns = ThreadLocal.withInitial(Columns::new);
     private volatile WaterwaysIndex ready;
@@ -70,6 +74,7 @@ public final class WaterwaysCarver {
         this.meander = random.getOrCreateNoise(Waterways.MEANDER_NOISE);
         double reach = region.keepOut() - Waterways.KEEP_OUT_REACH;
         this.keptOut = region.keepOut() > 0 && reach > 0 ? reach * reach : -1.0;
+        this.centre = Suppliers.memoize(() -> Waterways.getKeepOutCentre(generator, random));
     }
 
     public static WaterwaysCarver create(Waterways.Region region, NoiseBasedChunkGenerator generator,
@@ -117,7 +122,11 @@ public final class WaterwaysCarver {
     }
 
     private boolean isKeptOut(int x, int z) {
-        return (double) x * x + (double) z * z < keptOut;
+        if (keptOut < 0) return false;
+        BlockPos at = centre.get();
+        double dx = x - at.getX();
+        double dz = z - at.getZ();
+        return dx * dx + dz * dz < keptOut;
     }
 
     public BlockState getBed(int x, int z) {

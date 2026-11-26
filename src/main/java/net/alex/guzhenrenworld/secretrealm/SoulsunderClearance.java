@@ -1,6 +1,5 @@
 package net.alex.guzhenrenworld.secretrealm;
 
-import java.util.List;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.ChunkPos;
@@ -11,7 +10,6 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
-import net.minecraft.world.level.levelgen.structure.placement.ConcentricRingsStructurePlacement;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -22,8 +20,9 @@ import org.jetbrains.annotations.Nullable;
  *       12 格）水平上进了山心净空圆，就当作无效起点丢掉，整座结构不生成。</li>
  *   <li>⚠ 原版要塞也在 {@code SURFACE_STRUCTURES} 步（默认步），只靠 {@code bury} 埋进地下；按步拦会连要塞一起拦掉，所
  *       以埋地结构放行。</li>
- *   <li>山心从结构状态的环位置还原（与 {@link SoulsunderMountainStructure} 同约定，环区块中心），只依赖世界种子与群系
- *       源，与区块生成顺序无关；该维度没有荡魂山结构集时环位置为空，不拦。</li>
+ *   <li>山心从结构状态还原（{@link GentleSitePlacement#find}，与 {@link SoulsunderMountainStructure} 同约定，放置区块
+ *       中心），只依赖世界种子与生成器，与区块生成顺序无关；不是福地生成器建的结构状态或该维度没有荡魂山结构集时，不拦。
+ *       </li>
  *   <li>不用结构集的 {@code exclusion_zone}：它挂在被排斥的一方，要改写原版与其他模组的结构集，且每个放置只能排斥一个结
  *       构集（前哨站已占用，排斥村庄）。</li>
  *   <li>不影响要塞（埋地，且同心环已错开）与地下结构（矿井、古城、试炼密室、埋藏的宝藏、古迹废墟），它们照常可在山下生
@@ -49,16 +48,12 @@ public final class SoulsunderClearance {
             return false;
         }
 
-        List<ChunkPos> mountains = getMountains(state, registries);
-        if (mountains == null || registries.registryOrThrow(Registries.STRUCTURE)
+        ChunkPos mountain = getMountain(state, registries);
+        if (mountain == null || registries.registryOrThrow(Registries.STRUCTURE)
                 .getResourceKey(structure).filter(SoulsunderMountain.STRUCTURE::equals).isPresent()) {
             return false;
         }
-        BoundingBox box = start.getBoundingBox();
-        for (ChunkPos mountain : mountains) {
-            if (crowds(box, mountain.getMiddleBlockX(), mountain.getMiddleBlockZ())) return true;
-        }
-        return false;
+        return crowds(start.getBoundingBox(), mountain.getMiddleBlockX(), mountain.getMiddleBlockZ());
     }
 
     /** {@code box} 的水平投影是否进了以 ({@code x}, {@code z}) 为心的净空圆。 */
@@ -68,10 +63,8 @@ public final class SoulsunderClearance {
         return dx * dx + dz * dz < (long) SoulsunderMountain.CLEARANCE * SoulsunderMountain.CLEARANCE;
     }
 
-    private static @Nullable List<ChunkPos> getMountains(ChunkGeneratorStructureState state,
-            RegistryAccess registries) {
+    private static @Nullable ChunkPos getMountain(ChunkGeneratorStructureState state, RegistryAccess registries) {
         StructureSet set = registries.registryOrThrow(Registries.STRUCTURE_SET).get(SoulsunderMountain.STRUCTURE_SET);
-        return set != null && set.placement() instanceof ConcentricRingsStructurePlacement rings
-                ? state.getRingPositionsFor(rings) : null;
+        return set != null && set.placement() instanceof GentleSitePlacement ? GentleSitePlacement.find(state) : null;
     }
 }

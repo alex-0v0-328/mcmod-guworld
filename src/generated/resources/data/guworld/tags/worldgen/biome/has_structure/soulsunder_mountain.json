@@ -1,5 +1,27 @@
 {
   "values": [
-    "guworld:fox_immortal_blissful_land"
+    "guworld:birch_forest",
+    "guworld:cherry_grove",
+    "guworld:dark_forest",
+    "guworld:dripstone_caves",
+    "guworld:flower_forest",
+    "guworld:forest",
+    "guworld:frozen_peaks",
+    "guworld:grove",
+    "guworld:jagged_peaks",
+    "guworld:lush_caves",
+    "guworld:meadow",
+    "guworld:old_growth_birch_forest",
+    "guworld:old_growth_pine_taiga",
+    "guworld:old_growth_spruce_taiga",
+    "guworld:plains",
+    "guworld:river",
+    "guworld:snowy_slopes",
+    "guworld:stony_peaks",
+    "guworld:sunflower_plains",
+    "guworld:swamp",
+    "guworld:taiga",
+    "guworld:windswept_forest",
+    "guworld:windswept_hills"
   ]
 }

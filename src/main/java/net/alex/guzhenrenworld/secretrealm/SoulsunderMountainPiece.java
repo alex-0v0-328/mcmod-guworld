@@ -54,10 +54,11 @@ import org.slf4j.Logger;
  *       {@code WorldGenRegion} 的邻块与方块实体逻辑，也不排光照更新；光照在其后的 {@code INITIALIZE_LIGHT} 阶段对整个区
  *       块一次算出；山石不透光（主模组定 lightBlock 15），山体内部没有天空光可传。</li>
  *   <li>被覆盖的方块若带方块实体，同时移除该方块实体，免得转正式区块时留下对不上方块的实体。</li>
- *   <li>边界框是本区块里山形非空列的范围，竖直从世界底部到山顶，因为向下补的深度在装饰前不可知；山脚随地形上移的列可能
- *       略出框顶，只影响 {@code /locate} 一类的框判断。</li>
+ *   <li>边界框是本区块里山形非空列的范围，竖直从世界底部到本区块山形最高的段顶，因为向下补的深度在装饰前不可知；山脚随
+ *       地形上移的列可能略出框顶，只影响 {@code /locate} 一类的框判断。各片框顶的最大值就是山巅最高一层荡魂山石（山底
+ *       + 117），主模组据此反推山底，是跨仓契约；起点自身的框被原版按地形适配外扩 12 格，不能用。</li>
  *   <li>每座山的耗时按结构片累加，最后一片写完时记一行 INFO（山石、补石、清除数、区块数、总耗时、最慢区块）；中途重启的
- *       山只记不全，不再补记。累加表按山心坐标记，福地山心总在同一处，所以停服时清空（{@link #clearProgress}），单人
+ *       山只记不全，不再补记。累加表按山心坐标记，同一种子的福地山心总在同一处，所以停服时清空（{@link #clearProgress}），单人
  *       换存档后不接着上一个世界的计数。</li>
  * </ul>
  */
@@ -93,7 +94,6 @@ public final class SoulsunderMountainPiece extends StructurePiece implements Pie
         int lastX = originX + shape.getWidth() - 1;
         int lastZ = originZ + shape.getDepth() - 1;
         int bottom = Math.min(floor, centre.getY());
-        int top = centre.getY() + shape.getHeight() - 1;
         List<BoundingBox> boxes = new ArrayList<>();
         for (int chunkZ = originZ >> 4; chunkZ <= lastZ >> 4; chunkZ++) {
             for (int chunkX = originX >> 4; chunkX <= lastX >> 4; chunkX++) {
@@ -101,10 +101,14 @@ public final class SoulsunderMountainPiece extends StructurePiece implements Pie
                 int minZ = Integer.MAX_VALUE;
                 int maxX = Integer.MIN_VALUE;
                 int maxZ = Integer.MIN_VALUE;
+                int top = Integer.MIN_VALUE;
                 for (int z = Math.max(chunkZ << 4, originZ); z <= Math.min((chunkZ << 4) + 15, lastZ); z++) {
                     for (int x = Math.max(chunkX << 4, originX); x <= Math.min((chunkX << 4) + 15, lastX); x++) {
-                        if (shape.getSpanCount((z - originZ) * shape.getWidth() + x - originX) == 0) continue;
+                        int column = (z - originZ) * shape.getWidth() + x - originX;
+                        int count = shape.getSpanCount(column);
+                        if (count == 0) continue;
 
+                        top = Math.max(top, centre.getY() + shape.getTop(column, count - 1));
                         minX = Math.min(minX, x);
                         maxX = Math.max(maxX, x);
                         minZ = Math.min(minZ, z);

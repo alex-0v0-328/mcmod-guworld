@@ -24,7 +24,7 @@ import net.minecraft.world.level.levelgen.placement.RarityFilter;
  *       {@code TOP_LAYER_MODIFICATION}（植被装饰之后）将放置地物注入 {@link #BIOMES} 群系标签；本类的两个引导方法由
  *       {@code datagen.DatapackProvider} 调用。</li>
  *   <li>{@code datagen.BiomeTagsProvider} 将本类的主世界陆地群系名单（{@link #LAND_BIOMES}，不含洞穴变体）与四域、狐仙福
- *       地（不含平地圈）的陆地群系汇总写入 {@link #BIOMES}；世界生成条目归属本模组命名空间，而元泉方块、流体、物品与渲染归属主模组。</li>
+ *       地的陆地群系汇总写入 {@link #BIOMES}；世界生成条目归属本模组命名空间，而元泉方块、流体、物品与渲染归属主模组。</li>
  *   <li>放置地物按 {@link #RARITY} 稀有度尝试触发，实际能否成泉取决于 {@link SpiritSpringGround} 是否在候选范围内找到合
  *       格平地。</li>
  *   <li>⚠ 元泉为陆地地表结构，{@link #LAND_BIOMES} 严禁简化替换为包含海洋与河流的 {@code #minecraft:is_overworld}。

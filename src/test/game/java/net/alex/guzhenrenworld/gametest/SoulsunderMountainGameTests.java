@@ -16,8 +16,12 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.GuzhenrenBlocks;
+import net.alex.guzhenrenworld.biome.Replicas;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandSite;
 import net.alex.guzhenrenworld.dimension.blissfulland.BoundedNoiseGenerator;
 import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
+import net.alex.guzhenrenworld.secretrealm.GentleSitePlacement;
 import net.alex.guzhenrenworld.secretrealm.SoulsunderClearance;
 import net.alex.guzhenrenworld.secretrealm.SoulsunderMountain;
 import net.alex.guzhenrenworld.secretrealm.SoulsunderMountainPiece;
@@ -62,7 +66,6 @@ import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
-import net.minecraft.world.level.levelgen.structure.placement.ConcentricRingsStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -73,26 +76,29 @@ import org.slf4j.Logger;
 /**
  * 荡魂山与狐仙福地的世界生成运行时检查，按福地自己的生成器（不经 GameTest 自身的超平坦世界）。
  * <ul>
- *   <li>注册：结构集是 1 个点、distance 0、偏好群系为空的同心环，结构在 {@code SURFACE_STRUCTURES} 步、地形适配
- *       {@code beard_thin}，群系只有福地一个。</li>
- *   <li>放置：三个种子下，福地结构状态的环位都恰为区块 (0, 0)；主世界结构状态算不出该结构集的环位。</li>
- *   <li>生成：福地里环区块起点有效、山心为 {@link #CENTRE}、每个区块一片；山体区块并行做噪声填充两遍（无胡须、有胡须，
+ *   <li>注册：结构集用缓地放置（{@code guworld:gentle_site}），结构在 {@code SURFACE_STRUCTURES} 步、地形适配
+ *       {@code beard_thin}，群系是福地全部群系。</li>
+ *   <li>挑址：{@link #SITE_SEEDS} 三个种子下，各建两份互不相干的福地生成器与 {@code RandomState}，挑出的区块相同（确定
+ *       性），在原点 ±32 区块内、合格（无水、起伏不超过 24 格、山底不高于 y 190，山巅不超建造上限）；山心周围
+ *       {@link #DRY_CHECK} 格 3×3 列的噪声地形上没有水；放置器只在该区块命中；原版主世界的结构状态处处不命中。日志
+ *       {@code soulsunder mountain site} 记每次挑址毫秒数、区块、山底与起伏。</li>
+ *   <li>生成：福地里挑址区块起点有效、山心为挑址给出的山心、结构片边界框最高顶是山巅（山底 + 117）、每个区块一片；山体区块并行做噪声填充两遍（无胡须、有胡须，
  *       不含地表、雕刻与地物；先空跑一遍预热），各由结构片逐区块写入并计时，日志 {@code soulsunder mountain fill} 记噪
  *       声与写入毫秒数、山石、补石与清除数；有胡须时补石不多于无胡须，写入后贴地列的最低山石下方是实心方块（无浮空），
- *       各列最高一段以上到地表只剩空气与流体，山心列顶到山底加山形顶高；行宫锚点 {@link #ANCHOR} 脚下是山石、往上
- *       {@link #HEADROOM} 格是空的、{@link #ROOF_REACH} 格内有洞顶，山巅站立点 {@link #SUMMIT} 脚下是山石。</li>
+ *       各列最高一段以上到地表只剩空气与流体，山心列顶到山底加山形顶高；行宫锚点（山心 + {@link #ANCHOR}）脚下是山石、
+ *       往上 {@link #HEADROOM} 格是空的、{@link #ROOF_REACH} 格内有洞顶，山巅站立点（山心 + {@link #SUMMIT}）脚下是山石。
+ *       </li>
  *   <li>坡地：在原版主世界（种子 {@link #SLOPE_SEED}）沿一条斜线找第一个山心周围 ±{@link #SLOPE_REACH} 格地面落差
- *       不小于 {@link #SLOPE_RELIEF} 格的陆地区块，把山立在那里（福地平台上山脚不贴地形、不补石，这轮补上覆盖）：无胡
- *       须时要补石，有胡须时补石不多于无胡须，没有浮空列，山上不压原地形。</li>
- *   <li>福地地形：山心 {@link #PLATFORM_CHECK} 格内地表都在 y 64（含主模组入口落点 {@link #LANDING} 周围），界内最后
- *       一列区块有方块、界外第一列区块全空；疆域内稀疏取样有水面、有地下洞穴，日志 {@code blissful land terrain} 记水面
+ *       不小于 {@link #SLOPE_RELIEF} 格的陆地区块，把山立在那里（福地挑的是缓地，补石少，这轮补上覆盖）：无胡须时要补石，有胡须时补石不多于无胡须，没有浮空列，山上不压原地形。</li>
+ *   <li>福地疆域：界内最后一列区块有方块、界外第一列区块全空；疆域内稀疏取样有水面、有地下洞穴，日志 {@code blissful land terrain} 记水面
  *       列、地面高度与洞穴占比。</li>
  *   <li>断崖：沿疆域东边线每 {@link #EDGE_STEP} 格查噪声地形，找到第一列挨着虚空的流体，填充它所在的区块后，东边
  *       线那一列从下到上没有流体。</li>
  *   <li>积雪：荡魂山石上雪层不能存活，原版石头上能。</li>
- *   <li>净空：原版主世界噪声配上平原与福地两个群系的棋盘群系源（{@link #CHECKER_SIZE}，原点所在 256 格见方是平原），手
- *       建「荡魂山 + 村庄」的结构状态（环位同样是区块 (0, 0)），从种子 1 起找一个原版会在山心净空圆里生成村庄的种子，对
- *       该区块走 {@code createStructures} 后，区块里没有进净空圆的结构起点；要塞与荡魂山自身不受净空约束。</li>
+ *   <li>净空：原版主世界噪声配上原版平原与福地平原复刻两个群系的棋盘群系源（{@link #CHECKER_SIZE}），套进有疆域生成器
+ *       （先经 {@code createState} 登记，荡魂山照样挑缓地），手建「荡魂山 + 村庄」的结构状态，从种子 1 起找一个原版会在
+ *       山心净空圆里生成村庄的种子，对该区块走 {@code createStructures} 后，区块里没有进净空圆的结构起点；要塞与荡魂山
+ *       自身不受净空约束。</li>
  *   <li>计时只含噪声与结构片写入；正式生成在 {@code FEATURES} 状态写入、多维护两张高度图，游戏内每座山的实际耗时以结构
  *       片的 INFO 日志为准。</li>
  * </ul>
@@ -104,14 +110,12 @@ public final class SoulsunderMountainGameTests {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final long SEED = 12345L;
-    private static final BlockPos CENTRE = new BlockPos(8, 64, 8);
-    private static final BlockPos LANDING = new BlockPos(8, 65, 168);
-    private static final BlockPos ANCHOR = new BlockPos(6, 104, 5);
+    private static final BlockPos ANCHOR = new BlockPos(-2, 40, -3);
     private static final int HEADROOM = 3;
     private static final int ROOF_REACH = 20;
-    private static final BlockPos SUMMIT = new BlockPos(12, 182, 6);
-    private static final int PLATFORM_CHECK = 184;
-    private static final int PLATFORM_STEP = 8;
+    private static final BlockPos SUMMIT = new BlockPos(4, 118, -2);
+    private static final int SUMMIT_RISE = 117;
+    private static final int DRY_CHECK = 32;
     private static final int TERRAIN_REACH = 4096;
     private static final int TERRAIN_STEP = 128;
     private static final int CAVE_DEPTH = 8;
@@ -122,7 +126,7 @@ public final class SoulsunderMountainGameTests {
     private static final int SLOPE_STRIDE = 24;
     private static final int SLOPE_REACH = 64;
     private static final int SLOPE_RELIEF = 24;
-    private static final long[] RING_SEEDS = {SEED, 10L, 20261120L};
+    private static final long[] SITE_SEEDS = {SEED, 10L, 20261120L};
     private static final int VILLAGE_SEEDS = 48;
     private static final int VILLAGE_REACH = 96;
     private static final int DUMP_REACH = 112;
@@ -131,13 +135,11 @@ public final class SoulsunderMountainGameTests {
     private SoulsunderMountainGameTests() {}
 
     @GameTest(template = "empty9x9x9")
-    public static void registeredAsTheOriginRingOfTheBlissfulLand(GameTestHelper helper) {
+    public static void registeredAsTheGentleSiteOfTheBlissfulLand(GameTestHelper helper) {
         RegistryAccess registries = helper.getLevel().registryAccess();
         StructureSet set = registries.registryOrThrow(Registries.STRUCTURE_SET)
                 .getOrThrow(SoulsunderMountain.STRUCTURE_SET);
-        helper.assertTrue(set.placement() instanceof ConcentricRingsStructurePlacement rings && rings.count() == 1
-                && rings.distance() == 0 && rings.preferredBiomes().size() == 0,
-                "the set is not one unbiased ring point at the origin");
+        helper.assertTrue(set.placement() instanceof GentleSitePlacement, "the set is placed by " + set.placement());
         helper.assertTrue(set.structures().size() == 1
                 && set.structures().getFirst().structure().is(SoulsunderMountain.STRUCTURE), "the set lists " + set);
         Structure structure = registries.registryOrThrow(Registries.STRUCTURE).getOrThrow(SoulsunderMountain.STRUCTURE);
@@ -145,22 +147,55 @@ public final class SoulsunderMountainGameTests {
         helper.assertTrue(structure.terrainAdaptation() == TerrainAdjustment.BEARD_THIN,
                 "terrain adaptation " + structure.terrainAdaptation());
         Registry<Biome> biomes = registries.registryOrThrow(Registries.BIOME);
-        helper.assertTrue(structure.biomes().size() == 1
-                && structure.biomes().contains(biomes.getHolderOrThrow(FoxImmortalBlissfulLand.BIOME)),
-                "the mountain may stand in " + structure.biomes());
+        helper.assertTrue(structure.biomes().size() == BlissfulLandBiomes.ROSTER.size()
+                && BlissfulLandBiomes.ROSTER.stream().allMatch(key -> structure.biomes()
+                .contains(biomes.getHolderOrThrow(key))), "the mountain may stand in " + structure.biomes());
         helper.succeed();
     }
 
-    @GameTest(template = "empty9x9x9", timeoutTicks = 400)
-    public static void ringSitsOnTheOriginChunkOfTheBlissfulLandOnly(GameTestHelper helper) {
-        for (long seed : RING_SEEDS) {
+    @GameTest(template = "empty9x9x9", timeoutTicks = 1200)
+    public static void siteIsGentleDeterministicAndBlissfulOnly(GameTestHelper helper) {
+        StructurePlacement placement = helper.getLevel().registryAccess().registryOrThrow(Registries.STRUCTURE_SET)
+                .getOrThrow(SoulsunderMountain.STRUCTURE_SET).placement();
+        for (long seed : SITE_SEEDS) {
             BlissfulLand land = BlissfulLand.create(helper, seed);
-            List<ChunkPos> ring = land.structures().getRingPositionsFor(getRings(helper));
-            helper.assertTrue(List.of(new ChunkPos(0, 0)).equals(ring), "seed " + seed + ": the ring is " + ring);
-            List<ChunkPos> overworld = Overworld.create(helper, seed).structures()
-                    .getRingPositionsFor(getRings(helper));
-            helper.assertTrue(overworld == null || overworld.isEmpty(),
-                    "seed " + seed + ": the overworld still rings the mountain at " + overworld);
+            long started = System.nanoTime();
+            BlissfulLandSite site = land.generator().getSite(land.random());
+            long millis = (System.nanoTime() - started) / 1_000_000;
+            BlissfulLandSite again = BlissfulLand.create(helper, seed).site();
+            LOGGER.info("soulsunder mountain site (seed {}): {} ms, chunk {}, floor y {}, relief {}, wet {}", seed,
+                    millis, site.chunk(), site.floor(), site.relief(), site.wet());
+            helper.assertTrue(site.equals(again), "seed " + seed + ": picked " + site + " then " + again);
+            helper.assertTrue(Math.abs(site.chunk().x) <= BlissfulLandSite.REACH_CHUNKS
+                    && Math.abs(site.chunk().z) <= BlissfulLandSite.REACH_CHUNKS, "seed " + seed + ": " + site
+                    + " lies beyond the reach");
+            helper.assertTrue(site.isGentle(), "seed " + seed + ": no gentle site, picked " + site);
+            helper.assertTrue(site.floor() + SUMMIT_RISE < HEIGHTS.getMaxBuildHeight(),
+                    "seed " + seed + ": the summit of " + site + " tops the build limit");
+            BlockPos centre = site.centre();
+            for (int dz = -1; dz <= 1; dz++) {
+                for (int dx = -1; dx <= 1; dx++) {
+                    int x = centre.getX() + dx * DRY_CHECK;
+                    int z = centre.getZ() + dz * DRY_CHECK;
+                    int surface = land.generator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, HEIGHTS,
+                            land.random());
+                    int floor = land.generator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, HEIGHTS,
+                            land.random());
+                    helper.assertTrue(surface == floor, "seed " + seed + ": water stands at " + x + ", " + z);
+                }
+            }
+            ChunkPos chunk = site.chunk();
+            helper.assertTrue(placement.isStructureChunk(land.structures(), chunk.x, chunk.z),
+                    "seed " + seed + ": the placement misses " + chunk);
+            for (ChunkPos other : List.of(new ChunkPos(chunk.x + 1, chunk.z), new ChunkPos(chunk.x, chunk.z - 1),
+                    new ChunkPos(0, 0).equals(chunk) ? new ChunkPos(4, 4) : new ChunkPos(0, 0))) {
+                helper.assertFalse(placement.isStructureChunk(land.structures(), other.x, other.z),
+                        "seed " + seed + ": the placement also hits " + other);
+            }
+            Overworld overworld = Overworld.create(helper, seed);
+            helper.assertTrue(GentleSitePlacement.find(overworld.structures()) == null
+                    && !placement.isStructureChunk(overworld.structures(), chunk.x, chunk.z),
+                    "seed " + seed + ": the overworld still places the mountain");
         }
         helper.succeed();
     }
@@ -174,7 +209,8 @@ public final class SoulsunderMountainGameTests {
         BlockState stone = GuzhenrenBlocks.SOULSUNDER_STONE.get().defaultBlockState();
         long seed = SEED;
         BlissfulLand world = BlissfulLand.create(helper, seed);
-        ChunkPos ring = new ChunkPos(0, 0);
+        BlissfulLandSite site = world.site();
+        ChunkPos ring = site.chunk();
         StructureStart start = structure.generate(registries, world.generator(), world.generator().getBiomeSource(),
                 world.random(), helper.getLevel().getServer().getStructureManager(), seed, ring, 0, HEIGHTS,
                 biome -> structure.biomes().contains(biome));
@@ -182,7 +218,10 @@ public final class SoulsunderMountainGameTests {
         List<SoulsunderMountainPiece> pieces = start.getPieces().stream()
                 .map(SoulsunderMountainPiece.class::cast).toList();
         BlockPos centre = pieces.getFirst().getCentre();
-        helper.assertTrue(centre.equals(CENTRE), "the centre " + centre + " is not " + CENTRE);
+        helper.assertTrue(centre.equals(site.centre()), "the centre " + centre + " is not " + site.centre());
+        int boxTop = start.getPieces().stream().mapToInt(piece -> piece.getBoundingBox().maxY()).max().orElseThrow();
+        helper.assertTrue(boxTop == centre.getY() + SUMMIT_RISE, "the pieces top out at y " + boxTop
+                + ", not the summit");
         helper.assertTrue(pieces.stream().allMatch(piece -> getChunk(piece).equals(getChunk(piece, true))),
                 "a piece spans two chunks");
         fillMountain(world.generator(), world.random(), seed, pieces, null, biomes, "warm-up",
@@ -206,14 +245,16 @@ public final class SoulsunderMountainGameTests {
         helper.assertTrue(middle.getBlockState(centre.atY(top)).is(stone.getBlock())
                 && !middle.getBlockState(centre.atY(top + 1)).is(stone.getBlock()),
                 "seed " + seed + ": the summit is not at y " + top);
-        helper.assertTrue(isStone(chunks, ANCHOR.below())
-                        && BlockPos.betweenClosedStream(ANCHOR, ANCHOR.above(HEADROOM - 1))
+        BlockPos anchor = centre.offset(ANCHOR);
+        helper.assertTrue(isStone(chunks, anchor.below())
+                        && BlockPos.betweenClosedStream(anchor, anchor.above(HEADROOM - 1))
                         .noneMatch(pos -> isStone(chunks, pos))
-                        && BlockPos.betweenClosedStream(ANCHOR.above(HEADROOM), ANCHOR.above(ROOF_REACH))
+                        && BlockPos.betweenClosedStream(anchor.above(HEADROOM), anchor.above(ROOF_REACH))
                         .anyMatch(pos -> isStone(chunks, pos)),
-                "the palace anchor " + ANCHOR + " does not stand in a roofed hollow");
-        helper.assertTrue(isStone(chunks, SUMMIT.below()) && !isStone(chunks, SUMMIT),
-                "the summit stone is not under " + SUMMIT);
+                "the palace anchor " + anchor + " does not stand in a roofed hollow");
+        BlockPos standing = centre.offset(SUMMIT);
+        helper.assertTrue(isStone(chunks, standing.below()) && !isStone(chunks, standing)
+                && standing.getY() - 1 == centre.getY() + SUMMIT_RISE, "the summit stone is not under " + standing);
         helper.succeed();
     }
 
@@ -249,32 +290,10 @@ public final class SoulsunderMountainGameTests {
     }
 
     @GameTest(template = "empty9x9x9", timeoutTicks = 1200)
-    public static void blissfulLandIsFlatAroundTheMountainAndVoidOutside(GameTestHelper helper) {
+    public static void blissfulLandIsVoidOutside(GameTestHelper helper) {
         BlissfulLand land = BlissfulLand.create(helper, SEED);
         BoundedNoiseGenerator generator = land.generator();
         RandomState random = land.random();
-        int uneven = 0;
-        for (int dz = -PLATFORM_CHECK; dz <= PLATFORM_CHECK; dz += PLATFORM_STEP) {
-            for (int dx = -PLATFORM_CHECK; dx <= PLATFORM_CHECK; dx += PLATFORM_STEP) {
-                if (dx * dx + dz * dz > PLATFORM_CHECK * PLATFORM_CHECK) continue;
-
-                int x = CENTRE.getX() + dx;
-                int z = CENTRE.getZ() + dz;
-                if (generator.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG, HEIGHTS, random) != LANDING.getY()
-                        || generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, HEIGHTS, random)
-                        != LANDING.getY()) {
-                    uneven++;
-                }
-            }
-        }
-        helper.assertTrue(uneven == 0, uneven + " platform columns are not grass-high at y 64");
-        for (int dz = -1; dz <= 1; dz++) {
-            for (int dx = -1; dx <= 1; dx++) {
-                int height = generator.getBaseHeight(LANDING.getX() + dx, LANDING.getZ() + dz,
-                        Heightmap.Types.WORLD_SURFACE_WG, HEIGHTS, random);
-                helper.assertTrue(height == LANDING.getY(), "the landing is " + height + " high, not " + LANDING);
-            }
-        }
         int edge = FoxImmortalBlissfulLand.HALF_SIZE_CHUNKS;
         Registry<Biome> biomes = helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
         for (ChunkPos position : List.of(new ChunkPos(edge - 1, 0), new ChunkPos(-edge, edge - 1))) {
@@ -345,17 +364,18 @@ public final class SoulsunderMountainGameTests {
         Holder<StructureSet> mountainSet = sets.getHolderOrThrow(SoulsunderMountain.STRUCTURE_SET);
         Holder<StructureSet> villages = sets.getHolderOrThrow(BuiltinStructureSets.VILLAGES);
         Registry<Biome> biomes = registries.registryOrThrow(Registries.BIOME);
-        NoiseBasedChunkGenerator generator = new NoiseBasedChunkGenerator(new CheckerboardColumnBiomeSource(
+        BoundedNoiseGenerator generator = new BoundedNoiseGenerator(new CheckerboardColumnBiomeSource(
                 HolderSet.direct(biomes.getHolderOrThrow(Biomes.PLAINS),
-                        biomes.getHolderOrThrow(FoxImmortalBlissfulLand.BIOME)), CHECKER_SIZE),
-                registries.lookupOrThrow(Registries.NOISE_SETTINGS).getOrThrow(NoiseGeneratorSettings.OVERWORLD));
+                        biomes.getHolderOrThrow(Replicas.PLAINS)), CHECKER_SIZE),
+                registries.lookupOrThrow(Registries.NOISE_SETTINGS).getOrThrow(NoiseGeneratorSettings.OVERWORLD),
+                FoxImmortalBlissfulLand.HALF_SIZE_CHUNKS);
         for (long seed = 1; seed <= VILLAGE_SEEDS; seed++) {
             Overworld world = new Overworld(generator, RandomState.create(generator.generatorSettings().value(),
                     registries.lookupOrThrow(Registries.NOISE), seed), null, sets);
+            generator.createState(registries.lookupOrThrow(Registries.STRUCTURE_SET), world.random(), seed);
             ChunkGeneratorStructureState state = ChunkGeneratorStructureState.createForFlat(world.random(), seed,
                     generator.getBiomeSource(), Stream.of(mountainSet, villages));
-            ChunkPos ring = state.getRingPositionsFor(
-                    (ConcentricRingsStructurePlacement) mountainSet.value().placement()).getFirst();
+            ChunkPos ring = GentleSitePlacement.find(state);
             int x = ring.getMiddleBlockX();
             int z = ring.getMiddleBlockZ();
             for (var kept : List.of(SoulsunderMountain.STRUCTURE, BuiltinStructures.STRONGHOLD)) {
@@ -562,11 +582,6 @@ public final class SoulsunderMountainGameTests {
         return true;
     }
 
-    private static ConcentricRingsStructurePlacement getRings(GameTestHelper helper) {
-        return (ConcentricRingsStructurePlacement) helper.getLevel().registryAccess()
-                .registryOrThrow(Registries.STRUCTURE_SET).getOrThrow(SoulsunderMountain.STRUCTURE_SET).placement();
-    }
-
     private static ChunkPos findSlope(Overworld world) {
         for (int i = 0; i < SLOPE_TRIES; i++) {
             ChunkPos chunk = new ChunkPos(i * SLOPE_STRIDE, i * SLOPE_STRIDE / 2);
@@ -675,10 +690,12 @@ public final class SoulsunderMountainGameTests {
             }
             RandomState random = RandomState.create(generator.generatorSettings().value(),
                     registries.lookupOrThrow(Registries.NOISE), seed);
-            ChunkGeneratorStructureState structures = ChunkGeneratorStructureState.createForNormal(random, seed,
-                    generator.getBiomeSource(), registries.lookupOrThrow(Registries.STRUCTURE_SET));
+            ChunkGeneratorStructureState structures = generator.createState(
+                    registries.lookupOrThrow(Registries.STRUCTURE_SET), random, seed);
             structures.ensureStructuresGenerated();
             return new BlissfulLand(generator, random, structures);
         }
+
+        BlissfulLandSite site() { return generator.getSite(random); }
     }
 }

@@ -3,7 +3,6 @@ package net.alex.guzhenrenworld.dimension.blissfulland;
 import com.mojang.datafixers.util.Pair;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,21 +20,14 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList;
 
 /**
- * 狐仙福地的群系名单与多噪声表：照中州（原版主世界）的温带陆地与山地群系，平地圈另占一格。
+ * 狐仙福地的群系名单与多噪声表：照中州（原版主世界）的温带陆地与山地群系。
  * <ul>
  *   <li>表取原版主世界预设（{@link MultiNoiseBiomeSourceParameterList.Preset#OVERWORLD}）逐条照抄，只把群系按
  *       {@link #SOURCES} 换成本名单里的复刻；沙漠、热带草原、恶地、丛林、红树林与海洋、海滩这些名单外的群系并到最接近的
  *       平原或森林（原著称狐仙福地是草原地貌，不是沙漠），雪原、冰刺并到针叶林，冻河并到河流，深暗之域并到溶洞。</li>
- *   <li>平地圈：表里另加一格，大陆度在 {@link #RING_CONTINENTALNESS} 以上、深度 0 到 {@link #RING_DEPTH}、其余参数全
- *       域，指向 {@link FoxImmortalBlissfulLand#BIOME}；圈外大陆度截到 1，只有 {@link BlissfulLandTerrain} 在山心周围
- *       把大陆度压到 2 时才落进这一格，荡魂山的结构群系标签也只认这个群系。这一格离 1 留得远：Tectonic 的温度、侵
- *       蚀会超出原版范围，离原版各格都远的点会被全域的这一格抢走。</li>
- *   <li>气候参数编解码只收 ±{@link #PARAMETER_LIMIT}（±2）；原版各格深度只有 0、1、0.2–0.9 与 1.1 几档，若平地圈深
- *       度设为全域会让远处高空（深度很负）落进该格，故限定在 0 到 {@link #RING_DEPTH}。</li>
  *   <li>复刻：{@link #REPLICAS} 是只有福地用的原版复刻；平原、河流、两种洞穴、雪林与冰封山峰和别的域共用，在
- *       {@link Replicas#SHARED}。</li>
- *   <li>陆地（{@link #LAND}）：名单去掉河流、两种洞穴和平地圈群系，元泉与野生知心草按它在福地生成（Alex 定，同四域）；
- *       平地圈群系只加进知心草，不加元泉，元泉的水池会占掉田区和入口落点附近的平地。</li>
+ *       {@link Replicas#SHARED}。{@link #ROSTER} 是福地全部群系，荡魂山的结构群系标签也取它。</li>
+ *   <li>陆地（{@link #LAND}）：名单去掉河流与两种洞穴，元泉与野生知心草按它在福地生成（Alex 定，同四域）。</li>
  *   <li>知心草（{@link #GRASSLAND}）另去掉雪林、冰封山峰：这两个复刻与北原共用，群系标签按群系生效，加进来北原也会挂上；
  *       两者都是雪地，本来就长不出。</li>
  *   <li>⚠ 原版预设里每个群系都要在 {@link #SOURCES} 有去处，漏掉的在数据生成时直接报错。</li>
@@ -44,9 +36,6 @@ import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList;
 
 public final class BlissfulLandBiomes {
 
-    public static final float RING_CONTINENTALNESS = 1.9F;
-    private static final float PARAMETER_LIMIT = 2.0F;
-    private static final float RING_DEPTH = 1.1F;
     public static final List<Replicas.Template> REPLICAS = List.of(
             Replicas.of(Biomes.SUNFLOWER_PLAINS,
                     (placed, carvers) -> OverworldBiomes.plains(placed, carvers, true, false, false)),
@@ -172,24 +161,16 @@ public final class BlissfulLandBiomes {
             if (target == null) throw new IllegalStateException("no blissful land biome for " + entry.getSecond());
             parameters.add(Pair.of(entry.getFirst(), biomes.getOrThrow(target)));
         }
-        Climate.Parameter whole = Climate.Parameter.span(-PARAMETER_LIMIT, PARAMETER_LIMIT);
-        Climate.Parameter ring = Climate.Parameter.span(RING_CONTINENTALNESS, PARAMETER_LIMIT);
-        Climate.Parameter depth = Climate.Parameter.span(0.0F, RING_DEPTH);
-        parameters.add(Pair.of(Climate.parameters(whole, whole, ring, whole, depth, whole, 0.0F),
-                biomes.getOrThrow(FoxImmortalBlissfulLand.BIOME)));
         return parameters;
     }
 
     private static List<ResourceKey<Biome>> getGrassland() {
         List<ResourceKey<Biome>> grassland = new ArrayList<>(LAND);
         grassland.removeAll(List.of(Replicas.GROVE, Replicas.FROZEN_PEAKS));
-        grassland.add(FoxImmortalBlissfulLand.BIOME);
         return List.copyOf(grassland);
     }
 
     private static Set<ResourceKey<Biome>> getRoster() {
-        Set<ResourceKey<Biome>> roster = new LinkedHashSet<>(SOURCES.keySet());
-        roster.add(FoxImmortalBlissfulLand.BIOME);
-        return Set.copyOf(roster);
+        return Set.copyOf(SOURCES.keySet());
     }
 }

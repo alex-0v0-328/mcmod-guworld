@@ -2,6 +2,7 @@ package net.alex.guzhenrenworld.waterways;
 
 import java.util.concurrent.CancellationException;
 import java.util.function.BooleanSupplier;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
@@ -66,22 +67,23 @@ public final class WaterwaysPlanner {
         GroundHeights heights = new GroundHeights(random.router(), minY, minY + settings.noiseSettings().height());
         BiomeSource biomes = generator.getBiomeSource();
         Climate.Sampler sampler = random.sampler();
+        BlockPos centre = region.keepOut() > 0 ? Waterways.getKeepOutCentre(generator, random) : BlockPos.ZERO;
         WaterwaysPool.forEach(x.length, cell -> {
             if (cancelled.getAsBoolean()) throw new CancellationException(region.name());
             int height = heights.sample(x[cell], z[cell]);
             ground[cell] = height;
-            kind[cell] = isWall(region, cell, size, x[cell], z[cell]) ? WaterwaysPlan.Kind.WALL
+            kind[cell] = isWall(region, centre, cell, size, x[cell], z[cell]) ? WaterwaysPlan.Kind.WALL
                     : classify(cell, size, height, settings.seaLevel(), biomes.getNoiseBiome(
                     QuartPos.fromBlock(x[cell]), QuartPos.fromBlock(height), QuartPos.fromBlock(z[cell]), sampler)
                     .is(key -> key.location().getPath().endsWith("river")));
         });
     }
 
-    private static boolean isWall(Waterways.Region region, int cell, int size, int x, int z) {
+    private static boolean isWall(Waterways.Region region, BlockPos centre, int cell, int size, int x, int z) {
         int column = cell % size;
         int row = cell / size;
         boolean edge = column == 0 || row == 0 || column == size - 1 || row == size - 1;
-        return region.walled() && edge || Math.hypot(x, z) < region.keepOut();
+        return region.walled() && edge || Math.hypot(x - centre.getX(), z - centre.getZ()) < region.keepOut();
     }
 
     private static WaterwaysPlan.Kind classify(int cell, int size, int height, int seaLevel, boolean river) {

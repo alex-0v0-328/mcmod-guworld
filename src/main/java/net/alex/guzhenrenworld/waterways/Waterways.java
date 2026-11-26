@@ -2,12 +2,15 @@ package net.alex.guzhenrenworld.waterways;
 
 import com.mojang.serialization.Codec;
 import net.alex.guzhenrenworld.GuWorld;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
+import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,8 +37,9 @@ import org.jetbrains.annotations.NotNull;
  *       {@link #DRY_WIDTH} 格的主干河道中注水，其余支流保持为干涸河谷。</li>
  *   <li>网格边长按区域给（{@link Region#cell()}，默认 {@link #CELL}）：抖动随之放大，成河的汇流格数按面积换算
  *       （{@link Region#minCatchment()}），使网格放粗后溪流仍从同样大的集水面积起头，每段的水面节点数不变。</li>
- *   <li>禁区与墙（狐仙福地用）：{@link Region#keepOut()} 大于 0 时，离原点不到这么多格的网格是墙；
- *       {@link Region#walled()} 时最外一圈也是墙而非出口。墙不进填洼、不收汇流，溪流绕开平地圈，也不流向疆域断面；
+ *   <li>禁区与墙（狐仙福地用）：{@link Region#keepOut()} 大于 0 时，离禁区中心（{@link #getKeepOutCentre}：生成器实现
+ *       {@link KeepOutAnchor} 时由它给出，狐仙福地是荡魂山山心；否则为原点）不到这么多格的网格是墙；
+ *       {@link Region#walled()} 时最外一圈也是墙而非出口。墙不进填洼、不收汇流，溪流绕开禁区，也不流向疆域断面；
  *       {@link #KEEP_OUT_REACH} 为河道半宽、岸带与两轴摆动之和再留 8 格，禁区内更深处碰不到任何线段（随河宽或岸带联
  *       动）。</li>
  *   <li>数据包里的区域边长与禁区半径上限为 {@link #MAX_BORDER_SIZE}：规划按网格数平方开数组，边长再大会让 int 溢出、
@@ -79,6 +83,10 @@ public final class Waterways {
 
     public static void registerNoises(BootstrapContext<NormalNoise.NoiseParameters> context) {
         context.register(MEANDER_NOISE, new NormalNoise.NoiseParameters(MEANDER_OCTAVE, 1.0, 1.0));
+    }
+
+    public static BlockPos getKeepOutCentre(NoiseBasedChunkGenerator generator, RandomState random) {
+        return generator instanceof KeepOutAnchor anchor ? anchor.getKeepOutCentre(random) : BlockPos.ZERO;
     }
 
     public static double getDepth(double width) {
@@ -128,6 +136,12 @@ public final class Waterways {
                         ? Blocks.SAND.defaultBlockState() : Blocks.GRAVEL.defaultBlockState();
             };
         }
+    }
+
+    /** 给出水系禁区中心的生成器；中心只能依赖种子与刻河前的地形，否则与建图互相等待。 */
+    public interface KeepOutAnchor {
+
+        BlockPos getKeepOutCentre(RandomState random);
     }
 
     public record Region(String name, double borderSize, boolean dry, Bed bed, double keepOut, boolean walled,

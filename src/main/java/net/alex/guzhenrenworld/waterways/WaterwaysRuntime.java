@@ -3,6 +3,7 @@ package net.alex.guzhenrenworld.waterways;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
 import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.server.level.ServerLevel;
@@ -68,11 +69,13 @@ public final class WaterwaysRuntime {
                 + (region.cell() != Waterways.CELL ? "/cell" + region.cell() : "");
         WaterwaysCarver carver = new WaterwaysCarver(region, generator, random, (ground, cancelled) -> {
             int[] fingerprint = getFingerprint(ground, generator, random);
-            WaterwaysIndex saved = data.get(key, region, seed, fingerprint);
+            BlockPos centre = Waterways.getKeepOutCentre(generator, random);
+            String keyed = region.keepOut() > 0 ? key + "@" + centre.getX() + "," + centre.getZ() : key;
+            WaterwaysIndex saved = data.get(keyed, region, seed, fingerprint);
             if (saved != null) return saved;
             WaterwaysPlan plan = WaterwaysPlanner.plan(region, generator, random, seed, cancelled);
             WaterwaysIndex built = WaterwaysIndex.of(plan, ground, random.getOrCreateNoise(Waterways.MEANDER_NOISE));
-            data.put(key, seed, fingerprint, built);
+            data.put(keyed, seed, fingerprint, built);
             return built;
         });
         attach(random, carver);

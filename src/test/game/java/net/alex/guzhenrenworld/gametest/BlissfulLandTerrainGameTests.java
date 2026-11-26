@@ -8,7 +8,6 @@ import java.util.TreeMap;
 import java.util.stream.IntStream;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
-import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandTerrain;
 import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
 import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.GameTest;
@@ -28,10 +27,10 @@ import org.slf4j.Logger;
  *   <li>全疆域：{@link #SAMPLES} × {@link #SAMPLES} 网格、间距 {@link #SPACING} 格，以原点为中心铺满疆域；日志
  *       {@code blissful land terrain shape} 记高度分位、y {@link #HIGHLAND} 以上占比、水面列占比和地表群系占比。断言
  *       最高处在 {@link #PEAK_LOW} 到 {@link #PEAK_HIGH} 之间（照中州的尺度，山峰约 y 250），水面列 2%–30%，地表群系至
- *       少 {@link #MIN_BIOMES} 种、都在名单里，平地圈群系只在山心 {@link BlissfulLandTerrain#MARGIN} 格附近（远处的列在地表和
- *       {@link #SKY} 高空都不是）；福地全部群系的地物按装饰步排得出顺序（原版遇到顺序成环会抛错）。</li>
- *   <li>平地圈：山心外 {@link #FLAT_CHECK} 格一圈全平（草方块顶 y 64）；{@link BlissfulLandTerrain#FLAT} 到
- *       {@link BlissfulLandTerrain#RING} 格之间的三圈地面不低于 y 64、没有水，群系都是平地圈的群系。</li>
+ *       少 {@link #MIN_BIOMES} 种、都在名单里（地表与 {@link #SKY} 高空都查）；福地全部群系的地物按装饰步排得出顺序（原
+ *       版遇到顺序成环会抛错）。</li>
+ *   <li>原点附近不再整形：山心外 {@link #NEAR} 格一圈 {@link #SPOKES} 列的地面高差至少 {@link #NEAR_RELIEF} 格（旧平地
+ *       圈全在 y 64）。</li>
  * </ul>
  */
 
@@ -47,11 +46,9 @@ public final class BlissfulLandTerrainGameTests {
     private static final int PEAK_LOW = 200;
     private static final int PEAK_HIGH = 290;
     private static final int MIN_BIOMES = 12;
-    private static final int GRASS_TOP = 65;
-    private static final int FLAT_CHECK = 376;
-    private static final int[] BAND = {392, 448, 504};
-    private static final int RING_SPOKES = 64;
-    private static final int RING_BIOME_REACH = BlissfulLandTerrain.MARGIN + 64;
+    private static final int NEAR = 376;
+    private static final int SPOKES = 64;
+    private static final int NEAR_RELIEF = 8;
     private static final int[] SKY = {250, 310};
 
     private BlissfulLandTerrainGameTests() {}
@@ -75,17 +72,13 @@ public final class BlissfulLandTerrainGameTests {
         long highland = Arrays.stream(floors).filter(floor -> floor > HIGHLAND).count();
         Map<String, Integer> biomes = new TreeMap<>();
         int strays = 0;
-        int farRings = 0;
         for (int[] column : columns) {
             Holder<Biome> biome = probe.getBiome(column[0], column[3], column[1]);
             ResourceKey<Biome> key = biome.unwrapKey().orElseThrow();
             biomes.merge(key.location().getPath(), 1, Integer::sum);
             if (!BlissfulLandBiomes.ROSTER.contains(key)) strays++;
-            boolean far = Math.hypot(column[0] - BlissfulLandTerrain.CENTRE, column[1] - BlissfulLandTerrain.CENTRE)
-                    > RING_BIOME_REACH;
-            if (far && key.equals(FoxImmortalBlissfulLand.BIOME)) farRings++;
             for (int y : SKY) {
-                if (far && probe.getBiome(column[0], y, column[1]).is(FoxImmortalBlissfulLand.BIOME)) farRings++;
+                if (!probe.getBiome(column[0], y, column[1]).is(BlissfulLandBiomes.ROSTER::contains)) strays++;
             }
         }
         StringBuilder shares = new StringBuilder();
@@ -101,45 +94,25 @@ public final class BlissfulLandTerrainGameTests {
         helper.assertTrue(peak >= PEAK_LOW && peak <= PEAK_HIGH, "the highest sampled floor is y " + peak);
         helper.assertTrue(wet >= total / 50 && wet <= total * 3 / 10, wet + " of " + total + " columns hold water");
         helper.assertTrue(biomes.size() >= MIN_BIOMES, "only " + biomes.size() + " surface biomes: " + biomes);
-        helper.assertTrue(strays == 0, strays + " columns sit in biomes off the roster: " + biomes);
-        helper.assertTrue(farRings == 0, farRings + " far samples sit in the ring biome");
+        helper.assertTrue(strays == 0, strays + " samples sit in biomes off the roster: " + biomes);
         List<Holder<Biome>> possible = List.copyOf(probe.getGenerator().getBiomeSource().possibleBiomes());
         FeatureSorter.buildFeaturesPerStep(possible, biome -> biome.value().getGenerationSettings().features(), true);
-        checkRing(helper, probe);
+        checkNatural(helper, probe);
         helper.succeed();
     }
 
-    private static void checkRing(GameTestHelper helper, RegionProbe probe) {
-        int uneven = 0;
-        int low = 0;
-        int wet = 0;
-        int offRing = 0;
-        for (int spoke = 0; spoke < RING_SPOKES; spoke++) {
-            double angle = 2 * Math.PI * spoke / RING_SPOKES;
-            int[] at = getPoint(angle, FLAT_CHECK);
-            NoiseColumn flat = probe.getColumn(at[0], at[1]);
-            if (probe.getHeight(flat, Heightmap.Types.WORLD_SURFACE_WG) != GRASS_TOP
-                    || probe.getHeight(flat, Heightmap.Types.OCEAN_FLOOR_WG) != GRASS_TOP) {
-                uneven++;
-            }
-            for (int radius : BAND) {
-                int[] point = getPoint(angle, radius);
-                NoiseColumn column = probe.getColumn(point[0], point[1]);
-                int floor = probe.getHeight(column, Heightmap.Types.OCEAN_FLOOR_WG);
-                int surface = probe.getHeight(column, Heightmap.Types.WORLD_SURFACE_WG);
-                if (floor < GRASS_TOP) low++;
-                if (surface > floor) wet++;
-                if (!probe.getBiome(point[0], surface, point[1]).is(FoxImmortalBlissfulLand.BIOME)) offRing++;
-            }
+    private static void checkNatural(GameTestHelper helper, RegionProbe probe) {
+        int lowest = Integer.MAX_VALUE;
+        int highest = Integer.MIN_VALUE;
+        for (int spoke = 0; spoke < SPOKES; spoke++) {
+            double angle = 2 * Math.PI * spoke / SPOKES;
+            NoiseColumn column = probe.getColumn((int) Math.round(NEAR * Math.cos(angle)),
+                    (int) Math.round(NEAR * Math.sin(angle)));
+            int floor = probe.getHeight(column, Heightmap.Types.OCEAN_FLOOR_WG);
+            lowest = Math.min(lowest, floor);
+            highest = Math.max(highest, floor);
         }
-        helper.assertTrue(uneven == 0, uneven + " columns " + FLAT_CHECK + " blocks out are not flat at y 64");
-        helper.assertTrue(low == 0, low + " ring columns dip below y 64");
-        helper.assertTrue(wet == 0, wet + " ring columns hold water");
-        helper.assertTrue(offRing == 0, offRing + " ring columns are not in the ring biome");
-    }
-
-    private static int[] getPoint(double angle, int radius) {
-        return new int[]{BlissfulLandTerrain.CENTRE + (int) Math.round(radius * Math.cos(angle)),
-                BlissfulLandTerrain.CENTRE + (int) Math.round(radius * Math.sin(angle))};
+        helper.assertTrue(highest - lowest >= NEAR_RELIEF, "the ground " + NEAR + " blocks out spans only y " + lowest
+                + " to " + highest + ": the flat ring is back");
     }
 }

@@ -28,8 +28,7 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
  *       名后残留悬空翻译键。</li>
  *   <li>{@link #addDimensionName} 同时写出原版维度名与 Traveler's Titles 标题，{@link #addTitleColor} 按该模组约定写出
  *       不带 {@code #} 的 6 位小写十六进制颜色值；{@link #addBiomes} 按顺序或按各域 {@link BiomeName} 列表写出群系译
- *       名，宝黄天（{@link TreasureYellowHeaven}）的唯一群系与狐仙福地（{@link FoxImmortalBlissfulLand}）平地圈的群系直
- *       接沿用维度名称。</li>
+ *       名，宝黄天（{@link TreasureYellowHeaven}）的唯一群系直接沿用维度名称。</li>
  *   <li>⚠ 简体中文为手写权威定稿；若 {@link #addBiomes} 传入的译名数与群系数量不匹配，或简体文本包含
  *       {@link TraditionalGlyphs} 未收录的新汉字，都会在 {@code runData} 阶段直接抛错失败。</li>
  * </ul>
@@ -53,7 +52,6 @@ public class Translations extends LanguageProvider {
         addBiomes(List.of(TreasureYellowHeaven.BIOME), "宝黄天");
         addDimensionName(FoxImmortalBlissfulLand.LEVEL_STEM, FoxImmortalBlissfulLand.TITLE);
         addTitleColor(FoxImmortalBlissfulLand.LEVEL_STEM, FoxImmortalBlissfulLand.COLOR);
-        addBiomes(List.of(FoxImmortalBlissfulLand.BIOME), FoxImmortalBlissfulLand.TITLE);
         addBiomes(Replicas.BIOMES,
                 "平原",
                 "河流",

@@ -37,7 +37,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  *       （{@link SpiritSpringRegistration}），野生知心草地物与群系修改器（{@link IntimateGrass}），以及四域水系地物与修
  *       改器（{@link WaterwaysRegistration}，福地的群系也在内）；另有狐仙福地的维度类型、群系与复刻
  *       （{@link BlissfulLandBiomes}）、噪声、Tectonic 副本、噪声设置与维度层级（{@link FoxImmortalBlissfulLand}），以
- *       及荡魂山的结构与同心环结构集（{@link SoulsunderMountain}）。</li>
+ *       及荡魂山的结构与缓地放置的结构集（{@link SoulsunderMountain}）。</li>
  *   <li>注册四域共用的维度类型，并按 {@link Regions#ALL} 逐域注册各自的密度函数（Tectonic 路由与域钩子）、噪声生成设
  *       置、维度层级（{@link RegionBootstraps}）以及挂载在各域前缀下的可达移植地形副本。</li>
  *   <li>汇总注册原版复刻群系（{@link Replicas#SHARED} 加各域独有复刻）、Terralith 移植群系及地物（{@link Ports#BIOMES}
@@ -62,7 +62,6 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 Replicas.registerBiomes(context, getJoined(Replicas.SHARED, Region.Biomes::replicas));
                 Ports.registerBiomes(context, getJoined(Ports.BIOMES, Region.Biomes::ported));
                 BiomeSettings.registerBiomes(context);
-                FoxImmortalBlissfulLand.registerBiome(context);
                 Replicas.registerBiomes(context, BlissfulLandBiomes.REPLICAS);
             })
             .add(Registries.NOISE, context -> {

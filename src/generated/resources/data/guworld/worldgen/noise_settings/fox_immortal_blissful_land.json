@@ -19,13 +19,7 @@
   },
   "noise_router": {
     "barrier": "guworld:terrain/fox_immortal_blissful_land/minecraft/overworld/noise_router/barrier",
-    "continents": {
-      "type": "guworld:blissful_shape",
-      "argument": "guworld:terrain/fox_immortal_blissful_land/minecraft/overworld/noise_router/continents",
-      "kind": "continents",
-      "lakes": "guworld:terrain/fox_immortal_blissful_land/lakes",
-      "offset": 0.0
-    },
+    "continents": "guworld:terrain/fox_immortal_blissful_land/minecraft/overworld/noise_router/continents",
     "depth": "guworld:terrain/fox_immortal_blissful_land/minecraft/overworld/noise_router/depth",
     "erosion": "guworld:terrain/fox_immortal_blissful_land/minecraft/overworld/noise_router/erosion",
     "final_density": {
@@ -40,19 +34,13 @@
       "bed": "gravel_clay_sand",
       "cell": 32,
       "dry": false,
-      "keep_out": 608.0,
+      "keep_out": 256.0,
       "meander": "guworld:waterways/meander",
       "region": "fox_immortal_blissful_land",
       "size": 19584.0,
       "walled": true
     },
-    "fluid_level_floodedness": {
-      "type": "guworld:blissful_shape",
-      "argument": "guworld:terrain/fox_immortal_blissful_land/minecraft/overworld/noise_router/fluid_level_floodedness",
-      "kind": "floodedness",
-      "lakes": "guworld:terrain/fox_immortal_blissful_land/lakes",
-      "offset": 0.0
-    },
+    "fluid_level_floodedness": "guworld:terrain/fox_immortal_blissful_land/minecraft/overworld/noise_router/fluid_level_floodedness",
     "fluid_level_spread": "guworld:terrain/fox_immortal_blissful_land/minecraft/overworld/noise_router/fluid_level_spread",
     "initial_density_without_jaggedness": {
       "type": "guworld:blissful_shape",

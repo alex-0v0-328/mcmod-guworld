@@ -39,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 /**
- * 狐仙福地地形的可选噪声填充基准（Tectonic 副本加平地圈、湖与水系包装，不挂雕刻器）。
+ * 狐仙福地地形的可选噪声填充基准（Tectonic 副本加湖与水系包装，不挂雕刻器）。
  * <ul>
  *   <li>仅当 GameTest 服务端带 {@code -Dguworld.noiseBenchmark=true} 时单独成批，常规检查免付这 10 秒。</li>
  *   <li>同 {@link BlissfulLandTerrainGameTests} 读模组维度 JSON 生成器，种子 12345；疆域中部 8×8 区块（间距 1024 格）
@@ -121,7 +121,7 @@ public final class BlissfulLandNoiseBenchmark {
         }
     }
 
-    // 同一份噪声设置，只把路由里福地加的包装（平地圈、湖、水系、截断的大陆度与压低的淹没度）换回移植来的具名函数。
+    // 同一份噪声设置，只把路由里福地加的包装（湖、水系）换回移植来的具名函数。
     private static NoiseBasedChunkGenerator readBareGenerator(GameTestHelper helper,
             NoiseBasedChunkGenerator generator) {
         ResourceLocation file = FoxImmortalBlissfulLand.NOISE_SETTINGS.location()

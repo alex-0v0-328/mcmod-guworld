@@ -1,5 +1,6 @@
 package net.alex.guzhenrenworld.datagen;
 
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,7 +9,6 @@ import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.WildCropClimate;
 import net.alex.guzhenrenworld.dimension.Regions;
 import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
-import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.alex.guzhenrenworld.feature.IntimateGrass;
@@ -29,11 +29,11 @@ import org.jetbrains.annotations.Nullable;
  * <ul>
  *   <li>元泉生成群系标签（{@link SpiritSpring#BIOMES}）汇总主世界陆地群系名单（{@link SpiritSpring#LAND_BIOMES}）、所有
  *       域与狐仙福地（{@link BlissfulLandBiomes#LAND}）的陆地群系；野生知心草生成群系标签（{@link IntimateGrass#BIOMES}）
- *       只含同一份主世界名单、南疆与狐仙福地（{@link BlissfulLandBiomes#GRASSLAND}，含平地圈）的陆地群系；农夫
+ *       只含同一份主世界名单、南疆与狐仙福地（{@link BlissfulLandBiomes#GRASSLAND}）的陆地群系；农夫
  *       乐事野生作物气候标签（{@link WildCropClimate}）则汇总 {@link Regions#ALL} 各域与狐仙福地
  *       （{@link BlissfulLandBiomes#CROPS}）的作物气候映射表，多域共用的群系（如雨林）通过有序集合去重。</li>
- *   <li>荡魂山的结构群系标签（{@link SoulsunderMountain#BIOMES}）只含狐仙福地的群系
- *       （{@link FoxImmortalBlissfulLand#BIOME}），所以只有福地生成它。</li>
+ *   <li>荡魂山的结构群系标签（{@link SoulsunderMountain#BIOMES}）是狐仙福地全部群系（{@link BlissfulLandBiomes#ROSTER}）；
+ *       其中平原、河流等复刻与别的域共用，只在福地生成靠放置器（{@code guworld:gentle_site} 只在福地生成器下命中）。</li>
  *   <li>⚠ 每个注册表在同一模组的数据生成周期内只能注册一个标签 Provider，否则会因输出任务重名而报错；新增群系标签必须
  *       统一在{@link #addTags} 中追加。</li>
  * </ul>
@@ -58,7 +58,8 @@ public class BiomeTagsProvider extends TagsProvider<Biome> {
         grassland.addAll(SouthernBorder.REGION.biomes().land());
         grassland.addAll(BlissfulLandBiomes.GRASSLAND);
         grassland.forEach(intimateGrass::add);
-        tag(SoulsunderMountain.BIOMES).add(FoxImmortalBlissfulLand.BIOME);
+        TagAppender<Biome> mountain = tag(SoulsunderMountain.BIOMES);
+        BlissfulLandBiomes.ROSTER.stream().sorted(Comparator.comparing(ResourceKey::location)).forEach(mountain::add);
         for (WildCropClimate climate : WildCropClimate.values()) {
             Set<ResourceKey<Biome>> biomes = new LinkedHashSet<>();
             for (Region region : Regions.ALL) biomes.addAll(region.biomes().crops().getOrDefault(climate, List.of()));
