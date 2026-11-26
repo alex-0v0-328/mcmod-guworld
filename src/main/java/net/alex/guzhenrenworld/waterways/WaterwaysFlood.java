@@ -1,7 +1,6 @@
 package net.alex.guzhenrenworld.waterways;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 /**
  * 水系规划中的洼地填平、流向判定与汇流面积累加算法，纯内存网格数组运算而不访问世界。
@@ -55,7 +54,7 @@ final class WaterwaysFlood {
     static int[] getReceivers(WaterwaysPlan.Kind[] kind, double[] filled, int[] x, int[] z, int size) {
         int[] receiver = new int[kind.length];
         Arrays.fill(receiver, -1);
-        IntStream.range(0, kind.length).parallel().forEach(cell -> {
+        WaterwaysPool.forEach(kind.length, cell -> {
             if (kind[cell] != WaterwaysPlan.Kind.LAND) return;
             double steepest = 0;
             for (int direction = 0; direction < 8; direction++) {

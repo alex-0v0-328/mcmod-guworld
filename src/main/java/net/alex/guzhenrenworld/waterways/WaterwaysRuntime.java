@@ -22,9 +22,11 @@ import org.jetbrains.annotations.Nullable;
  *       </li>
  *   <li>雕刻器构建时优先读取维度存档中的 {@link WaterwaysData}（校验 {@link Waterways#PARAMETERS}、边界尺寸、海平面、世
  *       界种子及{@link #FINGERPRINT} 采样点地面与群系指纹），校验未命中时才执行完整水文规划并写回存档。</li>
- *   <li>维度卸载或服务端停止时自动移除雕刻器以释放内存，并取消仍在跑的建图（{@link WaterwaysCarver#cancel}）；
- *       {@link #get} 供 {@link WaterwaysFeature} 与测试获取当前维度的雕刻器，测试也可通过 {@link #attach} 与
- *       {@link #detach} 为自建的 {@link RandomState} 手动挂载或卸载雕刻器。</li>
+ *   <li>各维度的建图经 {@link WaterwaysQueue#SHARED} 依次执行（一次一个维度，低优先级）；玩家进入某个维度时
+ *       {@link #prioritize} 把该维度仍在排队的建图提到队首。</li>
+ *   <li>维度卸载或服务端停止时自动移除雕刻器以释放内存，并取消排队与运行中的建图（{@link WaterwaysCarver#cancel}），
+ *       停服时再清空共用队列；{@link #get} 供 {@link WaterwaysFeature} 与测试获取当前维度的雕刻器，测试也可通过
+ *       {@link #attach} 与 {@link #detach} 为自建的 {@link RandomState} 手动挂载或卸载雕刻器。</li>
  * </ul>
  */
 
@@ -83,9 +85,16 @@ public final class WaterwaysRuntime {
         }
     }
 
+    static void prioritize(ServerLevel level) {
+        if (WaterwaysDensity.find(level.getChunkSource().randomState().router()).isEmpty()) return;
+        WaterwaysCarver carver = get(level);
+        if (carver != null) carver.promote();
+    }
+
     static void clear() {
         CARVERS.values().forEach(WaterwaysCarver::cancel);
         CARVERS.clear();
+        WaterwaysQueue.SHARED.clear();
     }
 
     private static int[] getFingerprint(GroundHeights ground, NoiseBasedChunkGenerator generator, RandomState random) {

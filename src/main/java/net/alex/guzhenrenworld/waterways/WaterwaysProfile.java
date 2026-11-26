@@ -29,7 +29,7 @@ public final class WaterwaysProfile {
     public static WaterwaysProfile of(WaterwaysPlan plan, GroundHeights ground, NormalNoise meander) {
         int count = plan.count();
         double[][] readings = new double[count][];
-        IntStream.range(0, count).parallel().forEach(cell -> readings[cell] = WaterwaysIndex.isSegment(plan, cell)
+        WaterwaysPool.forEach(count, cell -> readings[cell] = WaterwaysIndex.isSegment(plan, cell)
                 ? getReadings(plan, cell, ground, meander) : null);
         double[] arrival = new double[count];
         for (int cell = 0; cell < count; cell++) {

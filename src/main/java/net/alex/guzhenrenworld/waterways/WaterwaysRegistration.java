@@ -11,6 +11,7 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -21,6 +22,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.common.world.BiomeModifiers;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -33,6 +36,9 @@ import net.neoforged.neoforge.registries.RegisterEvent;
  *   <li>{@link #onRegister} 在模组总线上注册密度函数类型 {@code guworld:waterways}（{@link WaterwaysDensity#MAP_CODEC}
  *       ）与同名地物 {@link WaterwaysFeature}（数据生成阶段同样触发，以供数据包生成器编码）；服务端维度加载、卸载与停服
  *       事件则转发给{@link WaterwaysRuntime} 管理雕刻器实例。</li>
+ *   <li>服务端玩家登录、重生或进入某维度（{@link EntityJoinLevelEvent}），以及玩家动身去某维度之前
+ *       （{@link EntityTravelToDimensionEvent}，早于目的地区块加载），都转给 {@link WaterwaysRuntime#prioritize}，让该维度
+ *       仍在排队的建图排到队首。</li>
  *   <li>三个 {@code register*} 引导方法由 {@code datagen.DatapackProvider} 调用：将无放置修饰器（每区块固定执行一次）的
  *       水系地物在 {@code RAW_GENERATION} 阶段挂载到传入的四域全量群系名册上。</li>
  * </ul>
@@ -87,6 +93,20 @@ public final class WaterwaysRegistration {
     @SubscribeEvent
     public static void onLevelUnload(LevelEvent.Unload event) {
         if (event.getLevel() instanceof ServerLevel level) WaterwaysRuntime.onLevelUnload(level);
+    }
+
+    @SubscribeEvent
+    public static void onPlayerJoinLevel(EntityJoinLevelEvent event) {
+        if (event.getEntity() instanceof ServerPlayer && event.getLevel() instanceof ServerLevel level) {
+            WaterwaysRuntime.prioritize(level);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerTravel(EntityTravelToDimensionEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || player.getServer() == null) return;
+        ServerLevel level = player.getServer().getLevel(event.getDimension());
+        if (level != null) WaterwaysRuntime.prioritize(level);
     }
 
     @SubscribeEvent

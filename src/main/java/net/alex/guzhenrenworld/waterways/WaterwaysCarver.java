@@ -4,9 +4,6 @@ import com.mojang.logging.LogUtils;
 import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,11 +21,14 @@ import org.slf4j.Logger;
  *   <li>内部延迟持有 {@link WaterwaysIndex}：{@link #getSurface} 计算单列刻河后的目标地表高度供
  *       {@link WaterwaysDensity} 削低地形，{@link #getChannel} 与 {@link #getBed} 查询单列的河道水位、河底与河床方块供
  *       {@link WaterwaysFeature} 铺床注水。</li>
- *   <li>水系索引在后台守护线程池中仅构建一次，可由维度加载时的 {@link #prefetch} 提前触发，或由首个查询的列按需触发；构
- *       建完成前所有调用方在 {@link CompletableFuture#join()} 上等待；若构建异常则记录错误日志并回退为空索引（该域保持
- *       不刻河）。维度卸载或停服时 {@link WaterwaysRuntime} 调 {@link #cancel}：规划阶段的地面扫描随即抛出
- *       {@link CancellationException} 停下，回退为空索引且不写存档，免得单人退回标题后旧世界的建图继续占满线程池、重进
- *       时再起第二份。</li>
+ *   <li>水系索引仅构建一次，可由维度加载时的 {@link #prefetch} 提前触发，或由首个查询的列按需触发；构建任务（
+ *       {@link WaterwaysBuild}）排进全局单线程低优先级队列（{@link WaterwaysQueue#SHARED}），一次只建一个维度，规划与
+ *       剖面的并行计算另走专用线程池（{@link WaterwaysPool}）；构建完成前所有调用方在 {@link CompletableFuture#join()}
+ *       上等待（排队中也一样），若构建异常则记录错误日志并回退为空索引（该域保持不刻河）。玩家进入某维度时
+ *       {@link WaterwaysRuntime#prioritize} 调 {@link #promote}，把仍在排队的建图提到队首。维度卸载或停服时
+ *       {@link WaterwaysRuntime} 调 {@link #cancel}：排队中的任务直接出队并回退为空索引，运行中的规划阶段地面扫描随即
+ *       抛出 {@link CancellationException} 停下，回退为空索引且不写存档，免得单人退回标题后旧世界的建图继续占满线程、重
+ *       进时再起第二份。</li>
  *   <li>禁区内的列不等索引：离原点不到 {@link Waterways.Region#keepOut()} 减 {@link Waterways#KEEP_OUT_REACH} 格的列一
  *       定不刻河、不放水，直接返回。狐仙福地起服时荡魂山就在主线程上取山脚高度，等福地建图（几十秒）会被看门狗判卡死。
  *       </li>
@@ -46,28 +46,27 @@ public final class WaterwaysCarver {
     private static final int COLUMNS_BITS = 5;
     private static final int COLUMNS = 1 << (2 * COLUMNS_BITS);
     private static final int COLUMN_MASK = (1 << COLUMNS_BITS) - 1;
-    private static final ExecutorService BUILDER = Executors.newCachedThreadPool(task -> {
-        Thread thread = new Thread(task, "guworld-waterways");
-        thread.setDaemon(true);
-        return thread;
-    });
 
     private final Waterways.Region region;
-    private final BiFunction<GroundHeights, BooleanSupplier, WaterwaysIndex> builder;
     private final GroundHeights ground;
     private final NormalNoise meander;
     private final double keptOut;
-    private final AtomicReference<CompletableFuture<WaterwaysIndex>> build = new AtomicReference<>();
+    private final WaterwaysBuild<WaterwaysIndex> build;
     private final ThreadLocal<Columns> columns = ThreadLocal.withInitial(Columns::new);
     private volatile WaterwaysIndex ready;
-    private volatile boolean cancelled;
 
     WaterwaysCarver(Waterways.Region region, NoiseBasedChunkGenerator generator, RandomState random,
             BiFunction<GroundHeights, BooleanSupplier, WaterwaysIndex> builder) {
         NoiseSettings noise = generator.generatorSettings().value().noiseSettings();
         this.region = region;
-        this.builder = builder;
         this.ground = new GroundHeights(random.router(), noise.minY(), noise.minY() + noise.height());
+        this.build = new WaterwaysBuild<>(WaterwaysQueue.SHARED, region.name(), cancelled -> {
+            long started = System.nanoTime();
+            WaterwaysIndex index = builder.apply(ground, cancelled);
+            LOGGER.info("Waterways of {}: {} segments in {} s", region.name(), index.segments(),
+                    "%.1f".formatted((System.nanoTime() - started) / 1e9));
+            return index;
+        }, () -> WaterwaysIndex.empty(region));
         this.meander = random.getOrCreateNoise(Waterways.MEANDER_NOISE);
         double reach = region.keepOut() - Waterways.KEEP_OUT_REACH;
         this.keptOut = region.keepOut() > 0 && reach > 0 ? reach * reach : -1.0;
@@ -85,17 +84,21 @@ public final class WaterwaysCarver {
     }
 
     public void prefetch() {
-        getBuild();
+        build.start();
+    }
+
+    void promote() {
+        build.promote();
     }
 
     void cancel() {
-        cancelled = true;
+        build.cancel();
     }
 
     public WaterwaysIndex getIndex() {
         WaterwaysIndex built = ready;
         if (built != null) return built;
-        built = getBuild().join();
+        built = build.start().join();
         ready = built;
         return built;
     }
@@ -137,36 +140,6 @@ public final class WaterwaysCarver {
         cache.z[slot] = z;
         cache.surface[slot] = surface;
         return surface;
-    }
-
-    private CompletableFuture<WaterwaysIndex> getBuild() {
-        CompletableFuture<WaterwaysIndex> started = build.get();
-        if (started != null) return started;
-        CompletableFuture<WaterwaysIndex> fresh = new CompletableFuture<>();
-        if (!build.compareAndSet(null, fresh)) return build.get();
-        try {
-            BUILDER.execute(() -> fresh.complete(getBuilt()));
-        } catch (RuntimeException | Error exception) {
-            LOGGER.error("Waterways of {} could not start; the region stays uncarved", region.name(), exception);
-            fresh.complete(WaterwaysIndex.empty(region));
-        }
-        return fresh;
-    }
-
-    private WaterwaysIndex getBuilt() {
-        long started = System.nanoTime();
-        try {
-            WaterwaysIndex index = builder.apply(ground, () -> cancelled);
-            LOGGER.info("Waterways of {}: {} segments in {} s", region.name(), index.segments(),
-                    "%.1f".formatted((System.nanoTime() - started) / 1e9));
-            return index;
-        } catch (CancellationException exception) {
-            LOGGER.info("Waterways of {} cancelled with its dimension", region.name());
-            return WaterwaysIndex.empty(region);
-        } catch (RuntimeException | Error exception) {
-            LOGGER.error("Waterways of {} failed; the region stays uncarved", region.name(), exception);
-            return WaterwaysIndex.empty(region);
-        }
     }
 
     private static final class Columns {

@@ -2,7 +2,6 @@ package net.alex.guzhenrenworld.waterways;
 
 import java.util.concurrent.CancellationException;
 import java.util.function.BooleanSupplier;
-import java.util.stream.IntStream;
 import net.minecraft.core.QuartPos;
 import net.minecraft.world.level.biome.BiomeSource;
 import net.minecraft.world.level.biome.Climate;
@@ -14,9 +13,10 @@ import net.minecraft.world.level.levelgen.RandomState;
  * 域水文网格规划（{@link WaterwaysPlan}）的构建器，完全由世界种子与地形决定。
  * <ul>
  *   <li>第一阶段为并行网格采样（{@link #sample}）：将每个网格中心按世界种子与行列散列在 X/Z 轴随机抖动，至多
- *       {@link Waterways.Region#jitter()} 格（16 格网格时为 {@link Waterways#JITTER}），通过 {@link GroundHeights} 并行
- *       扫描地面高度，并结合海平面与噪声群系（路径以 {@code river} 结尾视为河口）划分网格类型，禁区与墙边
- *       （{@link Waterways.Region#keepOut()}、{@link Waterways.Region#walled()}）记为墙；512×512 网格约需 45 CPU 秒。
+ *       {@link Waterways.Region#jitter()} 格（16 格网格时为 {@link Waterways#JITTER}），通过 {@link GroundHeights} 在专
+ *       用低优先级线程池（{@link WaterwaysPool}）上并行扫描地面高度，并结合海平面与噪声群系（路径以 {@code river} 结尾
+ *       视为河口）划分网格类型，禁区与墙边（{@link Waterways.Region#keepOut()}、{@link Waterways.Region#walled()}）记为
+ *       墙；512×512 网格约需 45 CPU 秒。
  *       每格开扫前查一次取消标志，维度卸载后抛 {@link CancellationException} 让后台建图尽快停下。</li>
  *   <li>第二阶段为纯内存水文拓扑求解：调用 {@link WaterwaysFlood} 在采样数组上依次完成洼地填平、最陡流向判定与汇流面积
  *       累加，耗时不足 1 秒。</li>
@@ -66,7 +66,7 @@ public final class WaterwaysPlanner {
         GroundHeights heights = new GroundHeights(random.router(), minY, minY + settings.noiseSettings().height());
         BiomeSource biomes = generator.getBiomeSource();
         Climate.Sampler sampler = random.sampler();
-        IntStream.range(0, x.length).parallel().forEach(cell -> {
+        WaterwaysPool.forEach(x.length, cell -> {
             if (cancelled.getAsBoolean()) throw new CancellationException(region.name());
             int height = heights.sample(x[cell], z[cell]);
             ground[cell] = height;
