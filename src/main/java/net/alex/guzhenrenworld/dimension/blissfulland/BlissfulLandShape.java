@@ -109,37 +109,7 @@ public final class BlissfulLandShape implements DensityFunction {
         double dz = z - BlissfulLandTerrain.CENTRE;
         double squared = dx * dx + dz * dz;
         return switch (kind) {
-            case FINAL, INITIAL -> {
-                double floorLevel;
-                double capLevel;
-                if (context instanceof NoiseChunk) {
-                    if (cachedX == null) {
-                        cachedX = new int[COLUMNS];
-                        cachedZ = new int[COLUMNS];
-                        cachedFloor = new double[COLUMNS];
-                        cachedCap = new double[COLUMNS];
-                        Arrays.fill(cachedX, Integer.MIN_VALUE);
-                    }
-                    int slot = (x & COLUMN_MASK) << COLUMN_BITS | (z & COLUMN_MASK);
-                    if (cachedX[slot] != x || cachedZ[slot] != z) {
-                        cachedFloor[slot] = getFloor(squared);
-                        cachedCap[slot] = getCap(x, z, squared, context);
-                        cachedX[slot] = x;
-                        cachedZ[slot] = z;
-                    }
-                    floorLevel = cachedFloor[slot];
-                    capLevel = cachedCap[slot];
-                } else {
-                    floorLevel = getFloor(squared);
-                    capLevel = getCap(x, z, squared, context);
-                }
-                double threshold = kind == Kind.INITIAL ? BlissfulLandTerrain.PRELIMINARY : 0.0;
-                int y = context.blockY();
-                double floor = BlissfulLandTerrain.SLOPE * Math.min(floorLevel - y,
-                        y - floorLevel + BlissfulLandTerrain.FLOOR_SLAB) + threshold;
-                double cap = BlissfulLandTerrain.SLOPE * (capLevel - y) + threshold;
-                yield Math.min(Math.max(value, floor), cap);
-            }
+            case FINAL, INITIAL -> clampToBounds(value, x, z, squared, context);
             case CONTINENTS -> {
                 double inland = Math.clamp(value, BlissfulLandTerrain.CONTINENTS_LOW,
                         BlissfulLandTerrain.CONTINENTS_HIGH);
@@ -151,6 +121,43 @@ public final class BlissfulLandShape implements DensityFunction {
                 yield BlissfulLandTerrain.DRY_FLOODEDNESS + share * (value - BlissfulLandTerrain.DRY_FLOODEDNESS);
             }
         };
+    }
+
+    private double clampToBounds(double value, int x, int z, double squared, FunctionContext context) {
+        double floorLevel;
+        double capLevel;
+        if (context instanceof NoiseChunk) {
+            int slot = getColumnSlot(x, z, squared, context);
+            floorLevel = cachedFloor[slot];
+            capLevel = cachedCap[slot];
+        } else {
+            floorLevel = getFloor(squared);
+            capLevel = getCap(x, z, squared, context);
+        }
+        double threshold = kind == Kind.INITIAL ? BlissfulLandTerrain.PRELIMINARY : 0.0;
+        int y = context.blockY();
+        double floor = BlissfulLandTerrain.SLOPE * Math.min(floorLevel - y,
+                y - floorLevel + BlissfulLandTerrain.FLOOR_SLAB) + threshold;
+        double cap = BlissfulLandTerrain.SLOPE * (capLevel - y) + threshold;
+        return Math.min(Math.max(value, floor), cap);
+    }
+
+    private int getColumnSlot(int x, int z, double squared, FunctionContext context) {
+        if (cachedX == null) {
+            cachedX = new int[COLUMNS];
+            cachedZ = new int[COLUMNS];
+            cachedFloor = new double[COLUMNS];
+            cachedCap = new double[COLUMNS];
+            Arrays.fill(cachedX, Integer.MIN_VALUE);
+        }
+        int slot = (x & COLUMN_MASK) << COLUMN_BITS | (z & COLUMN_MASK);
+        if (cachedX[slot] != x || cachedZ[slot] != z) {
+            cachedFloor[slot] = getFloor(squared);
+            cachedCap[slot] = getCap(x, z, squared, context);
+            cachedX[slot] = x;
+            cachedZ[slot] = z;
+        }
+        return slot;
     }
 
     private static double getFloor(double squared) {

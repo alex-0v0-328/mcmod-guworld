@@ -8,7 +8,6 @@ import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.biome.Reshaping;
 import net.alex.guzhenrenworld.biome.ZGradient;
 import net.alex.guzhenrenworld.dimension.region.Region;
-import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
 import net.minecraft.world.level.levelgen.DensityFunctions;
 
 /**
