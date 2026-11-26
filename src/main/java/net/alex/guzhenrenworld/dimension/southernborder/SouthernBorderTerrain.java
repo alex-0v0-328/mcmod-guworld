@@ -17,12 +17,12 @@ import net.minecraft.world.level.levelgen.DensityFunctions;
  * </ul>
  */
 
-public final class Terrain {
+public final class SouthernBorderTerrain {
 
     private static final double OCEAN_OFFSET = -0.1;
     private static final double VERTICAL_SCALE = 1.125;
     public static final Region.Hooks HOOKS = new Region.Hooks(DensityFunctions.constant(OCEAN_OFFSET), VERTICAL_SCALE,
             0.0, Region.Hooks.AS_PORTED);
 
-    private Terrain() {}
+    private SouthernBorderTerrain() {}
 }

@@ -15,7 +15,7 @@ import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
 import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandFoxImmortal;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
-import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
+import net.alex.guzhenrenworld.dimension.southernborder.BambooSeaRegistration;
 import net.alex.guzhenrenworld.feature.IntimateGrass;
 import net.alex.guzhenrenworld.feature.SpiritSpring;
 import net.alex.guzhenrenworld.feature.SpiritSpringRegistration;
@@ -33,7 +33,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  * 本模组全部数据包内置注册表条目的唯一生成器。
  * <ul>
  *   <li>汇总注册宝黄天的维度类型、群系与维度层级（{@link TreasureYellowHeaven}），南疆自制的竹海群系与稀疏竹子放置地物
- *       （{@link BiomeSettings}），元泉配置地物、放置地物（{@link SpiritSpring}）与群系修改器
+ *       （{@link BambooSeaRegistration}），元泉配置地物、放置地物（{@link SpiritSpring}）与群系修改器
  *       （{@link SpiritSpringRegistration}），野生知心草地物与群系修改器（{@link IntimateGrass}），以及四域水系地物与修
  *       改器（{@link WaterwaysRegistration}，福地的群系也在内）；另有狐仙福地的维度类型、群系与复刻
  *       （{@link BlissfulLandBiomes}）、噪声、Tectonic 副本、噪声设置与维度层级（{@link BlissfulLandFoxImmortal}），以
@@ -61,7 +61,7 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 TreasureYellowHeaven.registerBiome(context);
                 Replicas.registerBiomes(context, getJoined(Replicas.SHARED, Region.Biomes::replicas));
                 Ports.registerBiomes(context, getJoined(Ports.BIOMES, Region.Biomes::ported));
-                BiomeSettings.registerBiomes(context);
+                BambooSeaRegistration.registerBiomes(context);
                 Replicas.registerBiomes(context, BlissfulLandBiomes.REPLICAS);
             })
             .add(Registries.NOISE, context -> {
@@ -94,7 +94,7 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 IntimateGrass.registerPlacedFeature(context);
                 WaterwaysRegistration.registerPlacedFeature(context);
                 Ports.registerPlacedFeatures(context);
-                BiomeSettings.registerPlacedFeatures(context);
+                BambooSeaRegistration.registerPlacedFeatures(context);
             })
             .add(Registries.STRUCTURE, SoulsunderMountain::registerStructure)
             .add(Registries.STRUCTURE_SET, SoulsunderMountain::registerStructureSet)

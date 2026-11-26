@@ -32,7 +32,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
  * </ul>
  */
 
-public final class BiomeSettings {
+public final class BambooSeaRegistration {
 
     public static final ResourceKey<Biome> BAMBOO_SEA = GuWorld.key(Registries.BIOME, "bamboo_sea");
     private static final ResourceKey<PlacedFeature> BAMBOO =
@@ -41,7 +41,7 @@ public final class BiomeSettings {
     private static final double BAMBOO_NOISE_SCALE = 80.0;
     private static final double BAMBOO_NOISE_OFFSET = 0.3;
 
-    private BiomeSettings() {}
+    private BambooSeaRegistration() {}
 
     public static void registerPlacedFeatures(BootstrapContext<PlacedFeature> context) {
         HolderGetter<ConfiguredFeature<?, ?>> configured = context.lookup(Registries.CONFIGURED_FEATURE);

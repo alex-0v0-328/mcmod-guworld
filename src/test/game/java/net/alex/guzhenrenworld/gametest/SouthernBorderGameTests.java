@@ -9,7 +9,7 @@ import java.util.TreeMap;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.biome.Ports;
 import net.alex.guzhenrenworld.dimension.region.Region;
-import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
+import net.alex.guzhenrenworld.dimension.southernborder.BambooSeaRegistration;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.GameTest;
@@ -42,7 +42,7 @@ public final class SouthernBorderGameTests {
     private static final List<ResourceKey<Biome>> MOUNTAINS = List.of(Ports.MISTY_MOUNTAINS, Ports.CLOUD_FOREST,
             Ports.ROCKY_PEAKS, Ports.EMERALD_PEAKS, Ports.JUNGLE_MOUNTAINS, Ports.PAINTED_MOUNTAINS,
             Ports.GRANITE_CLIFFS, Ports.ALPINE_MEADOW, Ports.ZHANGSHIYAN_CLIFFS, Ports.KARST_PEAK_FOREST);
-    private static final List<ResourceKey<Biome>> HILLS = List.of(BiomeSettings.BAMBOO_SEA, Ports.RAINFOREST,
+    private static final List<ResourceKey<Biome>> HILLS = List.of(BambooSeaRegistration.BAMBOO_SEA, Ports.RAINFOREST,
             Ports.PLATEAU, Ports.FORESTED_PLATEAU, Ports.PEACH_GROVE);
 
     private SouthernBorderGameTests() {}

@@ -11,7 +11,7 @@ import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
 import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandFoxImmortal;
 import net.alex.guzhenrenworld.dimension.region.Region;
-import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
+import net.alex.guzhenrenworld.dimension.southernborder.BambooSeaRegistration;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.biome.Biome;
@@ -77,7 +77,7 @@ public class Translations extends LanguageProvider {
                 "高山草甸",
                 "嶂石岩",
                 "喀斯特峰林");
-        addBiomes(List.of(BiomeSettings.BAMBOO_SEA), "竹海");
+        addBiomes(List.of(BambooSeaRegistration.BAMBOO_SEA), "竹海");
         for (Region region : Regions.ALL) {
             addDimensionName(region.levelStem(), region.title());
             addBiomes(region.biomes().names());

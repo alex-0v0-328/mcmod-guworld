@@ -15,8 +15,8 @@ import net.minecraft.world.level.biome.Biome;
  * 南疆维度的多噪声群系分布映射。
  * <ul>
  *   <li>基于 Terralith 主世界多噪声参数表（{@link Ports#getBiomeParameters}），按 {@link #GROUPS} 将来源群系映射为南疆
- *       群系（海洋、海滩与岛屿来源仅作完整性映射，{@link Terrain} 的大陆度不会采样到这些区间）；底层 Tectonic 地形将侵
- *       蚀度与山脊值重映射回该表分段，使各参数格保留原有地形原型并替换为南疆同类群系。</li>
+ *       群系（海洋、海滩与岛屿来源仅作完整性映射，{@link SouthernBorderTerrain} 的大陆度不会采样到这些区间）；底层
+ *       Tectonic 地形将侵蚀度与山脊值重映射回该表分段，使各参数格保留原有地形原型并替换为南疆同类群系。</li>
  *   <li>{@link #ROSTER} 为南疆可生成的全部群系集合；{@link #LAND} 为剔除水体与洞穴（{@link #WATER_AND_CAVES}）后的陆地
  *       群系列表，供元泉[Spirit Spring]与野生知心草投放；{@link #CROPS} 将陆地群系按 {@link WildCropClimate} 的温湿度规
  *       则归入农夫乐事野生作物气候。</li>
@@ -28,7 +28,7 @@ import net.minecraft.world.level.biome.Biome;
  * </ul>
  */
 
-public final class BiomeLayout {
+public final class SouthernBorderLayout {
 
     private static final Map<ResourceKey<Biome>, List<String>> GROUPS = Map.ofEntries(
             Map.entry(Replicas.RIVER, List.of("minecraft:river", "minecraft:frozen_river", "terralith:warm_river")),
@@ -52,7 +52,7 @@ public final class BiomeLayout {
             Map.entry(Ports.FORESTED_PLATEAU, List.of("minecraft:forest", "minecraft:flower_forest",
                     "minecraft:birch_forest", "minecraft:old_growth_birch_forest", "terralith:birch_taiga",
                     "terralith:lavender_forest", "terralith:forested_highlands")),
-            Map.entry(BiomeSettings.BAMBOO_SEA, List.of("minecraft:bamboo_jungle", "minecraft:sparse_jungle")),
+            Map.entry(BambooSeaRegistration.BAMBOO_SEA, List.of("minecraft:bamboo_jungle", "minecraft:sparse_jungle")),
             Map.entry(Ports.RAINFOREST, List.of("minecraft:jungle", "minecraft:dark_forest",
                     "terralith:tropical_jungle", "terralith:amethyst_rainforest")),
             Map.entry(Ports.CLOUD_FOREST, List.of("minecraft:taiga", "minecraft:snowy_taiga",
@@ -102,7 +102,8 @@ public final class BiomeLayout {
     public static final Map<WildCropClimate, List<ResourceKey<Biome>>> CROPS = Map.of(
             WildCropClimate.HOT, List.of(Ports.PAINTED_MOUNTAINS),
             WildCropClimate.WET, List.of(Ports.CLOUD_FOREST, Ports.HOT_SPRINGS, Ports.ORCHID_SWAMP, Ports.PEACH_GROVE,
-                    Ports.RAINFOREST, Ports.JUNGLE_MOUNTAINS, Ports.ZHANGSHIYAN_CLIFFS, BiomeSettings.BAMBOO_SEA),
+                    Ports.RAINFOREST, Ports.JUNGLE_MOUNTAINS, Ports.ZHANGSHIYAN_CLIFFS,
+                    BambooSeaRegistration.BAMBOO_SEA),
             WildCropClimate.BEACH, List.of(),
             WildCropClimate.TEMPERATE, List.of(Replicas.PLAINS, Ports.PLATEAU, Ports.ORCHID_SWAMP, Ports.PEACH_GROVE,
                     Ports.GRANITE_CLIFFS, Ports.ALPINE_MEADOW, Ports.KARST_PEAK_FOREST),
@@ -114,5 +115,5 @@ public final class BiomeLayout {
                     Ports.ZHANGSHIYAN_CLIFFS),
             Ports.KARST_PEAK_FOREST);
 
-    private BiomeLayout() {}
+    private SouthernBorderLayout() {}
 }
