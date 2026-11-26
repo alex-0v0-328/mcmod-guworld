@@ -34,6 +34,10 @@ import net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList;
  *       度设为全域会让远处高空（深度很负）落进该格，故限定在 0 到 {@link #RING_DEPTH}。</li>
  *   <li>复刻：{@link #REPLICAS} 是只有福地用的原版复刻；平原、河流、两种洞穴、雪林与冰封山峰和别的域共用，在
  *       {@link Replicas#SHARED}。</li>
+ *   <li>陆地（{@link #LAND}）：名单去掉河流、两种洞穴和平地圈群系，元泉与野生知心草按它在福地生成（Alex 定，同四域）；
+ *       平地圈群系只加进知心草，不加元泉，元泉的水池会占掉田区和入口落点附近的平地。</li>
+ *   <li>知心草（{@link #GRASSLAND}）另去掉雪林、冰封山峰：这两个复刻与北原共用，群系标签按群系生效，加进来北原也会挂上；
+ *       两者都是雪地，本来就长不出。</li>
  *   <li>⚠ 原版预设里每个群系都要在 {@link #SOURCES} 有去处，漏掉的在数据生成时直接报错。</li>
  * </ul>
  */
@@ -89,6 +93,11 @@ public final class BlissfulLandBiomes {
     private static final ResourceKey<Biome> SNOWY_SLOPES = Replicas.keyOf(Biomes.SNOWY_SLOPES);
     private static final ResourceKey<Biome> JAGGED_PEAKS = Replicas.keyOf(Biomes.JAGGED_PEAKS);
     private static final ResourceKey<Biome> STONY_PEAKS = Replicas.keyOf(Biomes.STONY_PEAKS);
+    public static final List<ResourceKey<Biome>> LAND = List.of(Replicas.PLAINS, SUNFLOWER_PLAINS, MEADOW, SWAMP,
+            FOREST, FLOWER_FOREST, BIRCH_FOREST, OLD_GROWTH_BIRCH_FOREST, DARK_FOREST, CHERRY_GROVE, TAIGA,
+            OLD_GROWTH_PINE_TAIGA, OLD_GROWTH_SPRUCE_TAIGA, WINDSWEPT_HILLS, WINDSWEPT_FOREST, Replicas.GROVE,
+            SNOWY_SLOPES, JAGGED_PEAKS, STONY_PEAKS, Replicas.FROZEN_PEAKS);
+    public static final List<ResourceKey<Biome>> GRASSLAND = getGrassland();
     public static final List<BiomeName> NAMES = List.of(
             new BiomeName(SUNFLOWER_PLAINS, "向日葵平原"),
             new BiomeName(MEADOW, "草甸"),
@@ -169,6 +178,13 @@ public final class BlissfulLandBiomes {
         parameters.add(Pair.of(Climate.parameters(whole, whole, ring, whole, depth, whole, 0.0F),
                 biomes.getOrThrow(FoxImmortalBlissfulLand.BIOME)));
         return parameters;
+    }
+
+    private static List<ResourceKey<Biome>> getGrassland() {
+        List<ResourceKey<Biome>> grassland = new ArrayList<>(LAND);
+        grassland.removeAll(List.of(Replicas.GROVE, Replicas.FROZEN_PEAKS));
+        grassland.add(FoxImmortalBlissfulLand.BIOME);
+        return List.copyOf(grassland);
     }
 
     private static Set<ResourceKey<Biome>> getRoster() {

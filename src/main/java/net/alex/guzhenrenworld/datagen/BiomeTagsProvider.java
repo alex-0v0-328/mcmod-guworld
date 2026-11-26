@@ -27,8 +27,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * 本模组生物群系标签的唯一数据生成器。
  * <ul>
- *   <li>元泉生成群系标签（{@link SpiritSpring#BIOMES}）汇总主世界陆地群系名单（{@link SpiritSpring#LAND_BIOMES}）与所有
- *       域的陆地群系；野生知心草生成群系标签（{@link IntimateGrass#BIOMES}）仅包含同一份主世界名单与南疆陆地群系；农夫
+ *   <li>元泉生成群系标签（{@link SpiritSpring#BIOMES}）汇总主世界陆地群系名单（{@link SpiritSpring#LAND_BIOMES}）、所有
+ *       域与狐仙福地（{@link BlissfulLandBiomes#LAND}）的陆地群系；野生知心草生成群系标签（{@link IntimateGrass#BIOMES}）
+ *       只含同一份主世界名单、南疆与狐仙福地（{@link BlissfulLandBiomes#GRASSLAND}，含平地圈）的陆地群系；农夫
  *       乐事野生作物气候标签（{@link WildCropClimate}）则汇总 {@link Regions#ALL} 各域与狐仙福地
  *       （{@link BlissfulLandBiomes#CROPS}）的作物气候映射表，多域共用的群系（如雨林）通过有序集合去重。</li>
  *   <li>荡魂山的结构群系标签（{@link SoulsunderMountain#BIOMES}）只含狐仙福地的群系
@@ -50,10 +51,12 @@ public class BiomeTagsProvider extends TagsProvider<Biome> {
         TagAppender<Biome> spiritSpring = tag(SpiritSpring.BIOMES);
         Set<ResourceKey<Biome>> land = new LinkedHashSet<>(SpiritSpring.LAND_BIOMES);
         Regions.ALL.forEach(region -> land.addAll(region.biomes().land()));
+        land.addAll(BlissfulLandBiomes.LAND);
         land.forEach(spiritSpring::add);
         TagAppender<Biome> intimateGrass = tag(IntimateGrass.BIOMES);
         Set<ResourceKey<Biome>> grassland = new LinkedHashSet<>(SpiritSpring.LAND_BIOMES);
         grassland.addAll(SouthernBorder.REGION.biomes().land());
+        grassland.addAll(BlissfulLandBiomes.GRASSLAND);
         grassland.forEach(intimateGrass::add);
         tag(SoulsunderMountain.BIOMES).add(FoxImmortalBlissfulLand.BIOME);
         for (WildCropClimate climate : WildCropClimate.values()) {

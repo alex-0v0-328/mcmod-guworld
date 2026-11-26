@@ -36,8 +36,8 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  *       放弃。</li>
  *   <li>{@link #RARITY}、{@link #TRIES}、{@link #XZ_SPREAD} 与 {@link #Y_SPREAD} 对齐农夫乐事野生胡萝卜的生成密度；群系
  *       修改器挂载在 {@code VEGETAL_DECORATION} 阶段，由 {@code datagen.DatapackProvider} 调用三个引导方法写出。</li>
- *   <li>{@code datagen.BiomeTagsProvider} 将主世界陆地群系（{@link SpiritSpring#LAND_BIOMES}）与南疆陆地群系填入
- *       {@link #BIOMES}；无草方块的沙漠或雪峰即使在标签内也不会实际长出知心草。</li>
+ *   <li>{@code datagen.BiomeTagsProvider} 将主世界陆地群系（{@link SpiritSpring#LAND_BIOMES}）、南疆与狐仙福地的陆地群系
+ *       （含平地圈，去掉与北原共用的雪地复刻）填入 {@link #BIOMES}；无草方块的沙漠或雪峰即使在标签内也不会实际长出知心草。</li>
  *   <li>⚠ 群系修改器按群系标签而非按维度生效，因此南疆与其他域共用的群系（如东海的雨林）也会自然生成野生知心草。</li>
  * </ul>
  */

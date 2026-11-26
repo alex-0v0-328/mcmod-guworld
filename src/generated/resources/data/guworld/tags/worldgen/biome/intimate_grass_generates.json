@@ -56,6 +56,24 @@
     "guworld:plateau",
     "guworld:rainforest",
     "guworld:rocky_peaks",
-    "guworld:zhangshiyan_cliffs"
+    "guworld:zhangshiyan_cliffs",
+    "guworld:sunflower_plains",
+    "guworld:meadow",
+    "guworld:swamp",
+    "guworld:forest",
+    "guworld:flower_forest",
+    "guworld:birch_forest",
+    "guworld:old_growth_birch_forest",
+    "guworld:dark_forest",
+    "guworld:cherry_grove",
+    "guworld:taiga",
+    "guworld:old_growth_pine_taiga",
+    "guworld:old_growth_spruce_taiga",
+    "guworld:windswept_hills",
+    "guworld:windswept_forest",
+    "guworld:snowy_slopes",
+    "guworld:jagged_peaks",
+    "guworld:stony_peaks",
+    "guworld:fox_immortal_blissful_land"
   ]
 }

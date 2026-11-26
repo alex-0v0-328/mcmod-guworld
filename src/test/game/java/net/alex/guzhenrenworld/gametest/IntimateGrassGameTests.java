@@ -6,6 +6,7 @@ import java.util.Set;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.GuzhenrenBlocks;
 import net.alex.guzhenrenworld.dimension.Regions;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.southernborder.SouthernBorder;
 import net.alex.guzhenrenworld.feature.IntimateGrass;
@@ -34,7 +35,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 /**
  * 野生知心草世界生成运行时检查。配置地物在半草半石的 15×15 地板上只把两格高知心草放到草方块上，石地一株不长；群系修改
- * 器把放置地物挂到主世界陆地与南疆陆地群系的 {@code VEGETAL_DECORATION} 步，不挂海洋，也不挂别域独有的陆地群系。
+ * 器把放置地物挂到主世界陆地、南疆陆地与狐仙福地陆地（含平地圈）群系的 {@code VEGETAL_DECORATION} 步，不挂海洋，也不挂
+ * 别域独有的陆地群系。
  * 放置用固定种子的随机源，结果确定。
  */
 
@@ -84,12 +86,13 @@ public final class IntimateGrassGameTests {
     }
 
     @GameTest(template = "empty9x9x9")
-    public static void patchHangsOnMainlandAndSouthernBorderLandOnly(GameTestHelper helper) {
+    public static void patchHangsOnMainlandSouthernBorderAndBlissfulLandOnly(GameTestHelper helper) {
         Registry<Biome> biomes = helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
         helper.assertTrue(hasPatch(biomes.getHolderOrThrow(Biomes.PLAINS)), "plains lack the patch");
         helper.assertFalse(hasPatch(biomes.getHolderOrThrow(Biomes.OCEAN)), "the ocean carries the patch");
 
         Set<ResourceKey<Biome>> southern = new HashSet<>(SouthernBorder.REGION.biomes().land());
+        southern.addAll(BlissfulLandBiomes.GRASSLAND);
         for (ResourceKey<Biome> biome : southern) {
             helper.assertTrue(hasPatch(biomes.getHolderOrThrow(biome)), biome.location() + " lacks the patch");
         }
