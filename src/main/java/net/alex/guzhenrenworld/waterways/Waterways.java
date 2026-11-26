@@ -38,12 +38,15 @@ import org.jetbrains.annotations.NotNull;
  *       {@link Region#walled()} 时最外一圈也是墙而非出口。墙不进填洼、不收汇流，溪流绕开平地圈，也不流向疆域断面；
  *       {@link #KEEP_OUT_REACH} 为河道半宽、岸带与两轴摆动之和再留 8 格，禁区内更深处碰不到任何线段（随河宽或岸带联
  *       动）。</li>
+ *   <li>数据包里的区域边长与禁区半径上限为 {@link #MAX_BORDER_SIZE}：规划按网格数平方开数组，边长再大会让 int 溢出、
+ *       内存失控（现有最大的狐仙福地 19,584 格）。</li>
  * </ul>
  */
 
 public final class Waterways {
 
     public static final int CELL = 16;
+    public static final double MAX_BORDER_SIZE = 65_536.0;
     public static final int JITTER = 5;
     public static final int MIN_CATCHMENT = 32;
     public static final double WIDTH_SCALE = 1.5;

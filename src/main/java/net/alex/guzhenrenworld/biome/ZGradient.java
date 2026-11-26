@@ -1,6 +1,7 @@
 package net.alex.guzhenrenworld.biome;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.NotNull;
  *       {@link Ports#registerDensityFunctions}）中引用。</li>
  *   <li>{@link #MAP_CODEC} 由 {@link GradientRegistration} 按 {@link #ID} 注册，{@link #CODEC} 供注册表分派类型；由于求
  *       值仅依赖水平 Z 坐标，可安全包裹在 {@code cache_2d} 列缓存中（{@link ColumnCaches}）。</li>
+ *   <li>两端坐标必须不同：相等时插值分母为 0，整列会求出 NaN，编解码直接报错。</li>
  * </ul>
  */
 
@@ -26,13 +28,19 @@ public record ZGradient(int fromZ, int toZ, double fromValue, double toValue)
     public static final String ID = "z_gradient";
     private static final int COORDINATE_LIMIT = 30_000_000;
     private static final double VALUE_LIMIT = 1_000_000.0;
-    public static final MapCodec<ZGradient> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    private static final MapCodec<ZGradient> FIELDS = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.intRange(-COORDINATE_LIMIT, COORDINATE_LIMIT).fieldOf("from_z").forGetter(ZGradient::fromZ),
             Codec.intRange(-COORDINATE_LIMIT, COORDINATE_LIMIT).fieldOf("to_z").forGetter(ZGradient::toZ),
             Codec.doubleRange(-VALUE_LIMIT, VALUE_LIMIT).fieldOf("from_value").forGetter(ZGradient::fromValue),
             Codec.doubleRange(-VALUE_LIMIT, VALUE_LIMIT).fieldOf("to_value").forGetter(ZGradient::toValue)
     ).apply(instance, ZGradient::new));
+    public static final MapCodec<ZGradient> MAP_CODEC = FIELDS.validate(ZGradient::validate);
     static final KeyDispatchDataCodec<ZGradient> CODEC = KeyDispatchDataCodec.of(MAP_CODEC);
+
+    private static DataResult<ZGradient> validate(ZGradient gradient) {
+        return gradient.fromZ() == gradient.toZ()
+                ? DataResult.error(() -> "z_gradient needs from_z != to_z") : DataResult.success(gradient);
+    }
 
     @Override
     public double compute(FunctionContext context) {

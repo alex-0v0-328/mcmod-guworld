@@ -2,11 +2,13 @@ package net.alex.guzhenrenworld.waterways;
 
 import com.mojang.logging.LogUtils;
 import java.util.Arrays;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.DensityFunction;
 import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
@@ -24,7 +26,9 @@ import org.slf4j.Logger;
  *       {@link WaterwaysFeature} 铺床注水。</li>
  *   <li>水系索引在后台守护线程池中仅构建一次，可由维度加载时的 {@link #prefetch} 提前触发，或由首个查询的列按需触发；构
  *       建完成前所有调用方在 {@link CompletableFuture#join()} 上等待；若构建异常则记录错误日志并回退为空索引（该域保持
- *       不刻河）。</li>
+ *       不刻河）。维度卸载或停服时 {@link WaterwaysRuntime} 调 {@link #cancel}：规划阶段的地面扫描随即抛出
+ *       {@link CancellationException} 停下，回退为空索引且不写存档，免得单人退回标题后旧世界的建图继续占满线程池、重进
+ *       时再起第二份。</li>
  *   <li>禁区内的列不等索引：离原点不到 {@link Waterways.Region#keepOut()} 减 {@link Waterways#KEEP_OUT_REACH} 格的列一
  *       定不刻河、不放水，直接返回。狐仙福地起服时荡魂山就在主线程上取山脚高度，等福地建图（几十秒）会被看门狗判卡死。
  *       </li>
@@ -49,16 +53,17 @@ public final class WaterwaysCarver {
     });
 
     private final Waterways.Region region;
-    private final Function<GroundHeights, WaterwaysIndex> builder;
+    private final BiFunction<GroundHeights, BooleanSupplier, WaterwaysIndex> builder;
     private final GroundHeights ground;
     private final NormalNoise meander;
     private final double keptOut;
     private final AtomicReference<CompletableFuture<WaterwaysIndex>> build = new AtomicReference<>();
     private final ThreadLocal<Columns> columns = ThreadLocal.withInitial(Columns::new);
     private volatile WaterwaysIndex ready;
+    private volatile boolean cancelled;
 
     WaterwaysCarver(Waterways.Region region, NoiseBasedChunkGenerator generator, RandomState random,
-            Function<GroundHeights, WaterwaysIndex> builder) {
+            BiFunction<GroundHeights, BooleanSupplier, WaterwaysIndex> builder) {
         NoiseSettings noise = generator.generatorSettings().value().noiseSettings();
         this.region = region;
         this.builder = builder;
@@ -70,8 +75,8 @@ public final class WaterwaysCarver {
 
     public static WaterwaysCarver create(Waterways.Region region, NoiseBasedChunkGenerator generator,
             RandomState random, long seed) {
-        return new WaterwaysCarver(region, generator, random, ground -> WaterwaysIndex.of(
-                WaterwaysPlanner.plan(region, generator, random, seed), ground,
+        return new WaterwaysCarver(region, generator, random, (ground, cancelled) -> WaterwaysIndex.of(
+                WaterwaysPlanner.plan(region, generator, random, seed, cancelled), ground,
                 random.getOrCreateNoise(Waterways.MEANDER_NOISE)));
     }
 
@@ -81,6 +86,10 @@ public final class WaterwaysCarver {
 
     public void prefetch() {
         getBuild();
+    }
+
+    void cancel() {
+        cancelled = true;
     }
 
     public WaterwaysIndex getIndex() {
@@ -147,10 +156,13 @@ public final class WaterwaysCarver {
     private WaterwaysIndex getBuilt() {
         long started = System.nanoTime();
         try {
-            WaterwaysIndex index = builder.apply(ground);
+            WaterwaysIndex index = builder.apply(ground, () -> cancelled);
             LOGGER.info("Waterways of {}: {} segments in {} s", region.name(), index.segments(),
                     "%.1f".formatted((System.nanoTime() - started) / 1e9));
             return index;
+        } catch (CancellationException exception) {
+            LOGGER.info("Waterways of {} cancelled with its dimension", region.name());
+            return WaterwaysIndex.empty(region);
         } catch (RuntimeException | Error exception) {
             LOGGER.error("Waterways of {} failed; the region stays uncarved", region.name(), exception);
             return WaterwaysIndex.empty(region);

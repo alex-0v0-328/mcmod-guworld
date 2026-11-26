@@ -1,5 +1,7 @@
 package net.alex.guzhenrenworld.waterways;
 
+import java.util.concurrent.CancellationException;
+import java.util.function.BooleanSupplier;
 import java.util.stream.IntStream;
 import net.minecraft.core.QuartPos;
 import net.minecraft.world.level.biome.BiomeSource;
@@ -15,7 +17,7 @@ import net.minecraft.world.level.levelgen.RandomState;
  *       {@link Waterways.Region#jitter()} 格（16 格网格时为 {@link Waterways#JITTER}），通过 {@link GroundHeights} 并行
  *       扫描地面高度，并结合海平面与噪声群系（路径以 {@code river} 结尾视为河口）划分网格类型，禁区与墙边
  *       （{@link Waterways.Region#keepOut()}、{@link Waterways.Region#walled()}）记为墙；512×512 网格约需 45 CPU 秒。
- *       </li>
+ *       每格开扫前查一次取消标志，维度卸载后抛 {@link CancellationException} 让后台建图尽快停下。</li>
  *   <li>第二阶段为纯内存水文拓扑求解：调用 {@link WaterwaysFlood} 在采样数组上依次完成洼地填平、最陡流向判定与汇流面积
  *       累加，耗时不足 1 秒。</li>
  * </ul>
@@ -27,6 +29,11 @@ public final class WaterwaysPlanner {
 
     public static WaterwaysPlan plan(Waterways.Region region, NoiseBasedChunkGenerator generator, RandomState random,
             long seed) {
+        return plan(region, generator, random, seed, () -> false);
+    }
+
+    public static WaterwaysPlan plan(Waterways.Region region, NoiseBasedChunkGenerator generator, RandomState random,
+            long seed, BooleanSupplier cancelled) {
         NoiseGeneratorSettings settings = generator.generatorSettings().value();
         int seaLevel = settings.seaLevel();
         int size = region.cells();
@@ -43,7 +50,7 @@ public final class WaterwaysPlanner {
         }
         float[] ground = new float[count];
         WaterwaysPlan.Kind[] kind = new WaterwaysPlan.Kind[count];
-        sample(region, generator, random, size, x, z, ground, kind);
+        sample(region, generator, random, size, x, z, ground, kind, cancelled);
         double[] filled = new double[count];
         int[] order = new int[count];
         WaterwaysFlood.fill(kind, ground, filled, order, size);
@@ -53,13 +60,14 @@ public final class WaterwaysPlanner {
     }
 
     private static void sample(Waterways.Region region, NoiseBasedChunkGenerator generator, RandomState random,
-            int size, int[] x, int[] z, float[] ground, WaterwaysPlan.Kind[] kind) {
+            int size, int[] x, int[] z, float[] ground, WaterwaysPlan.Kind[] kind, BooleanSupplier cancelled) {
         NoiseGeneratorSettings settings = generator.generatorSettings().value();
         int minY = settings.noiseSettings().minY();
         GroundHeights heights = new GroundHeights(random.router(), minY, minY + settings.noiseSettings().height());
         BiomeSource biomes = generator.getBiomeSource();
         Climate.Sampler sampler = random.sampler();
         IntStream.range(0, x.length).parallel().forEach(cell -> {
+            if (cancelled.getAsBoolean()) throw new CancellationException(region.name());
             int height = heights.sample(x[cell], z[cell]);
             ground[cell] = height;
             kind[cell] = isWall(region, cell, size, x[cell], z[cell]) ? WaterwaysPlan.Kind.WALL

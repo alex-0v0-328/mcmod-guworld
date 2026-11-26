@@ -38,11 +38,11 @@ public final class WaterwaysDensity implements DensityFunction {
     private static final double LOWEST = -SLOPE * 4096;
     public static final MapCodec<WaterwaysDensity> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.fieldOf("region").forGetter(density -> density.region.name()),
-            Codec.doubleRange(Waterways.CELL, 60_000_000.0).fieldOf("size")
+            Codec.doubleRange(Waterways.CELL, Waterways.MAX_BORDER_SIZE).fieldOf("size")
                     .forGetter(density -> density.region.borderSize()),
             Codec.BOOL.fieldOf("dry").forGetter(density -> density.region.dry()),
             Waterways.Bed.CODEC.fieldOf("bed").forGetter(density -> density.region.bed()),
-            Codec.doubleRange(0.0, 60_000_000.0).optionalFieldOf("keep_out", 0.0)
+            Codec.doubleRange(0.0, Waterways.MAX_BORDER_SIZE).optionalFieldOf("keep_out", 0.0)
                     .forGetter(density -> density.region.keepOut()),
             Codec.BOOL.optionalFieldOf("walled", false).forGetter(density -> density.region.walled()),
             Codec.intRange(Waterways.CELL / 2, Waterways.CELL * 4).optionalFieldOf("cell", Waterways.CELL)

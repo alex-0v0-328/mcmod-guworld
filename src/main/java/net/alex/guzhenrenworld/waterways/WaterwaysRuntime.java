@@ -22,8 +22,9 @@ import org.jetbrains.annotations.Nullable;
  *       </li>
  *   <li>雕刻器构建时优先读取维度存档中的 {@link WaterwaysData}（校验 {@link Waterways#PARAMETERS}、边界尺寸、海平面、世
  *       界种子及{@link #FINGERPRINT} 采样点地面与群系指纹），校验未命中时才执行完整水文规划并写回存档。</li>
- *   <li>维度卸载或服务端停止时自动移除雕刻器以释放内存；{@link #get} 供 {@link WaterwaysFeature} 与测试获取当前维度的雕
- *       刻器，测试也可通过 {@link #attach} 与 {@link #detach} 为自建的 {@link RandomState} 手动挂载或卸载雕刻器。</li>
+ *   <li>维度卸载或服务端停止时自动移除雕刻器以释放内存，并取消仍在跑的建图（{@link WaterwaysCarver#cancel}）；
+ *       {@link #get} 供 {@link WaterwaysFeature} 与测试获取当前维度的雕刻器，测试也可通过 {@link #attach} 与
+ *       {@link #detach} 为自建的 {@link RandomState} 手动挂载或卸载雕刻器。</li>
  * </ul>
  */
 
@@ -39,7 +40,8 @@ public final class WaterwaysRuntime {
     }
 
     public static void detach(RandomState random) {
-        CARVERS.remove(random.getOrCreateNoise(Waterways.MEANDER_NOISE));
+        WaterwaysCarver carver = CARVERS.remove(random.getOrCreateNoise(Waterways.MEANDER_NOISE));
+        if (carver != null) carver.cancel();
     }
 
     static @Nullable WaterwaysCarver find(@Nullable NormalNoise meander) {
@@ -62,12 +64,12 @@ public final class WaterwaysRuntime {
                 String.valueOf(generator.generatorSettings().value().seaLevel()))
                 + (region.keepOut() > 0 ? "/keep" + region.keepOut() : "") + (region.walled() ? "/walled" : "")
                 + (region.cell() != Waterways.CELL ? "/cell" + region.cell() : "");
-        WaterwaysCarver carver = new WaterwaysCarver(region, generator, random, ground -> {
+        WaterwaysCarver carver = new WaterwaysCarver(region, generator, random, (ground, cancelled) -> {
             int[] fingerprint = getFingerprint(ground, generator, random);
             WaterwaysIndex saved = data.get(key, region, seed, fingerprint);
             if (saved != null) return saved;
-            WaterwaysIndex built = WaterwaysIndex.of(WaterwaysPlanner.plan(region, generator, random, seed), ground,
-                    random.getOrCreateNoise(Waterways.MEANDER_NOISE));
+            WaterwaysPlan plan = WaterwaysPlanner.plan(region, generator, random, seed, cancelled);
+            WaterwaysIndex built = WaterwaysIndex.of(plan, ground, random.getOrCreateNoise(Waterways.MEANDER_NOISE));
             data.put(key, seed, fingerprint, built);
             return built;
         });
@@ -82,6 +84,7 @@ public final class WaterwaysRuntime {
     }
 
     static void clear() {
+        CARVERS.values().forEach(WaterwaysCarver::cancel);
         CARVERS.clear();
     }
 

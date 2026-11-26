@@ -57,7 +57,8 @@ import org.slf4j.Logger;
  *   <li>边界框是本区块里山形非空列的范围，竖直从世界底部到山顶，因为向下补的深度在装饰前不可知；山脚随地形上移的列可能
  *       略出框顶，只影响 {@code /locate} 一类的框判断。</li>
  *   <li>每座山的耗时按结构片累加，最后一片写完时记一行 INFO（山石、补石、清除数、区块数、总耗时、最慢区块）；中途重启的
- *       山只记不全，不再补记。</li>
+ *       山只记不全，不再补记。累加表按山心坐标记，福地山心总在同一处，所以停服时清空（{@link #clearProgress}），单人
+ *       换存档后不接着上一个世界的计数。</li>
  * </ul>
  */
 
@@ -234,10 +235,9 @@ public final class SoulsunderMountainPiece extends StructurePiece implements Pie
         }
     }
 
-    /** 山形高 {@code height} 的列相对山底的上下移动：山脚按权重贴向地面 {@code ground}，且列顶不低于地面。 */
     private int getShift(int height, int ground) {
-        double t = Math.clamp(1.0 - (double) height / FOLLOW, 0.0, 1.0);
-        double weight = t * t * (3 - 2 * t);
+        double outward = Math.clamp(1.0 - (double) height / FOLLOW, 0.0, 1.0);
+        double weight = outward * outward * (3 - 2 * outward);
         int follow = (int) Math.round(weight * (ground + 1 - centre.getY()));
         return Math.max(follow, ground + 1 - height - centre.getY());
     }
@@ -249,6 +249,10 @@ public final class SoulsunderMountainPiece extends StructurePiece implements Pie
     private static void setBlock(ChunkAccess chunk, BlockPos pos, BlockState state) {
         BlockState previous = chunk.setBlockState(pos, state, false);
         if (previous != null && previous.hasBlockEntity()) chunk.removeBlockEntity(pos);
+    }
+
+    static void clearProgress() {
+        PROGRESS.clear();
     }
 
     private void recordProgress(long nanos, int[] placed) {
