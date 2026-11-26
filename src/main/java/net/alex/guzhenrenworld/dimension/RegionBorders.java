@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandFoxImmortal;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.minecraft.network.protocol.game.ClientboundInitializeBorderPacket;
 import net.minecraft.resources.ResourceKey;
@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 
 /**
  * 有限维度的独立方形世界边界管理器，以 {@code (0, 0)} 为中心、边长按维度取（{@link #SIZES}）：四域（
- * {@link Regions#ALL}）各 {@link Region#BORDER_SIZE} 格，狐仙福地 {@link FoxImmortalBlissfulLand#BORDER_SIZE} 格。
+ * {@link Regions#ALL}）各 {@link Region#BORDER_SIZE} 格，狐仙福地 {@link BlissfulLandFoxImmortal#BORDER_SIZE} 格。
  * <ul>
  *   <li>原版世界边界默认绑定主世界：其余维度通过委托监听器被动跟随主世界边界，{@code /worldborder} 指令也仅修改主世界，
  *       且玩家在任何维度登录、切换维度或重生时原版均下发主世界边界包；因此需由 {@link RegionBorderEvents} 在原版流程之
@@ -73,7 +73,7 @@ public final class RegionBorders {
     private static Map<ResourceKey<Level>, Double> getSizes() {
         Map<ResourceKey<Level>, Double> sizes = new LinkedHashMap<>();
         Regions.ALL.forEach(region -> sizes.put(region.level(), Region.BORDER_SIZE));
-        sizes.put(FoxImmortalBlissfulLand.LEVEL, FoxImmortalBlissfulLand.BORDER_SIZE);
+        sizes.put(BlissfulLandFoxImmortal.LEVEL, BlissfulLandFoxImmortal.BORDER_SIZE);
         return Map.copyOf(sizes);
     }
 

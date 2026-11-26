@@ -9,7 +9,7 @@ import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.Regions;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
-import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandFoxImmortal;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
 import net.minecraft.data.PackOutput;
@@ -50,8 +50,8 @@ public class Translations extends LanguageProvider {
         addDimensionName(TreasureYellowHeaven.LEVEL_STEM, "宝黄天");
         addTitleColor(TreasureYellowHeaven.LEVEL_STEM, TreasureYellowHeaven.COLOR);
         addBiomes(List.of(TreasureYellowHeaven.BIOME), "宝黄天");
-        addDimensionName(FoxImmortalBlissfulLand.LEVEL_STEM, FoxImmortalBlissfulLand.TITLE);
-        addTitleColor(FoxImmortalBlissfulLand.LEVEL_STEM, FoxImmortalBlissfulLand.COLOR);
+        addDimensionName(BlissfulLandFoxImmortal.LEVEL_STEM, BlissfulLandFoxImmortal.TITLE);
+        addTitleColor(BlissfulLandFoxImmortal.LEVEL_STEM, BlissfulLandFoxImmortal.COLOR);
         addBiomes(Replicas.BIOMES,
                 "平原",
                 "河流",

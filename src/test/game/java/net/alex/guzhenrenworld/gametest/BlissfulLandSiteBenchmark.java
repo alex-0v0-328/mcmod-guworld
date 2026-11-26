@@ -4,7 +4,7 @@ import com.mojang.logging.LogUtils;
 import java.util.List;
 import java.util.function.IntBinaryOperator;
 import net.alex.guzhenrenworld.GuWorld;
-import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandFoxImmortal;
 import net.alex.guzhenrenworld.waterways.GroundHeights;
 import net.minecraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -46,14 +46,14 @@ public final class BlissfulLandSiteBenchmark {
     }
 
     private static void measure(GameTestHelper helper) {
-        RegionProbe probe = new RegionProbe(helper, FoxImmortalBlissfulLand.LEVEL_STEM, FoxImmortalBlissfulLand.MIN_Y,
-                FoxImmortalBlissfulLand.HEIGHT);
+        RegionProbe probe = new RegionProbe(helper, BlissfulLandFoxImmortal.LEVEL_STEM, BlissfulLandFoxImmortal.MIN_Y,
+                BlissfulLandFoxImmortal.HEIGHT);
         NoiseBasedChunkGenerator generator = probe.getGenerator();
         RandomState random = probe.getRandomState();
-        LevelHeightAccessor heights = LevelHeightAccessor.create(FoxImmortalBlissfulLand.MIN_Y,
-                FoxImmortalBlissfulLand.HEIGHT);
-        GroundHeights ground = new GroundHeights(random.router(), FoxImmortalBlissfulLand.MIN_Y,
-                FoxImmortalBlissfulLand.MIN_Y + FoxImmortalBlissfulLand.HEIGHT);
+        LevelHeightAccessor heights = LevelHeightAccessor.create(BlissfulLandFoxImmortal.MIN_Y,
+                BlissfulLandFoxImmortal.HEIGHT);
+        GroundHeights ground = new GroundHeights(random.router(), BlissfulLandFoxImmortal.MIN_Y,
+                BlissfulLandFoxImmortal.MIN_Y + BlissfulLandFoxImmortal.HEIGHT);
         IntBinaryOperator surface = (x, z) -> generator.getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
                 heights, random);
         IntBinaryOperator floor = (x, z) -> generator.getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG, heights,

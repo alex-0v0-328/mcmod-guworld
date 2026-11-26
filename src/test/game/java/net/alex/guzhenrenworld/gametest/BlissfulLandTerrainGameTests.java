@@ -8,7 +8,7 @@ import java.util.TreeMap;
 import java.util.stream.IntStream;
 import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
-import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandFoxImmortal;
 import net.minecraft.core.Holder;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -55,8 +55,8 @@ public final class BlissfulLandTerrainGameTests {
 
     @GameTest(template = "empty9x9x9", timeoutTicks = 2400)
     public static void terrainFollowsTheCentralLands(GameTestHelper helper) {
-        RegionProbe probe = new RegionProbe(helper, FoxImmortalBlissfulLand.LEVEL_STEM, FoxImmortalBlissfulLand.MIN_Y,
-                FoxImmortalBlissfulLand.HEIGHT);
+        RegionProbe probe = new RegionProbe(helper, BlissfulLandFoxImmortal.LEVEL_STEM, BlissfulLandFoxImmortal.MIN_Y,
+                BlissfulLandFoxImmortal.HEIGHT);
         int total = SAMPLES * SAMPLES;
         long started = System.nanoTime();
         int[][] columns = IntStream.range(0, total).parallel().mapToObj(index -> {

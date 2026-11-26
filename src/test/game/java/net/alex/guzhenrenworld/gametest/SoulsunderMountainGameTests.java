@@ -18,9 +18,9 @@ import net.alex.guzhenrenworld.GuWorld;
 import net.alex.guzhenrenworld.GuzhenrenBlocks;
 import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandFoxImmortal;
 import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandSite;
 import net.alex.guzhenrenworld.dimension.blissfulland.BoundedNoiseGenerator;
-import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
 import net.alex.guzhenrenworld.secretrealm.GentleSitePlacement;
 import net.alex.guzhenrenworld.secretrealm.SoulsunderClearance;
 import net.alex.guzhenrenworld.secretrealm.SoulsunderMountain;
@@ -294,7 +294,7 @@ public final class SoulsunderMountainGameTests {
         BlissfulLand land = BlissfulLand.create(helper, SEED);
         BoundedNoiseGenerator generator = land.generator();
         RandomState random = land.random();
-        int edge = FoxImmortalBlissfulLand.HALF_SIZE_CHUNKS;
+        int edge = BlissfulLandFoxImmortal.HALF_SIZE_CHUNKS;
         Registry<Biome> biomes = helper.getLevel().registryAccess().registryOrThrow(Registries.BIOME);
         for (ChunkPos position : List.of(new ChunkPos(edge - 1, 0), new ChunkPos(-edge, edge - 1))) {
             helper.assertFalse(generator.isOutside(position), position + " lies outside");
@@ -313,7 +313,7 @@ public final class SoulsunderMountainGameTests {
     public static void blissfulLandSealsItsEdge(GameTestHelper helper) {
         BlissfulLand land = BlissfulLand.create(helper, SEED);
         BoundedNoiseGenerator generator = land.generator();
-        int edge = FoxImmortalBlissfulLand.HALF_SIZE_CHUNKS * 16 - 1;
+        int edge = BlissfulLandFoxImmortal.HALF_SIZE_CHUNKS * 16 - 1;
         BlockPos found = null;
         String fluid = null;
         for (int z = -edge; z < edge && found == null; z += EDGE_STEP) {
@@ -368,7 +368,7 @@ public final class SoulsunderMountainGameTests {
                 HolderSet.direct(biomes.getHolderOrThrow(Biomes.PLAINS),
                         biomes.getHolderOrThrow(Replicas.PLAINS)), CHECKER_SIZE),
                 registries.lookupOrThrow(Registries.NOISE_SETTINGS).getOrThrow(NoiseGeneratorSettings.OVERWORLD),
-                FoxImmortalBlissfulLand.HALF_SIZE_CHUNKS);
+                BlissfulLandFoxImmortal.HALF_SIZE_CHUNKS);
         for (long seed = 1; seed <= VILLAGE_SEEDS; seed++) {
             Overworld world = new Overworld(generator, RandomState.create(generator.generatorSettings().value(),
                     registries.lookupOrThrow(Registries.NOISE), seed), null, sets);
@@ -679,7 +679,7 @@ public final class SoulsunderMountainGameTests {
 
         static BlissfulLand create(GameTestHelper helper, long seed) {
             RegistryAccess registries = helper.getLevel().registryAccess();
-            ResourceLocation file = FoxImmortalBlissfulLand.LEVEL_STEM.location()
+            ResourceLocation file = BlissfulLandFoxImmortal.LEVEL_STEM.location()
                     .withPath(path -> "dimension/" + path + ".json");
             BoundedNoiseGenerator generator;
             try (Reader reader = helper.getLevel().getServer().getResourceManager().openAsReader(file)) {

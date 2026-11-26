@@ -12,7 +12,7 @@ import net.alex.guzhenrenworld.biome.Replicas;
 import net.alex.guzhenrenworld.dimension.Regions;
 import net.alex.guzhenrenworld.dimension.TreasureYellowHeaven;
 import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandBiomes;
-import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandFoxImmortal;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.region.RegionBootstraps;
 import net.alex.guzhenrenworld.dimension.southernborder.BiomeSettings;
@@ -36,7 +36,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
  *       （{@link BiomeSettings}），元泉配置地物、放置地物（{@link SpiritSpring}）与群系修改器
  *       （{@link SpiritSpringRegistration}），野生知心草地物与群系修改器（{@link IntimateGrass}），以及四域水系地物与修
  *       改器（{@link WaterwaysRegistration}，福地的群系也在内）；另有狐仙福地的维度类型、群系与复刻
- *       （{@link BlissfulLandBiomes}）、噪声、Tectonic 副本、噪声设置与维度层级（{@link FoxImmortalBlissfulLand}），以
+ *       （{@link BlissfulLandBiomes}）、噪声、Tectonic 副本、噪声设置与维度层级（{@link BlissfulLandFoxImmortal}），以
  *       及荡魂山的结构与缓地放置的结构集（{@link SoulsunderMountain}）。</li>
  *   <li>注册四域共用的维度类型，并按 {@link Regions#ALL} 逐域注册各自的密度函数（Tectonic 路由与域钩子）、噪声生成设
  *       置、维度层级（{@link RegionBootstraps}）以及挂载在各域前缀下的可达移植地形副本。</li>
@@ -55,7 +55,7 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
             .add(Registries.DIMENSION_TYPE, context -> {
                 TreasureYellowHeaven.registerDimensionType(context);
                 RegionBootstraps.registerDimensionType(context);
-                FoxImmortalBlissfulLand.registerDimensionType(context);
+                BlissfulLandFoxImmortal.registerDimensionType(context);
             })
             .add(Registries.BIOME, context -> {
                 TreasureYellowHeaven.registerBiome(context);
@@ -68,20 +68,20 @@ public class DatapackProvider extends DatapackBuiltinEntriesProvider {
                 Ports.registerNoises(context);
                 Regions.ALL.forEach(region -> RegionBootstraps.registerNoises(context, region));
                 Waterways.registerNoises(context);
-                FoxImmortalBlissfulLand.registerNoises(context);
+                BlissfulLandFoxImmortal.registerNoises(context);
             })
             .add(Registries.DENSITY_FUNCTION, context -> {
                 Regions.ALL.forEach(region -> RegionBootstraps.registerDensityFunctions(context, region));
-                FoxImmortalBlissfulLand.registerDensityFunctions(context);
+                BlissfulLandFoxImmortal.registerDensityFunctions(context);
             })
             .add(Registries.NOISE_SETTINGS, context -> {
                 Regions.ALL.forEach(region -> RegionBootstraps.registerNoiseSettings(context, region));
-                FoxImmortalBlissfulLand.registerNoiseSettings(context);
+                BlissfulLandFoxImmortal.registerNoiseSettings(context);
             })
             .add(Registries.LEVEL_STEM, context -> {
                 TreasureYellowHeaven.registerLevelStem(context);
                 Regions.ALL.forEach(region -> RegionBootstraps.registerLevelStem(context, region));
-                FoxImmortalBlissfulLand.registerLevelStem(context);
+                BlissfulLandFoxImmortal.registerLevelStem(context);
             })
             .add(Registries.CONFIGURED_FEATURE, context -> {
                 SpiritSpring.registerConfiguredFeature(context);

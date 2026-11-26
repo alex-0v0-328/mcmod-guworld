@@ -1,0 +1,5 @@
+{
+  "type": "minecraft:add",
+  "argument1": "guworld:terrain/blissful_land_fox_immortal/hook/ocean_offset",
+  "argument2": 0.0
+}

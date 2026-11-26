@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import net.alex.guzhenrenworld.GuWorld;
-import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandFoxImmortal;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -109,7 +109,7 @@ public final class BlissfulLandNoiseBenchmark {
     }
 
     private static NoiseBasedChunkGenerator readGenerator(GameTestHelper helper) {
-        ResourceLocation file = FoxImmortalBlissfulLand.LEVEL_STEM.location()
+        ResourceLocation file = BlissfulLandFoxImmortal.LEVEL_STEM.location()
                 .withPath(path -> "dimension/" + path + ".json");
         try (Reader reader = helper.getLevel().getServer().getResourceManager().openAsReader(file)) {
             return (NoiseBasedChunkGenerator) LevelStem.CODEC.parse(RegistryOps.create(JsonOps.INSTANCE,
@@ -124,13 +124,13 @@ public final class BlissfulLandNoiseBenchmark {
     // 同一份噪声设置，只把路由里福地加的包装（湖、水系）换回移植来的具名函数。
     private static NoiseBasedChunkGenerator readBareGenerator(GameTestHelper helper,
             NoiseBasedChunkGenerator generator) {
-        ResourceLocation file = FoxImmortalBlissfulLand.NOISE_SETTINGS.location()
+        ResourceLocation file = BlissfulLandFoxImmortal.NOISE_SETTINGS.location()
                 .withPath(path -> "worldgen/noise_settings/" + path + ".json");
         try (Reader reader = helper.getLevel().getServer().getResourceManager().openAsReader(file)) {
             JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
             JsonObject router = json.getAsJsonObject("noise_router");
             for (String field : BARE_FIELDS) {
-                router.addProperty(field, GuWorld.MOD_ID + ":terrain/" + FoxImmortalBlissfulLand.LEVEL.location()
+                router.addProperty(field, GuWorld.MOD_ID + ":terrain/" + BlissfulLandFoxImmortal.LEVEL.location()
                         .getPath() + "/minecraft/overworld/noise_router/" + field);
             }
             NoiseGeneratorSettings settings = NoiseGeneratorSettings.DIRECT_CODEC.parse(RegistryOps.create(
@@ -143,8 +143,8 @@ public final class BlissfulLandNoiseBenchmark {
     }
 
     private static long fill(NoiseBasedChunkGenerator generator, RandomState random, Registry<Biome> biomes) {
-        LevelHeightAccessor column = LevelHeightAccessor.create(FoxImmortalBlissfulLand.MIN_Y,
-                FoxImmortalBlissfulLand.HEIGHT);
+        LevelHeightAccessor column = LevelHeightAccessor.create(BlissfulLandFoxImmortal.MIN_Y,
+                BlissfulLandFoxImmortal.HEIGHT);
         StructureManager structures = new StructureManager(null, null, null) {
 
             @Override

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 import net.alex.guzhenrenworld.GuWorld;
-import net.alex.guzhenrenworld.dimension.blissfulland.FoxImmortalBlissfulLand;
+import net.alex.guzhenrenworld.dimension.blissfulland.BlissfulLandFoxImmortal;
 import net.alex.guzhenrenworld.dimension.region.Region;
 import net.alex.guzhenrenworld.dimension.easternsea.EasternSea;
 import net.alex.guzhenrenworld.dimension.northernplains.NorthernPlains;
@@ -56,7 +56,7 @@ public final class WaterwaysPlanMaps {
     private static final double DEEP = 1.0;
     private static final List<ResourceKey<LevelStem>> STEMS = List.of(SouthernBorder.REGION.levelStem(),
             WesternDesert.REGION.levelStem(), EasternSea.REGION.levelStem(), NorthernPlains.REGION.levelStem(),
-            FoxImmortalBlissfulLand.LEVEL_STEM);
+            BlissfulLandFoxImmortal.LEVEL_STEM);
 
     private WaterwaysPlanMaps() {}
 
